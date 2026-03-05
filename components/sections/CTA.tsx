@@ -1,5 +1,9 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import SpaceBackground from '@/components/SpaceBackground';
+import VideoBackground from '@/components/VideoBackground';
+
+const VIDEO_URL = 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69aa0befde2e7de2a9765ced.mp4';
 
 export default function CTA() {
   return (
@@ -17,6 +21,9 @@ export default function CTA() {
           position: 'relative',
           overflow: 'hidden',
         }}>
+          <SpaceBackground opacity={0.6} />
+          <VideoBackground src={VIDEO_URL} opacity={0.05} />
+
           <div style={{
             position: 'absolute', top: '-100px', right: '-100px',
             width: '400px', height: '400px', borderRadius: '50%',

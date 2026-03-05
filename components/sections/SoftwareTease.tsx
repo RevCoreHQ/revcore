@@ -2,6 +2,10 @@
 
 import Link from 'next/link';
 import { ArrowRight, CheckCircle } from 'lucide-react';
+import SpaceBackground from '@/components/SpaceBackground';
+import VideoBackground from '@/components/VideoBackground';
+
+const VIDEO_URL = 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69aa0befde2e7de2a9765ced.mp4';
 import { useScrollReveal, fadeUp, scaleUp } from '@/hooks/useScrollReveal';
 import AnimatedText from '@/components/AnimatedText';
 import IpadMockup from '@/components/iPadMockup';
@@ -30,8 +34,10 @@ export default function SoftwareTease() {
   const { ref, inView } = useScrollReveal({ threshold: 0.06 });
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#070b0f', overflow: 'hidden' }}>
-      <div className="container">
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#070b0f', overflow: 'hidden', position: 'relative' }}>
+      <SpaceBackground />
+      <VideoBackground src={VIDEO_URL} opacity={0.05} />
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '5rem' }}>

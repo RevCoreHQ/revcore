@@ -4,6 +4,11 @@ import { useState } from 'react';
 import { Check, ChevronDown, ChevronUp, Lock, ArrowRight, Star, Zap, TrendingUp } from 'lucide-react';
 import FunnelDiagram from '@/components/FunnelDiagram';
 import SEOChecker from '@/components/SEOChecker';
+import SpaceBackground from '@/components/SpaceBackground';
+import VideoBackground from '@/components/VideoBackground';
+
+const HERO_VIDEO_URL = 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69aa0befde2e7de2a9765ced.mp4';
+const HERO_PHOTO_URL = 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69aa0c41665b7299ea867c81.jpg';
 
 const SALES_PASSWORD = 'RevCore2025';
 
@@ -401,8 +406,22 @@ function SalesDeck() {
       </div>
 
       {/* ── Hero ── */}
-      <section style={{ background: '#0A0A0A', padding: '80px 0 100px' }}>
-        <div className="container" style={{ textAlign: 'center' }}>
+      <section style={{ background: '#0A0A0A', padding: '80px 0 100px', position: 'relative', overflow: 'hidden' }}>
+        {/* Hero photo with parallax-style overlay */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: `url(${HERO_PHOTO_URL})`,
+          backgroundSize: 'cover', backgroundPosition: 'center top',
+          opacity: 0.18,
+        }} />
+        {/* Dark gradient over photo */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to bottom, rgba(10,10,10,0.6) 0%, rgba(10,10,10,0.3) 50%, rgba(10,10,10,0.85) 100%)',
+        }} />
+        <SpaceBackground opacity={0.7} />
+        <VideoBackground src={HERO_VIDEO_URL} opacity={0.05} />
+        <div className="container" style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.15em',

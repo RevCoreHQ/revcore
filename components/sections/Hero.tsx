@@ -3,6 +3,10 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import SpaceBackground from '@/components/SpaceBackground';
+import VideoBackground from '@/components/VideoBackground';
+
+const VIDEO_URL = 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69aa0befde2e7de2a9765ced.mp4';
 
 export default function Hero() {
   const imgRef = useRef<HTMLDivElement>(null);
@@ -179,6 +183,16 @@ export default function Hero() {
               willChange: 'transform',
             }}
           />
+
+          {/* Space stars layer */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}>
+            <SpaceBackground opacity={0.45} />
+          </div>
+
+          {/* Video texture overlay */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
+            <VideoBackground src={VIDEO_URL} opacity={0.05} />
+          </div>
 
           {/* Dark vignette overlay */}
           <div style={{

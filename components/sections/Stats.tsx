@@ -1,6 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import SpaceBackground from '@/components/SpaceBackground';
+import VideoBackground from '@/components/VideoBackground';
+
+const VIDEO_URL = 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69aa0befde2e7de2a9765ced.mp4';
 
 const stats = [
   { num: 28, prefix: '$', suffix: 'K', label: 'Avg. job value closed', sub: 'By RevCore partners' },
@@ -60,8 +64,10 @@ export default function Stats() {
   }, []);
 
   return (
-    <section ref={sectionRef} style={{ padding: '100px 0', background: 'var(--color-primary)' }}>
-      <div className="container">
+    <section ref={sectionRef} style={{ padding: '100px 0', background: 'var(--color-primary)', position: 'relative', overflow: 'hidden' }}>
+      <SpaceBackground />
+      <VideoBackground src={VIDEO_URL} opacity={0.05} />
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2rem' }}>
           {stats.map((s, i) => (
             <StatItem key={i} stat={s} active={active} index={i} />
