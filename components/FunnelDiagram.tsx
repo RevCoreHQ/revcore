@@ -120,7 +120,7 @@ export default function FunnelDiagram() {
   // Flow particle path (center of funnel)
   const flowPath = `M ${FC} ${FSY - 2} L ${FC} ${FUNNEL_BOT_Y + 4}`;
 
-  const viewH = fullscreen ? 'calc(100vh - 48px)' : '730px';
+  const viewH = fullscreen ? 'calc(100vh - 48px)' : '1100px';
 
   return (
     <div
@@ -262,7 +262,7 @@ export default function FunnelDiagram() {
           {/* ══════════════════════════════════════════════════════════
               TOP OF FUNNEL
           ══════════════════════════════════════════════════════════ */}
-          <Card x={220} y={8} w={920} h={278} bg="#111820" accent={`${ACCENT}25`} r={16}>
+          <Card x={30} y={8} w={920} h={278} bg="#111820" accent={`${ACCENT}25`} r={16}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <div style={{ width: 24, height: 2, background: ACCENT }} />
               <span style={{ fontFamily: 'DM Sans', fontWeight: 800, fontSize: 14.5, color: 'white', letterSpacing: '-0.01em' }}>
@@ -413,7 +413,7 @@ export default function FunnelDiagram() {
                 borderRight: `2px solid ${isActive ? s.color + '70' : s.color + '28'}`,
                 transition: 'border-color 0.3s',
               }}>
-                <svg style={{ position: 'absolute', right: -22, top: '50%', transform: 'translateY(-50%)', overflow: 'visible' }}>
+                <svg width={26} height={8} viewBox="0 -4 26 8" style={{ position: 'absolute', right: -22, top: '50%', marginTop: -4, overflow: 'visible', display: 'block' }}>
                   <line x1={0} y1={0} x2={18} y2={0} stroke={isActive ? s.color : `${s.color}50`} strokeWidth={1.5} style={{ transition: 'stroke 0.3s' }} />
                   <polygon points="18,-4 25,0 18,4" fill={isActive ? s.color : `${s.color}50`} style={{ transition: 'fill 0.3s' }} />
                 </svg>
@@ -457,12 +457,14 @@ export default function FunnelDiagram() {
                 {s.touchpoint && (
                   <p style={{
                     fontFamily: 'DM Sans', fontWeight: 800,
-                    fontSize: Math.max(9, 13.5 - i * 0.55),
+                    fontSize: Math.max(7, 13 - i * 0.9),
                     color: isActive ? 'white' : s.color,
                     textTransform: 'uppercase', letterSpacing: '-0.01em',
                     marginBottom: isActive ? 5 : 0,
                     transition: 'all 0.25s',
                     textShadow: isActive ? `0 0 20px ${s.color}90` : 'none',
+                    overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+                    maxWidth: '100%',
                   }}>
                     {s.touchpoint}
                   </p>
@@ -476,7 +478,7 @@ export default function FunnelDiagram() {
                   display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center',
                 }}>
                   {s.items.slice(0, i < 4 ? 3 : 2).map((item, j) => (
-                    <span key={j} style={{ fontSize: Math.max(8, 10 - i * 0.4), color: w(0.55), lineHeight: 1.45 }}>
+                    <span key={j} style={{ fontSize: Math.max(7.5, 10 - i * 0.4), color: w(0.55), lineHeight: 1.45, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
                       {item}
                     </span>
                   ))}
@@ -545,7 +547,7 @@ export default function FunnelDiagram() {
           {/* ══════════════════════════════════════════════════════════
               CONVERSION OPTIMISATION SYSTEMS
           ══════════════════════════════════════════════════════════ */}
-          <Card x={220} y={FUNNEL_BOT_Y + 58} w={920} h={218} bg="#111820" accent={`${GREEN}25`}>
+          <Card x={30} y={FUNNEL_BOT_Y + 58} w={920} h={218} bg="#111820" accent={`${GREEN}25`}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
               <div style={{ background: GREEN, color: '#0d1117', borderRadius: 100, padding: '2px 10px', fontSize: 9, fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                 STEP 2
@@ -570,7 +572,7 @@ export default function FunnelDiagram() {
           </Card>
 
           {/* PROJECT */}
-          <Card x={220} y={FUNNEL_BOT_Y + 292} w={440} h={140} bg="#111820" accent={`${BLUE}25`}>
+          <Card x={270} y={FUNNEL_BOT_Y + 292} w={440} h={200} bg="#111820" accent={`${BLUE}25`}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 13 }}>
               <div style={{ background: BLUE, color: '#0d1117', borderRadius: 100, padding: '2px 10px', fontSize: 9, fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                 STEP 3

@@ -4,7 +4,7 @@ import { useState } from 'react';
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface SEOCheck {
   id: string;
-  category: 'technical' | 'content' | 'images' | 'social';
+  category: 'technical' | 'content' | 'images' | 'social' | 'local';
   title: string;
   status: 'pass' | 'warning' | 'fail';
   current: string;
@@ -31,9 +31,9 @@ const STATUS_COLOR = { pass: GREEN, warning: YELLOW, fail: ACCENT };
 const STATUS_LABEL = { pass: 'PASS', warning: 'WARNING', fail: 'ISSUE' };
 const STATUS_ICON  = { pass: '✓', warning: '!', fail: '✕' };
 const IMPACT_COLOR = { high: ACCENT, medium: YELLOW, low: w(0.35) };
-const CAT_LABELS   = { technical: 'Technical', content: 'Content', images: 'Images', social: 'Social & Schema' };
+const CAT_LABELS   = { technical: 'Technical', content: 'Content', images: 'Images', social: 'Social & Schema', local: 'Local SEO' };
 
-const categories = ['all', 'technical', 'content', 'images', 'social'] as const;
+const categories = ['all', 'technical', 'content', 'images', 'local', 'social'] as const;
 
 // ─── Score Ring ───────────────────────────────────────────────────────────────
 function ScoreRing({ score }: { score: number }) {
