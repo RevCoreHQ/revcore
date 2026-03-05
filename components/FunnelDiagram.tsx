@@ -620,23 +620,6 @@ export default function FunnelDiagram() {
             ))}
           </Card>
 
-          <Card x={1164} y={548} w={648} h={196} bg="#111820" accent={`${ACCENT}22`}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 11 }}>
-              <div style={{ width: 5, height: 5, borderRadius: '50%', background: ACCENT }} />
-              <span style={{ fontFamily: 'DM Sans', fontWeight: 700, fontSize: 11, color: ACCENT, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                SEO Simulator Tool
-              </span>
-            </div>
-            <p style={{ fontSize: 11, color: w(0.45), lineHeight: 1.65, marginBottom: 12 }}>
-              Simulate how your client appears in search results. Screenshot the results and use in the presentation to show the gap between them and competitors.
-            </p>
-            <div style={{ background: w(0.04), border: `1px solid ${w(0.08)}`, borderRadius: 10, padding: '9px 13px' }}>
-              <p style={{ fontSize: 8.5, fontWeight: 700, color: w(0.3), letterSpacing: '0.06em', marginBottom: 3 }}>TOOL URL</p>
-              <p style={{ fontSize: 10.5, color: BLUE, fontWeight: 600 }}>
-                totheweb.com/learning-center/tools-search-engine-simulator
-              </p>
-            </div>
-          </Card>
 
         </div>
       </div>

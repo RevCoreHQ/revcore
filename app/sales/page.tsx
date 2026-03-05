@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Check, ChevronDown, ChevronUp, Lock, ArrowRight, Star, Zap, TrendingUp } from 'lucide-react';
 import FunnelDiagram from '@/components/FunnelDiagram';
+import SEOChecker from '@/components/SEOChecker';
 
 const SALES_PASSWORD = 'RevCore2025';
 
@@ -469,6 +470,31 @@ function SalesDeck() {
             </div>
           </div>
           <FunnelDiagram />
+        </div>
+      </section>
+
+      {/* ── Section: SEO Analyser ── */}
+      <section style={{ padding: '80px 0', background: '#070b0f' }}>
+        <div className="container">
+          <div style={{ marginBottom: '2.5rem' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', marginBottom: '1rem' }}>
+              <span style={{ width: '20px', height: '2px', background: '#94D96B', display: 'block' }} />
+              Live Tool
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'end' }}>
+              <h2 style={{
+                fontFamily: 'DM Sans, sans-serif',
+                fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
+                fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em', color: 'white',
+              }}>
+                SEO Audit —<br />run it live
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.45)', lineHeight: '1.8' }}>
+                Paste a client&apos;s website URL and get an instant SEO report. 14 checks across technical SEO, content, images, and social — each with a clear recommendation and why it matters.
+              </p>
+            </div>
+          </div>
+          <SEOChecker />
         </div>
       </section>
 
