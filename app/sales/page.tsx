@@ -464,7 +464,7 @@ function SalesDeck() {
                 How the full<br />funnel works
               </h2>
               <p style={{ color: 'var(--color-gray)', lineHeight: '1.8' }}>
-                Every service connects into one system. Drag to explore, scroll to zoom. Use this during calls to walk your client through how their leads go from impression to appointment.
+                Every service connects into one system — from the first impression all the way to a booked appointment. Drag to explore, scroll to zoom.
               </p>
             </div>
           </div>
