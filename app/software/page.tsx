@@ -160,8 +160,16 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
   );
 
   const ipadPanel = (
-    <div style={{ flex: '0 0 64%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', overflow: 'hidden', animation: 'demoIpadIn 0.55s cubic-bezier(0.22,1,0.36,1) both' }}>
+    <div style={{ flex: '0 0 64%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem', overflow: 'hidden', animation: 'demoIpadIn 0.55s cubic-bezier(0.22,1,0.36,1) both' }}>
       <div style={{ width: '100%', maxWidth: '700px', cursor: 'default' }}>{ipadContent}</div>
+      {/* Interact hint */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginTop: '1.25rem', padding: '6px 14px', borderRadius: '100px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', animation: 'demoFadeUp 0.5s ease 1.2s both' }}>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ opacity: 0.5 }}>
+          <path d="M5 1v4H1m0 0l4-4m-4 4l4 4" stroke="white" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+          <rect x="6" y="6" width="5" height="5" rx="1" stroke="white" strokeWidth="1.3" opacity="0.5"/>
+        </svg>
+        <span style={{ fontSize: '0.67rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500, letterSpacing: '0.04em' }}>Live &amp; interactive — click around</span>
+      </div>
     </div>
   );
 
