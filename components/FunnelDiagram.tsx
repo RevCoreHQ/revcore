@@ -198,7 +198,7 @@ export default function FunnelDiagram() {
       {/* ── Viewport ── */}
       <div
         ref={viewRef}
-        style={{ height: viewH, overflow: 'hidden', cursor: dragging ? 'grabbing' : 'grab', position: 'relative', flex: 1 }}
+        style={{ height: viewH, overflow: 'hidden', cursor: dragging ? 'grabbing' : 'grab', position: 'relative', flexShrink: 0 }}
         onMouseDown={onDown} onMouseMove={onMove} onMouseUp={onUp} onMouseLeave={onUp} onWheel={onWheel}
       >
         <div style={{
