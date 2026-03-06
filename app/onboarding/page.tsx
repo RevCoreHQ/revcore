@@ -5,31 +5,7 @@ import { CheckCircle, ArrowRight, FolderOpen, Camera, AlertCircle } from 'lucide
 
 const WEBHOOK_URL = 'https://hooks.zapier.com/hooks/catch/25618535/uwiidgu/';
 
-const SERVICES = [
-  'Roofing',
-  'Siding',
-  'Windows & Doors',
-  'Gutters',
-  'HVAC',
-  'Solar',
-  'Bathrooms & Kitchens',
-  'Outdoor Living / Decks',
-  'Pools & Spas',
-  'Insulation',
-  'Painting',
-  'Flooring',
-  'Other',
-];
-
-const TICKET_RANGES = [
-  'Under $5,000',
-  '$5,000 – $10,000',
-  '$10,000 – $20,000',
-  '$20,000 – $35,000',
-  '$35,000 – $60,000',
-  '$60,000 – $100,000',
-  '$100,000+',
-];
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 type FormData = {
   companyName: string;
@@ -38,10 +14,13 @@ type FormData = {
   email: string;
   phone: string;
   website: string;
-  serviceArea: string;
+  officeLocation: string;
+  serviceAreas: string;
+  maxDriveDistance: string;
+  availFrom: string;
+  availTo: string;
   service: string;
-  serviceOther: string;
-  startingTicket: string;
+  startingPrice: string;
   differentiation: string;
   driveLink: string;
   mediaAcknowledge: boolean;
@@ -55,14 +34,31 @@ const EMPTY: FormData = {
   email: '',
   phone: '',
   website: '',
-  serviceArea: '',
+  officeLocation: '',
+  serviceAreas: '',
+  maxDriveDistance: '',
+  availFrom: '',
+  availTo: '',
   service: '',
-  serviceOther: '',
-  startingTicket: '',
+  startingPrice: '',
   differentiation: '',
   driveLink: '',
   mediaAcknowledge: false,
   notes: '',
+};
+
+const inputStyle: React.CSSProperties = {
+  background: 'rgba(255,255,255,0.05)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '10px',
+  padding: '12px 16px',
+  color: 'white',
+  fontSize: '0.9375rem',
+  outline: 'none',
+  transition: 'border-color 0.2s',
+  width: '100%',
+  boxSizing: 'border-box',
+  fontFamily: 'DM Sans, sans-serif',
 };
 
 function InputField({
@@ -82,19 +78,7 @@ function InputField({
         onChange={(e) => onChange(name, e.target.value)}
         required={required}
         placeholder={placeholder}
-        style={{
-          background: 'rgba(255,255,255,0.05)',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '10px',
-          padding: '12px 16px',
-          color: 'white',
-          fontSize: '0.9375rem',
-          outline: 'none',
-          transition: 'border-color 0.2s',
-          width: '100%',
-          boxSizing: 'border-box',
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        style={inputStyle}
         onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(254,100,98,0.5)'; }}
         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
       />
@@ -127,6 +111,7 @@ function SectionHeader({ number, title, sub }: { number: string; title: string; 
 
 export default function OnboardingPage() {
   const [form, setForm] = useState<FormData>(EMPTY);
+  const [availDays, setAvailDays] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
@@ -136,13 +121,22 @@ export default function OnboardingPage() {
     setForm((prev) => ({ ...prev, [k]: v }));
   }
 
+  function toggleDay(day: string) {
+    setAvailDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
 
-    const service = form.service === 'Other' ? form.serviceOther : form.service;
-    if (!service) {
-      setError('Please select or enter the service you want to drive jobs for.');
+    if (!form.service.trim()) {
+      setError('Please enter the service you want to drive jobs for.');
+      return;
+    }
+    if (!form.startingPrice.trim()) {
+      setError('Please enter your starting price for that service.');
       return;
     }
     if (!form.mediaAcknowledge) {
@@ -160,9 +154,13 @@ export default function OnboardingPage() {
       email: form.email,
       phone: form.phone,
       website: form.website || '(not provided)',
-      service_area: form.serviceArea,
-      service_to_drive: service,
-      starting_ticket: form.startingTicket,
+      office_location: form.officeLocation || '(not provided)',
+      service_areas: form.serviceAreas,
+      max_drive_distance: form.maxDriveDistance || '(not provided)',
+      availability_days: availDays.length ? availDays.join(', ') : '(not specified)',
+      availability_hours: form.availFrom && form.availTo ? `${form.availFrom} – ${form.availTo}` : '(not specified)',
+      service_to_drive: form.service,
+      starting_price: form.startingPrice,
       differentiation: form.differentiation || '(not provided)',
       google_drive_link: form.driveLink || '(not provided)',
       media_prepared: form.driveLink ? 'Yes — Drive link provided' : 'No — RevCore will source content',
@@ -223,7 +221,6 @@ export default function OnboardingPage() {
         background: 'linear-gradient(to bottom, #0d1117 0%, #070b0f 100%)',
         position: 'relative', overflow: 'hidden',
       }}>
-        {/* Subtle glow */}
         <div style={{
           position: 'absolute', top: '-60px', left: '50%', transform: 'translateX(-50%)',
           width: '600px', height: '300px', borderRadius: '50%',
@@ -280,11 +277,8 @@ export default function OnboardingPage() {
         <div className="container" style={{ maxWidth: '700px' }}>
           <form ref={formRef} onSubmit={handleSubmit} noValidate>
 
-            {/* ─ Section 1: Company & Contact ─ */}
-            <div style={{
-              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
-              borderRadius: '20px', padding: '2.5rem', marginBottom: '20px',
-            }}>
+            {/* ─ Section 01: Company & Contact ─ */}
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', padding: '2.5rem', marginBottom: '20px' }}>
               <SectionHeader
                 number="01"
                 title="Company & Contact"
@@ -296,98 +290,140 @@ export default function OnboardingPage() {
                 <InputField label="Role / Title" name="role" value={form.role} onChange={set} required placeholder="Owner, Sales Manager…" />
                 <InputField label="Best Email" name="email" value={form.email} onChange={set} required type="email" placeholder="john@company.com" />
                 <InputField label="Cell Phone" name="phone" value={form.phone} onChange={set} required type="tel" placeholder="(555) 000-0000" />
-                <InputField label="Company Website" name="website" value={form.website} onChange={set} placeholder="www.company.com" />
+                <InputField label="Company Website" name="website" value={form.website} onChange={set} required placeholder="www.company.com" />
               </div>
               <div style={{ marginTop: '16px' }}>
-                <InputField label="Primary Service Area / City" name="serviceArea" value={form.serviceArea} onChange={set} required placeholder="e.g. Dallas-Fort Worth, TX + surrounding suburbs" />
+                <InputField label="Primary Office Location" name="officeLocation" value={form.officeLocation} onChange={set} required placeholder="123 Main St, Dallas, TX 75201" />
               </div>
             </div>
 
-            {/* ─ Section 2: Service to Drive Jobs For ─ */}
-            <div style={{
-              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
-              borderRadius: '20px', padding: '2.5rem', marginBottom: '20px',
-            }}>
+            {/* ─ Section 02: Service Areas & Availability ─ */}
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', padding: '2.5rem', marginBottom: '20px' }}>
               <SectionHeader
                 number="02"
-                title="The Service You Want to Drive Jobs For"
-                sub="Pick the one service you want to focus on first. We build your campaigns, software, and presentations around this."
+                title="Service Areas & Availability"
+                sub="Tell us where you work and when you're available to run appointments."
               />
 
-              {/* Service selector */}
+              {/* Service areas */}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.04em', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
+                  Target Service Areas (cities, zip codes, regions)<span style={{ color: '#FE6462', marginLeft: '3px' }}>*</span>
+                </label>
+                <textarea
+                  value={form.serviceAreas}
+                  onChange={(e) => set('serviceAreas', e.target.value)}
+                  required
+                  rows={3}
+                  placeholder="e.g. Dallas, Plano, Frisco, Allen TX — zip codes 75201, 75024, 75034 — DFW metro area"
+                  style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.65' }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(254,100,98,0.5)'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+                />
+              </div>
+
+              {/* Max drive distance */}
+              <div style={{ marginBottom: '24px' }}>
+                <InputField
+                  label="Maximum Distance You're Willing to Drive for an Appointment"
+                  name="maxDriveDistance"
+                  value={form.maxDriveDistance}
+                  onChange={set}
+                  required
+                  placeholder="e.g. 30 miles, 45 minutes, within county, etc."
+                />
+              </div>
+
+              {/* Availability days */}
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.04em', textTransform: 'uppercase', display: 'block', marginBottom: '12px' }}>
-                  Service<span style={{ color: '#FE6462', marginLeft: '3px' }}>*</span>
+                  Days Available for Appointments<span style={{ color: '#FE6462', marginLeft: '3px' }}>*</span>
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                  {SERVICES.map((svc) => (
-                    <button
-                      key={svc}
-                      type="button"
-                      onClick={() => set('service', svc)}
-                      style={{
-                        padding: '10px 12px',
-                        borderRadius: '10px',
-                        border: form.service === svc ? '1px solid rgba(254,100,98,0.6)' : '1px solid rgba(255,255,255,0.08)',
-                        background: form.service === svc ? 'rgba(254,100,98,0.12)' : 'rgba(255,255,255,0.03)',
-                        color: form.service === svc ? '#FE6462' : 'rgba(255,255,255,0.5)',
-                        fontSize: '0.82rem', fontWeight: 600,
-                        cursor: 'pointer', textAlign: 'left',
-                        transition: 'all 0.2s',
-                        fontFamily: 'DM Sans, sans-serif',
-                      }}
-                    >
-                      {svc}
-                    </button>
-                  ))}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {DAYS.map((day) => {
+                    const selected = availDays.includes(day);
+                    return (
+                      <button
+                        key={day}
+                        type="button"
+                        onClick={() => toggleDay(day)}
+                        style={{
+                          padding: '9px 16px', borderRadius: '10px', fontSize: '0.83rem', fontWeight: 600,
+                          border: selected ? '1px solid rgba(254,100,98,0.55)' : '1px solid rgba(255,255,255,0.08)',
+                          background: selected ? 'rgba(254,100,98,0.12)' : 'rgba(255,255,255,0.03)',
+                          color: selected ? '#FE6462' : 'rgba(255,255,255,0.5)',
+                          cursor: 'pointer', fontFamily: 'DM Sans, sans-serif', transition: 'all 0.18s',
+                        }}
+                      >
+                        {day.slice(0, 3)}
+                      </button>
+                    );
+                  })}
                 </div>
-                {form.service === 'Other' && (
-                  <div style={{ marginTop: '12px' }}>
+              </div>
+
+              {/* Availability hours */}
+              <div>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.04em', textTransform: 'uppercase', display: 'block', marginBottom: '12px' }}>
+                  Appointment Hours<span style={{ color: '#FE6462', marginLeft: '3px' }}>*</span>
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>From</label>
                     <input
-                      type="text"
-                      value={form.serviceOther}
-                      onChange={(e) => set('serviceOther', e.target.value)}
-                      placeholder="Describe your service…"
+                      type="time"
+                      value={form.availFrom}
+                      onChange={(e) => set('availFrom', e.target.value)}
                       required
-                      style={{
-                        width: '100%', boxSizing: 'border-box',
-                        background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '10px', padding: '12px 16px', color: 'white',
-                        fontSize: '0.9375rem', outline: 'none', fontFamily: 'DM Sans, sans-serif',
-                      }}
+                      style={{ ...inputStyle, colorScheme: 'dark' }}
                       onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(254,100,98,0.5)'; }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
                     />
                   </div>
-                )}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>To</label>
+                    <input
+                      type="time"
+                      value={form.availTo}
+                      onChange={(e) => set('availTo', e.target.value)}
+                      required
+                      style={{ ...inputStyle, colorScheme: 'dark' }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(254,100,98,0.5)'; }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+                    />
+                  </div>
+                </div>
               </div>
+            </div>
 
-              {/* Starting ticket */}
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.04em', textTransform: 'uppercase', display: 'block', marginBottom: '12px' }}>
-                  Average / Starting Job Ticket<span style={{ color: '#FE6462', marginLeft: '3px' }}>*</span>
-                </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
-                  {TICKET_RANGES.map((range) => (
-                    <button
-                      key={range}
-                      type="button"
-                      onClick={() => set('startingTicket', range)}
-                      style={{
-                        padding: '10px 8px',
-                        borderRadius: '10px',
-                        border: form.startingTicket === range ? '1px solid rgba(148,217,107,0.6)' : '1px solid rgba(255,255,255,0.08)',
-                        background: form.startingTicket === range ? 'rgba(148,217,107,0.1)' : 'rgba(255,255,255,0.03)',
-                        color: form.startingTicket === range ? '#94D96B' : 'rgba(255,255,255,0.5)',
-                        fontSize: '0.76rem', fontWeight: 600,
-                        cursor: 'pointer', textAlign: 'center',
-                        transition: 'all 0.2s',
-                        fontFamily: 'DM Sans, sans-serif',
-                      }}
-                    >
-                      {range}
-                    </button>
-                  ))}
+            {/* ─ Section 03: The Service You Want to Drive Jobs For ─ */}
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', padding: '2.5rem', marginBottom: '20px' }}>
+              <SectionHeader
+                number="03"
+                title="The Service You Want to Drive Jobs For"
+                sub="Tell us the specific service and your starting price. We build your campaigns, software, and presentations around this."
+              />
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <InputField
+                    label="Service to Drive More Jobs For"
+                    name="service"
+                    value={form.service}
+                    onChange={set}
+                    required
+                    placeholder="e.g. Roofing, HVAC, Solar, Siding, Gutters…"
+                  />
+                </div>
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <InputField
+                    label="Starting Price for This Service"
+                    name="startingPrice"
+                    value={form.startingPrice}
+                    onChange={set}
+                    required
+                    placeholder="e.g. $8,500, starts at $12k, avg job $25,000…"
+                  />
                 </div>
               </div>
 
@@ -401,35 +437,22 @@ export default function OnboardingPage() {
                   onChange={(e) => set('differentiation', e.target.value)}
                   rows={3}
                   placeholder="Years in business, warranties, awards, guarantees, specializations… anything that sets you apart."
-                  style={{
-                    width: '100%', boxSizing: 'border-box',
-                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '10px', padding: '12px 16px', color: 'white',
-                    fontSize: '0.9375rem', outline: 'none', resize: 'vertical',
-                    fontFamily: 'DM Sans, sans-serif', lineHeight: '1.65',
-                  }}
+                  style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.65' }}
                   onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(254,100,98,0.5)'; }}
                   onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
                 />
               </div>
             </div>
 
-            {/* ─ Section 3: Media Preparation ─ */}
-            <div style={{
-              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
-              borderRadius: '20px', padding: '2.5rem', marginBottom: '20px',
-            }}>
+            {/* ─ Section 04: Media Preparation ─ */}
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', padding: '2.5rem', marginBottom: '20px' }}>
               <SectionHeader
-                number="03"
+                number="04"
                 title="Media Preparation"
                 sub="Strong ads require real photos and video from your jobs. The more we have, the better your campaigns will perform."
               />
 
-              {/* What to collect */}
-              <div style={{
-                background: 'rgba(107,142,254,0.06)', border: '1px solid rgba(107,142,254,0.15)',
-                borderRadius: '14px', padding: '1.5rem', marginBottom: '1.5rem',
-              }}>
+              <div style={{ background: 'rgba(107,142,254,0.06)', border: '1px solid rgba(107,142,254,0.15)', borderRadius: '14px', padding: '1.5rem', marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
                   <Camera size={15} color="#6B8EFE" />
                   <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#6B8EFE', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
@@ -471,12 +494,7 @@ export default function OnboardingPage() {
                   value={form.driveLink}
                   onChange={(e) => set('driveLink', e.target.value)}
                   placeholder="https://drive.google.com/drive/folders/…"
-                  style={{
-                    width: '100%', boxSizing: 'border-box',
-                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '10px', padding: '12px 16px', color: 'white',
-                    fontSize: '0.9375rem', outline: 'none', fontFamily: 'DM Sans, sans-serif',
-                  }}
+                  style={inputStyle}
                   onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(107,142,254,0.5)'; }}
                   onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
                 />
@@ -516,13 +534,10 @@ export default function OnboardingPage() {
               </button>
             </div>
 
-            {/* ─ Section 4: Anything Else ─ */}
-            <div style={{
-              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
-              borderRadius: '20px', padding: '2.5rem', marginBottom: '28px',
-            }}>
+            {/* ─ Section 05: Anything Else ─ */}
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', padding: '2.5rem', marginBottom: '28px' }}>
               <SectionHeader
-                number="04"
+                number="05"
                 title="Anything Else?"
                 sub="Anything you want your rep to know before the call — existing ad accounts, past agencies, specific goals, concerns, etc."
               />
@@ -531,13 +546,7 @@ export default function OnboardingPage() {
                 onChange={(e) => set('notes', e.target.value)}
                 rows={4}
                 placeholder="Optional — share anything relevant…"
-                style={{
-                  width: '100%', boxSizing: 'border-box',
-                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '10px', padding: '12px 16px', color: 'white',
-                  fontSize: '0.9375rem', outline: 'none', resize: 'vertical',
-                  fontFamily: 'DM Sans, sans-serif', lineHeight: '1.65',
-                }}
+                style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.65' }}
                 onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(254,100,98,0.5)'; }}
                 onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
               />
@@ -545,11 +554,7 @@ export default function OnboardingPage() {
 
             {/* Error */}
             {error && (
-              <div style={{
-                display: 'flex', alignItems: 'flex-start', gap: '10px',
-                background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.25)',
-                borderRadius: '12px', padding: '14px 16px', marginBottom: '20px',
-              }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.25)', borderRadius: '12px', padding: '14px 16px', marginBottom: '20px' }}>
                 <AlertCircle size={16} color="#FE6462" style={{ flexShrink: 0, marginTop: '1px' }} />
                 <span style={{ fontSize: '0.875rem', color: '#FE6462', lineHeight: '1.5' }}>{error}</span>
               </div>
@@ -562,28 +567,17 @@ export default function OnboardingPage() {
               style={{
                 width: '100%',
                 background: submitting ? 'rgba(254,100,98,0.5)' : '#FE6462',
-                color: 'white',
-                border: 'none',
-                borderRadius: '14px',
-                padding: '16px',
-                fontSize: '1rem',
-                fontWeight: 700,
-                cursor: submitting ? 'not-allowed' : 'pointer',
+                color: 'white', border: 'none', borderRadius: '14px', padding: '16px',
+                fontSize: '1rem', fontWeight: 700, cursor: submitting ? 'not-allowed' : 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-                transition: 'opacity 0.2s, transform 0.2s',
-                fontFamily: 'DM Sans, sans-serif',
-                letterSpacing: '-0.01em',
+                transition: 'opacity 0.2s, transform 0.2s', fontFamily: 'DM Sans, sans-serif', letterSpacing: '-0.01em',
               }}
               onMouseEnter={(e) => { if (!submitting) { e.currentTarget.style.opacity = '0.88'; e.currentTarget.style.transform = 'translateY(-1px)'; } }}
               onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
             >
               {submitting ? (
                 <>
-                  <span style={{
-                    width: '16px', height: '16px', borderRadius: '50%',
-                    border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white',
-                    display: 'block', animation: 'spin 0.7s linear infinite',
-                  }} />
+                  <span style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', display: 'block', animation: 'spin 0.7s linear infinite' }} />
                   Submitting…
                 </>
               ) : (
@@ -600,33 +594,10 @@ export default function OnboardingPage() {
 
       {/* ── Success Modal ── */}
       {submitted && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 200,
-          background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          padding: '20px',
-        }}>
-          <div style={{
-            width: '100%', maxWidth: '920px',
-            background: '#0d1117', borderRadius: '24px',
-            border: '1px solid rgba(255,255,255,0.08)',
-            overflow: 'hidden',
-            display: 'grid', gridTemplateColumns: '1fr 1.6fr',
-            boxShadow: '0 40px 100px rgba(0,0,0,0.6)',
-          }}>
-            {/* Left */}
-            <div style={{
-              background: 'linear-gradient(160deg, #0f1a0f 0%, #0a0f0a 100%)',
-              padding: '3rem 2.5rem',
-              display: 'flex', flexDirection: 'column', justifyContent: 'center',
-              borderRight: '1px solid rgba(255,255,255,0.06)',
-            }}>
-              <div style={{
-                width: '52px', height: '52px', borderRadius: '50%',
-                background: 'rgba(148,217,107,0.15)', border: '1px solid rgba(148,217,107,0.3)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginBottom: '1.5rem',
-              }}>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ width: '100%', maxWidth: '920px', background: '#0d1117', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr 1.6fr', boxShadow: '0 40px 100px rgba(0,0,0,0.6)' }}>
+            <div style={{ background: 'linear-gradient(160deg, #0f1a0f 0%, #0a0f0a 100%)', padding: '3rem 2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: 'rgba(148,217,107,0.15)', border: '1px solid rgba(148,217,107,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
                 <CheckCircle size={22} color="#94D96B" />
               </div>
               <h2 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '1.6rem', fontWeight: 800, color: 'white', lineHeight: 1.15, letterSpacing: '-0.02em', marginBottom: '0.875rem' }}>
@@ -636,31 +607,22 @@ export default function OnboardingPage() {
                 We received your onboarding form. Your rep will review it before your call and come prepared with a custom plan for your business.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '2rem' }}>
-                {[
-                  'Form received — going to your rep now',
-                  'Call prep starts immediately',
-                  'Expect contact within 24 hours',
-                ].map((item) => (
+                {['Form received — going to your rep now', 'Call prep starts immediately', 'Expect contact within 24 hours'].map((item) => (
                   <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <CheckCircle size={13} color="#94D96B" />
                     <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)' }}>{item}</span>
                   </div>
                 ))}
               </div>
-              <div style={{
-                background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.15)',
-                borderRadius: '12px', padding: '12px 16px',
-              }}>
+              <div style={{ background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.15)', borderRadius: '12px', padding: '12px 16px' }}>
                 <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', lineHeight: '1.6', margin: 0 }}>
                   <strong style={{ color: 'rgba(255,255,255,0.65)' }}>Didn&apos;t share your Google Drive link?</strong><br />
-                  You can still email it to{' '}
+                  Email it to{' '}
                   <a href="mailto:hello@revcorehq.com" style={{ color: '#94D96B', textDecoration: 'none' }}>hello@revcorehq.com</a>{' '}
                   before your call.
                 </p>
               </div>
             </div>
-
-            {/* Right — Calendar */}
             <div style={{ background: 'white', minHeight: '560px' }}>
               <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #f0f0f0' }}>
                 <p style={{ fontSize: '0.75rem', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>
@@ -678,26 +640,12 @@ export default function OnboardingPage() {
       )}
 
       <style>{`
-        @keyframes pulse-dot {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.6; transform: scale(0.85); }
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.85); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .container { padding: 0 clamp(1.25rem, 4vw, 2rem); margin: 0 auto; }
         @media (max-width: 700px) {
-          div[style*="grid-template-columns: 1fr 1fr"] {
-            grid-template-columns: 1fr !important;
-          }
-          div[style*="grid-template-columns: repeat(3, 1fr)"] {
-            grid-template-columns: repeat(2, 1fr) !important;
-          }
-          div[style*="grid-template-columns: repeat(4, 1fr)"] {
-            grid-template-columns: repeat(2, 1fr) !important;
-          }
-          div[style*="grid-template-columns: 1fr 1.6fr"] {
-            grid-template-columns: 1fr !important;
-          }
+          div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+          div[style*="grid-template-columns: 1fr 1.6fr"] { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>

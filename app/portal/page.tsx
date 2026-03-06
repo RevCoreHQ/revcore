@@ -106,7 +106,7 @@ function LoginScreen({ onLogin }: { onLogin: (email: string) => void }) {
 }
 
 // ─── Dashboard ───────────────────────────────────────────────────────────────
-type Tab = 'home' | 'sales' | 'resources';
+type Tab = 'home' | 'sales' | 'gmb' | 'resources';
 
 function Dashboard({ email, onLogout }: { email: string; onLogout: () => void }) {
   const [activeTab, setActiveTab] = useState<Tab>('home');
@@ -140,6 +140,7 @@ function Dashboard({ email, onLogout }: { email: string; onLogout: () => void })
           {([
             { id: 'home', label: 'Dashboard' },
             { id: 'sales', label: 'Sales Mastery' },
+            { id: 'gmb', label: 'Google Setup' },
             { id: 'resources', label: 'Resources' },
           ] as { id: Tab; label: string }[]).map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id as Tab)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '1rem 1.5rem', fontSize: '0.88rem', fontWeight: 600, fontFamily: 'inherit', whiteSpace: 'nowrap', color: activeTab === tab.id ? '#FE6462' : 'rgba(255,255,255,0.4)', borderBottom: activeTab === tab.id ? '2px solid #FE6462' : '2px solid transparent', transition: 'all 0.2s', marginBottom: '-1px' }}>
@@ -153,6 +154,7 @@ function Dashboard({ email, onLogout }: { email: string; onLogout: () => void })
       <main style={{ maxWidth: '1200px', margin: '0 auto', padding: 'clamp(2rem, 4vw, 3rem) clamp(1.5rem, 5vw, 4rem)' }}>
         {activeTab === 'home' && <HomeDashboard displayName={displayName} setActiveTab={setActiveTab} />}
         {activeTab === 'sales' && <SalesMastery />}
+        {activeTab === 'gmb' && <GoogleSetup />}
         {activeTab === 'resources' && <Resources />}
       </main>
 
@@ -374,6 +376,143 @@ function SalesMastery() {
             </div>
           ))}
         </div>
+      </div>
+
+      <style>{`@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }`}</style>
+    </div>
+  );
+}
+
+// ─── Google Setup ────────────────────────────────────────────────────────────
+function GoogleSetup() {
+  const steps = [
+    {
+      num: '01',
+      title: 'Go to your Google Business Profile',
+      detail: 'Visit business.google.com and sign in with the Google account that owns your business listing. Make sure you\'re logged into the correct account — the one where your business is verified.',
+    },
+    {
+      num: '02',
+      title: 'Open Business Profile Settings',
+      detail: 'Once inside your dashboard, click on the business name or select your listing. Then look for the gear icon or "Business Profile settings" in the left-hand menu.',
+    },
+    {
+      num: '03',
+      title: 'Navigate to "Managers"',
+      detail: 'Inside settings, find and click "Managers" (sometimes listed under "People and access"). This is where you control who can access and edit your profile.',
+    },
+    {
+      num: '04',
+      title: 'Add RevCore as a Manager',
+      detail: 'Click the "Add" button or the blue "+" icon. In the email field, enter: hello@revcorehq.com — then select "Manager" as the access role (not Owner). Click "Invite."',
+      highlight: 'hello@revcorehq.com',
+    },
+    {
+      num: '05',
+      title: 'We\'ll Accept and Get to Work',
+      detail: 'Once you send the invite, we\'ll receive a notification and accept it. After that, RevCore will have access to optimize your profile — updating photos, posts, services, hours, and your Q&A to drive more organic local leads.',
+    },
+  ];
+
+  return (
+    <div>
+      <div style={{ marginBottom: '2.5rem' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(66,133,244,0.1)', border: '1px solid rgba(66,133,244,0.25)', borderRadius: '100px', padding: '4px 12px', marginBottom: '1rem' }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <span style={{ color: '#4285F4', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Google Business</span>
+        </div>
+        <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.4rem)', fontWeight: 800, letterSpacing: '-0.03em', margin: '0 0 0.5rem', lineHeight: 1.1 }}>Google Business Profile Setup</h1>
+        <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '1rem', margin: 0, maxWidth: '580px', lineHeight: 1.6 }}>
+          Adding RevCore as a manager to your Google Business Profile lets us optimize your listing for local search — more reviews visibility, better photos, updated services, and local posts that drive calls.
+        </p>
+      </div>
+
+      {/* Video Placeholder */}
+      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '20px', overflow: 'hidden', marginBottom: '2.5rem' }}>
+        <div style={{ position: 'relative', paddingBottom: '56.25%', background: 'linear-gradient(135deg, #0d1117 0%, #0a0f1a 100%)' }}>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.25rem' }}>
+            <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: 'rgba(66,133,244,0.12)', border: '1px solid rgba(66,133,244,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="#4285F4"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.35rem' }}>Google Business Profile Walkthrough</div>
+              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.88rem' }}>Step-by-step Loom video — coming soon.</div>
+            </div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(66,133,244,0.1)', border: '1px solid rgba(66,133,244,0.25)', borderRadius: '100px', padding: '5px 14px' }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4285F4', animation: 'pulse-dot 2s ease-in-out infinite' }} />
+              <span style={{ color: '#4285F4', fontSize: '0.75rem', fontWeight: 600 }}>Video uploading soon</span>
+            </div>
+          </div>
+        </div>
+        <div style={{ padding: '1.25rem 1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>How to Add RevCore as a Google Business Manager</div>
+          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.82rem', marginTop: '2px' }}>RevCore walkthrough · Coming soon</div>
+        </div>
+      </div>
+
+      {/* Why it matters */}
+      <div style={{ background: 'rgba(66,133,244,0.05)', border: '1px solid rgba(66,133,244,0.15)', borderRadius: '16px', padding: '1.5rem', marginBottom: '2rem' }}>
+        <h2 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 1rem', letterSpacing: '-0.01em', color: '#4285F4' }}>Why This Matters for Your Business</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.75rem' }}>
+          {[
+            { title: 'More Calls from Local Search', desc: 'An optimized GBP profile ranks higher when locals search for your service.' },
+            { title: 'Better Review Management', desc: 'We help you respond to reviews and set up a review request strategy.' },
+            { title: 'Service & Photo Optimization', desc: 'Updated photos and services signal trust and completeness to Google\'s algorithm.' },
+            { title: 'Local Posts & Offers', desc: 'Regular posts keep your listing active and show up in Maps results.' },
+          ].map((item, i) => (
+            <div key={i} style={{ padding: '0.9rem 1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.3rem', color: '#fff' }}>{item.title}</div>
+              <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.8rem', lineHeight: 1.5 }}>{item.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Step-by-step walkthrough */}
+      <h2 style={{ fontSize: '1.05rem', fontWeight: 700, margin: '0 0 1.25rem', letterSpacing: '-0.01em' }}>Step-by-Step: How to Add RevCore</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginBottom: '2rem' }}>
+        {steps.map((step, i) => (
+          <div key={i} style={{ display: 'flex', gap: '1.25rem', paddingBottom: i < steps.length - 1 ? '0' : '0', position: 'relative' }}>
+            {i < steps.length - 1 && <div style={{ position: 'absolute', left: '19px', top: '44px', height: 'calc(100% - 12px)', width: '1px', background: 'rgba(255,255,255,0.07)' }} />}
+            <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(66,133,244,0.1)', border: '1px solid rgba(66,133,244,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.68rem', fontWeight: 800, color: '#4285F4', letterSpacing: '0.05em' }}>
+              {step.num}
+            </div>
+            <div style={{ paddingTop: '0.35rem', paddingBottom: i < steps.length - 1 ? '1.75rem' : 0 }}>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '0.4rem' }}>{step.title}</div>
+              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', lineHeight: 1.6 }}>
+                {step.highlight
+                  ? step.detail.split(step.highlight).map((part, j, arr) => (
+                      <span key={j}>{part}{j < arr.length - 1 && <span style={{ background: 'rgba(66,133,244,0.15)', border: '1px solid rgba(66,133,244,0.3)', borderRadius: '5px', padding: '1px 7px', color: '#93bbf9', fontWeight: 700, fontFamily: 'monospace', fontSize: '0.83rem' }}>{step.highlight}</span>}</span>
+                    ))
+                  : step.detail}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Access level note */}
+      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px', padding: '1.25rem 1.5rem', marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(148,217,107,0.1)', border: '1px solid rgba(148,217,107,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <div>
+          <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.3rem' }}>Manager access — not Owner</div>
+          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.83rem', lineHeight: 1.5 }}>
+            When you add us, select <strong style={{ color: 'rgba(255,255,255,0.75)' }}>Manager</strong> — not Owner. This gives us everything we need to optimize your profile without transferring ownership of your listing. You stay in full control.
+          </div>
+        </div>
+      </div>
+
+      {/* Contact CTA */}
+      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px', padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+        <div>
+          <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.25rem' }}>Need help with the steps above?</div>
+          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.83rem' }}>Email us and we can walk you through it live.</div>
+        </div>
+        <a href="mailto:hello@revcorehq.com?subject=GBP Access Help" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#4285F4', borderRadius: '10px', padding: '0.65rem 1.25rem', color: '#fff', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, whiteSpace: 'nowrap' }}>
+          Get help via email
+        </a>
       </div>
 
       <style>{`@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }`}</style>
