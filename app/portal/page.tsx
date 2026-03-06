@@ -140,7 +140,7 @@ function Dashboard({ email, onLogout }: { email: string; onLogout: () => void })
           {([
             { id: 'home', label: 'Dashboard' },
             { id: 'sales', label: 'Sales Mastery' },
-            { id: 'gmb', label: 'Google Setup' },
+            { id: 'gmb', label: 'Integrations' },
             { id: 'resources', label: 'Resources' },
           ] as { id: Tab; label: string }[]).map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id as Tab)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '1rem 1.5rem', fontSize: '0.88rem', fontWeight: 600, fontFamily: 'inherit', whiteSpace: 'nowrap', color: activeTab === tab.id ? '#FE6462' : 'rgba(255,255,255,0.4)', borderBottom: activeTab === tab.id ? '2px solid #FE6462' : '2px solid transparent', transition: 'all 0.2s', marginBottom: '-1px' }}>
@@ -162,6 +162,144 @@ function Dashboard({ email, onLogout }: { email: string; onLogout: () => void })
         @media (min-width: 600px) { .portal-email-label { display: block !important; } }
         @media (max-width: 600px) { .portal-grid-2 { grid-template-columns: 1fr !important; } }
       `}</style>
+    </div>
+  );
+}
+
+// ─── Support Section ─────────────────────────────────────────────────────────
+function SupportSection() {
+  const [name, setName] = useState('');
+  const [issueType, setIssueType] = useState('Question');
+  const [subject, setSubject] = useState('');
+  const [description, setDescription] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !subject.trim() || !description.trim()) return;
+    setSubmitting(true);
+    const emailSubject = encodeURIComponent(`[Support] ${issueType}: ${subject}`);
+    const emailBody = encodeURIComponent(`Name: ${name}\nIssue Type: ${issueType}\nSubject: ${subject}\n\n--- Description ---\n${description}\n\n---\nSubmitted via RevCore Client Portal`);
+    setTimeout(() => {
+      window.location.href = `mailto:support@revcorehq.com?subject=${emailSubject}&body=${emailBody}`;
+      setSubmitted(true);
+      setSubmitting(false);
+    }, 500);
+  };
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://api.leadconnectorhq.com/js/form_embed.js';
+    script.type = 'text/javascript';
+    document.body.appendChild(script);
+    return () => { try { document.body.removeChild(script); } catch {} };
+  }, []);
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)',
+    borderRadius: '10px', padding: '0.75rem 1rem', color: '#fff', fontSize: '0.88rem',
+    fontFamily: 'DM Sans, sans-serif', outline: 'none', boxSizing: 'border-box',
+  };
+  const labelStyle: React.CSSProperties = {
+    display: 'block', fontSize: '0.78rem', fontWeight: 600, color: 'rgba(255,255,255,0.45)',
+    marginBottom: '0.4rem', letterSpacing: '0.06em', textTransform: 'uppercase',
+  };
+
+  return (
+    <div style={{ marginTop: '2.5rem' }}>
+      {/* Section header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '1.75rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+        <div style={{ width: '44px', height: '44px', background: 'rgba(254,100,98,0.1)', border: '1px solid rgba(254,100,98,0.25)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FE6462" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <div>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>Support Center</h2>
+          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.84rem', margin: 0 }}>Submit a ticket or book a 30-minute call with your RevCore team.</p>
+        </div>
+      </div>
+
+      {/* Ticket form */}
+      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.75rem', marginBottom: '1.5rem' }}>
+        <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 0.3rem', letterSpacing: '-0.01em' }}>Submit a Support Ticket</h3>
+        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.84rem', margin: '0 0 1.5rem', lineHeight: 1.5 }}>Report a bug, request a change, or ask a question — we respond within a few hours during business hours.</p>
+
+        {submitted ? (
+          <div style={{ background: 'rgba(148,217,107,0.07)', border: '1px solid rgba(148,217,107,0.2)', borderRadius: '12px', padding: '2rem', textAlign: 'center' }}>
+            <div style={{ width: '48px', height: '48px', background: 'rgba(148,217,107,0.12)', border: '1px solid rgba(148,217,107,0.3)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            </div>
+            <div style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.4rem', color: '#94D96B' }}>Ticket Sent!</div>
+            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', lineHeight: 1.5, marginBottom: '1.25rem' }}>
+              Your email client opened with your ticket details pre-filled. We'll reply to you at <strong style={{ color: 'rgba(255,255,255,0.75)' }}>support@revcorehq.com</strong>.
+            </div>
+            <button onClick={() => { setSubmitted(false); setName(''); setSubject(''); setDescription(''); setIssueType('Question'); }}
+              style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', color: 'rgba(255,255,255,0.6)', fontSize: '0.83rem', padding: '7px 18px', cursor: 'pointer', fontFamily: 'inherit' }}>
+              Submit another
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }} className="portal-grid-2">
+              <div>
+                <label style={labelStyle}>Your Name *</label>
+                <input value={name} onChange={e => setName(e.target.value)} placeholder="John Smith" required style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>Issue Type *</label>
+                <select value={issueType} onChange={e => setIssueType(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+                  <option value="Question">Question</option>
+                  <option value="Bug / Error">Bug / Error</option>
+                  <option value="Change Request">Change Request</option>
+                  <option value="Campaign Issue">Campaign Issue</option>
+                  <option value="Billing">Billing</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label style={labelStyle}>Subject *</label>
+              <input value={subject} onChange={e => setSubject(e.target.value)} placeholder="Brief summary of your issue or request" required style={inputStyle} />
+            </div>
+            <div>
+              <label style={labelStyle}>Description *</label>
+              <textarea value={description} onChange={e => setDescription(e.target.value)}
+                placeholder="Describe the issue in detail. Include relevant dates, what you expected vs. what happened, or any steps to reproduce..."
+                required rows={5} style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.6 }} />
+            </div>
+            <button type="submit" disabled={submitting || !name.trim() || !subject.trim() || !description.trim()}
+              style={{ alignSelf: 'flex-start', background: submitting ? 'rgba(254,100,98,0.5)' : '#FE6462', color: '#fff', border: 'none', borderRadius: '10px', padding: '0.75rem 1.75rem', fontSize: '0.9rem', fontWeight: 700, cursor: submitting ? 'not-allowed' : 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '8px', transition: 'opacity 0.2s' }}>
+              {submitting
+                ? <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation: 'spin 0.8s linear infinite' }}><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Opening email...</>
+                : <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send Ticket</>
+              }
+            </button>
+          </form>
+        )}
+      </div>
+
+      {/* Book a support call */}
+      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '1.25rem' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FE6462" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: '2px', flexShrink: 0 }}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <div>
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 0.3rem', letterSpacing: '-0.01em' }}>Book a 30-Minute Support Call</h3>
+            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.84rem', margin: 0, lineHeight: 1.5 }}>
+              Each client gets <strong style={{ color: 'rgba(255,255,255,0.7)' }}>one complimentary 30-minute call per week</strong> on our support calendar. Pick a time that works for you below.
+            </p>
+          </div>
+        </div>
+        <div style={{ background: 'rgba(0,0,0,0.25)', borderRadius: '12px', overflow: 'hidden' }}>
+          <iframe
+            src="https://api.leadconnectorhq.com/widget/booking/zP6dMYc8h9lrBFqYkuXm"
+            style={{ width: '100%', border: 'none', minHeight: '680px', display: 'block' }}
+            scrolling="no"
+            id="zP6dMYc8h9lrBFqYkuXm_1772759825887"
+          />
+        </div>
+      </div>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
@@ -244,19 +382,7 @@ function HomeDashboard({ displayName, setActiveTab }: { displayName: string; set
         </div>
       </div>
 
-      {/* Support card */}
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
-        <div>
-          <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '0.25rem' }}>Need help or have questions?</div>
-          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem' }}>Your RevCore team is here. Reach out anytime.</div>
-        </div>
-        <a href="mailto:hello@revcorehq.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '0.65rem 1.25rem', color: '#fff', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 600, whiteSpace: 'nowrap', transition: 'all 0.2s' }}
-          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
-          onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          hello@revcorehq.com
-        </a>
-      </div>
+      <SupportSection />
 
       <style>{`@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }`}</style>
     </div>
@@ -511,6 +637,170 @@ function GoogleSetup() {
           <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.83rem' }}>Email us and we can walk you through it live.</div>
         </div>
         <a href="mailto:hello@revcorehq.com?subject=GBP Access Help" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#4285F4', borderRadius: '10px', padding: '0.65rem 1.25rem', color: '#fff', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, whiteSpace: 'nowrap' }}>
+          Get help via email
+        </a>
+      </div>
+
+      {/* ─── FACEBOOK BUSINESS SUITE ─── */}
+      <div style={{ marginTop: '3.5rem', marginBottom: '1rem' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(24,119,242,0.1)', border: '1px solid rgba(24,119,242,0.25)', borderRadius: '100px', padding: '4px 12px', marginBottom: '1rem' }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+          <span style={{ color: '#1877F2', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Facebook Business Suite</span>
+        </div>
+        <h2 style={{ fontSize: 'clamp(1.4rem, 3vw, 1.9rem)', fontWeight: 800, letterSpacing: '-0.03em', margin: '0 0 0.5rem', lineHeight: 1.15 }}>Facebook & Instagram Ad Access</h2>
+        <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.95rem', margin: 0, maxWidth: '580px', lineHeight: 1.6 }}>
+          We need access to your Facebook ad assets so we can build, launch, and manage your campaigns. Follow one or both paths below depending on how your account is set up.
+        </p>
+      </div>
+
+      {/* Path 1 — Business Manager */}
+      <div style={{ background: 'rgba(24,119,242,0.04)', border: '1px solid rgba(24,119,242,0.15)', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.25rem' }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(24,119,242,0.12)', border: '1px solid rgba(24,119,242,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1877F2" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>Path A — Campaign Access via Meta Business Manager</div>
+            <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', marginTop: '2px' }}>Recommended if you use Business Manager (business.facebook.com)</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+          {[
+            { num: '01', title: 'Go to Meta Business Manager', detail: 'Visit business.facebook.com and log in with the Facebook account connected to your business. Make sure you\'re in the correct Business Manager account.' },
+            { num: '02', title: 'Open Business Settings', detail: 'In the left sidebar, click "Settings" (or the gear icon), then select "Business Settings." This is the central hub for managing access.' },
+            { num: '03', title: 'Go to Users → People', detail: 'In Business Settings, click "Users" in the left panel, then click "People." This is where you\'ll invite our team.' },
+            { num: '04', title: 'Invite RevCore as an Employee', detail: 'Click "Add," enter hello@revcorehq.com, and set the role to "Employee." Click Next — don\'t assign pages yet, we\'ll do that in the next step.', highlight: 'hello@revcorehq.com' },
+            { num: '05', title: 'Assign Ad Account Access', detail: 'After adding the user, select "Ad accounts" from the left panel under "Accounts." Find your ad account, click "Add People," select RevCore, and set the role to "Advertiser."' },
+            { num: '06', title: 'Send the Invite', detail: 'Click "Invite" to finalise. We\'ll receive a notification, accept it, and get to work on your campaigns immediately.' },
+          ].map((step: { num: string; title: string; detail: string; highlight?: string }, i: number, arr: { num: string; title: string; detail: string; highlight?: string }[]) => (
+            <div key={i} style={{ display: 'flex', gap: '1.25rem', position: 'relative' }}>
+              {i < arr.length - 1 && <div style={{ position: 'absolute', left: '19px', top: '44px', height: 'calc(100% - 12px)', width: '1px', background: 'rgba(255,255,255,0.07)' }} />}
+              <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(24,119,242,0.1)', border: '1px solid rgba(24,119,242,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.68rem', fontWeight: 800, color: '#1877F2', letterSpacing: '0.05em' }}>{step.num}</div>
+              <div style={{ paddingTop: '0.35rem', paddingBottom: i < arr.length - 1 ? '1.75rem' : 0 }}>
+                <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.35rem' }}>{step.title}</div>
+                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.83rem', lineHeight: 1.6 }}>
+                  {step.highlight
+                    ? step.detail.split(step.highlight).map((part: string, j: number, a: string[]) => (
+                        <span key={j}>{part}{j < a.length - 1 && <span style={{ background: 'rgba(24,119,242,0.15)', border: '1px solid rgba(24,119,242,0.3)', borderRadius: '5px', padding: '1px 7px', color: '#7db4f9', fontWeight: 700, fontFamily: 'monospace', fontSize: '0.83rem' }}>{step.highlight}</span>}</span>
+                      ))
+                    : step.detail}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Path 2 — Ads Manager direct */}
+      <div style={{ background: 'rgba(24,119,242,0.04)', border: '1px solid rgba(24,119,242,0.15)', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.25rem' }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(24,119,242,0.12)', border: '1px solid rgba(24,119,242,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1877F2" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>Path B — Ad Account Access via Ads Manager</div>
+            <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', marginTop: '2px' }}>Use this if you manage ads directly in Ads Manager without Business Manager</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+          {[
+            { num: '01', title: 'Open Ads Manager', detail: 'Go to adsmanager.facebook.com and make sure you\'re logged into the correct Facebook account that owns the ad account.' },
+            { num: '02', title: 'Go to Ad Account Settings', detail: 'Click the menu icon (≡) in the top left, then navigate to "Ad Account Settings." You can also access this via Settings → Ad Account Settings.' },
+            { num: '03', title: 'Find "Ad Account Roles"', detail: 'Scroll down to the "Ad Account Roles" section. Here you\'ll see a list of people who currently have access to this ad account.' },
+            { num: '04', title: 'Add RevCore as an Advertiser', detail: 'Click "Add People," type in hello@revcorehq.com, and assign the role "Advertiser." This gives us full campaign management without the ability to modify your payment method.', highlight: 'hello@revcorehq.com' },
+            { num: '05', title: 'Confirm and Save', detail: 'Click "Confirm" to send the request. We\'ll accept and begin building your campaigns.' },
+          ].map((step: { num: string; title: string; detail: string; highlight?: string }, i: number, arr: { num: string; title: string; detail: string; highlight?: string }[]) => (
+            <div key={i} style={{ display: 'flex', gap: '1.25rem', position: 'relative' }}>
+              {i < arr.length - 1 && <div style={{ position: 'absolute', left: '19px', top: '44px', height: 'calc(100% - 12px)', width: '1px', background: 'rgba(255,255,255,0.07)' }} />}
+              <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(24,119,242,0.1)', border: '1px solid rgba(24,119,242,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.68rem', fontWeight: 800, color: '#1877F2', letterSpacing: '0.05em' }}>{step.num}</div>
+              <div style={{ paddingTop: '0.35rem', paddingBottom: i < arr.length - 1 ? '1.75rem' : 0 }}>
+                <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.35rem' }}>{step.title}</div>
+                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.83rem', lineHeight: 1.6 }}>
+                  {step.highlight
+                    ? step.detail.split(step.highlight).map((part: string, j: number, a: string[]) => (
+                        <span key={j}>{part}{j < a.length - 1 && <span style={{ background: 'rgba(24,119,242,0.15)', border: '1px solid rgba(24,119,242,0.3)', borderRadius: '5px', padding: '1px 7px', color: '#7db4f9', fontWeight: 700, fontFamily: 'monospace', fontSize: '0.83rem' }}>{step.highlight}</span>}</span>
+                      ))
+                    : step.detail}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Facebook note */}
+      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px', padding: '1.25rem 1.5rem', marginBottom: '2.5rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(148,217,107,0.1)', border: '1px solid rgba(148,217,107,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <div>
+          <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.3rem' }}>Advertiser role — not Admin</div>
+          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.83rem', lineHeight: 1.5 }}>
+            We only need <strong style={{ color: 'rgba(255,255,255,0.75)' }}>Advertiser</strong> access — this lets us create and manage campaigns without touching your billing, payment methods, or account ownership. You stay in full control.
+          </div>
+        </div>
+      </div>
+
+      {/* ─── GOOGLE CALENDAR ─── */}
+      <div style={{ marginBottom: '1rem' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(66,133,244,0.1)', border: '1px solid rgba(66,133,244,0.25)', borderRadius: '100px', padding: '4px 12px', marginBottom: '1rem' }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4285F4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span style={{ color: '#4285F4', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Google Calendar</span>
+        </div>
+        <h2 style={{ fontSize: 'clamp(1.4rem, 3vw, 1.9rem)', fontWeight: 800, letterSpacing: '-0.03em', margin: '0 0 0.5rem', lineHeight: 1.15 }}>Google Calendar Read/Write Access</h2>
+        <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.95rem', margin: 0, maxWidth: '580px', lineHeight: 1.6 }}>
+          Sharing your Google Calendar with full read and write access allows RevCore to manage your appointment scheduling, integrate bookings from your campaigns, and keep your availability synced automatically.
+        </p>
+      </div>
+
+      <div style={{ background: 'rgba(66,133,244,0.04)', border: '1px solid rgba(66,133,244,0.15)', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+          {[
+            { num: '01', title: 'Open Google Calendar', detail: 'Go to calendar.google.com and sign in with the Google account that holds the calendar you want to share — typically your main business account.' },
+            { num: '02', title: 'Find the Calendar to Share', detail: 'On the left sidebar under "My calendars," hover over the calendar you want to share (e.g. your business calendar). Click the three-dot menu (⋮) that appears.' },
+            { num: '03', title: 'Open Settings and Sharing', detail: 'Click "Settings and sharing" from the dropdown menu. This opens the sharing and access settings for that specific calendar.' },
+            { num: '04', title: 'Add RevCore Under "Share with specific people"', detail: 'Scroll to the "Share with specific people or groups" section. Click "+ Add people and groups" and enter hello@revcorehq.com.', highlight: 'hello@revcorehq.com' },
+            { num: '05', title: 'Set Permission to "Make changes to events"', detail: 'In the permissions dropdown next to our email, select "Make changes to events." This grants full read/write access — we can create, edit, and delete events on your behalf.' },
+            { num: '06', title: 'Click Send', detail: 'Hit "Send" to share the calendar. We\'ll accept the invite and connect your calendar to your campaign\'s booking workflow so leads can book directly into your schedule.' },
+          ].map((step: { num: string; title: string; detail: string; highlight?: string }, i: number, arr: { num: string; title: string; detail: string; highlight?: string }[]) => (
+            <div key={i} style={{ display: 'flex', gap: '1.25rem', position: 'relative' }}>
+              {i < arr.length - 1 && <div style={{ position: 'absolute', left: '19px', top: '44px', height: 'calc(100% - 12px)', width: '1px', background: 'rgba(255,255,255,0.07)' }} />}
+              <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(66,133,244,0.1)', border: '1px solid rgba(66,133,244,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.68rem', fontWeight: 800, color: '#4285F4', letterSpacing: '0.05em' }}>{step.num}</div>
+              <div style={{ paddingTop: '0.35rem', paddingBottom: i < arr.length - 1 ? '1.75rem' : 0 }}>
+                <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.35rem' }}>{step.title}</div>
+                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.83rem', lineHeight: 1.6 }}>
+                  {step.highlight
+                    ? step.detail.split(step.highlight).map((part: string, j: number, a: string[]) => (
+                        <span key={j}>{part}{j < a.length - 1 && <span style={{ background: 'rgba(66,133,244,0.15)', border: '1px solid rgba(66,133,244,0.3)', borderRadius: '5px', padding: '1px 7px', color: '#93bbf9', fontWeight: 700, fontFamily: 'monospace', fontSize: '0.83rem' }}>{step.highlight}</span>}</span>
+                      ))
+                    : step.detail}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Calendar note */}
+      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px', padding: '1.25rem 1.5rem', marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(148,217,107,0.1)', border: '1px solid rgba(148,217,107,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <div>
+          <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.3rem' }}>Make changes to events — not "Make changes and manage sharing"</div>
+          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.83rem', lineHeight: 1.5 }}>
+            Select <strong style={{ color: 'rgba(255,255,255,0.75)' }}>"Make changes to events"</strong> from the dropdown. This gives us full read/write access to manage bookings without allowing us to share your calendar with others or change its settings.
+          </div>
+        </div>
+      </div>
+
+      {/* Final CTA for integrations */}
+      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px', padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+        <div>
+          <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.25rem' }}>Need help with any of these steps?</div>
+          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.83rem' }}>Email us and we can walk you through it on a quick call.</div>
+        </div>
+        <a href="mailto:hello@revcorehq.com?subject=Integration Access Help" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#4285F4', borderRadius: '10px', padding: '0.65rem 1.25rem', color: '#fff', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, whiteSpace: 'nowrap' }}>
           Get help via email
         </a>
       </div>
