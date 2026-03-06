@@ -106,7 +106,7 @@ function LoginScreen({ onLogin }: { onLogin: (email: string) => void }) {
 }
 
 // ─── Dashboard ───────────────────────────────────────────────────────────────
-type Tab = 'home' | 'sales' | 'gmb' | 'resources';
+type Tab = 'home' | 'sales' | 'gmb' | 'resources' | 'support';
 
 function Dashboard({ email, onLogout }: { email: string; onLogout: () => void }) {
   const [activeTab, setActiveTab] = useState<Tab>('home');
@@ -142,6 +142,7 @@ function Dashboard({ email, onLogout }: { email: string; onLogout: () => void })
             { id: 'sales', label: 'Sales Mastery' },
             { id: 'gmb', label: 'Integrations' },
             { id: 'resources', label: 'Resources' },
+            { id: 'support', label: 'Support' },
           ] as { id: Tab; label: string }[]).map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id as Tab)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '1rem 1.5rem', fontSize: '0.88rem', fontWeight: 600, fontFamily: 'inherit', whiteSpace: 'nowrap', color: activeTab === tab.id ? '#FE6462' : 'rgba(255,255,255,0.4)', borderBottom: activeTab === tab.id ? '2px solid #FE6462' : '2px solid transparent', transition: 'all 0.2s', marginBottom: '-1px' }}>
               {tab.label}
@@ -156,6 +157,7 @@ function Dashboard({ email, onLogout }: { email: string; onLogout: () => void })
         {activeTab === 'sales' && <SalesMastery />}
         {activeTab === 'gmb' && <GoogleSetup />}
         {activeTab === 'resources' && <Resources />}
+        {activeTab === 'support' && <SupportSection />}
       </main>
 
       <style>{`
@@ -381,8 +383,6 @@ function HomeDashboard({ displayName, setActiveTab }: { displayName: string; set
           ))}
         </div>
       </div>
-
-      <SupportSection />
 
       <style>{`@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }`}</style>
     </div>
