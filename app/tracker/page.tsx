@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
+import { supabase, hasSupabase } from '@/lib/supabase';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PASS  = 'revcore2024';
@@ -699,13 +700,11 @@ function PayoutsTab({ data, setData, partners }: { data: AppData; setData: (d: A
 }
 
 // ─── Calendar Tab ─────────────────────────────────────────────────────────────
-function CalendarTab({ data, partners }: { data: AppData; partners: Partner[] }) {
+function CalendarTab({ data }: { data: AppData }) {
   const [weekOffset, setWeekOffset] = useState(0);
   const weekStart = getWeekStart(weekOffset);
   const weekDays: Date[] = Array.from({ length: 7 }, (_, i) => { const d = new Date(weekStart); d.setDate(d.getDate() + i); return d; });
   const weekEnd   = weekDays[6];
-
-  const pName = (id: string) => partners.find(p => p.id === id)?.name || '—';
 
   const eventsForDay = (day: Date) => {
     const ds = day.toISOString().slice(0, 10);
@@ -880,10 +879,26 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [data, setDataRaw] = useState<AppData>({ partners: [], clients: [], comms: [] });
 
   useEffect(() => {
-    try { const s = localStorage.getItem(STORE); if (s) setDataRaw(JSON.parse(s)); } catch {}
+    const loadLocal = () => { try { const s = localStorage.getItem(STORE); if (s) setDataRaw(JSON.parse(s)); } catch {} };
+    if (hasSupabase && supabase) {
+      (async () => {
+        try {
+          const { data: row } = await supabase!.from('rc_tracker_data').select('value').eq('key', 'appData').single();
+          if (row?.value) setDataRaw(row.value as AppData); else loadLocal();
+        } catch { loadLocal(); }
+      })();
+    } else {
+      loadLocal();
+    }
   }, []);
 
-  const setData = (d: AppData) => { setDataRaw(d); try { localStorage.setItem(STORE, JSON.stringify(d)); } catch {} };
+  const setData = (d: AppData) => {
+    setDataRaw(d);
+    try { localStorage.setItem(STORE, JSON.stringify(d)); } catch {}
+    if (hasSupabase && supabase) {
+      supabase.from('rc_tracker_data').upsert({ key: 'appData', value: d }, { onConflict: 'key' }).then(() => {});
+    }
+  };
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'clients',  label: 'Clients' },
@@ -934,9 +949,9 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       {/* Content */}
       <main style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 4vw, 3rem)' }}>
         {tab === 'clients'  && <ClientsTab  data={data} setData={setData} partners={data.partners} />}
-        {tab === 'partners' && <PartnersTab data={data} partners={data.partners} />}
+        {tab === 'partners' && <PartnersTab data={data} />}
         {tab === 'payouts'  && <PayoutsTab  data={data} setData={setData} partners={data.partners} />}
-        {tab === 'calendar' && <CalendarTab data={data} partners={data.partners} />}
+        {tab === 'calendar' && <CalendarTab data={data} />}
         {tab === 'settings' && <SettingsTab data={data} setData={setData} />}
       </main>
 
