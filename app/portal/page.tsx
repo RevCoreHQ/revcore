@@ -29,21 +29,23 @@ function LoginScreen({ onLogin }: { onLogin: (name: string) => void }) {
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', fontFamily: 'DM Sans, sans-serif', position: 'relative', overflow: 'hidden', paddingTop: 'calc(80px + 2rem)' }}>
-      {/* Background glow */}
-      <div style={{ position: 'absolute', top: '-120px', right: '-80px', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(254,100,98,0.07) 0%, transparent 60%)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: '-100px', left: '-60px', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(107,142,254,0.05) 0%, transparent 60%)', pointerEvents: 'none' }} />
+      {/* Background glows */}
+      <div style={{ position: 'absolute', top: '-120px', right: '-80px', width: '600px', height: '600px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(254,100,98,0.08) 0%, transparent 60%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: '-100px', left: '-60px', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(107,142,254,0.06) 0%, transparent 60%)', pointerEvents: 'none' }} />
 
-      <div style={{ width: '100%', maxWidth: '420px', position: 'relative', zIndex: 1 }}>
-        {/* Logo */}
+      <div style={{ width: '100%', maxWidth: '440px', position: 'relative', zIndex: 1, animation: 'loginFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both' }}>
+        {/* Hero header */}
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png" alt="RevCore" style={{ height: '36px', width: 'auto', filter: 'brightness(0) invert(1)', marginBottom: '1rem' }} />
-          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Client Portal</div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '72px', height: '72px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', marginBottom: '1.25rem' }}>
+            <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png" alt="RevCore" style={{ height: '38px', width: 'auto', filter: 'brightness(0) invert(1)' }} />
+          </div>
+          <h1 style={{ color: '#fff', fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.04em', margin: '0 0 0.4rem', lineHeight: 1.1 }}>RevCore<br />Client Portal</h1>
+          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.88rem', margin: 0, letterSpacing: '0.01em' }}>Your resources, tools, and support — all in one place.</p>
         </div>
 
         {/* Card */}
         <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '20px', padding: '2.5rem' }}>
-          <h1 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.5rem', letterSpacing: '-0.02em' }}>Welcome back</h1>
-          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.9rem', margin: '0 0 2rem' }}>Sign in to access your RevCore client resources.</p>
+          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.9rem', margin: '0 0 2rem' }}>Sign in to access your client resources.</p>
 
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: '1rem' }}>
@@ -102,6 +104,12 @@ function LoginScreen({ onLogin }: { onLogin: (name: string) => void }) {
           Need access? Email <a href="mailto:hello@revcorehq.com" style={{ color: 'rgba(254,100,98,0.7)', textDecoration: 'none' }}>hello@revcorehq.com</a>
         </p>
       </div>
+      <style>{`
+        @keyframes loginFadeUp {
+          from { opacity: 0; transform: translateY(28px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
