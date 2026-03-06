@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { useScrollReveal, fadeUp, scaleUp } from '@/hooks/useScrollReveal';
 import AnimatedText from '@/components/AnimatedText';
+import SpaceBackground from '@/components/SpaceBackground';
 
 const services = [
   {
@@ -220,6 +221,7 @@ export default function Services() {
           overflow: 'hidden',
           ...fadeUp(diagramIn, 0),
         }}>
+          <SpaceBackground opacity={0.45} />
           {/* Background grid texture */}
           <div style={{
             position: 'absolute', inset: 0,

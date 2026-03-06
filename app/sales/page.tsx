@@ -4,10 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { Check, ChevronDown, ChevronUp, Lock, ArrowRight, Star, Zap, TrendingUp } from 'lucide-react';
 import FunnelDiagram from '@/components/FunnelDiagram';
 import SEOChecker from '@/components/SEOChecker';
-import SpaceBackground from '@/components/SpaceBackground';
-import VideoBackground from '@/components/VideoBackground';
-
-const HERO_VIDEO_URL = 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69aa0befde2e7de2a9765ced.mp4';
 const HERO_PHOTO_URL = 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69aa0c41665b7299ea867c81.jpg';
 
 const SALES_PASSWORD = 'RevCore2025';
@@ -432,15 +428,13 @@ function SalesDeck() {
           position: 'absolute', inset: '-10% 0',
           backgroundImage: `url(${HERO_PHOTO_URL})`,
           backgroundSize: 'cover', backgroundPosition: 'center top',
-          opacity: 0.22, willChange: 'transform',
+          opacity: 0.45, willChange: 'transform',
         }} />
         {/* Dark vignette */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.25) 50%, rgba(10,10,10,0.9) 100%)',
+          background: 'linear-gradient(to bottom, rgba(10,10,10,0.72) 0%, rgba(10,10,10,0.35) 45%, rgba(10,10,10,0.88) 100%)',
         }} />
-        <SpaceBackground opacity={0.7} />
-        <VideoBackground src={HERO_VIDEO_URL} opacity={0.05} />
         {/* Grain overlay */}
         <div style={{
           position: 'absolute', inset: 0,
@@ -459,9 +453,9 @@ function SalesDeck() {
             <span style={{ width: '24px', height: '2px', background: '#FE6462', display: 'block' }} />
           </div>
           <h1 style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.05, marginBottom: '1.25rem' }}>
-            <span className="sales-hero-line">Built to grow your</span><br />
+            <span className="sales-hero-line">Built to grow your</span>
             <span ref={revenueRef} className="sales-hero-accent">revenue.</span>
-            <span className="sales-hero-line"> Not just your leads.</span>
+            <span className="sales-hero-line">Not just your leads.</span>
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.45)', maxWidth: '560px', margin: '0 auto 2.5rem', lineHeight: '1.8', fontSize: '1.0625rem' }}>
             Everything from individual services to full revenue-partner engagements — plus our proprietary sales software built exclusively for home service contractors.
@@ -1038,31 +1032,20 @@ function SalesDeck() {
 
       <style>{`
         .sales-hero-line {
-          font-size: clamp(2.5rem, 6vw, 5rem);
+          font-size: clamp(1.6rem, 3.5vw, 3rem);
           color: transparent;
-          -webkit-text-stroke: 1.2px rgba(255,255,255,0.62);
+          -webkit-text-stroke: 1.5px rgba(255,255,255,0.65);
+          display: block;
+          line-height: 1.1;
+          letter-spacing: -0.03em;
         }
         .sales-hero-accent {
-          font-size: clamp(2.5rem, 6vw, 5rem);
-          background: linear-gradient(118deg,
-            rgba(13,3,5,0.9) 0%,
-            rgba(100,16,16,0.82) 28%,
-            rgba(210,38,38,0.72) 52%,
-            rgba(130,18,18,0.82) 72%,
-            rgba(26,4,6,0.9) 100%
-          );
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          background-size: 300% 100%;
-          filter: brightness(1.4) saturate(1.2);
-          will-change: filter;
-          animation: salesAccentShimmer 10s ease-in-out infinite;
-        }
-        @keyframes salesAccentShimmer {
-          0%   { background-position: 160% center; }
-          50%  { background-position: -60% center; }
-          100% { background-position: -60% center; }
+          font-size: clamp(3.5rem, 9vw, 7.5rem);
+          color: #FE6462;
+          display: block;
+          line-height: 0.92;
+          letter-spacing: -0.04em;
+          text-shadow: 0 0 80px rgba(254,100,98,0.32);
         }
         @media (max-width: 1024px) {
           div[style*="grid-template-columns: 280px 1fr 240px"] {

@@ -20,13 +20,6 @@ const footerLinks = {
   ],
 };
 
-const socials = [
-  { label: 'LinkedIn', href: '#' },
-  { label: 'Instagram', href: '#' },
-  { label: 'Facebook', href: '#' },
-  { label: 'YouTube', href: '#' },
-];
-
 export default function Footer() {
   return (
     <footer style={{ background: 'var(--color-primary)', color: 'var(--color-white)', paddingTop: '80px', paddingBottom: '40px' }}>
@@ -49,20 +42,6 @@ export default function Footer() {
             <p style={{ marginTop: '1rem', fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)', lineHeight: '1.7', maxWidth: '240px' }}>
               Automated revenue systems for home service contractors. Exclusive territory. Performance guaranteed.
             </p>
-            <div style={{ display: 'flex', gap: '10px', marginTop: '1.5rem' }}>
-              {socials.map((s) => (
-                <a key={s.label} href={s.href} aria-label={s.label} style={{
-                  width: '36px', height: '36px', borderRadius: '50%',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  textDecoration: 'none', color: 'rgba(255,255,255,0.5)',
-                  fontSize: '0.65rem', fontWeight: 700,
-                  transition: 'border-color 0.2s, color 0.2s',
-                }}>
-                  {s.label[0]}
-                </a>
-              ))}
-            </div>
           </div>
 
           {Object.entries(footerLinks).map(([title, links]) => (

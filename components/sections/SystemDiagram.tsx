@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, X } from 'lucide-react';
+import SpaceBackground from '@/components/SpaceBackground';
 
 /* ─── Data ─────────────────────────────────────────────────────────────────── */
 
@@ -130,8 +131,9 @@ export default function SystemDiagram() {
   }
 
   return (
-    <section style={{ padding: '100px 0 120px', background: '#070b0f', overflow: 'hidden' }}>
-      <div className="container">
+    <section style={{ padding: '100px 0 120px', background: '#070b0f', overflow: 'hidden', position: 'relative' }}>
+      <SpaceBackground opacity={0.45} />
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
 
         {/* ── Header ── */}
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>

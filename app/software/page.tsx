@@ -8,6 +8,7 @@ import AnimatedText from '@/components/AnimatedText';
 import IpadMockup from '@/components/iPadMockup';
 import QuotingApp from '@/components/QuotingApp';
 import PitchApp from '@/components/PitchApp';
+import SpaceBackground from '@/components/SpaceBackground';
 
 /* ─── Feature grid item ──────────────────────────────────────────────────── */
 function Feature({ icon, title, desc, accent }: { icon: React.ReactNode; title: string; desc: string; accent: string }) {
@@ -63,8 +64,9 @@ function QuotingSection() {
   ];
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#0a0f0a' }}>
-      <div className="container">
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#0a0f0a', position: 'relative', overflow: 'hidden' }}>
+      <SpaceBackground opacity={0.55} />
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'center' }}>
           {/* Left — iPad */}
           <div style={{ display: 'flex', justifyContent: 'center', ...slideFromLeft(inView, 0) }}>
@@ -116,8 +118,9 @@ function PresentationSection() {
   ];
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#070b12' }}>
-      <div className="container">
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#070b12', position: 'relative', overflow: 'hidden' }}>
+      <SpaceBackground opacity={0.55} />
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'center' }}>
           {/* Left — content */}
           <div style={{ ...slideFromLeft(inView, 0) }}>
@@ -160,8 +163,9 @@ function PresentationSection() {
 function IntegrationBanner() {
   const { ref, inView } = useScrollReveal({ threshold: 0.12 });
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '80px 0', background: '#0A0A0A' }}>
-      <div className="container">
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '80px 0', background: '#0A0A0A', position: 'relative', overflow: 'hidden' }}>
+      <SpaceBackground opacity={0.45} />
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{
           borderRadius: '24px',
           background: 'linear-gradient(135deg, #0f1a10 0%, #0a0f1a 100%)',
@@ -220,8 +224,9 @@ function IntegrationBanner() {
 function SoftwareCTA() {
   const { ref, inView } = useScrollReveal({ threshold: 0.2 });
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#070b0f', textAlign: 'center' }}>
-      <div className="container" style={{ maxWidth: '640px' }}>
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#070b0f', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+      <SpaceBackground opacity={0.55} />
+      <div className="container" style={{ maxWidth: '640px', position: 'relative', zIndex: 1 }}>
         <div style={{ ...fadeUp(inView, 0) }}>
           <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '1.5rem' }}>
             Ready to see it in action?
@@ -271,16 +276,17 @@ function SoftwareHero() {
   React.useEffect(() => {
     const onScroll = () => {
       if (!titleRef.current) return;
-      const y = `${-window.scrollY * 0.18}px`;
-      titleRef.current.style.backgroundPositionY = `0px, ${y}`;
+      const y = `${-window.scrollY * 0.28}px`;
+      titleRef.current.style.backgroundPositionY = y;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '160px', paddingBottom: '100px', background: '#070b0f' }}>
-      <div className="container" style={{ textAlign: 'center', maxWidth: '1000px' }}>
+    <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '160px', paddingBottom: '100px', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
+      <SpaceBackground opacity={0.25} />
+      <div className="container" style={{ textAlign: 'center', maxWidth: '1000px', position: 'relative', zIndex: 1 }}>
         <div style={{ ...fadeUp(inView, 0) }}>
           <div style={{
             display: 'inline-flex', gap: '8px', marginBottom: '1.5rem',
@@ -299,14 +305,12 @@ function SoftwareHero() {
             style={{
               fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 800, lineHeight: 1.05,
               letterSpacing: '-0.03em', marginBottom: '1.25rem', whiteSpace: 'nowrap',
-              backgroundImage: [
-                'linear-gradient(110deg, rgba(148,217,107,0.72) 0%, rgba(107,142,254,0.85) 55%, rgba(148,217,107,0.65) 100%)',
-                'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9d5c5b003fa5c4ac3d374.png)',
-              ].join(', '),
-              backgroundSize: '200% auto, cover',
-              backgroundPositionX: 'center, center',
-              backgroundPositionY: '0px, 0px',
+              backgroundImage: 'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9d5c5b003fa5c4ac3d374.png)',
+              backgroundSize: 'cover',
+              backgroundPositionX: 'center',
+              backgroundPositionY: '0px',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+              filter: 'brightness(1.5) saturate(1.05)',
               color: 'white',
             }}
           >

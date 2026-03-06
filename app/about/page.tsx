@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowRight, CheckCircle } from 'lucide-react';
+import SpaceBackground from '@/components/SpaceBackground';
 import {
   useScrollReveal,
   fadeUp,
@@ -176,8 +177,9 @@ export default function AboutPage() {
       <SystemDiagram />
 
       {/* ── Stats bar — dark ── */}
-      <section ref={statsSection.ref as React.Ref<HTMLElement>} style={{ padding: '80px 0', background: '#070b0f' }}>
-        <div className="container">
+      <section ref={statsSection.ref as React.Ref<HTMLElement>} style={{ padding: '80px 0', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
+        <SpaceBackground opacity={0.45} />
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: 'rgba(255,255,255,0.07)', borderRadius: '20px', overflow: 'hidden' }}>
             {stats.map((s, i) => (
               <div key={s.label} style={{
@@ -194,8 +196,9 @@ export default function AboutPage() {
       </section>
 
       {/* ── Four pillars — corner animations ── */}
-      <section ref={pillarsSection.ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#0A0A0A' }}>
-        <div className="container">
+      <section ref={pillarsSection.ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#0A0A0A', position: 'relative', overflow: 'hidden' }}>
+        <SpaceBackground opacity={0.45} />
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ textAlign: 'center', marginBottom: '4rem', ...fadeUp(pillarsSection.inView, 0) }}>
             <div className="section-tag" style={{ color: 'rgba(255,255,255,0.35)', justifyContent: 'center' }}>
               <span style={{ width: '24px', height: '2px', background: '#FE6462', display: 'block' }} />
@@ -298,8 +301,9 @@ export default function AboutPage() {
       </section>
 
       {/* ── CRM spotlight — dark ── */}
-      <section ref={crmSection.ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#070b0f' }}>
-        <div className="container">
+      <section ref={crmSection.ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
+        <SpaceBackground opacity={0.45} />
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: '820px', margin: '0 auto' }}>
                 <div style={{
                   borderRadius: '24px', padding: '3.5rem',

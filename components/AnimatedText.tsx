@@ -44,9 +44,9 @@ export default function AnimatedText({
             <span
               style={{
                 display: 'inline-block',
-                transform: inView ? 'translateY(0) rotate(0deg)' : 'translateY(112%) rotate(4deg)',
+                transform: inView ? 'translateY(0) rotate(0deg)' : 'translateY(80%) rotate(2deg)',
                 opacity: inView ? 1 : 0,
-                transition: `transform 0.9s cubic-bezier(0.16,1,0.3,1) ${delay + i * stagger}ms, opacity 0.5s ease ${delay + i * stagger}ms`,
+                transition: `transform 1.3s cubic-bezier(0.16,1,0.3,1) ${delay + i * stagger}ms, opacity 0.8s ease ${delay + i * stagger}ms`,
               }}
             >
               {word}

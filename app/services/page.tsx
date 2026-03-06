@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { useScrollReveal, fadeUp, slideFromLeft, slideFromRight } from '@/hooks/useScrollReveal';
+import SpaceBackground from '@/components/SpaceBackground';
 import AnimatedText from '@/components/AnimatedText';
 
 const services = [
@@ -211,8 +212,9 @@ export default function ServicesPage() {
       </section>
 
       {/* ── All-in-1 CRM banner ── */}
-      <section ref={crmSection.ref as React.Ref<HTMLElement>} style={{ padding: '80px 0 120px', background: '#070b0f' }}>
-        <div className="container">
+      <section ref={crmSection.ref as React.Ref<HTMLElement>} style={{ padding: '80px 0 120px', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
+        <SpaceBackground opacity={0.45} />
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{
             borderRadius: '24px',
             background: 'linear-gradient(135deg, #0f1a10 0%, #0a0f1a 100%)',

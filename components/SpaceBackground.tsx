@@ -10,21 +10,21 @@ export default function SpaceBackground({ opacity = 1 }: { opacity?: number }) {
       <div style={{
         position: 'absolute', top: '-80px', right: '-60px',
         width: '420px', height: '420px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(254,100,98,0.09) 0%, transparent 65%)',
+        background: 'radial-gradient(circle, rgba(254,100,98,0.05) 0%, transparent 50%)',
         animation: 'planet-drift-a 18s ease-in-out infinite',
         willChange: 'transform',
       }} />
       <div style={{
         position: 'absolute', bottom: '-60px', left: '15%',
         width: '360px', height: '360px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(107,142,254,0.08) 0%, transparent 65%)',
+        background: 'radial-gradient(circle, rgba(107,142,254,0.04) 0%, transparent 50%)',
         animation: 'planet-drift-b 24s ease-in-out infinite',
         willChange: 'transform',
       }} />
       <div style={{
         position: 'absolute', top: '30%', left: '-80px',
         width: '280px', height: '280px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(148,217,107,0.07) 0%, transparent 65%)',
+        background: 'radial-gradient(circle, rgba(148,217,107,0.04) 0%, transparent 50%)',
         animation: 'planet-drift-c 20s ease-in-out infinite',
         willChange: 'transform',
       }} />
@@ -65,18 +65,16 @@ export default function SpaceBackground({ opacity = 1 }: { opacity?: number }) {
           </circle>
         ))}
 
-        {/* Shooting stars */}
+        {/* Shooting stars — rare, fast, spread across viewport */}
         {([
-          { x1: 120,  y1: 50,  x2: 320,  y2: 160,  delay: '0s',   dur: '4s'   },
-          { x1: 900,  y1: 30,  x2: 1100, y2: 140,  delay: '7s',   dur: '3.5s' },
-          { x1: 400,  y1: 180, x2: 620,  y2: 310,  delay: '14s',  dur: '4.5s' },
-          { x1: 1200, y1: 100, x2: 1400, y2: 220,  delay: '20s',  dur: '3.8s' },
+          { x1: 160,  y1: 55,  x2: 400,  y2: 188,  delay: '3s',  dur: '52s' },
+          { x1: 1040, y1: 38,  x2: 1275, y2: 162,  delay: '29s', dur: '58s' },
         ]).map((ss, i) => (
           <line key={`ss${i}`} x1={ss.x1} y1={ss.y1} x2={ss.x1} y2={ss.y1}
-            stroke="white" strokeWidth={0.8} strokeLinecap="round" opacity={0}>
-            <animate attributeName="x2" values={`${ss.x1};${ss.x2}`} dur={ss.dur} begin={ss.delay} repeatCount="indefinite" />
-            <animate attributeName="y2" values={`${ss.y1};${ss.y2}`} dur={ss.dur} begin={ss.delay} repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0;0.22;0.12;0" keyTimes="0;0.06;0.4;1" dur={ss.dur} begin={ss.delay} repeatCount="indefinite" />
+            stroke="white" strokeWidth={0.9} strokeLinecap="round" opacity={0}>
+            <animate attributeName="x2" values={`${ss.x1};${ss.x2};${ss.x2}`} keyTimes="0;0.055;1" dur={ss.dur} begin={ss.delay} repeatCount="indefinite" />
+            <animate attributeName="y2" values={`${ss.y1};${ss.y2};${ss.y2}`} keyTimes="0;0.055;1" dur={ss.dur} begin={ss.delay} repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0;0.30;0.16;0;0" keyTimes="0;0.018;0.055;0.09;1" dur={ss.dur} begin={ss.delay} repeatCount="indefinite" />
           </line>
         ))}
       </svg>

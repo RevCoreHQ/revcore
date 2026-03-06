@@ -3,6 +3,7 @@
 import Script from 'next/script';
 import { useEffect, useRef } from 'react';
 import { Mail, Clock, CheckCircle } from 'lucide-react';
+import SpaceBackground from '@/components/SpaceBackground';
 
 export default function ContactPage() {
   const bookRef = useRef<HTMLSpanElement>(null);
@@ -106,6 +107,7 @@ export default function ContactPage() {
 
       {/* ── Calendar + Info ── */}
       <section style={{ background: '#070b0f', padding: '80px 0 120px', position: 'relative', overflow: 'hidden' }}>
+        <SpaceBackground opacity={0.45} />
         {/* Animated orbs */}
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
           <div className="contact-orb contact-orb-1" />
