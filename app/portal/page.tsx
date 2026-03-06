@@ -123,24 +123,15 @@ function Dashboard({ name, onLogout }: { name: string; onLogout: () => void }) {
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', fontFamily: 'DM Sans, sans-serif', color: '#fff', paddingTop: '80px' }}>
-      {/* Portal Header */}
-      <header style={{ position: 'sticky', top: 80, zIndex: 100, background: 'rgba(7,11,15,0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px', maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png" alt="RevCore" style={{ height: '28px', filter: 'brightness(0) invert(1)' }} />
-            <div style={{ width: '1px', height: '18px', background: 'rgba(255,255,255,0.15)' }} />
-            <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Client Portal</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', display: 'none' }} className="portal-email-label">{name}</span>
-            <button onClick={onLogout} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'rgba(255,255,255,0.55)', fontSize: '0.82rem', padding: '6px 14px', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.2s' }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#fff'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.55)'; }}>
-              Sign out
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* Floating sign-out */}
+      <div style={{ position: 'fixed', top: '20px', right: '24px', zIndex: 200, display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <span style={{ color: 'rgba(0,0,0,0.45)', fontSize: '0.82rem', fontWeight: 600 }}>Welcome, {displayName}</span>
+        <button onClick={onLogout} style={{ background: 'rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.12)', borderRadius: '8px', color: 'rgba(0,0,0,0.55)', fontSize: '0.82rem', padding: '6px 14px', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif', fontWeight: 600, backdropFilter: 'blur(8px)', transition: 'all 0.2s' }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.12)'; e.currentTarget.style.color = '#000'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.07)'; e.currentTarget.style.color = 'rgba(0,0,0,0.55)'; }}>
+          Sign out
+        </button>
+      </div>
 
       {/* Tab Nav */}
       <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>

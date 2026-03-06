@@ -37,6 +37,7 @@ export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const pathname = usePathname();
   const isTracker = pathname?.startsWith('/tracker');
+  const isPortal  = pathname?.startsWith('/portal');
 
   return (
     <header style={{
@@ -61,7 +62,7 @@ export default function Header() {
         <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png" alt="RevCore" style={{ height: '32px', width: 'auto' }} />
           <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: '1.2rem', color: '#0A0A0A' }}>
-            RevCore{isTracker && <span style={{ color: '#FE6462', marginLeft: '5px' }}>Tracker</span>}
+            RevCore{isTracker && <span style={{ color: '#FE6462', marginLeft: '5px' }}>Tracker</span>}{isPortal && <span style={{ color: '#FE6462', marginLeft: '5px' }}>Client Portal</span>}
           </span>
         </Link>
 
