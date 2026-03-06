@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle, Zap, FileText, Bell, Star, Layers, Monitor } from 'lucide-react';
-import { useScrollReveal, fadeUp, scaleUp, slideFromLeft, slideFromRight } from '@/hooks/useScrollReveal';
+import { useScrollReveal, useScrollRevealBidirectional, fadeUp, scaleUp } from '@/hooks/useScrollReveal';
 import AnimatedText from '@/components/AnimatedText';
 import IpadMockup from '@/components/iPadMockup';
 import QuotingApp from '@/components/QuotingApp';
@@ -96,7 +97,7 @@ function WatchDemoBtn({ onClick, accent }: { onClick: () => void; accent: string
 function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onStep, ipadContent }: {
   open: boolean; onClose: () => void; ipadSide: 'left' | 'right'; accent: string;
   steps: DemoStep[]; step: number; onStep: (n: number) => void; ipadContent: React.ReactNode;
-}) {
+}): React.ReactPortal | null {
   // Lock body scroll when open
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
@@ -114,11 +115,11 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
     return () => window.removeEventListener('keydown', handler);
   }, [open, step, steps.length, onClose, onStep]);
 
-  if (!open) return null;
+  if (!open || typeof document === 'undefined') return null;
   const isLeft = ipadSide === 'left';
 
   const textPanel = (
-    <div style={{ flex: '0 0 36%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '2.5rem 3rem', animation: `${isLeft ? 'demoSlideR' : 'demoSlideL'} 0.55s cubic-bezier(0.22,1,0.36,1) 0.15s both` }}>
+    <div style={{ flex: '0 0 36%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '2.5rem 3rem', position: 'relative', zIndex: 10, pointerEvents: 'auto', animation: `${isLeft ? 'demoSlideR' : 'demoSlideL'} 0.55s cubic-bezier(0.22,1,0.36,1) 0.15s both` }}>
       <div key={step} style={{ animation: 'demoStepIn 0.38s cubic-bezier(0.22,1,0.36,1) both' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '100px', background: `${accent}14`, border: `1px solid ${accent}28`, marginBottom: '1.5rem' }}>
           <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: accent }} />
@@ -159,12 +160,12 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
   );
 
   const ipadPanel = (
-    <div style={{ flex: '0 0 64%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', animation: 'demoIpadIn 0.55s cubic-bezier(0.22,1,0.36,1) both' }}>
+    <div style={{ flex: '0 0 64%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', overflow: 'hidden', animation: 'demoIpadIn 0.55s cubic-bezier(0.22,1,0.36,1) both' }}>
       <div style={{ width: '100%', maxWidth: '700px', cursor: 'default' }}>{ipadContent}</div>
     </div>
   );
 
-  return (
+  return createPortal(
     <div
       style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', background: 'rgba(4,7,11,0.94)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', animation: 'demoBackdropIn 0.3s ease both' }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
@@ -196,21 +197,32 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
         @keyframes demoFadeUp { from { opacity:0; transform:translateY(-8px) } to { opacity:1; transform:translateY(0) } }
         @keyframes demoDot { 0%,100% { opacity:1 } 50% { opacity:0.3 } }
       `}</style>
+    </div>,
+    document.body
+  );
+}
+
+/* ─── Stat pill ──────────────────────────────────────────────────────────── */
+function StatPill({ value, label, accent, inView, delay }: { value: string; label: string; accent: string; inView: boolean; delay: number }) {
+  return (
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '7px 16px', borderRadius: '100px', background: `${accent}08`, border: `1px solid ${accent}20`, ...scaleUp(inView, delay) }}>
+      <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, fontSize: '0.88rem', color: accent }}>{value}</span>
+      <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>{label}</span>
     </div>
   );
 }
 
 /* ─── Page sections ──────────────────────────────────────────────────────── */
 function QuotingSection() {
-  const { ref, inView } = useScrollReveal({ threshold: 0.08 });
+  const { ref, inView } = useScrollRevealBidirectional({ threshold: 0.06 });
   const [demoOpen, setDemoOpen] = useState(false);
   const [demoStep, setDemoStep] = useState(0);
   const quotingFeatures = [
     { icon: <FileText size={16} />, title: 'On-Site Quote Generation', desc: 'Build accurate, professional proposals at the door with your pricing built in. No office trips.' },
-    { icon: <Layers size={16} />, title: 'Good / Better / Best Options', desc: 'Present three tiers on every job, proven to increase average ticket size by 34%.' },
-    { icon: <Zap size={16} />, title: 'Job Tracking Pipeline', desc: 'See every quote\'s status at a glance: sent, viewed, followed-up, signed. Nothing slips.' },
-    { icon: <Bell size={16} />, title: 'Automated Follow-Up', desc: 'Timed SMS & email sequences fire automatically when a quote goes cold. Your team focuses on selling.' },
-    { icon: <Star size={16} />, title: 'Review Request Automation', desc: 'After every closed job, the system requests a Google review automatically. No awkward asks.' },
+    { icon: <Layers size={16} />, title: 'Good / Better / Best Tiers', desc: 'Present three options on every job — proven to increase average ticket size by 34%.' },
+    { icon: <Zap size={16} />, title: 'Job Tracking Pipeline', desc: 'Every quote status at a glance: sent, viewed, followed up, signed. Nothing slips.' },
+    { icon: <Bell size={16} />, title: 'Automated Follow-Up', desc: 'Timed SMS & email sequences fire automatically when a quote goes cold.' },
+    { icon: <Star size={16} />, title: 'Review Request Automation', desc: 'After every closed job, the system requests a Google review. No awkward asks.' },
     { icon: <CheckCircle size={16} />, title: 'E-Signature Collection', desc: 'Collect digital signatures in the field. Lock in the job before you leave the driveway.' },
   ];
 
@@ -230,60 +242,101 @@ function QuotingSection() {
           </IpadMockup>
         }
       />
-      <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#0a0f0a', position: 'relative', overflow: 'hidden' }}>
-      <SpaceBackground opacity={0.18} />
-      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'center' }}>
-          {/* Left — iPad + demo button */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', ...slideFromLeft(inView, 0) }}>
-            <IpadMockup width={560} accentGlow="rgba(148,217,107,0.5)">
-              <QuotingApp />
-            </IpadMockup>
-            <WatchDemoBtn onClick={() => { setDemoStep(0); setDemoOpen(true); }} accent="#94D96B" />
-          </div>
-          {/* Right — content */}
-          <div style={{ ...slideFromRight(inView, 100) }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '5px 14px', borderRadius: '100px', background: 'rgba(148,217,107,0.1)', border: '1px solid rgba(148,217,107,0.2)', marginBottom: '1.25rem', ...fadeUp(inView, 0) }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#94D96B', display: 'block' }} />
-              <span style={{ color: '#94D96B', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em' }}>QUOTING SOFTWARE</span>
+      <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#060c06', position: 'relative', overflow: 'hidden' }}>
+        <SpaceBackground opacity={0.15} />
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
+
+            {/* Left — iPad + stat pills + demo button */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', ...fadeUp(inView, 0) }}>
+              <IpadMockup width={560} accentGlow="rgba(148,217,107,0.45)">
+                <QuotingApp />
+              </IpadMockup>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '1.75rem', flexWrap: 'wrap' as const, justifyContent: 'center' }}>
+                <StatPill value="34%" label="higher avg. ticket" accent="#94D96B" inView={inView} delay={300} />
+                <StatPill value="0" label="quotes lost to cold leads" accent="#94D96B" inView={inView} delay={420} />
+              </div>
+              <div style={{ ...scaleUp(inView, 560) }}>
+                <WatchDemoBtn onClick={() => { setDemoStep(0); setDemoOpen(true); }} accent="#94D96B" />
+              </div>
             </div>
-            <AnimatedText
-              as="h2"
-              inView={inView}
-              delay={150}
-              stagger={75}
-              style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 800, lineHeight: 1.15, letterSpacing: '-0.02em', color: 'white', marginBottom: '1rem' }}
-            >
-              Quote on-site. Track every job. Never lose a follow-up.
-            </AnimatedText>
-            <p style={{ color: 'rgba(255,255,255,0.5)', lineHeight: '1.8', marginBottom: '2rem', ...fadeUp(inView, 500) }}>
-              Most contractors lose 40% of quotes because they never follow up. RevCore Quoting eliminates that, with a built-in pipeline, automated sequences, and review requests that run without your team lifting a finger.
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              {quotingFeatures.map((f, i) => (
-                <div key={f.title} style={{ ...scaleUp(inView, 500 + i * 80) }}>
-                  <Feature {...f} accent="#94D96B" />
-                </div>
-              ))}
+
+            {/* Right — content */}
+            <div>
+              {/* Label */}
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '5px 14px', borderRadius: '100px', background: 'rgba(148,217,107,0.07)', border: '1px solid rgba(148,217,107,0.18)', marginBottom: '1.75rem', ...fadeUp(inView, 80) }}>
+                <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#94D96B', display: 'block' }} />
+                <span style={{ color: '#94D96B', fontSize: '0.67rem', fontWeight: 700, letterSpacing: '0.1em' }}>SCOPE · ESTIMATING & QUOTING</span>
+              </div>
+
+              {/* Product name */}
+              <div style={{ ...fadeUp(inView, 140) }}>
+                <p style={{
+                  fontFamily: 'DM Sans, sans-serif',
+                  fontSize: 'clamp(3.5rem, 5.5vw, 5.25rem)',
+                  fontWeight: 900,
+                  lineHeight: 0.92,
+                  letterSpacing: '-0.045em',
+                  margin: '0 0 1.1rem',
+                  background: 'linear-gradient(110deg, #fff 5%, #94D96B 38%, #d4f7b5 58%, #fff 88%)',
+                  backgroundSize: '300% 100%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  animation: inView ? 'sectionGradientShift 9s ease-in-out infinite' : 'none',
+                }}>Scope.</p>
+              </div>
+
+              {/* Tagline */}
+              <h2 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 'clamp(1.25rem, 2vw, 1.65rem)', fontWeight: 700, color: 'rgba(255,255,255,0.78)', lineHeight: 1.3, letterSpacing: '-0.02em', margin: '0 0 1.25rem', ...fadeUp(inView, 210) }}>
+                Quote on-site. Track every job.<br />Never lose a follow-up.
+              </h2>
+
+              {/* Description */}
+              <p style={{ color: 'rgba(255,255,255,0.42)', lineHeight: '1.85', marginBottom: '2.25rem', fontSize: '0.93rem', ...fadeUp(inView, 300) }}>
+                Most contractors lose 40% of quotes because they never follow up. Scope eliminates that — with a built-in pipeline, automated sequences, and review requests that run without lifting a finger.
+              </p>
+
+              {/* Features */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '11px', marginBottom: '2rem' }}>
+                {quotingFeatures.map((f, i) => (
+                  <div key={f.title} style={{ ...scaleUp(inView, 380 + i * 65) }}>
+                    <Feature {...f} accent="#94D96B" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Availability */}
+              <div style={{ ...fadeUp(inView, 800), borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' as const, gap: '8px' }}>
+                <span style={{ fontSize: '0.77rem', color: 'rgba(255,255,255,0.28)', lineHeight: 1.5 }}>
+                  Available on its own, or as part of{' '}
+                  <span style={{ color: 'rgba(255,255,255,0.58)', fontWeight: 600 }}>RevCore Pro</span>.
+                </span>
+                <a href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#94D96B', fontSize: '0.77rem', fontWeight: 600, textDecoration: 'none', letterSpacing: '0.01em', opacity: 0.85, transition: 'opacity 0.2s' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.85'; }}>
+                  Get started <ArrowRight size={12} />
+                </a>
+              </div>
             </div>
+
           </div>
         </div>
-      </div>
-    </section>
+      </section>
     </>
   );
 }
 
 function PresentationSection() {
-  const { ref, inView } = useScrollReveal({ threshold: 0.08 });
+  const { ref, inView } = useScrollRevealBidirectional({ threshold: 0.06 });
   const [demoOpen, setDemoOpen] = useState(false);
   const [demoStep, setDemoStep] = useState(0);
   const pitchFeatures = [
-    { icon: <Monitor size={16} />, title: 'Trade-Specific Decks', desc: 'Built for your exact trade, roofing, HVAC, solar, windows, siding, and more. Not a generic template.' },
-    { icon: <Layers size={16} />, title: 'Before & After Comparisons', desc: 'Photo-heavy slides showing the transformation. Homeowners buy emotion, give it to them.' },
-    { icon: <FileText size={16} />, title: 'Financing On-Screen', desc: 'Display monthly payment options directly in the presentation. Remove sticker shock on the spot.' },
-    { icon: <Star size={16} />, title: 'Built-in Social Proof', desc: 'Reviews, photos, certifications, and warranties presented at the right moment in the pitch flow.' },
-    { icon: <CheckCircle size={16} />, title: 'iPad-Ready & Offline', desc: 'Works without internet. No loading screens in the field. Looks flawless on any device.' },
+    { icon: <Monitor size={16} />, title: 'Trade-Specific Decks', desc: 'Built for your exact trade — roofing, HVAC, solar, windows, siding, and more. Not a template.' },
+    { icon: <Layers size={16} />, title: 'Before & After Comparisons', desc: 'Photo-heavy slides showing real transformations. Homeowners buy emotion — give it to them.' },
+    { icon: <FileText size={16} />, title: 'Financing On-Screen', desc: 'Display monthly payment options inside the presentation. Remove sticker shock on the spot.' },
+    { icon: <Star size={16} />, title: 'Built-in Social Proof', desc: 'Reviews, photos, certifications, and warranties surfaced at exactly the right moment.' },
+    { icon: <CheckCircle size={16} />, title: 'iPad-Ready & Offline', desc: 'Works without internet. No loading screens in the field. Flawless on any device.' },
     { icon: <Zap size={16} />, title: 'E-Signature Close', desc: 'Collect a signed contract before you stand up from the kitchen table.' },
   ];
 
@@ -303,46 +356,87 @@ function PresentationSection() {
           </IpadMockup>
         }
       />
-      <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#070b12', position: 'relative', overflow: 'hidden' }}>
-      <SpaceBackground opacity={0.18} />
-      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'center' }}>
-          {/* Left — content */}
-          <div style={{ ...slideFromLeft(inView, 0) }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '5px 14px', borderRadius: '100px', background: 'rgba(107,142,254,0.1)', border: '1px solid rgba(107,142,254,0.2)', marginBottom: '1.25rem', ...fadeUp(inView, 0) }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#6B8EFE', display: 'block' }} />
-              <span style={{ color: '#6B8EFE', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em' }}>PRESENTATION SOFTWARE</span>
+      <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#06080f', position: 'relative', overflow: 'hidden' }}>
+        <SpaceBackground opacity={0.15} />
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
+
+            {/* Left — content */}
+            <div>
+              {/* Label */}
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '5px 14px', borderRadius: '100px', background: 'rgba(107,142,254,0.07)', border: '1px solid rgba(107,142,254,0.18)', marginBottom: '1.75rem', ...fadeUp(inView, 80) }}>
+                <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#6B8EFE', display: 'block' }} />
+                <span style={{ color: '#6B8EFE', fontSize: '0.67rem', fontWeight: 700, letterSpacing: '0.1em' }}>STAGE · SALES PRESENTATION</span>
+              </div>
+
+              {/* Product name */}
+              <div style={{ ...fadeUp(inView, 140) }}>
+                <p style={{
+                  fontFamily: 'DM Sans, sans-serif',
+                  fontSize: 'clamp(3.5rem, 5.5vw, 5.25rem)',
+                  fontWeight: 900,
+                  lineHeight: 0.92,
+                  letterSpacing: '-0.045em',
+                  margin: '0 0 1.1rem',
+                  background: 'linear-gradient(110deg, #fff 5%, #6B8EFE 38%, #b8caff 58%, #fff 88%)',
+                  backgroundSize: '300% 100%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  animation: inView ? 'sectionGradientShift 9s ease-in-out infinite' : 'none',
+                }}>Stage.</p>
+              </div>
+
+              {/* Tagline */}
+              <h2 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 'clamp(1.25rem, 2vw, 1.65rem)', fontWeight: 700, color: 'rgba(255,255,255,0.78)', lineHeight: 1.3, letterSpacing: '-0.02em', margin: '0 0 1.25rem', ...fadeUp(inView, 210) }}>
+                Stand out. Build trust.<br />Win the job before you leave.
+              </h2>
+
+              {/* Description */}
+              <p style={{ color: 'rgba(255,255,255,0.42)', lineHeight: '1.85', marginBottom: '2.25rem', fontSize: '0.93rem', ...fadeUp(inView, 300) }}>
+                Your competitors show up with a pen and a brochure. Stage puts you in a different category entirely — a custom interactive presentation that makes homeowners feel confident they&apos;re hiring the best.
+              </p>
+
+              {/* Features */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '11px', marginBottom: '2rem' }}>
+                {pitchFeatures.map((f, i) => (
+                  <div key={f.title} style={{ ...scaleUp(inView, 380 + i * 65) }}>
+                    <Feature {...f} accent="#6B8EFE" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Availability */}
+              <div style={{ ...fadeUp(inView, 800), borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' as const, gap: '8px' }}>
+                <span style={{ fontSize: '0.77rem', color: 'rgba(255,255,255,0.28)', lineHeight: 1.5 }}>
+                  Available on its own, or as part of{' '}
+                  <span style={{ color: 'rgba(255,255,255,0.58)', fontWeight: 600 }}>RevCore Pro</span>.
+                </span>
+                <a href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#6B8EFE', fontSize: '0.77rem', fontWeight: 600, textDecoration: 'none', letterSpacing: '0.01em', opacity: 0.85, transition: 'opacity 0.2s' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.85'; }}>
+                  Get started <ArrowRight size={12} />
+                </a>
+              </div>
             </div>
-            <AnimatedText
-              as="h2"
-              inView={inView}
-              delay={150}
-              stagger={75}
-              style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 800, lineHeight: 1.15, letterSpacing: '-0.02em', color: 'white', marginBottom: '1rem' }}
-            >
-              Stand out. Build trust. Win the job.
-            </AnimatedText>
-            <p style={{ color: 'rgba(255,255,255,0.5)', lineHeight: '1.8', marginBottom: '2rem', ...fadeUp(inView, 500) }}>
-              Your competitors are showing up with a pen and a brochure. RevCore Pitch puts you in a different category entirely, a custom interactive presentation that makes homeowners feel confident they&apos;re hiring the best.
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              {pitchFeatures.map((f, i) => (
-                <div key={f.title} style={{ ...scaleUp(inView, 500 + i * 80) }}>
-                  <Feature {...f} accent="#6B8EFE" />
-                </div>
-              ))}
+
+            {/* Right — iPad + stat pills + demo button */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', ...fadeUp(inView, 0) }}>
+              <IpadMockup width={560} accentGlow="rgba(107,142,254,0.45)">
+                <PitchApp />
+              </IpadMockup>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '1.75rem', flexWrap: 'wrap' as const, justifyContent: 'center' }}>
+                <StatPill value="3×" label="more likely to close on first visit" accent="#6B8EFE" inView={inView} delay={300} />
+                <StatPill value="0" label="paper contracts" accent="#6B8EFE" inView={inView} delay={420} />
+              </div>
+              <div style={{ ...scaleUp(inView, 560) }}>
+                <WatchDemoBtn onClick={() => { setDemoStep(0); setDemoOpen(true); }} accent="#6B8EFE" />
+              </div>
             </div>
-          </div>
-          {/* Right — iPad + demo button */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', ...slideFromRight(inView, 100) }}>
-            <IpadMockup width={560} accentGlow="rgba(107,142,254,0.5)">
-              <PitchApp />
-            </IpadMockup>
-            <WatchDemoBtn onClick={() => { setDemoStep(0); setDemoOpen(true); }} accent="#6B8EFE" />
+
           </div>
         </div>
-      </div>
-    </section>
+      </section>
     </>
   );
 }
@@ -378,9 +472,9 @@ function IntegrationBanner() {
               {[
                 { label: 'Website leads → CRM', color: '#94D96B' },
                 { label: 'Paid Ads → CRM', color: '#6B8EFE' },
-                { label: 'Quoting Software → CRM', color: '#94D96B' },
+                { label: 'Scope → CRM', color: '#94D96B' },
+                { label: 'Stage → CRM', color: '#6B8EFE' },
                 { label: 'Follow-Up Engine → CRM', color: '#FEB64A' },
-                { label: 'Rehash Automation → CRM', color: '#FE6462' },
               ].map((item) => (
                 <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 14px', borderRadius: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
                   <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: item.color, flexShrink: 0 }} />
@@ -471,10 +565,13 @@ function SoftwareHero() {
             display: 'inline-flex', gap: '8px', marginBottom: '1.5rem',
           }}>
             <span style={{ padding: '4px 14px', borderRadius: '100px', background: 'rgba(148,217,107,0.1)', color: '#94D96B', fontSize: '0.72rem', fontWeight: 700, border: '1px solid rgba(148,217,107,0.2)' }}>
-              Quoting Software
+              Scope
             </span>
             <span style={{ padding: '4px 14px', borderRadius: '100px', background: 'rgba(107,142,254,0.1)', color: '#6B8EFE', fontSize: '0.72rem', fontWeight: 700, border: '1px solid rgba(107,142,254,0.2)' }}>
-              Presentation Software
+              Stage
+            </span>
+            <span style={{ padding: '4px 14px', borderRadius: '100px', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.45)', fontSize: '0.72rem', fontWeight: 700, border: '1px solid rgba(255,255,255,0.1)' }}>
+              RevCore Pro
             </span>
           </div>
         </div>
@@ -491,7 +588,7 @@ function SoftwareHero() {
           </h1>
         </div>
         <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '1.1rem', lineHeight: '1.75', marginBottom: '2.5rem', ...fadeUp(inView, 600) }}>
-          Two purpose-built tools that work together, from the first quote to the signed contract and the five-star review.
+          Scope and Stage — two purpose-built tools that work together, from the first quote to the signed contract and the five-star review. Available separately, or bundled as RevCore Pro.
         </p>
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', ...fadeUp(inView, 750) }}>
           <a href="#quoting" style={{
@@ -500,7 +597,7 @@ function SoftwareHero() {
             padding: '13px 24px', borderRadius: '100px',
             fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none',
           }}>
-            Quoting Software ↓
+            Explore Scope ↓
           </a>
           <a href="#presentation" style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -508,7 +605,7 @@ function SoftwareHero() {
             padding: '13px 24px', borderRadius: '100px',
             fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none',
           }}>
-            Presentation Software ↓
+            Explore Stage ↓
           </a>
         </div>
       </div>
@@ -527,6 +624,10 @@ export default function SoftwarePage() {
 
       <style>{`
         @keyframes gradientShift {
+          0%, 100% { background-position: 100% center; }
+          50%       { background-position: 0% center; }
+        }
+        @keyframes sectionGradientShift {
           0%, 100% { background-position: 100% center; }
           50%       { background-position: 0% center; }
         }
