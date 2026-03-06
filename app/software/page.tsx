@@ -295,7 +295,7 @@ function SoftwareHero() {
             background: 'linear-gradient(110deg, #fff 0%, #fff 15%, #6B8EFE 38%, #94D96B 58%, #fff 82%, #fff 100%)',
             backgroundSize: '250% 100%',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-            animation: 'gradientShift 5s ease-in-out infinite',
+            animation: 'gradientShift 12s ease-in-out infinite',
           }}>
             Software that closes jobs.
           </h1>
