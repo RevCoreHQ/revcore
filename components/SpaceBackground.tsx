@@ -18,29 +18,29 @@ type StarData = {
 // 200 stars across tiers: tiny sparkle dust → medium → large sparkle focal points
 const STARS: StarData[] = Array.from({ length: 200 }, () => {
   const tier = _rng();
+  // Sizes scaled down ~40% vs before
   const r =
-    tier < 0.30 ? 0.12 + _rng() * 0.18  // tiny dust: 0.12–0.30
-  : tier < 0.62 ? 0.30 + _rng() * 0.35  // small: 0.30–0.65
-  : tier < 0.85 ? 0.65 + _rng() * 0.75  // medium: 0.65–1.40
-  : tier < 0.95 ? 1.40 + _rng() * 0.90  // large: 1.40–2.30
-  :               2.30 + _rng() * 1.20;  // focal: 2.30–3.50
+    tier < 0.30 ? 0.08 + _rng() * 0.12  // tiny dust: 0.08–0.20
+  : tier < 0.62 ? 0.20 + _rng() * 0.22  // small: 0.20–0.42
+  : tier < 0.85 ? 0.42 + _rng() * 0.46  // medium: 0.42–0.88
+  : tier < 0.95 ? 0.88 + _rng() * 0.54  // large: 0.88–1.42
+  :               1.42 + _rng() * 0.78;  // focal: 1.42–2.20
   const cr = _rng();
   return {
     cx: _rng() * 1440,
     cy: _rng() * 700,
     r,
-    dur: 1.2 + _rng() * 7,
-    begin: _rng() * 14,
-    dx: (_rng() - 0.5) * 6,
-    dy: (_rng() - 0.5) * 6,
-    dDur: 8 + _rng() * 16,
-    // only larger stars get 4-pointed sparkle treatment
-    sparkle: r > 1.8 && _rng() > 0.3,
+    // Much slower flicker — 6–22s per cycle instead of 1.2–8s
+    dur: 6 + _rng() * 16,
+    begin: _rng() * 20,
+    dx: (_rng() - 0.5) * 4,
+    dy: (_rng() - 0.5) * 4,
+    dDur: 12 + _rng() * 20,
+    sparkle: r > 1.1 && _rng() > 0.4,
     color: cr < 0.65 ? 'white' : cr < 0.82 ? '#c6d8ff' : '#fff4d8',
-    // tiny stars should be dimmer, large should flash brighter
-    maxOp: r < 0.3 ? 0.15 + _rng() * 0.25
-         : r < 0.65 ? 0.30 + _rng() * 0.35
-         :             0.55 + _rng() * 0.40,
+    maxOp: r < 0.2 ? 0.12 + _rng() * 0.18
+         : r < 0.42 ? 0.22 + _rng() * 0.28
+         :             0.45 + _rng() * 0.35,
   };
 });
 
@@ -65,10 +65,10 @@ export default function SpaceBackground({ opacity = 1 }: { opacity?: number }) {
     <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden', opacity }}>
 
       {/* ── Drifting planet glows ───────────────────────────────────────────── */}
-      <div style={{ position: 'absolute', top: '-80px', right: '-60px', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(254,100,98,0.055) 0%, transparent 55%)', animation: 'spPlanetA 20s ease-in-out infinite', willChange: 'transform' }} />
-      <div style={{ position: 'absolute', bottom: '-80px', left: '12%', width: '420px', height: '420px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(107,142,254,0.045) 0%, transparent 55%)', animation: 'spPlanetB 26s ease-in-out infinite', willChange: 'transform' }} />
-      <div style={{ position: 'absolute', top: '25%', left: '-60px', width: '320px', height: '320px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(148,217,107,0.035) 0%, transparent 55%)', animation: 'spPlanetC 22s ease-in-out infinite', willChange: 'transform' }} />
-      <div style={{ position: 'absolute', top: '55%', right: '20%', width: '240px', height: '240px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(180,120,255,0.03) 0%, transparent 60%)' }} />
+      <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(254,100,98,0.04) 0%, transparent 55%)', animation: 'spPlanetA 20s ease-in-out infinite', willChange: 'transform' }} />
+      <div style={{ position: 'absolute', bottom: '-50px', left: '12%', width: '260px', height: '260px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(107,142,254,0.035) 0%, transparent 55%)', animation: 'spPlanetB 26s ease-in-out infinite', willChange: 'transform' }} />
+      <div style={{ position: 'absolute', top: '25%', left: '-40px', width: '200px', height: '200px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(148,217,107,0.025) 0%, transparent 55%)', animation: 'spPlanetC 22s ease-in-out infinite', willChange: 'transform' }} />
+      <div style={{ position: 'absolute', top: '55%', right: '20%', width: '160px', height: '160px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(180,120,255,0.02) 0%, transparent 60%)' }} />
 
       {/* ── Stars SVG ───────────────────────────────────────────────────────── */}
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} preserveAspectRatio="xMidYMid slice" viewBox="0 0 1440 700">
