@@ -97,6 +97,12 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
   open: boolean; onClose: () => void; ipadSide: 'left' | 'right'; accent: string;
   steps: DemoStep[]; step: number; onStep: (n: number) => void; ipadContent: React.ReactNode;
 }) {
+  // Lock body scroll when open
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
@@ -153,8 +159,8 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
   );
 
   const ipadPanel = (
-    <div style={{ flex: '0 0 64%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', animation: 'demoIpadIn 0.65s cubic-bezier(0.22,1,0.36,1) 0.05s both' }}>
-      <div style={{ width: '100%', maxWidth: '700px' }}>{ipadContent}</div>
+    <div style={{ flex: '0 0 64%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', animation: 'demoIpadIn 0.55s cubic-bezier(0.22,1,0.36,1) both' }}>
+      <div style={{ width: '100%', maxWidth: '700px', cursor: 'default' }}>{ipadContent}</div>
     </div>
   );
 
@@ -175,7 +181,10 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
           onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
         >✕</button>
       </div>
-      <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', maxWidth: '1380px', margin: '0 auto', padding: '72px 2rem 2rem' }}>
+      <div
+        style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', maxWidth: '1380px', margin: '0 auto', padding: '72px 2rem 2rem' }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {isLeft ? <>{ipadPanel}{textPanel}</> : <>{textPanel}{ipadPanel}</>}
       </div>
       <style>{`
