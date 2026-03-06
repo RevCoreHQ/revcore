@@ -119,7 +119,7 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
   const isLeft = ipadSide === 'left';
 
   const textPanel = (
-    <div style={{ flex: '0 0 36%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '2.5rem 3rem', position: 'relative', zIndex: 10, pointerEvents: 'auto', animation: `${isLeft ? 'demoSlideR' : 'demoSlideL'} 0.55s cubic-bezier(0.22,1,0.36,1) 0.15s both` }}>
+    <div style={{ flex: '0 0 36%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '2.5rem 3rem', position: 'relative', zIndex: 10, pointerEvents: 'auto', animation: 'demoFadeUp 0.5s ease 0.2s both' }}>
       <div key={step} style={{ animation: 'demoStepIn 0.38s cubic-bezier(0.22,1,0.36,1) both' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '100px', background: `${accent}14`, border: `1px solid ${accent}28`, marginBottom: '1.5rem' }}>
           <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: accent }} />
