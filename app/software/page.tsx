@@ -115,6 +115,18 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
     return () => window.removeEventListener('keydown', handler);
   }, [open, step, steps.length, onClose, onStep]);
 
+  const [activityTs, setActivityTs] = useState(0);
+  const handleActivity = () => setActivityTs(Date.now());
+
+  // Autoplay: advance after 5.5s of idle; resets on any user interaction or step change
+  useEffect(() => {
+    if (!open) return;
+    const t = setTimeout(() => {
+      onStep(step < steps.length - 1 ? step + 1 : 0);
+    }, 5500);
+    return () => clearTimeout(t);
+  }, [open, step, activityTs, steps.length, onStep]);
+
   if (!open || typeof document === 'undefined') return null;
   const isLeft = ipadSide === 'left';
 
@@ -147,20 +159,24 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
             {steps.map((_, i) => (
-              <button key={i} onClick={() => onStep(i)} style={{ width: i === step ? '22px' : '6px', height: '6px', borderRadius: '100px', background: i === step ? accent : 'rgba(255,255,255,0.18)', border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.35s cubic-bezier(0.34,1.56,0.64,1)' }} />
+              <button key={i} onClick={() => { onStep(i); handleActivity(); }} style={{ width: i === step ? '22px' : '6px', height: '6px', borderRadius: '100px', background: i === step ? accent : 'rgba(255,255,255,0.18)', border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.35s cubic-bezier(0.34,1.56,0.64,1)' }} />
             ))}
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button onClick={() => step > 0 && onStep(step - 1)} disabled={step === 0} style={{ width: '36px', height: '36px', borderRadius: '50%', background: step === 0 ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', color: step === 0 ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.65)', cursor: step === 0 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s', fontSize: '1rem' }}>←</button>
-            <button onClick={() => step < steps.length - 1 && onStep(step + 1)} disabled={step === steps.length - 1} style={{ width: '36px', height: '36px', borderRadius: '50%', background: step === steps.length - 1 ? 'rgba(255,255,255,0.04)' : `${accent}20`, border: `1px solid ${step === steps.length - 1 ? 'rgba(255,255,255,0.1)' : accent + '40'}`, color: step === steps.length - 1 ? 'rgba(255,255,255,0.18)' : accent, cursor: step === steps.length - 1 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s', fontSize: '1rem' }}>→</button>
+            <button onClick={() => { if (step > 0) { onStep(step - 1); handleActivity(); } }} disabled={step === 0} style={{ width: '36px', height: '36px', borderRadius: '50%', background: step === 0 ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', color: step === 0 ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.65)', cursor: step === 0 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s', fontSize: '1rem' }}>←</button>
+            <button onClick={() => { if (step < steps.length - 1) { onStep(step + 1); handleActivity(); } }} disabled={step === steps.length - 1} style={{ width: '36px', height: '36px', borderRadius: '50%', background: step === steps.length - 1 ? 'rgba(255,255,255,0.04)' : `${accent}20`, border: `1px solid ${step === steps.length - 1 ? 'rgba(255,255,255,0.1)' : accent + '40'}`, color: step === steps.length - 1 ? 'rgba(255,255,255,0.18)' : accent, cursor: step === steps.length - 1 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s', fontSize: '1rem' }}>→</button>
           </div>
+        </div>
+        {/* Autoplay progress bar */}
+        <div style={{ marginTop: '1.25rem', height: '2px', background: 'rgba(255,255,255,0.08)', borderRadius: '100px', overflow: 'hidden' }}>
+          <div key={`${step}-${activityTs}`} style={{ height: '100%', background: accent, borderRadius: '100px', animation: 'autoPlayProgress 5.5s linear forwards', transformOrigin: 'left' }} />
         </div>
       </div>
     </div>
   );
 
   const ipadPanel = (
-    <div style={{ flex: '0 0 64%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem', overflow: 'hidden', animation: 'demoIpadIn 0.55s cubic-bezier(0.22,1,0.36,1) both' }}>
+    <div style={{ flex: '0 0 64%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem', animation: 'demoIpadIn 0.55s cubic-bezier(0.22,1,0.36,1) both' }}>
       <div style={{ width: '100%', maxWidth: '700px', cursor: 'default' }}>{ipadContent}</div>
       {/* Interact hint */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginTop: '1.25rem', padding: '6px 14px', borderRadius: '100px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', animation: 'demoFadeUp 0.5s ease 1.2s both' }}>
@@ -176,6 +192,7 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
   return createPortal(
     <div
       style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', background: 'rgba(4,7,11,0.94)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', animation: 'demoBackdropIn 0.3s ease both' }}
+      onMouseMove={handleActivity}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 28px', animation: 'demoFadeUp 0.4s ease 0.2s both' }}>
@@ -204,6 +221,7 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
         @keyframes demoStepIn { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
         @keyframes demoFadeUp { from { opacity:0; transform:translateY(-8px) } to { opacity:1; transform:translateY(0) } }
         @keyframes demoDot { 0%,100% { opacity:1 } 50% { opacity:0.3 } }
+        @keyframes autoPlayProgress { from { width:0% } to { width:100% } }
       `}</style>
     </div>,
     document.body

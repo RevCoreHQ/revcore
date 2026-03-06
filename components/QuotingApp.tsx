@@ -254,13 +254,13 @@ export default function QuotingApp({ controlledTab }: { controlledTab?: Tab } = 
     <div style={{ background: BG, fontFamily: '-apple-system, "DM Sans", sans-serif', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <StatusBar center="RevCore Quoting" />
       {/* Tab bar */}
-      <div style={{ display: 'flex', background: BG, padding: '2px 6px 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ display: 'flex', background: BG, padding: '2px 0 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             style={{
-              flex: 1, padding: '7px 4px 9px', border: 'none', cursor: 'pointer', background: 'transparent',
+              flex: 1, padding: '7px 2px 9px', border: 'none', cursor: 'pointer', background: 'transparent',
               color: tab === t.id ? ACCENT : 'rgba(255,255,255,0.28)',
               fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px',
               borderBottom: `2px solid ${tab === t.id ? ACCENT : 'transparent'}`,
