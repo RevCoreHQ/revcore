@@ -51,7 +51,7 @@ function LoginScreen({ onLogin }: { onLogin: (name: string) => void }) {
             <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png" alt="RevCore" style={{ height: '38px', width: 'auto', filter: 'brightness(0) invert(1)' }} />
           </div>
           <h1 style={{ color: '#fff', fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.04em', margin: '0 0 0.4rem', lineHeight: 1.1 }}>RevCore<br />Client Portal</h1>
-          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.88rem', margin: 0, letterSpacing: '0.01em' }}>Your resources, tools, and support — all in one place.</p>
+          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.88rem', margin: 0, letterSpacing: '0.01em' }}>Your resources, tools, and support, all in one place.</p>
         </div>
 
         {/* Card */}
@@ -126,8 +126,8 @@ function LoginScreen({ onLogin }: { onLogin: (name: string) => void }) {
 }
 
 // ─── Portal Header ────────────────────────────────────────────────────────────
-function PortalHeader({ name, activeTab, setActiveTab, onLogout }: {
-  name: string; activeTab: Tab; setActiveTab: (t: Tab) => void; onLogout: () => void;
+function PortalHeader({ name, activeTab, setActiveTab, onLogout, highlightTab }: {
+  name: string; activeTab: Tab; setActiveTab: (t: Tab) => void; onLogout: () => void; highlightTab?: Tab | null;
 }) {
   return (
     <header style={{
@@ -145,22 +145,28 @@ function PortalHeader({ name, activeTab, setActiveTab, onLogout }: {
 
       {/* Tab Nav */}
       <nav style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: '2px', overflowX: 'auto' }}>
-        {TABS.map(tab => (
-          <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-            style={{
-              background: activeTab === tab.id ? 'rgba(255,255,255,0.09)' : 'none',
-              border: '1px solid ' + (activeTab === tab.id ? 'rgba(255,255,255,0.13)' : 'transparent'),
-              borderRadius: '8px', cursor: 'pointer', padding: '6px 13px',
-              fontSize: '0.84rem', fontWeight: activeTab === tab.id ? 600 : 500,
-              fontFamily: 'inherit', whiteSpace: 'nowrap', letterSpacing: '-0.01em',
-              color: activeTab === tab.id ? '#fff' : 'rgba(255,255,255,0.42)',
-              transition: 'all 0.18s',
-            }}
-            onMouseEnter={e => { if (activeTab !== tab.id) e.currentTarget.style.color = 'rgba(255,255,255,0.72)'; }}
-            onMouseLeave={e => { if (activeTab !== tab.id) e.currentTarget.style.color = 'rgba(255,255,255,0.42)'; }}>
-            {tab.label}
-          </button>
-        ))}
+        {TABS.map(tab => {
+          const isActive = activeTab === tab.id;
+          const isHighlighted = highlightTab === tab.id;
+          return (
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+              style={{
+                background: isActive ? 'rgba(255,255,255,0.09)' : 'none',
+                border: '1px solid ' + (isActive ? 'rgba(255,255,255,0.13)' : 'transparent'),
+                borderRadius: '8px', cursor: 'pointer', padding: '6px 13px',
+                fontSize: '0.84rem', fontWeight: isActive ? 600 : 500,
+                fontFamily: 'inherit', whiteSpace: 'nowrap', letterSpacing: '-0.01em',
+                color: isActive ? '#fff' : 'rgba(255,255,255,0.42)',
+                transition: 'all 0.18s',
+                boxShadow: isHighlighted ? '0 0 0 2px rgba(254,100,98,0.55)' : 'none',
+                animation: isHighlighted ? 'tabPulse 1.8s ease-in-out infinite' : 'none',
+              }}
+              onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = 'rgba(255,255,255,0.72)'; }}
+              onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = 'rgba(255,255,255,0.42)'; }}>
+              {tab.label}
+            </button>
+          );
+        })}
       </nav>
 
       {/* User + Logout */}
@@ -180,134 +186,206 @@ function PortalHeader({ name, activeTab, setActiveTab, onLogout }: {
           Sign out
         </button>
       </div>
+
+      <style>{`
+        @keyframes tabPulse {
+          0%, 100% { box-shadow: 0 0 0 2px rgba(254,100,98,0.55); }
+          50% { box-shadow: 0 0 0 4px rgba(254,100,98,0.2), 0 0 12px rgba(254,100,98,0.3); }
+        }
+      `}</style>
     </header>
   );
 }
 
-// ─── Onboarding Demo ──────────────────────────────────────────────────────────
-const DEMO_STEPS = [
+// ─── Onboarding Demo (Guided Tour) ────────────────────────────────────────────
+const DEMO_STEPS: Array<{ num: string; label: string; title: string; body: string; tab: Tab }> = [
   {
-    emoji: '🎉',
-    subtitle: "You're officially in.",
-    title: 'Welcome to RevCore!',
-    body: "Congratulations on partnering with RevCore. You've made a great decision — and we're here to make sure every dollar you invest works harder than you'd expect.",
+    num: '01', label: 'Welcome', tab: 'home',
+    title: "You're officially in.",
+    body: "Congratulations on partnering with RevCore. You've made a great decision, and we're committed to making sure every dollar drives real, measurable results for your business. Let us walk you through your portal.",
   },
   {
-    emoji: '🔒',
-    subtitle: 'Built for trades. Proven results.',
-    title: 'Your investment is in expert hands.',
-    body: "We specialize exclusively in roofing, HVAC, plumbing, and home services — campaigns built on real industry data, not guesswork. We've generated thousands of booked jobs for contractors just like you.",
+    num: '02', label: 'Sales Training', tab: 'sales',
+    title: "Close more appointments.",
+    body: "Your Sales Mastery tab has everything you need to win in-home. Watch our best practices walkthrough and use the pre-appointment checklist before every visit. Your close rate depends on what happens before you walk in the door.",
   },
   {
-    emoji: '🗺️',
-    subtitle: 'Everything you need, all in one place.',
-    title: "Here's what's inside your portal.",
-    body: "Dashboard — your home base and launch roadmap\nSales Mastery — training to close more appointments\nIntegrations — connect your accounts to RevCore\nResources — expectations, metrics, and FAQs\nSupport — submit a ticket or book a call anytime",
+    num: '03', label: 'Integrations', tab: 'gmb',
+    title: "Connect your accounts.",
+    body: "The Integrations tab walks you step by step through giving RevCore access to your Google Business Profile, Facebook Ads Manager, and Google Calendar. The sooner we're connected, the sooner your campaign goes live.",
   },
   {
-    emoji: '📋',
-    subtitle: 'Step 1 of your launch.',
-    title: 'Start with your onboarding form.',
-    body: "Before your kickoff call, complete your onboarding form. It covers your service details, starting price, target area, and media prep. This lets us build creatives specific to your business — not generic ad templates.",
+    num: '04', label: 'Resources', tab: 'resources',
+    title: "Know what to expect.",
+    body: "The Resources tab covers your campaign timeline, the metrics we track for you, and answers to the most common questions so you always know where things stand.",
   },
   {
-    emoji: '📞',
-    subtitle: "We're here when you need us.",
-    title: 'Get support anytime.',
-    body: "Have a question? Use the Support tab to submit a ticket or book a complimentary 30-minute call. We respond within a few hours during business hours and you get one support call per week included with your plan.",
+    num: '05', label: 'Support', tab: 'support',
+    title: "We're here when you need us.",
+    body: "Submit a ticket or book a complimentary 30-minute support call directly from the Support tab. We respond within a few hours during business hours, and you get one call per week included with your plan.",
   },
   {
-    emoji: '🚀',
-    subtitle: "Let's get to work.",
-    title: "You're all set.",
-    body: "Your campaign is being built. Your first step is to complete the onboarding form — then we'll schedule your kickoff call. We're excited to drive results for your business.",
+    num: '06', label: 'Get Started', tab: 'home',
+    title: "One thing left to do.",
+    body: "Complete your onboarding form to kick off your campaign. It covers your service details, pricing, target area, and media prep so we can build creatives tailored specifically to your business.",
   },
 ];
 
-function OnboardingDemo({ name, onDone }: { name: string; onDone: () => void }) {
+function OnboardingDemo({ name, onDone, onNavigate }: {
+  name: string;
+  onDone: () => void;
+  onNavigate: (tab: Tab, highlight: Tab | null) => void;
+}) {
   const [step, setStep] = useState(0);
-  const [exiting, setExiting] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [stepKey, setStepKey] = useState(0);
   const total = DEMO_STEPS.length;
   const current = DEMO_STEPS[step];
   const isLast = step === total - 1;
+  const progress = ((step + 1) / total) * 100;
 
-  const next = () => {
-    setExiting(true);
-    setTimeout(() => { setStep(s => s + 1); setExiting(false); }, 200);
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), 60);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    onNavigate(current.tab, current.tab);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
+  const goNext = () => {
+    setStepKey(k => k + 1);
+    setStep(s => s + 1);
   };
 
   const done = () => {
-    localStorage.setItem(DEMO_KEY(name), '1');
-    onDone();
+    setVisible(false);
+    onNavigate('home', null);
+    setTimeout(() => {
+      localStorage.setItem(DEMO_KEY(name), '1');
+      onDone();
+    }, 380);
   };
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'rgba(7,11,15,0.97)', backdropFilter: 'blur(24px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: '2rem', fontFamily: 'DM Sans, sans-serif',
+      position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 500,
+      fontFamily: 'DM Sans, sans-serif', color: '#fff',
+      transform: visible ? 'translateY(0)' : 'translateY(110%)',
+      transition: 'transform 0.45s cubic-bezier(0.16,1,0.3,1)',
     }}>
-      <div style={{ position: 'absolute', top: '15%', left: '50%', transform: 'translateX(-50%)', width: '600px', height: '600px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(254,100,98,0.07) 0%, transparent 60%)', pointerEvents: 'none' }} />
-
-      <div style={{
-        width: '100%', maxWidth: '500px',
-        opacity: exiting ? 0 : 1,
-        transform: exiting ? 'translateY(-10px)' : 'translateY(0)',
-        transition: 'opacity 0.18s ease, transform 0.18s ease',
-      }}>
-        {/* Progress pills */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '5px', marginBottom: '2.5rem' }}>
-          {DEMO_STEPS.map((_, i) => (
-            <div key={i} style={{
-              height: '3px', borderRadius: '4px',
-              width: i === step ? '28px' : '10px',
-              background: i <= step ? '#FE6462' : 'rgba(255,255,255,0.1)',
-              transition: 'all 0.3s ease',
-            }} />
-          ))}
-        </div>
-
-        {/* Card */}
+      {/* Thin progress bar */}
+      <div style={{ height: '2px', background: 'rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' }}>
         <div style={{
-          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '24px', padding: 'clamp(2rem, 5vw, 3rem) clamp(1.5rem, 4vw, 2.5rem)',
-          textAlign: 'center',
-        }}>
-          <div style={{ fontSize: '3.2rem', marginBottom: '1.25rem', lineHeight: 1 }}>{current.emoji}</div>
-          <div style={{ color: '#FE6462', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.65rem' }}>{current.subtitle}</div>
-          <h2 style={{ fontSize: 'clamp(1.4rem, 3vw, 1.9rem)', fontWeight: 800, letterSpacing: '-0.03em', margin: '0 0 1.1rem', lineHeight: 1.2 }}>{current.title}</h2>
-          <p style={{ color: 'rgba(255,255,255,0.52)', fontSize: '0.92rem', lineHeight: 1.75, margin: 0, whiteSpace: 'pre-line', textAlign: 'left' }}>{current.body}</p>
-        </div>
+          position: 'absolute', top: 0, left: 0, height: '100%',
+          width: `${progress}%`,
+          background: 'linear-gradient(90deg, #FE6462 0%, #ff9896 100%)',
+          transition: 'width 0.5s cubic-bezier(0.4,0,0.2,1)',
+          boxShadow: '0 0 8px rgba(254,100,98,0.6)',
+        }} />
+      </div>
 
-        {/* Actions */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem', marginTop: '1.25rem' }}>
-          {isLast ? (
-            <>
-              <Link href="/onboarding"
-                style={{ display: 'block', width: '100%', textAlign: 'center', background: '#FE6462', color: '#fff', border: 'none', borderRadius: '12px', padding: '0.9rem', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', textDecoration: 'none', letterSpacing: '-0.01em', boxSizing: 'border-box' }}
-                onClick={done}>
-                Complete Onboarding Form →
-              </Link>
-              <button onClick={done} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.28)', fontSize: '0.83rem', cursor: 'pointer', fontFamily: 'inherit', padding: '4px 8px' }}>
-                Skip for now
+      {/* Main card */}
+      <div style={{
+        background: 'rgba(10,14,20,0.97)',
+        backdropFilter: 'blur(32px) saturate(1.4)',
+        WebkitBackdropFilter: 'blur(32px) saturate(1.4)',
+        borderTop: '1px solid rgba(255,255,255,0.09)',
+        padding: 'clamp(1.25rem, 2.5vw, 1.75rem) clamp(1.5rem, 5vw, 4rem)',
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(1rem, 3vw, 2.5rem)', flexWrap: 'wrap' }}>
+
+            {/* Step number watermark + content */}
+            <div style={{ flex: 1, minWidth: '260px', display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+              <div style={{
+                fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', fontWeight: 900, lineHeight: 1,
+                color: 'rgba(254,100,98,0.12)', letterSpacing: '-0.05em', flexShrink: 0,
+                marginTop: '-0.1rem', fontVariantNumeric: 'tabular-nums',
+              }}>
+                {current.num}
+              </div>
+              <div key={stepKey} style={{ animation: 'tourStepIn 0.35s cubic-bezier(0.16,1,0.3,1) both' }}>
+                <div style={{
+                  color: '#FE6462', fontSize: '0.68rem', fontWeight: 700,
+                  letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.3rem',
+                }}>
+                  {current.label}
+                </div>
+                <h3 style={{
+                  fontSize: 'clamp(1rem, 2vw, 1.3rem)', fontWeight: 800,
+                  letterSpacing: '-0.03em', margin: '0 0 0.4rem', lineHeight: 1.15, color: '#fff',
+                }}>
+                  {current.title}
+                </h3>
+                <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.86rem', lineHeight: 1.65, margin: 0, maxWidth: '520px' }}>
+                  {current.body}
+                </p>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexShrink: 0 }}>
+              {/* Step dots */}
+              <div style={{ display: 'flex', gap: '5px', marginRight: '0.5rem' }}>
+                {DEMO_STEPS.map((_, i) => (
+                  <div key={i} style={{
+                    width: i === step ? '20px' : '6px', height: '6px', borderRadius: '4px',
+                    background: i <= step ? '#FE6462' : 'rgba(255,255,255,0.12)',
+                    transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)',
+                  }} />
+                ))}
+              </div>
+
+              <button onClick={done}
+                style={{
+                  background: 'none', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '10px', color: 'rgba(255,255,255,0.32)', fontSize: '0.84rem',
+                  padding: '0.65rem 1.15rem', cursor: 'pointer', fontFamily: 'inherit',
+                  transition: 'all 0.18s', whiteSpace: 'nowrap',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.22)'; e.currentTarget.style.color = 'rgba(255,255,255,0.65)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'rgba(255,255,255,0.32)'; }}>
+                Skip tour
               </button>
-            </>
-          ) : (
-            <>
-              <button onClick={next}
-                style={{ width: '100%', background: '#FE6462', color: '#fff', border: 'none', borderRadius: '12px', padding: '0.9rem', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '-0.01em', transition: 'opacity 0.18s' }}
-                onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-                onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-                Next →
-              </button>
-              <button onClick={done} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.22)', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'inherit', padding: '4px 8px' }}>
-                Skip intro
-              </button>
-            </>
-          )}
+
+              {isLast ? (
+                <Link href="/onboarding"
+                  style={{
+                    background: 'linear-gradient(135deg, #FE6462 0%, #e84f4d 100%)',
+                    color: '#fff', borderRadius: '10px', padding: '0.65rem 1.4rem',
+                    fontSize: '0.88rem', fontWeight: 700, textDecoration: 'none',
+                    display: 'inline-block', whiteSpace: 'nowrap',
+                    boxShadow: '0 0 20px rgba(254,100,98,0.35)',
+                  }}
+                  onClick={done}>
+                  Start Onboarding
+                </Link>
+              ) : (
+                <button onClick={goNext}
+                  style={{
+                    background: '#fff', color: '#070b0f', border: 'none',
+                    borderRadius: '10px', padding: '0.65rem 1.4rem',
+                    fontSize: '0.88rem', fontWeight: 700, cursor: 'pointer',
+                    fontFamily: 'inherit', transition: 'opacity 0.18s', whiteSpace: 'nowrap',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.opacity = '0.87'}
+                  onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
+                  Continue
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes tourStepIn {
+          from { opacity: 0; transform: translateX(14px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+      `}</style>
     </div>
   );
 }
@@ -317,6 +395,7 @@ function Dashboard({ name, onLogout }: { name: string; onLogout: () => void }) {
   const [activeTab, setActiveTab] = useState<Tab>('home');
   const [showDemo, setShowDemo] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const [tourHighlight, setTourHighlight] = useState<Tab | null>(null);
 
   useEffect(() => {
     const seen = localStorage.getItem(DEMO_KEY(name));
@@ -329,17 +408,22 @@ function Dashboard({ name, onLogout }: { name: string; onLogout: () => void }) {
     setTimeout(() => { setActiveTab(t); setTransitioning(false); }, 140);
   };
 
+  const handleTourNavigate = (tab: Tab, highlight: Tab | null) => {
+    handleTabChange(tab);
+    setTourHighlight(highlight);
+  };
+
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', fontFamily: 'DM Sans, sans-serif', color: '#fff' }}>
-      {showDemo && <OnboardingDemo name={name} onDone={() => setShowDemo(false)} />}
-      <PortalHeader name={name} activeTab={activeTab} setActiveTab={handleTabChange} onLogout={onLogout} />
+      <PortalHeader name={name} activeTab={activeTab} setActiveTab={handleTabChange} onLogout={onLogout} highlightTab={tourHighlight} />
 
       <main style={{
         maxWidth: '1200px', margin: '0 auto',
         padding: `calc(${PORTAL_HEADER_H}px + clamp(2rem, 4vw, 3rem)) clamp(1.5rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem)`,
+        paddingBottom: showDemo ? 'calc(clamp(2rem, 4vw, 3rem) + 160px)' : 'clamp(2rem, 4vw, 3rem)',
         opacity: transitioning ? 0 : 1,
         transform: transitioning ? 'translateY(5px)' : 'translateY(0)',
-        transition: 'opacity 0.14s ease, transform 0.14s ease',
+        transition: 'opacity 0.14s ease, transform 0.14s ease, padding-bottom 0.45s cubic-bezier(0.16,1,0.3,1)',
       }}>
         {activeTab === 'home' && <HomeDashboard displayName={name} setActiveTab={handleTabChange} />}
         {activeTab === 'sales' && <SalesMastery />}
@@ -347,6 +431,14 @@ function Dashboard({ name, onLogout }: { name: string; onLogout: () => void }) {
         {activeTab === 'resources' && <Resources />}
         {activeTab === 'support' && <SupportSection />}
       </main>
+
+      {showDemo && (
+        <OnboardingDemo
+          name={name}
+          onDone={() => { setShowDemo(false); setTourHighlight(null); }}
+          onNavigate={handleTourNavigate}
+        />
+      )}
 
       <style>{`
         @media (max-width: 600px) { .portal-grid-2 { grid-template-columns: 1fr !important; } }
@@ -381,7 +473,7 @@ function SupportSection() {
       {/* GHL Ticket Form */}
       <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.75rem', marginBottom: '1.5rem' }}>
         <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 0.3rem', letterSpacing: '-0.01em' }}>Submit a Support Ticket</h3>
-        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.84rem', margin: '0 0 1.5rem', lineHeight: 1.5 }}>Report a bug, request a change, or ask a question — we respond within a few hours during business hours.</p>
+        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.84rem', margin: '0 0 1.5rem', lineHeight: 1.5 }}>Report a bug, request a change, or ask a question, and we respond within a few hours during business hours.</p>
         <iframe
           src="https://api.leadconnectorhq.com/widget/form/9epUb2dwOeBwrZkLja00"
           style={{ width: '100%', height: '670px', border: 'none', borderRadius: '3px', display: 'block' }}
@@ -439,7 +531,7 @@ function HomeDashboard({ displayName, setActiveTab }: { displayName: string; set
           Welcome back, {displayName}.
         </h1>
         <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '1rem', margin: 0 }}>
-          Everything you need to get the most out of RevCore — all in one place.
+          Everything you need to get the most out of RevCore, all in one place.
         </p>
       </div>
 
@@ -483,9 +575,9 @@ function HomeDashboard({ displayName, setActiveTab }: { displayName: string; set
         <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 1.5rem', letterSpacing: '-0.02em' }}>Your Launch Roadmap</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
           {[
-            { step: '01', title: 'Complete Onboarding Form', desc: 'Service details, pricing, media prep — the foundation of your campaign.', done: false },
+            { step: '01', title: 'Complete Onboarding Form', desc: 'Service details, pricing, media prep, the foundation of your campaign.', done: false },
             { step: '02', title: 'Kickoff Strategy Call', desc: 'We review your onboarding form and align on campaign strategy, targeting, and creative direction.', done: false },
-            { step: '03', title: 'Creative Production', desc: 'RevCore builds your ad creatives, copy, and landing pages — ready for review within 5–7 days.', done: false },
+            { step: '03', title: 'Creative Production', desc: 'RevCore builds your ad creatives, copy, and landing pages, ready for review within 5 to 7 days.', done: false },
             { step: '04', title: 'Campaign Goes Live', desc: 'Ads launch across your target market. We monitor daily and optimize for cost-per-booked-job.', done: false },
             { step: '05', title: 'Weekly Performance Reviews', desc: 'We send performance updates and continuously optimize to improve results month over month.', done: false },
           ].map((item, i) => (
@@ -519,7 +611,7 @@ function SalesMastery() {
         </div>
         <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.4rem)', fontWeight: 800, letterSpacing: '-0.03em', margin: '0 0 0.5rem', lineHeight: 1.1 }}>Sales Mastery Hub</h1>
         <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '1rem', margin: 0, maxWidth: '560px' }}>
-          Best practices for in-home sales from the RevCore team — built specifically for the trades.
+          Best practices for in-home sales from the RevCore team, built for contractors and home service businesses.
         </p>
       </div>
 
@@ -532,7 +624,7 @@ function SalesMastery() {
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.35rem' }}>In-Home Sales Best Practices</div>
-              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.88rem' }}>Loom video coming soon — your team will be notified when it's ready.</div>
+              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.88rem' }}>Loom video coming soon, your team will be notified when it's ready.</div>
             </div>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(107,142,254,0.12)', border: '1px solid rgba(107,142,254,0.25)', borderRadius: '100px', padding: '5px 14px' }}>
               <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#6B8EFE', animation: 'pulse-dot 2s ease-in-out infinite' }} />
@@ -542,7 +634,7 @@ function SalesMastery() {
         </div>
         <div style={{ padding: '1.25rem 1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>In-Home Sales Best Practices — RevCore Walkthrough</div>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>In-Home Sales Best Practices, RevCore Walkthrough</div>
             <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.82rem', marginTop: '2px' }}>Hosted by RevCore team · Coming soon</div>
           </div>
         </div>
@@ -555,7 +647,7 @@ function SalesMastery() {
           {
             icon: '01', color: '#FE6462',
             title: 'Show Up to Win, Not Just Arrive',
-            tips: ['Arrive 5 min early — never late', 'Dress sharp: clean uniform or business casual', 'Leave your truck/van neat and visible (it\'s a billboard)', 'Bring a printed or digital proposal — not just a verbal quote'],
+            tips: ['Arrive 5 min early, never late', 'Dress sharp: clean uniform or business casual', "Leave your truck/van neat and visible (it's a billboard)", 'Bring a printed or digital proposal, not just a verbal quote'],
           },
           {
             icon: '02', color: '#6B8EFE',
@@ -565,12 +657,12 @@ function SalesMastery() {
           {
             icon: '03', color: '#94D96B',
             title: 'Build Trust, Not Pressure',
-            tips: ['Reference nearby jobs or neighborhoods you\'ve worked in', 'Show before/after photos or videos from past clients', 'Be honest about timelines — don\'t overpromise', 'Answer objections with curiosity, not defense'],
+            tips: ["Reference nearby jobs or neighborhoods you've worked in", 'Show before/after photos or videos from past clients', "Be honest about timelines, don't overpromise", 'Answer objections with curiosity, not defense'],
           },
           {
             icon: '04', color: '#FE6462',
             title: 'Present Value, Not Just Price',
-            tips: ['Break down what\'s included — don\'t just quote a number', 'Anchor high first, then show the right-fit option', 'Explain WHY you\'re priced the way you are (quality, warranty, team)', 'Quantify the risk of doing nothing or going cheap'],
+            tips: ["Break down what's included, don't just quote a number", 'Anchor high first, then show the right-fit option', 'Explain WHY you\'re priced the way you are (quality, warranty, team)', 'Quantify the risk of doing nothing or going cheap'],
           },
           {
             icon: '05', color: '#6B8EFE',
@@ -580,7 +672,7 @@ function SalesMastery() {
           {
             icon: '06', color: '#94D96B',
             title: 'Close With Confidence',
-            tips: ['Ask for the business directly: "Are you ready to move forward?"', 'Offer two options — both say yes, just in different ways', 'Make paperwork easy: digital signing on-site if possible', 'Get a deposit same day whenever possible — buyers remorse kills deals'],
+            tips: ['Ask for the business directly: "Are you ready to move forward?"', 'Offer two options, both say yes in different ways', 'Make paperwork easy: digital signing on-site if possible', 'Get a deposit same day whenever possible, buyers remorse kills deals'],
           },
         ].map((card, i) => (
           <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px', padding: '1.5rem' }}>
@@ -602,18 +694,18 @@ function SalesMastery() {
 
       {/* Appointment Prep Checklist */}
       <div style={{ background: 'rgba(254,100,98,0.05)', border: '1px solid rgba(254,100,98,0.15)', borderRadius: '16px', padding: '1.75rem' }}>
-        <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.4rem', letterSpacing: '-0.02em' }}>Before Every Appointment — Checklist</h2>
+        <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.4rem', letterSpacing: '-0.02em' }}>Before Every Appointment, Checklist</h2>
         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', margin: '0 0 1.25rem' }}>Run through this before you walk in the door.</p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '0.6rem' }}>
           {[
-            'Confirm appointment 1–2 hrs ahead with a text/call',
+            'Confirm appointment 1 to 2 hours ahead with a text/call',
             'Research the property address on Google Maps',
             'Review any notes from the lead source',
             'Have your pricing sheet / proposal ready',
             'Charge your phone & tablet fully',
             'Load before/after photos or videos to show',
             'Have financing options ready to discuss if needed',
-            'Know your schedule — can you start this week?',
+            'Know your schedule, can you start this week?',
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', padding: '0.6rem 0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
               <div style={{ width: '18px', height: '18px', borderRadius: '4px', border: '1.5px solid rgba(254,100,98,0.4)', flexShrink: 0, marginTop: '1px' }} />
@@ -634,7 +726,7 @@ function GoogleSetup() {
     {
       num: '01',
       title: 'Go to your Google Business Profile',
-      detail: 'Visit business.google.com and sign in with the Google account that owns your business listing. Make sure you\'re logged into the correct account — the one where your business is verified.',
+      detail: "Visit business.google.com and sign in with the Google account that owns your business listing. Make sure you're logged into the correct account, the one where your business is verified.",
     },
     {
       num: '02',
@@ -649,13 +741,13 @@ function GoogleSetup() {
     {
       num: '04',
       title: 'Add RevCore as a Manager',
-      detail: 'Click the "Add" button or the blue "+" icon. In the email field, enter: hello@revcorehq.com — then select "Manager" as the access role (not Owner). Click "Invite."',
+      detail: 'Click the "Add" button or the blue "+" icon. In the email field, enter: hello@revcorehq.com, then select "Manager" as the access role (not Owner). Click "Invite."',
       highlight: 'hello@revcorehq.com',
     },
     {
       num: '05',
-      title: 'We\'ll Accept and Get to Work',
-      detail: 'Once you send the invite, we\'ll receive a notification and accept it. After that, RevCore will have access to optimize your profile — updating photos, posts, services, hours, and your Q&A to drive more organic local leads.',
+      title: "We'll Accept and Get to Work",
+      detail: "Once you send the invite, we'll receive a notification and accept it. After that, RevCore will optimize your profile, updating photos, posts, services, hours, and your Q&A to drive more organic local leads.",
     },
   ];
 
@@ -668,7 +760,7 @@ function GoogleSetup() {
         </div>
         <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.4rem)', fontWeight: 800, letterSpacing: '-0.03em', margin: '0 0 0.5rem', lineHeight: 1.1 }}>Google Business Profile Setup</h1>
         <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '1rem', margin: 0, maxWidth: '580px', lineHeight: 1.6 }}>
-          Adding RevCore as a manager to your Google Business Profile lets us optimize your listing for local search — more reviews visibility, better photos, updated services, and local posts that drive calls.
+          Adding RevCore as a manager to your Google Business Profile lets us optimize your listing for local search, more review visibility, better photos, updated services, and local posts that drive calls.
         </p>
       </div>
 
@@ -681,7 +773,7 @@ function GoogleSetup() {
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.35rem' }}>Google Business Profile Walkthrough</div>
-              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.88rem' }}>Step-by-step Loom video — coming soon.</div>
+              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.88rem' }}>Step-by-step Loom video, coming soon.</div>
             </div>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(66,133,244,0.1)', border: '1px solid rgba(66,133,244,0.25)', borderRadius: '100px', padding: '5px 14px' }}>
               <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4285F4', animation: 'pulse-dot 2s ease-in-out infinite' }} />
@@ -700,9 +792,9 @@ function GoogleSetup() {
         <h2 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 1rem', letterSpacing: '-0.01em', color: '#4285F4' }}>Why This Matters for Your Business</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.75rem' }}>
           {[
-            { title: 'More Calls from Local Search', desc: 'An optimized GBP profile ranks higher when locals search for your service.' },
+            { title: 'More Calls from Local Search', desc: "An optimized GBP profile ranks higher when locals search for your service." },
             { title: 'Better Review Management', desc: 'We help you respond to reviews and set up a review request strategy.' },
-            { title: 'Service & Photo Optimization', desc: 'Updated photos and services signal trust and completeness to Google\'s algorithm.' },
+            { title: 'Service & Photo Optimization', desc: "Updated photos and services signal trust and completeness to Google's algorithm." },
             { title: 'Local Posts & Offers', desc: 'Regular posts keep your listing active and show up in Maps results.' },
           ].map((item, i) => (
             <div key={i} style={{ padding: '0.9rem 1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
@@ -742,9 +834,9 @@ function GoogleSetup() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
         </div>
         <div>
-          <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.3rem' }}>Manager access — not Owner</div>
+          <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.3rem' }}>Manager Access, Not Owner</div>
           <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.83rem', lineHeight: 1.5 }}>
-            When you add us, select <strong style={{ color: 'rgba(255,255,255,0.75)' }}>Manager</strong> — not Owner. This gives us everything we need to optimize your profile without transferring ownership of your listing. You stay in full control.
+            When you add us, select <strong style={{ color: 'rgba(255,255,255,0.75)' }}>Manager</strong>, not Owner. This gives us everything we need to optimize your profile without transferring ownership of your listing. You stay in full control.
           </div>
         </div>
       </div>
@@ -772,25 +864,25 @@ function GoogleSetup() {
         </p>
       </div>
 
-      {/* Path 1 — Business Manager */}
+      {/* Path A */}
       <div style={{ background: 'rgba(24,119,242,0.04)', border: '1px solid rgba(24,119,242,0.15)', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.25rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.25rem' }}>
           <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(24,119,242,0.12)', border: '1px solid rgba(24,119,242,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1877F2" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>Path A — Campaign Access via Meta Business Manager</div>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>Path A: Campaign Access via Meta Business Manager</div>
             <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', marginTop: '2px' }}>Recommended if you use Business Manager (business.facebook.com)</div>
           </div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
           {[
-            { num: '01', title: 'Go to Meta Business Manager', detail: 'Visit business.facebook.com and log in with the Facebook account connected to your business. Make sure you\'re in the correct Business Manager account.' },
+            { num: '01', title: 'Go to Meta Business Manager', detail: "Visit business.facebook.com and log in with the Facebook account connected to your business. Make sure you're in the correct Business Manager account." },
             { num: '02', title: 'Open Business Settings', detail: 'In the left sidebar, click "Settings" (or the gear icon), then select "Business Settings." This is the central hub for managing access.' },
-            { num: '03', title: 'Go to Users → People', detail: 'In Business Settings, click "Users" in the left panel, then click "People." This is where you\'ll invite our team.' },
-            { num: '04', title: 'Invite RevCore as an Employee', detail: 'Click "Add," enter hello@revcorehq.com, and set the role to "Employee." Click Next — don\'t assign pages yet, we\'ll do that in the next step.', highlight: 'hello@revcorehq.com' },
+            { num: '03', title: 'Go to Users, then People', detail: "In Business Settings, click \"Users\" in the left panel, then click \"People.\" This is where you'll invite our team." },
+            { num: '04', title: 'Invite RevCore as an Employee', detail: "Click \"Add,\" enter hello@revcorehq.com, and set the role to \"Employee.\" Click Next, don't assign pages yet, we'll do that in the next step.", highlight: 'hello@revcorehq.com' },
             { num: '05', title: 'Assign Ad Account Access', detail: 'After adding the user, select "Ad accounts" from the left panel under "Accounts." Find your ad account, click "Add People," select RevCore, and set the role to "Advertiser."' },
-            { num: '06', title: 'Send the Invite', detail: 'Click "Invite" to finalise. We\'ll receive a notification, accept it, and get to work on your campaigns immediately.' },
+            { num: '06', title: 'Send the Invite', detail: "Click \"Invite\" to finalize. We'll receive a notification, accept it, and get to work on your campaigns immediately." },
           ].map((step: { num: string; title: string; detail: string; highlight?: string }, i: number, arr: { num: string; title: string; detail: string; highlight?: string }[]) => (
             <div key={i} style={{ display: 'flex', gap: '1.25rem', position: 'relative' }}>
               {i < arr.length - 1 && <div style={{ position: 'absolute', left: '19px', top: '44px', height: 'calc(100% - 12px)', width: '1px', background: 'rgba(255,255,255,0.07)' }} />}
@@ -810,24 +902,24 @@ function GoogleSetup() {
         </div>
       </div>
 
-      {/* Path 2 — Ads Manager direct */}
+      {/* Path B */}
       <div style={{ background: 'rgba(24,119,242,0.04)', border: '1px solid rgba(24,119,242,0.15)', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.25rem' }}>
           <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(24,119,242,0.12)', border: '1px solid rgba(24,119,242,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1877F2" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>Path B — Ad Account Access via Ads Manager</div>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>Path B: Ad Account Access via Ads Manager</div>
             <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', marginTop: '2px' }}>Use this if you manage ads directly in Ads Manager without Business Manager</div>
           </div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
           {[
-            { num: '01', title: 'Open Ads Manager', detail: 'Go to adsmanager.facebook.com and make sure you\'re logged into the correct Facebook account that owns the ad account.' },
-            { num: '02', title: 'Go to Ad Account Settings', detail: 'Click the menu icon (≡) in the top left, then navigate to "Ad Account Settings." You can also access this via Settings → Ad Account Settings.' },
-            { num: '03', title: 'Find "Ad Account Roles"', detail: 'Scroll down to the "Ad Account Roles" section. Here you\'ll see a list of people who currently have access to this ad account.' },
+            { num: '01', title: 'Open Ads Manager', detail: "Go to adsmanager.facebook.com and make sure you're logged into the correct Facebook account that owns the ad account." },
+            { num: '02', title: 'Go to Ad Account Settings', detail: 'Click the menu icon in the top left, then navigate to "Ad Account Settings." You can also access this via Settings, then Ad Account Settings.' },
+            { num: '03', title: 'Find "Ad Account Roles"', detail: "Scroll down to the \"Ad Account Roles\" section. Here you'll see a list of people who currently have access to this ad account." },
             { num: '04', title: 'Add RevCore as an Advertiser', detail: 'Click "Add People," type in hello@revcorehq.com, and assign the role "Advertiser." This gives us full campaign management without the ability to modify your payment method.', highlight: 'hello@revcorehq.com' },
-            { num: '05', title: 'Confirm and Save', detail: 'Click "Confirm" to send the request. We\'ll accept and begin building your campaigns.' },
+            { num: '05', title: 'Confirm and Save', detail: "Click \"Confirm\" to send the request. We'll accept and begin building your campaigns." },
           ].map((step: { num: string; title: string; detail: string; highlight?: string }, i: number, arr: { num: string; title: string; detail: string; highlight?: string }[]) => (
             <div key={i} style={{ display: 'flex', gap: '1.25rem', position: 'relative' }}>
               {i < arr.length - 1 && <div style={{ position: 'absolute', left: '19px', top: '44px', height: 'calc(100% - 12px)', width: '1px', background: 'rgba(255,255,255,0.07)' }} />}
@@ -853,14 +945,14 @@ function GoogleSetup() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
         </div>
         <div>
-          <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.3rem' }}>Advertiser role — not Admin</div>
+          <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.3rem' }}>Advertiser Role, Not Admin</div>
           <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.83rem', lineHeight: 1.5 }}>
-            We only need <strong style={{ color: 'rgba(255,255,255,0.75)' }}>Advertiser</strong> access — this lets us create and manage campaigns without touching your billing, payment methods, or account ownership. You stay in full control.
+            We only need <strong style={{ color: 'rgba(255,255,255,0.75)' }}>Advertiser</strong> access, which lets us create and manage campaigns without touching your billing, payment methods, or account ownership. You stay in full control.
           </div>
         </div>
       </div>
 
-      {/* ─── GOOGLE CALENDAR ─── */}
+      {/* GOOGLE CALENDAR */}
       <div style={{ marginBottom: '1rem' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(66,133,244,0.1)', border: '1px solid rgba(66,133,244,0.25)', borderRadius: '100px', padding: '4px 12px', marginBottom: '1rem' }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4285F4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -875,12 +967,12 @@ function GoogleSetup() {
       <div style={{ background: 'rgba(66,133,244,0.04)', border: '1px solid rgba(66,133,244,0.15)', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.25rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
           {[
-            { num: '01', title: 'Open Google Calendar', detail: 'Go to calendar.google.com and sign in with the Google account that holds the calendar you want to share — typically your main business account.' },
-            { num: '02', title: 'Find the Calendar to Share', detail: 'On the left sidebar under "My calendars," hover over the calendar you want to share (e.g. your business calendar). Click the three-dot menu (⋮) that appears.' },
+            { num: '01', title: 'Open Google Calendar', detail: 'Go to calendar.google.com and sign in with the Google account that holds the calendar you want to share, typically your main business account.' },
+            { num: '02', title: 'Find the Calendar to Share', detail: 'On the left sidebar under "My calendars," hover over the calendar you want to share (e.g. your business calendar). Click the three-dot menu that appears.' },
             { num: '03', title: 'Open Settings and Sharing', detail: 'Click "Settings and sharing" from the dropdown menu. This opens the sharing and access settings for that specific calendar.' },
             { num: '04', title: 'Add RevCore Under "Share with specific people"', detail: 'Scroll to the "Share with specific people or groups" section. Click "+ Add people and groups" and enter hello@revcorehq.com.', highlight: 'hello@revcorehq.com' },
-            { num: '05', title: 'Set Permission to "Make changes to events"', detail: 'In the permissions dropdown next to our email, select "Make changes to events." This grants full read/write access — we can create, edit, and delete events on your behalf.' },
-            { num: '06', title: 'Click Send', detail: 'Hit "Send" to share the calendar. We\'ll accept the invite and connect your calendar to your campaign\'s booking workflow so leads can book directly into your schedule.' },
+            { num: '05', title: 'Set Permission to "Make changes to events"', detail: 'In the permissions dropdown next to our email, select "Make changes to events." This grants full read/write access, so we can create, edit, and delete events on your behalf.' },
+            { num: '06', title: 'Click Send', detail: "Hit \"Send\" to share the calendar. We'll accept the invite and connect your calendar to your campaign's booking workflow so leads can book directly into your schedule." },
           ].map((step: { num: string; title: string; detail: string; highlight?: string }, i: number, arr: { num: string; title: string; detail: string; highlight?: string }[]) => (
             <div key={i} style={{ display: 'flex', gap: '1.25rem', position: 'relative' }}>
               {i < arr.length - 1 && <div style={{ position: 'absolute', left: '19px', top: '44px', height: 'calc(100% - 12px)', width: '1px', background: 'rgba(255,255,255,0.07)' }} />}
@@ -906,14 +998,14 @@ function GoogleSetup() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
         </div>
         <div>
-          <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.3rem' }}>Make changes to events — not "Make changes and manage sharing"</div>
+          <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.3rem' }}>Make Changes to Events, Not "Make Changes and Manage Sharing"</div>
           <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.83rem', lineHeight: 1.5 }}>
             Select <strong style={{ color: 'rgba(255,255,255,0.75)' }}>"Make changes to events"</strong> from the dropdown. This gives us full read/write access to manage bookings without allowing us to share your calendar with others or change its settings.
           </div>
         </div>
       </div>
 
-      {/* Final CTA for integrations */}
+      {/* Final CTA */}
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px', padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
         <div>
           <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.25rem' }}>Need help with any of these steps?</div>
@@ -949,10 +1041,10 @@ function Resources() {
         <h2 style={{ fontSize: '1.05rem', fontWeight: 700, margin: '0 0 1.25rem', letterSpacing: '-0.01em' }}>What to Expect From Your Campaign</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {[
-            { period: 'Week 1–2', title: 'Setup & Launch', desc: 'Ad accounts configured, creatives built, audiences dialed in. Your campaign goes live. Expect data collection — not volume yet.' },
-            { period: 'Week 3–4', title: 'Optimization Begins', desc: 'We analyze early data, cut underperforming ads, and scale what\'s working. Lead quality improves week over week.' },
+            { period: 'Weeks 1 and 2', title: 'Setup & Launch', desc: 'Ad accounts configured, creatives built, audiences dialed in. Your campaign goes live. Expect data collection, not volume yet.' },
+            { period: 'Weeks 3 and 4', title: 'Optimization Begins', desc: "We analyze early data, cut underperforming ads, and scale what's working. Lead quality improves week over week." },
             { period: 'Month 2', title: 'Consistency & Volume', desc: 'Campaigns are dialed in. Lead flow becomes more predictable. We continue testing new creative angles to sustain performance.' },
-            { period: 'Month 3+', title: 'Scale & Refinement', desc: 'We have enough data to confidently scale budget toward your best-performing segments. Results compound over time.' },
+            { period: 'Month 3+', title: 'Scale & Refinement', desc: "We have enough data to confidently scale budget toward your best-performing segments. Results compound over time." },
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
               <div style={{ background: 'rgba(254,100,98,0.1)', border: '1px solid rgba(254,100,98,0.2)', borderRadius: '8px', padding: '0.4rem 0.75rem', fontSize: '0.72rem', fontWeight: 700, color: '#FE6462', letterSpacing: '0.04em', whiteSpace: 'nowrap', alignSelf: 'flex-start' }}>{item.period}</div>
@@ -968,14 +1060,14 @@ function Resources() {
       {/* Key Metrics */}
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '1.75rem', marginBottom: '1.5rem' }}>
         <h2 style={{ fontSize: '1.05rem', fontWeight: 700, margin: '0 0 0.4rem', letterSpacing: '-0.01em' }}>Metrics We Track For You</h2>
-        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', margin: '0 0 1.25rem' }}>These are the numbers that actually matter — not vanity metrics.</p>
+        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', margin: '0 0 1.25rem' }}>These are the numbers that actually matter, not vanity metrics.</p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem' }}>
           {[
             { metric: 'Cost Per Lead', desc: 'How much we spend to acquire each inbound inquiry' },
-            { metric: 'Cost Per Booked Job', desc: 'The real number — cost to generate a paying customer' },
+            { metric: 'Cost Per Booked Job', desc: 'The real number, cost to generate a paying customer' },
             { metric: 'Lead-to-Appointment Rate', desc: 'What % of leads actually book an appointment' },
             { metric: 'Appointment-to-Close Rate', desc: 'How well your team converts appointments into sales' },
-            { metric: 'Average Job Value', desc: 'Revenue per closed job — key to calculating true ROI' },
+            { metric: 'Average Job Value', desc: 'Revenue per closed job, key to calculating true ROI' },
             { metric: 'Return on Ad Spend', desc: 'Revenue generated per dollar of ad spend' },
           ].map((item, i) => (
             <div key={i} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
@@ -991,7 +1083,7 @@ function Resources() {
         <h2 style={{ fontSize: '1.05rem', fontWeight: 700, margin: '0 0 1.25rem', letterSpacing: '-0.01em' }}>Common Questions</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {[
-            { q: 'How quickly will I see leads?', a: 'Most campaigns start generating leads within 5–10 days of going live. Volume increases as we optimize over the first 30 days.' },
+            { q: 'How quickly will I see leads?', a: 'Most campaigns start generating leads within 5 to 10 days of going live. Volume increases as we optimize over the first 30 days.' },
             { q: 'What should I do when a lead comes in?', a: 'Respond within 5 minutes. Speed to lead is the single biggest factor in conversion rates. A warm lead goes cold fast.' },
             { q: 'What if the lead quality is low?', a: 'Let us know immediately via email. We use this feedback to tighten targeting and improve lead quality. Don\'t sit on bad data.' },
             { q: 'Can I pause or change my campaign?', a: 'Yes. Reach out to hello@revcorehq.com with any change requests. We generally need 48 hours notice for budget or targeting changes.' },
