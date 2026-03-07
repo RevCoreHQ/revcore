@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import SpaceBackground from '@/components/SpaceBackground';
@@ -18,11 +18,29 @@ import {
 import AnimatedText from '@/components/AnimatedText';
 import SystemDiagram from '@/components/sections/SystemDiagram';
 
+function CountUp({ target, suffix, inView }: { target: number; suffix: string; inView: boolean }) {
+  const [count, setCount] = useState(0);
+  const started = useRef(false);
+  useEffect(() => {
+    if (!inView || started.current) return;
+    started.current = true;
+    const duration = 1600;
+    const start = performance.now();
+    const frame = (now: number) => {
+      const p = Math.min((now - start) / duration, 1);
+      setCount(Math.round((1 - Math.pow(1 - p, 3)) * target));
+      if (p < 1) requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  }, [inView, target]);
+  return <>{count}{suffix}</>;
+}
+
 const stats = [
-  { num: '3x', label: 'Average revenue lift', sub: 'in first 90 days' },
-  { num: '40%', label: 'More quotes closed', sub: 'with our quoting software' },
-  { num: '100%', label: 'Custom-built', sub: 'for your trade & goals' },
-  { num: '1', label: 'Point of contact', sub: 'for your entire growth stack' },
+  { target: 3, suffix: 'x', label: 'Average revenue lift', sub: 'in first 90 days' },
+  { target: 40, suffix: '%', label: 'More quotes closed', sub: 'with our quoting software' },
+  { target: 100, suffix: '%', label: 'Custom-built', sub: 'for your trade & goals' },
+  { target: 1, suffix: '', label: 'Point of contact', sub: 'for your entire growth stack' },
 ];
 
 const pillars = [
@@ -70,6 +88,7 @@ export default function AboutPage() {
   useEffect(() => {
     if (agencyRef.current) {
       agencyRef.current.style.filter = 'brightness(1.2) saturate(1.3)';
+      agencyRef.current.style.backgroundPosition = '0% center';
     }
     const onScroll = () => {
       if (heroImgRef.current) {
@@ -77,9 +96,8 @@ export default function AboutPage() {
       }
       if (agencyRef.current) {
         const progress = Math.min(1, window.scrollY / 700);
-        const brightness = 1.2 + progress * 2.0;
-        const saturate = 1.3 + progress * 1.0;
-        agencyRef.current.style.filter = `brightness(${brightness}) saturate(${saturate})`;
+        agencyRef.current.style.filter = `brightness(${1.2 + progress * 2.0}) saturate(${1.3 + progress * 1.0})`;
+        agencyRef.current.style.backgroundPosition = `${progress * 300}% center`;
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -193,21 +211,26 @@ export default function AboutPage() {
           >
             Not a generalist agency. A revenue firm built exclusively for the trades.
           </AnimatedText>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', marginBottom: '3.5rem', ...fadeUp(hero.inView, 400) }}>
-            <p style={{ fontSize: '1.0625rem', lineHeight: '1.85', color: 'rgba(255,255,255,0.45)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', marginBottom: '3.5rem' }}>
+            <p style={{ fontSize: '1.0625rem', lineHeight: '1.85', color: 'rgba(255,255,255,0.45)', ...slideFromLeft(hero.inView, 350) }}>
               RevCore is not a generalist agency. We don&apos;t take on e-commerce brands, SaaS companies, or restaurants. We do one thing: help home improvement contractors — roofers, remodelers, window companies, pool builders, landscapers, and more — grow their revenue fast, with systems that actually work in the field.
             </p>
-            <p style={{ fontSize: '1.0625rem', lineHeight: '1.85', color: 'rgba(255,255,255,0.45)' }}>
+            <p style={{ fontSize: '1.0625rem', lineHeight: '1.85', color: 'rgba(255,255,255,0.45)', ...slideFromRight(hero.inView, 450) }}>
               Instead of sending you to four different vendors for your CRM, your ads, your software, and your training, we handle all of it. One team. One point of contact. Everything custom-built around your business.
             </p>
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', ...fadeUp(hero.inView, 550) }}>
-            {['Roofing', 'Windows', 'Interior Remodeling', 'General Contracting', 'Stucco & Siding', 'Decks & Patios', 'Pool Contractors', 'Landscaping', '+ More'].map((trade) => (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+            {['Roofing', 'Windows', 'Interior Remodeling', 'General Contracting', 'Stucco & Siding', 'Decks & Patios', 'Pool Contractors', 'Landscaping', '+ More'].map((trade, i) => (
               <span key={trade} style={{
                 padding: '6px 18px', borderRadius: '100px',
                 background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
                 fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)', fontWeight: 500,
-              }}>{trade}</span>
+                cursor: 'default', transition: 'background 0.2s ease, color 0.2s ease, border-color 0.2s ease',
+                ...fadeUp(hero.inView, 550 + i * 45),
+              }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(254,100,98,0.12)'; e.currentTarget.style.borderColor = 'rgba(254,100,98,0.35)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'rgba(255,255,255,0.45)'; }}
+              >{trade}</span>
             ))}
           </div>
         </div>
@@ -224,9 +247,15 @@ export default function AboutPage() {
             {stats.map((s, i) => (
               <div key={s.label} style={{
                 padding: '3rem 2rem', background: '#070b0f', textAlign: 'center',
+                transition: 'background 0.3s ease',
                 ...scaleUp(statsSection.inView, i * 100),
-              }}>
-                <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 'clamp(2.5rem, 4vw, 3.5rem)', fontWeight: 800, color: 'white', lineHeight: 1 }}>{s.num}</div>
+              }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#0d1520'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = '#070b0f'; }}
+              >
+                <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 'clamp(2.5rem, 4vw, 3.5rem)', fontWeight: 800, color: 'white', lineHeight: 1 }}>
+                  <CountUp target={s.target} suffix={s.suffix} inView={statsSection.inView} />
+                </div>
                 <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'rgba(255,255,255,0.6)', margin: '8px 0 4px' }}>{s.label}</div>
                 <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)' }}>{s.sub}</div>
               </div>
@@ -262,12 +291,24 @@ export default function AboutPage() {
               return (
                 <div key={p.number} style={{
                   borderRadius: '20px', background: p.color,
-                  border: `1px solid ${p.accent}18`, padding: '2.5rem',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  border: `1px solid ${p.accent}25`, padding: '2.5rem',
+                  transition: 'transform 0.6s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s ease',
+                  willChange: 'transform',
                   ...anim,
                 }}
-                  onMouseEnter={(e) => { e.currentTarget.style.transform = `${anim.transform ?? ''} translateY(-6px)`; e.currentTarget.style.boxShadow = `0 20px 60px ${p.accent}18`; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.transform = anim.transform ?? ''; e.currentTarget.style.boxShadow = 'none'; }}
+                  onMouseMove={(e) => {
+                    const r = e.currentTarget.getBoundingClientRect();
+                    const x = (e.clientX - r.left) / r.width - 0.5;
+                    const y = (e.clientY - r.top) / r.height - 0.5;
+                    e.currentTarget.style.transition = 'box-shadow 0.15s ease';
+                    e.currentTarget.style.transform = `perspective(900px) rotateX(${-y * 12}deg) rotateY(${x * 12}deg) translateY(-8px) scale(1.02)`;
+                    e.currentTarget.style.boxShadow = `${-x * 20}px ${-y * 20}px 50px ${p.accent}22, 0 24px 60px ${p.accent}15`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s ease';
+                    e.currentTarget.style.transform = '';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
                 >
                   <span style={{ fontSize: '0.68rem', color: p.accent, fontWeight: 700, letterSpacing: '0.1em', display: 'block', marginBottom: '0.75rem' }}>{p.number}</span>
                   <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '1.3rem', fontWeight: 800, color: 'white', lineHeight: 1.15, marginBottom: '0.875rem' }}>{p.title}</h3>
@@ -319,8 +360,10 @@ export default function AboutPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '4px' }}>
                     <div style={{
                       width: '36px', height: '36px', borderRadius: '50%',
-                      background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      flexShrink: 0,
+                      background: '#0A0A0A', border: '2px solid rgba(255,255,255,0.12)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0, position: 'relative',
+                      animation: timelineSection.inView ? `stepPop 0.5s cubic-bezier(0.34,1.56,0.64,1) ${0.1 + i * 0.15}s both` : 'none',
                     }}>
                       <span style={{ color: 'white', fontSize: '0.7rem', fontWeight: 800 }}>{String(i + 1).padStart(2, '0')}</span>
                     </div>
@@ -366,8 +409,16 @@ export default function AboutPage() {
                       { label: 'Paid ads → CRM', color: '#6B8EFE' },
                       { label: 'Follow-up engine → CRM', color: '#FEB64A' },
                       { label: 'Rehash automation → CRM', color: '#FE6462' },
-                    ].map((item) => (
-                      <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', borderRadius: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    ].map((item, i) => (
+                      <div key={item.label} style={{
+                        display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px',
+                        borderRadius: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
+                        transition: 'background 0.25s ease, border-color 0.25s ease',
+                        ...(i % 2 === 0 ? slideFromLeft(crmSection.inView, i * 100) : slideFromRight(crmSection.inView, i * 100)),
+                      }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = `${item.color}30`; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; }}
+                      >
                         <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.color, flexShrink: 0 }} />
                         <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.65)', fontWeight: 500 }}>{item.label}</span>
                       </div>
@@ -413,14 +464,14 @@ export default function AboutPage() {
             #ffffff 0%, #FE6462 20%, #ff9e9d 42%, #ffffff 58%, #FE6462 76%, #ff9e9d 88%, #ffffff 100%
           );
           background-size: 300% auto;
+          background-position: 0% center;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          animation: agencyShimmer 5s linear infinite;
         }
-        @keyframes agencyShimmer {
-          0%   { background-position: 0% center; }
-          100% { background-position: 300% center; }
+        @keyframes stepPop {
+          0%   { transform: scale(0.4); opacity: 0; }
+          100% { transform: scale(1);   opacity: 1; }
         }
         @media (max-width: 768px) {
           .about-grid-2 { grid-template-columns: 1fr !important; }
