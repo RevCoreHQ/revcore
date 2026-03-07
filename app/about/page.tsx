@@ -76,7 +76,7 @@ export default function AboutPage() {
         heroImgRef.current.style.transform = `translateY(${window.scrollY * 0.25}px)`;
       }
       if (agencyRef.current) {
-        const progress = Math.min(1, window.scrollY / 280);
+        const progress = Math.min(1, window.scrollY / 700);
         const brightness = 1.2 + progress * 2.0;
         const saturate = 1.3 + progress * 1.0;
         agencyRef.current.style.filter = `brightness(${brightness}) saturate(${saturate})`;
