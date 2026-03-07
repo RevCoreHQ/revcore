@@ -209,6 +209,11 @@ function ClientModal({ client, partners, onSave, onClose }: { client?: Client; p
         next.nextDue = d.toISOString().slice(0, 10);
       }
     }
+    // When enabling upsell, snapshot current pkg/amount as the originals
+    if (k === 'isUpsold' && v === true && !p.origPkg) {
+      next.origPkg = p.pkg;
+      next.origAmount = p.amount;
+    }
     return next;
   });
   const gr: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' };
@@ -322,12 +327,23 @@ function ClientModal({ client, partners, onSave, onClose }: { client?: Client; p
           This client was upsold to a new package
         </label>
         {f.isUpsold && (
-          <div style={gr}>
-            {field('Original Package', txtInp(f.origPkg || '', v => set('origPkg', v), 'e.g. 15 Appointments'))}
-            {field('Original Amount ($)', numInp(f.origAmount || 0, v => set('origAmount', v)))}
-            {field('Upsell Date', dateInp(f.upsoldAt || '', v => set('upsoldAt', v)))}
-            <div />
-          </div>
+          <>
+            <div style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.3)', marginBottom: '0.75rem' }}>
+              The <strong style={{ color: 'rgba(255,255,255,0.5)' }}>new package</strong> fields update the client&apos;s active package used in all revenue calculations.
+            </div>
+            <div style={{ ...gr, marginBottom: '0.75rem', padding: '0.85rem', background: 'rgba(180,122,255,0.06)', border: '1px solid rgba(180,122,255,0.15)', borderRadius: '12px' }}>
+              <div style={{ gridColumn: '1/-1', fontSize: '0.68rem', fontWeight: 700, color: '#B47AFF', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Original (what they started on)</div>
+              {field('Original Package', txtInp(f.origPkg || '', v => set('origPkg', v), 'e.g. 15 Appointments'))}
+              {field('Original Amount ($)', numInp(f.origAmount || 0, v => set('origAmount', v)))}
+            </div>
+            <div style={{ ...gr, padding: '0.85rem', background: 'rgba(148,217,107,0.06)', border: '1px solid rgba(148,217,107,0.15)', borderRadius: '12px' }}>
+              <div style={{ gridColumn: '1/-1', fontSize: '0.68rem', fontWeight: 700, color: '#94D96B', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>New Package (drives MRR & revenue)</div>
+              {field('New Package', txtInp(f.pkg, v => set('pkg', v), 'e.g. Retainer'))}
+              {field('New Amount ($)', numInp(f.amount, v => set('amount', v)))}
+              {field('New Plan Type', sel(f.planT, v => set('planT', v as PlanT), [['recurring', 'Recurring'], ['one-time', 'One-Time']]))}
+              {field('Upsell Date', dateInp(f.upsoldAt || '', v => set('upsoldAt', v)))}
+            </div>
+          </>
         )}
 
         {section('Status & Notes')}
