@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { supabase, hasSupabase } from '@/lib/supabase';
 
 const PASS  = 'revcore2024';
@@ -1293,14 +1293,22 @@ function SettingsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [tab, setTab] = useState<Tab>('overview');
   const [data, setDataRaw] = useState<AppData>({ partners: [], clients: [], comms: [] });
+  const [syncStatus, setSyncStatus] = useState<'connecting' | 'live' | 'offline'>('connecting');
+  const isSaving = useRef(false);
 
+  // Initial load
   useEffect(() => {
-    const loadLocal = () => { try { const s = localStorage.getItem(STORE); if (s) setDataRaw(JSON.parse(s)); } catch {} };
+    const loadLocal = () => {
+      try { const s = localStorage.getItem(STORE); if (s) setDataRaw(JSON.parse(s)); } catch {}
+      setSyncStatus('offline');
+    };
     if (hasSupabase && supabase) {
       (async () => {
         try {
-          const { data: row } = await supabase!.from('rc_tracker_data').select('value').eq('key', 'appData').single();
-          if (row?.value) setDataRaw(row.value as AppData); else loadLocal();
+          const { data: row, error } = await supabase!.from('rc_tracker_data').select('value').eq('key', 'appData').single();
+          if (error || !row?.value) { loadLocal(); return; }
+          setDataRaw(row.value as AppData);
+          setSyncStatus('live');
         } catch { loadLocal(); }
       })();
     } else {
@@ -1308,11 +1316,32 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     }
   }, []);
 
+  // Realtime subscription — push remote changes to all connected clients
+  useEffect(() => {
+    if (!hasSupabase || !supabase) return;
+    const channel = supabase
+      .channel('tracker-realtime')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rc_tracker_data', filter: 'key=eq.appData' },
+        (payload) => {
+          // Ignore updates we triggered ourselves
+          if (isSaving.current) return;
+          const incoming = (payload.new as { value: AppData }).value;
+          if (incoming) { setDataRaw(incoming); try { localStorage.setItem(STORE, JSON.stringify(incoming)); } catch {} }
+        })
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') setSyncStatus('live');
+        if (status === 'CLOSED' || status === 'CHANNEL_ERROR') setSyncStatus('offline');
+      });
+    return () => { supabase!.removeChannel(channel); };
+  }, []);
+
   const setData = (d: AppData) => {
     setDataRaw(d);
     try { localStorage.setItem(STORE, JSON.stringify(d)); } catch {}
     if (hasSupabase && supabase) {
-      supabase.from('rc_tracker_data').upsert({ key: 'appData', value: d }, { onConflict: 'key' }).then(() => {});
+      isSaving.current = true;
+      supabase.from('rc_tracker_data').upsert({ key: 'appData', value: d }, { onConflict: 'key' })
+        .then(() => { setTimeout(() => { isSaving.current = false; }, 500); });
     }
   };
 
@@ -1333,6 +1362,13 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
       {/* Floating sign-out */}
       <div style={{ position: 'fixed', top: '20px', right: '24px', zIndex: 200, display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {/* Sync status indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '100px', padding: '3px 10px', backdropFilter: 'blur(8px)' }}>
+          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: syncStatus === 'live' ? '#94D96B' : syncStatus === 'offline' ? '#F59E0B' : '#6B8EFE', boxShadow: syncStatus === 'live' ? '0 0 6px #94D96B' : 'none', animation: syncStatus === 'connecting' ? 'starPulse 1.2s ease infinite' : 'none' }} />
+          <span style={{ fontSize: '0.68rem', fontWeight: 600, color: syncStatus === 'live' ? '#94D96B' : syncStatus === 'offline' ? '#F59E0B' : '#6B8EFE' }}>
+            {syncStatus === 'live' ? 'Live' : syncStatus === 'offline' ? 'Offline' : 'Connecting…'}
+          </span>
+        </div>
         {pendingCount > 0 && (
           <div style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '100px', padding: '3px 12px', fontSize: '0.73rem', fontWeight: 700, color: '#F59E0B', backdropFilter: 'blur(8px)' }}>
             {pendingCount} pending
