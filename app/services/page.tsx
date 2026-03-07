@@ -128,7 +128,7 @@ export default function ServicesPage() {
             style={{
               position: 'absolute', inset: '-10% 0',
               backgroundImage: 'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac7965b003fa52d21b8088.png)',
-              backgroundSize: 'cover', backgroundPosition: '50% 20%',
+              backgroundSize: 'cover', backgroundPosition: '50% 5%',
               willChange: 'transform',
             }}
           />
@@ -258,13 +258,13 @@ export default function ServicesPage() {
               <div
                 key={service.id}
                 style={{
-                  width: 'clamp(480px, 72vw, 880px)',
-                  height: 'calc(100vh - 120px)',
+                  width: 'clamp(360px, 48vw, 640px)',
+                  height: 'min(calc(100vh - 160px), 680px)',
                   flexShrink: 0,
                   borderRadius: '20px',
                   background: `linear-gradient(145deg, ${service.accent}09 0%, #0d1117 55%, #070b0f 100%)`,
                   border: `1px solid ${activeCard === i ? service.accent + '35' : service.accent + '15'}`,
-                  padding: '3.5rem',
+                  padding: '2.5rem',
                   position: 'relative',
                   overflow: 'hidden',
                   display: 'flex',
@@ -300,14 +300,14 @@ export default function ServicesPage() {
                   </p>
                   <h2 style={{
                     fontFamily: 'DM Sans, sans-serif', fontWeight: 800,
-                    fontSize: 'clamp(2rem, 3.5vw, 3.25rem)', color: 'white',
-                    lineHeight: 1.05, letterSpacing: '-0.03em', marginBottom: '1.75rem',
+                    fontSize: 'clamp(1.5rem, 2.4vw, 2.25rem)', color: 'white',
+                    lineHeight: 1.05, letterSpacing: '-0.03em', marginBottom: '1.25rem',
                   }}>
                     {service.title}
                   </h2>
                   <p style={{
-                    color: 'rgba(255,255,255,0.45)', lineHeight: '1.8',
-                    fontSize: '0.9375rem', maxWidth: '560px',
+                    color: 'rgba(255,255,255,0.45)', lineHeight: '1.75',
+                    fontSize: '0.875rem', maxWidth: '480px',
                   }}>
                     {service.description}
                   </p>
