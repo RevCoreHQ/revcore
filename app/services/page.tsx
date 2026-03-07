@@ -128,7 +128,7 @@ export default function ServicesPage() {
             style={{
               position: 'absolute', inset: '-10% 0',
               backgroundImage: 'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac7965b003fa52d21b8088.png)',
-              backgroundSize: 'cover', backgroundPosition: '50% 5%',
+              backgroundSize: 'cover', backgroundPosition: '50% 0%',
               willChange: 'transform',
             }}
           />
