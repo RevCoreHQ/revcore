@@ -5,7 +5,7 @@ import { supabase, hasSupabase } from '@/lib/supabase';
 const PASS  = 'revcore2024';
 const STORE = 'rcTrackerV1';
 
-type Tab       = 'overview' | 'clients' | 'services' | 'team' | 'calendar' | 'settings';
+type Tab       = 'overview' | 'clients' | 'services' | 'analytics' | 'team' | 'calendar' | 'settings';
 type Stage     = 'onboarding' | 'balance-pending' | 'active' | 'at-risk' | 'paused' | 'churned';
 type PlanT     = 'recurring' | 'one-time';
 type InitCommT = 'pct' | 'fixed' | 'none';
@@ -26,6 +26,7 @@ interface Client {
   depPaid: boolean; balPaid: boolean;
   stage: Stage; payStat: PayStat; ghlId: string; notes: string; at: string;
   isUpsold?: boolean; origPkg?: string; origAmount?: number; upsoldAt?: string;
+  apptTotal?: number; apptDelivered?: number;
 }
 interface Commission {
   id: string; clientId: string; partnerId: string; role: 'setter' | 'closer';
@@ -33,7 +34,9 @@ interface Commission {
   due: string; paid: string; stat: CommStat; notes: string;
 }
 interface ServicePkg { id: string; name: string; price: number; planT: PlanT; description: string; }
-interface AppData { partners: Partner[]; clients: Client[]; comms: Commission[]; packages: ServicePkg[]; }
+interface Activity { id: string; clientId: string; type: 'call' | 'email' | 'note' | 'payment' | 'issue'; note: string; at: string; }
+interface MonthlyGoal { month: string; revenueTarget: number; newClientsTarget: number; }
+interface AppData { partners: Partner[]; clients: Client[]; comms: Commission[]; packages: ServicePkg[]; activities: Activity[]; goals: MonthlyGoal[]; }
 
 const PPA_MONTHLY = 2000; // estimated monthly revenue per PPA client
 const monthlyVal = (c: Client) => c.pkg.toLowerCase().includes('ppa') ? PPA_MONTHLY : c.amount;
@@ -360,6 +363,24 @@ function ClientModal({ client, partners, packages, onSave, onClose }: { client?:
               {field('Upsell Date', dateInp(f.upsoldAt || '', v => set('upsoldAt', v)))}
             </div>
           </>
+        )}
+
+        {section('Appointment Tracking')}
+        <div style={{ marginBottom: '0.5rem', fontSize: '0.73rem', color: 'rgba(255,255,255,0.3)' }}>For appointment-based packages — track delivery progress.</div>
+        <div style={gr}>
+          {field('Appointments Contracted', numInp(f.apptTotal || 0, v => set('apptTotal', v)))}
+          {field('Appointments Delivered', numInp(f.apptDelivered || 0, v => set('apptDelivered', v)))}
+        </div>
+        {(f.apptTotal || 0) > 0 && (
+          <div style={{ marginBottom: '0.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+              <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)' }}>Progress</span>
+              <span style={{ fontSize: '0.72rem', color: '#fff', fontWeight: 700 }}>{f.apptDelivered || 0} / {f.apptTotal}</span>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '6px', height: '6px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${Math.min(100, ((f.apptDelivered || 0) / (f.apptTotal || 1)) * 100)}%`, background: '#26D9B0', borderRadius: '6px' }} />
+            </div>
+          </div>
         )}
 
         {section('Status & Notes')}
@@ -728,7 +749,7 @@ function RevenueChart({ data }: { data: AppData }) {
 }
 
 /* ─── Overview tab ────────────────────────────────────────────────────────── */
-function OverviewTab({ data }: { data: AppData }) {
+function OverviewTab({ data, setData }: { data: AppData; setData: (d: AppData) => void }) {
   const [drill, setDrill] = useState<{ title: string; subtitle: string; content: React.ReactNode } | null>(null);
 
   // Retainer MRR: only true recurring clients that are active (exclude at-risk / paused / churned)
@@ -828,30 +849,346 @@ function OverviewTab({ data }: { data: AppData }) {
           )}
         </div>
       </div>
+
+      {/* Goals + Renewal Reminders */}
+      {(() => {
+        const thisMonth = today().slice(0, 7);
+        const goal = (data.goals ?? []).find(g => g.month === thisMonth);
+        const revProgress = goal ? Math.min(100, (totalMonthly / goal.revenueTarget) * 100) : 0;
+        const newProgress = goal ? Math.min(100, (newThisMonth.length / goal.newClientsTarget) * 100) : 0;
+        const in30 = new Date(); in30.setDate(in30.getDate() + 30);
+        const renewals = data.clients.filter(c => {
+          if (!c.nextDue || c.stage === 'churned' || c.stage === 'paused') return false;
+          const d = new Date(c.nextDue); return d >= new Date() && d <= in30;
+        }).sort((a, b) => a.nextDue.localeCompare(b.nextDue));
+        return (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.25rem' }}>
+            {/* Goals */}
+            <div style={{ ...glassCard, animation: 'cardReveal 0.5s cubic-bezier(0.16,1,0.3,1) 0.52s both' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem', letterSpacing: '-0.01em' }}>Monthly Goals</div>
+                <button onClick={() => {
+                  const rev = prompt('Revenue target ($):', goal ? String(goal.revenueTarget) : '');
+                  const nc  = prompt('New clients target:', goal ? String(goal.newClientsTarget) : '');
+                  if (!rev) return;
+                  const updated = (data.goals ?? []).filter(g => g.month !== thisMonth);
+                  setData({ ...data, goals: [...updated, { month: thisMonth, revenueTarget: parseFloat(rev) || 0, newClientsTarget: parseInt(nc || '0') || 0 }] });
+                }} style={{ ...btn('ghost'), padding: '4px 12px', fontSize: '0.73rem' }}>
+                  {goal ? 'Edit' : 'Set Goals'}
+                </button>
+              </div>
+              {!goal ? (
+                <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem', textAlign: 'center', padding: '1.5rem 0' }}>No goals set for this month yet.</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>Revenue</span>
+                      <span style={{ fontSize: '0.78rem', color: '#fff', fontWeight: 700 }}>{fmtM(totalMonthly)} / {fmtM(goal.revenueTarget)}</span>
+                    </div>
+                    <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '6px', height: '8px', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: `${revProgress}%`, background: revProgress >= 100 ? '#94D96B' : '#6B8EFE', borderRadius: '6px', transition: 'width 0.8s cubic-bezier(0.16,1,0.3,1)' }} />
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: revProgress >= 100 ? '#94D96B' : 'rgba(255,255,255,0.3)', marginTop: '4px' }}>{revProgress >= 100 ? '✓ Goal reached!' : `${revProgress.toFixed(0)}% — ${fmtM(goal.revenueTarget - totalMonthly)} to go`}</div>
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>New Clients</span>
+                      <span style={{ fontSize: '0.78rem', color: '#fff', fontWeight: 700 }}>{newThisMonth.length} / {goal.newClientsTarget}</span>
+                    </div>
+                    <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '6px', height: '8px', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: `${newProgress}%`, background: newProgress >= 100 ? '#94D96B' : '#26D9B0', borderRadius: '6px', transition: 'width 0.8s cubic-bezier(0.16,1,0.3,1)' }} />
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: newProgress >= 100 ? '#94D96B' : 'rgba(255,255,255,0.3)', marginTop: '4px' }}>{newProgress >= 100 ? '✓ Goal reached!' : `${newProgress.toFixed(0)}% — ${goal.newClientsTarget - newThisMonth.length} more to go`}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Renewal Reminders */}
+            <div style={{ ...glassCard, animation: 'cardReveal 0.5s cubic-bezier(0.16,1,0.3,1) 0.56s both' }}>
+              <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem', marginBottom: '1.25rem', letterSpacing: '-0.01em' }}>
+                Renewals Next 30 Days <span style={{ fontSize: '0.75rem', fontWeight: 600, color: renewals.length > 0 ? '#F59E0B' : '#94D96B', marginLeft: '6px' }}>{renewals.length} due</span>
+              </div>
+              {renewals.length === 0 ? (
+                <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem', textAlign: 'center', padding: '1.5rem 0' }}>No renewals in the next 30 days.</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {renewals.map(c => {
+                    const daysOut = Math.round((new Date(c.nextDue).getTime() - new Date().getTime()) / 86400000);
+                    const urgent = daysOut <= 7;
+                    return (
+                      <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.6rem 0.75rem', borderRadius: '8px', background: urgent ? 'rgba(245,158,11,0.08)' : 'rgba(255,255,255,0.03)', border: `1px solid ${urgent ? 'rgba(245,158,11,0.2)' : 'rgba(255,255,255,0.05)'}` }}>
+                        <div>
+                          <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.83rem' }}>{c.company || c.name}</div>
+                          <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)' }}>{fmtM(monthlyVal(c))}/mo · due {fmtD(c.nextDue)}</div>
+                        </div>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 700, color: urgent ? '#F59E0B' : 'rgba(255,255,255,0.4)' }}>{daysOut === 0 ? 'Today' : `${daysOut}d`}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
 
-function PipeCard({ c, color, partnerName, onEdit, PAY_STAT: PS }: { c: Client; color: string; partnerName: (id: string) => string; onEdit: (c: Client) => void; PAY_STAT: Record<PayStat, { label: string; color: string }> }) {
+function PipeCard({ c, color, partnerName, onEdit, onLog, onInvoice, PAY_STAT: PS }: { c: Client; color: string; partnerName: (id: string) => string; onEdit: (c: Client) => void; onLog: (c: Client) => void; onInvoice: (c: Client) => void; PAY_STAT: Record<PayStat, { label: string; color: string }> }) {
   const [hov, setHov] = useState(false);
   return (
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      onClick={() => onEdit(c)}
-      style={{ background: hov ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.04)', border: `1px solid ${hov ? color + '55' : 'rgba(255,255,255,0.07)'}`, borderRadius: '12px', padding: '0.85rem', cursor: 'pointer', transition: 'all 0.18s', transform: hov ? 'translateY(-2px)' : 'none', boxShadow: hov ? '0 6px 20px rgba(0,0,0,0.35)' : 'none' }}>
-      <div style={{ fontWeight: 700, fontSize: '0.83rem', color: '#fff', marginBottom: '2px', lineHeight: 1.2 }}>{c.company || c.name}</div>
-      {c.company && <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '6px' }}>{c.name}</div>}
-      <div style={{ fontSize: '0.82rem', fontWeight: 800, color, marginBottom: '6px' }}>{fmtM(c.amount)}{c.planT === 'recurring' && <span style={{ fontSize: '0.65rem', fontWeight: 400, color: 'rgba(255,255,255,0.3)' }}>/mo</span>}</div>
-      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-        {c.payStat !== 'current' && <span style={badge(PS[c.payStat].color)}>{PS[c.payStat].label}</span>}
-        {!c.depPaid && <span style={badge('#F59E0B')}>Dep. Pending</span>}
-        {c.depPaid && !c.balPaid && c.bal > 0 && <span style={badge('#26D9B0')}>Bal. {fmtM(c.bal)}</span>}
-        {c.isUpsold && <span style={badge('#B47AFF')}>↑ Upsell</span>}
+      style={{ background: hov ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.04)', border: `1px solid ${hov ? color + '55' : 'rgba(255,255,255,0.07)'}`, borderRadius: '12px', padding: '0.85rem', transition: 'all 0.18s', transform: hov ? 'translateY(-2px)' : 'none', boxShadow: hov ? '0 6px 20px rgba(0,0,0,0.35)' : 'none' }}>
+      <div onClick={() => onEdit(c)} style={{ cursor: 'pointer' }}>
+        <div style={{ fontWeight: 700, fontSize: '0.83rem', color: '#fff', marginBottom: '2px', lineHeight: 1.2 }}>{c.company || c.name}</div>
+        {c.company && <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '6px' }}>{c.name}</div>}
+        <div style={{ fontSize: '0.82rem', fontWeight: 800, color, marginBottom: '6px' }}>{fmtM(c.amount)}{c.planT === 'recurring' && <span style={{ fontSize: '0.65rem', fontWeight: 400, color: 'rgba(255,255,255,0.3)' }}>/mo</span>}</div>
+        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+          {c.payStat !== 'current' && <span style={badge(PS[c.payStat].color)}>{PS[c.payStat].label}</span>}
+          {!c.depPaid && <span style={badge('#F59E0B')}>Dep. Pending</span>}
+          {c.depPaid && !c.balPaid && c.bal > 0 && <span style={badge('#26D9B0')}>Bal. {fmtM(c.bal)}</span>}
+          {c.isUpsold && <span style={badge('#B47AFF')}>↑ Upsell</span>}
+        </div>
+        {(c.apptTotal || 0) > 0 && (
+          <div style={{ marginTop: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
+              <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Appts</span>
+              <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>{c.apptDelivered || 0}/{c.apptTotal}</span>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '4px', height: '4px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${Math.min(100, ((c.apptDelivered || 0) / (c.apptTotal || 1)) * 100)}%`, background: '#26D9B0', borderRadius: '4px' }} />
+            </div>
+          </div>
+        )}
+        {(c.setterId || c.closerId) && (
+          <div style={{ marginTop: '6px', fontSize: '0.68rem', color: 'rgba(255,255,255,0.28)', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '6px' }}>
+            {c.setterId && <span>Set: {partnerName(c.setterId)}</span>}
+            {c.setterId && c.closerId && <span style={{ margin: '0 4px' }}>·</span>}
+            {c.closerId && <span>Close: {partnerName(c.closerId)}</span>}
+          </div>
+        )}
       </div>
-      {(c.setterId || c.closerId) && (
-        <div style={{ marginTop: '6px', fontSize: '0.68rem', color: 'rgba(255,255,255,0.28)', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '6px' }}>
-          {c.setterId && <span>Set: {partnerName(c.setterId)}</span>}
-          {c.setterId && c.closerId && <span style={{ margin: '0 4px' }}>·</span>}
-          {c.closerId && <span>Close: {partnerName(c.closerId)}</span>}
+      {hov && (
+        <div style={{ display: 'flex', gap: '4px', marginTop: '8px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '8px' }} onClick={e => e.stopPropagation()}>
+          <button onClick={() => onLog(c)} style={{ ...btn('ghost'), padding: '3px 8px', fontSize: '0.68rem', flex: 1 }}>Log</button>
+          <button onClick={() => onInvoice(c)} style={{ ...btn('ghost'), padding: '3px 8px', fontSize: '0.68rem', flex: 1 }}>Invoice</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Analytics Tab ────────────────────────────────────────────────────────────
+function AnalyticsTab({ data }: { data: AppData }) {
+  const [section, setSection] = useState<'leaderboard' | 'churn' | 'cashflow' | 'revenue'>('leaderboard');
+
+  const partners = data.partners;
+  const clients  = data.clients;
+  const comms    = data.comms;
+
+  /* ── Leaderboard ── */
+  const leaderboard = useMemo(() => partners.map(p => {
+    const closed     = clients.filter(c => c.closerId === p.id);
+    const set        = clients.filter(c => c.setterId === p.id);
+    const myComms    = comms.filter(c => c.partnerId === p.id);
+    const earned     = myComms.reduce((s, c) => s + c.amount, 0);
+    const paid       = myComms.filter(c => c.stat === 'paid').reduce((s, c) => s + c.amount, 0);
+    const closedRev  = closed.reduce((s, c) => s + monthlyVal(c), 0);
+    const upsells    = closed.filter(c => c.isUpsold).length;
+    return { p, closed: closed.length, set: set.length, closedRev, earned, paid, upsells };
+  }).sort((a, b) => b.closedRev - a.closedRev), [partners, clients, comms]);
+
+  /* ── Churn Analysis ── */
+  const churned = clients.filter(c => c.stage === 'churned');
+  const active  = clients.filter(c => !['churned','paused'].includes(c.stage));
+  const churnRate = clients.length > 0 ? (churned.length / clients.length * 100).toFixed(1) : '0';
+  const avgLifespan = churned.length > 0 ? (() => {
+    const days = churned.map(c => {
+      const s = c.start || c.at; if (!s) return 0;
+      return Math.round((new Date().getTime() - new Date(s).getTime()) / 86400000);
+    });
+    return Math.round(days.reduce((a, b) => a + b, 0) / days.length);
+  })() : 0;
+  const lostMRR = churned.reduce((s, c) => s + monthlyVal(c), 0);
+  const churnByCloser = partners.map(p => ({
+    name: p.name,
+    churned: churned.filter(c => c.closerId === p.id).length,
+    total: clients.filter(c => c.closerId === p.id).length,
+  })).filter(x => x.total > 0);
+
+  /* ── Cash Flow Forecast (next 90 days) ── */
+  const cashflow = useMemo(() => {
+    const months: { label: string; month: string; expected: number; clients: Client[] }[] = [];
+    for (let i = 0; i < 3; i++) {
+      const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + i);
+      const m = d.toISOString().slice(0, 7);
+      const label = d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+      const due = active.filter(c => c.nextDue && c.nextDue.startsWith(m));
+      const expected = due.reduce((s, c) => s + monthlyVal(c), 0)
+        + active.filter(c => !c.depPaid && (c.nextDue || '').startsWith(m)).reduce((s, c) => s + c.deposit, 0)
+        + active.filter(c => c.depPaid && !c.balPaid && c.bal > 0 && (c.nextDue || '').startsWith(m)).reduce((s, c) => s + c.bal, 0);
+      months.push({ label, month: m, expected, clients: due });
+    }
+    return months;
+  }, [active]);
+
+  /* ── Revenue per Client ── */
+  const revenuePerClient = useMemo(() => clients.map(c => {
+    const start = c.start || c.at;
+    const monthsActive = start ? Math.max(1, Math.round((new Date().getTime() - new Date(start).getTime()) / (30.44 * 86400000))) : 1;
+    const collected = (c.depPaid ? c.deposit : 0) + (c.balPaid ? c.bal : 0) + (!c.isSplit ? (c.stage !== 'onboarding' ? c.amount : 0) : 0);
+    const estimated = monthlyVal(c) * (c.stage === 'churned' ? monthsActive : monthsActive);
+    return { c, monthsActive, collected, estimated };
+  }).sort((a, b) => b.estimated - a.estimated), [clients]);
+
+  const secBtn = (id: typeof section, label: string) => (
+    <button key={id} onClick={() => setSection(id)} style={{ padding: '7px 18px', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600, background: section === id ? 'rgba(255,255,255,0.12)' : 'transparent', color: section === id ? '#fff' : 'rgba(255,255,255,0.4)', transition: 'all 0.15s' }}>{label}</button>
+  );
+
+  return (
+    <div>
+      <div style={{ marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
+        <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.2rem', letterSpacing: '-0.03em' }}>Analytics</h2>
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>Performance, churn, and revenue insights</p>
+      </div>
+
+      <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.06)', borderRadius: '12px', padding: '4px', marginBottom: '1.75rem', width: 'fit-content' }}>
+        {secBtn('leaderboard', 'Leaderboard')}
+        {secBtn('churn', 'Churn Analysis')}
+        {secBtn('cashflow', 'Cash Flow')}
+        {secBtn('revenue', 'Revenue per Client')}
+      </div>
+
+      {/* ── Leaderboard ── */}
+      {section === 'leaderboard' && (
+        <div>
+          {leaderboard.length === 0 ? <p style={{ color: 'rgba(255,255,255,0.3)' }}>No team members yet.</p> : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {leaderboard.map((row, i) => (
+                <div key={row.p.id} style={{ ...glassCard, padding: '1.25rem 1.5rem', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr 1fr', gap: '1rem', alignItems: 'center', animation: `cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 0.05}s both` }}>
+                  <div>
+                    <div style={{ fontWeight: 800, color: '#fff', fontSize: '0.95rem' }}>{row.p.name}</div>
+                    <div style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.35)', marginTop: '2px' }}>{row.p.role}</div>
+                  </div>
+                  <div><div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', marginBottom: '2px' }}>CLOSED</div><div style={{ fontWeight: 800, color: '#94D96B', fontSize: '1.1rem' }}>{row.closed}</div></div>
+                  <div><div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', marginBottom: '2px' }}>SET</div><div style={{ fontWeight: 800, color: '#6B8EFE', fontSize: '1.1rem' }}>{row.set}</div></div>
+                  <div><div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', marginBottom: '2px' }}>REV CLOSED</div><div style={{ fontWeight: 800, color: '#fff', fontSize: '1rem' }}>{fmtM(row.closedRev)}</div></div>
+                  <div><div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', marginBottom: '2px' }}>EARNED</div><div style={{ fontWeight: 800, color: '#F59E0B', fontSize: '1rem' }}>{fmtM(row.earned)}</div></div>
+                  <div><div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', marginBottom: '2px' }}>UPSELLS</div><div style={{ fontWeight: 800, color: '#B47AFF', fontSize: '1.1rem' }}>{row.upsells}</div></div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Churn Analysis ── */}
+      {section === 'churn' && (
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+            {[
+              { label: 'Churn Rate', value: `${churnRate}%`, color: '#FE6462' },
+              { label: 'Churned Clients', value: churned.length, color: '#FE6462' },
+              { label: 'Lost MRR', value: fmtM(lostMRR), color: '#FE6462' },
+              { label: 'Avg Lifespan', value: avgLifespan > 0 ? `${avgLifespan}d` : '—', color: '#F59E0B' },
+            ].map(({ label, value, color }) => (
+              <div key={label} style={{ ...glassCard, borderLeft: `3px solid ${color}`, padding: '1rem 1.25rem' }}>
+                <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600, marginBottom: '0.3rem' }}>{label}</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 800, color }}>{value}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={glassCard}>
+              <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)', fontWeight: 700, color: '#fff', fontSize: '0.88rem' }}>Churned Clients</div>
+              {churned.length === 0 ? <div style={{ padding: '1.5rem', color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem' }}>No churned clients.</div> : churned.map(c => (
+                <div key={c.id} style={{ padding: '0.85rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div><div style={{ fontWeight: 700, color: '#fff', fontSize: '0.85rem' }}>{c.company || c.name}</div><div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)' }}>Started {fmtD(c.start || c.at)}</div></div>
+                  <div style={{ fontWeight: 800, color: '#FE6462', fontSize: '0.9rem' }}>{fmtM(monthlyVal(c))}</div>
+                </div>
+              ))}
+            </div>
+            <div style={glassCard}>
+              <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)', fontWeight: 700, color: '#fff', fontSize: '0.88rem' }}>Churn by Closer</div>
+              {churnByCloser.length === 0 ? <div style={{ padding: '1.5rem', color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem' }}>No data yet.</div> : churnByCloser.map(row => (
+                <div key={row.name} style={{ padding: '0.85rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ fontWeight: 700, color: '#fff', fontSize: '0.85rem' }}>{row.name}</span>
+                    <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>{row.churned}/{row.total} churned</span>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '4px', height: '6px', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${(row.churned / row.total) * 100}%`, background: '#FE6462', borderRadius: '4px', transition: 'width 0.6s' }} />
+                  </div>
+                </div>
+              ))}
+              <div style={{ padding: '0.85rem 1.25rem', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>Active clients: {active.length} · Total revenue at risk: {fmtM(active.reduce((s, c) => s + monthlyVal(c), 0))}/mo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Cash Flow Forecast ── */}
+      {section === 'cashflow' && (
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+            {cashflow.map((m, i) => (
+              <div key={m.month} style={{ ...glassCard, borderLeft: `3px solid ${i === 0 ? '#94D96B' : i === 1 ? '#6B8EFE' : '#B47AFF'}`, padding: '1.25rem 1.5rem', animation: `cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 0.1}s both` }}>
+                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{m.label}</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', marginBottom: '0.3rem' }}>{fmtM(m.expected)}</div>
+                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>{m.clients.length} renewal{m.clients.length !== 1 ? 's' : ''} due</div>
+                {m.clients.length > 0 && (
+                  <div style={{ marginTop: '0.85rem', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '0.85rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {m.clients.map(c => (
+                      <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
+                        <span style={{ color: 'rgba(255,255,255,0.6)' }}>{c.company || c.name}</span>
+                        <span style={{ color: '#fff', fontWeight: 700 }}>{fmtM(monthlyVal(c))}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <div style={{ ...glassCard, padding: '1.25rem 1.5rem' }}>
+            <div style={{ fontWeight: 700, color: '#fff', marginBottom: '0.75rem', fontSize: '0.9rem' }}>Outstanding Balances</div>
+            {active.filter(c => !c.depPaid || (!c.balPaid && c.bal > 0)).length === 0
+              ? <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem' }}>No outstanding balances.</div>
+              : active.filter(c => !c.depPaid || (!c.balPaid && c.bal > 0)).map(c => (
+                <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '0.83rem' }}>
+                  <span style={{ color: '#fff', fontWeight: 600 }}>{c.company || c.name}</span>
+                  <span style={{ color: '#F59E0B', fontWeight: 700 }}>{fmtM((!c.depPaid ? c.deposit : 0) + (!c.balPaid && c.bal > 0 ? c.bal : 0))} owed</span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      )}
+
+      {/* ── Revenue per Client ── */}
+      {section === 'revenue' && (
+        <div style={{ ...glassCard, padding: 0, overflow: 'hidden' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>{['Client', 'Package', 'Monthly Value', 'Months Active', 'Est. Total Revenue', 'Stage'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {revenuePerClient.map(({ c, monthsActive, estimated }) => (
+                <tr key={c.id} style={{ transition: 'background 0.15s' }} onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')} onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                  <td style={tdStyle}><div style={{ fontWeight: 700, color: '#fff' }}>{c.name}</div>{c.company && <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)' }}>{c.company}</div>}</td>
+                  <td style={tdStyle}><div style={{ fontSize: '0.83rem', color: 'rgba(255,255,255,0.7)' }}>{c.pkg || '—'}</div></td>
+                  <td style={tdStyle}><div style={{ fontWeight: 800, color: '#94D96B' }}>{fmtM(monthlyVal(c))}</div></td>
+                  <td style={tdStyle}><div style={{ color: 'rgba(255,255,255,0.7)' }}>{monthsActive} mo</div></td>
+                  <td style={tdStyle}><div style={{ fontWeight: 800, color: '#fff' }}>{fmtM(estimated)}</div></td>
+                  <td style={tdStyle}><span style={badge(STAGES[c.stage].color)}>{STAGES[c.stage].label}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
@@ -944,6 +1281,89 @@ function ServicesTab({ data, setData }: { data: AppData; setData: (d: AppData) =
   );
 }
 
+// ─── Activity Log Panel ───────────────────────────────────────────────────────
+const ACTIVITY_ICONS: Record<Activity['type'], string> = { call: '📞', email: '✉️', note: '📝', payment: '💰', issue: '⚠️' };
+function ActivityLog({ clientId, data, setData, onClose }: { clientId: string; data: AppData; setData: (d: AppData) => void; onClose: () => void }) {
+  const [note, setNote] = useState('');
+  const [type, setType] = useState<Activity['type']>('note');
+  const acts = (data.activities ?? []).filter(a => a.clientId === clientId).sort((a, b) => b.at.localeCompare(a.at));
+  const add = () => {
+    if (!note.trim()) return;
+    const act: Activity = { id: uid(), clientId, type, note: note.trim(), at: new Date().toISOString() };
+    setData({ ...data, activities: [...(data.activities ?? []), act] });
+    setNote('');
+  };
+  const del = (id: string) => setData({ ...data, activities: (data.activities ?? []).filter(a => a.id !== id) });
+  return (
+    <DrillPanel title="Activity Log" subtitle="Notes, calls, emails for this client" onClose={onClose}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '1rem' }}>
+        <select value={type} onChange={e => setType(e.target.value as Activity['type'])} style={{ ...inp, width: 'auto', cursor: 'pointer', flexShrink: 0 }}>
+          {(['note','call','email','payment','issue'] as Activity['type'][]).map(t => <option key={t} value={t}>{ACTIVITY_ICONS[t]} {t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
+        </select>
+        <input value={note} onChange={e => setNote(e.target.value)} onKeyDown={e => e.key === 'Enter' && add()} placeholder="Add a note…" style={{ ...inp, flex: 1 }} />
+        <button onClick={add} style={{ ...btn('primary'), flexShrink: 0 }}>Add</button>
+      </div>
+      {acts.length === 0 ? <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem', textAlign: 'center', padding: '2rem 0' }}>No activity logged yet.</div> : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {acts.map(a => (
+            <div key={a.id} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px', padding: '0.75rem 1rem', display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+              <span style={{ fontSize: '1rem', flexShrink: 0 }}>{ACTIVITY_ICONS[a.type]}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ color: '#fff', fontSize: '0.85rem', lineHeight: 1.4 }}>{a.note}</div>
+                <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', marginTop: '4px' }}>{new Date(a.at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })}</div>
+              </div>
+              <button onClick={() => del(a.id)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.2)', cursor: 'pointer', fontSize: '1rem', padding: 0, flexShrink: 0 }}>×</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </DrillPanel>
+  );
+}
+
+// ─── Invoice Modal ────────────────────────────────────────────────────────────
+function InvoiceModal({ client, onClose }: { client: Client; onClose: () => void }) {
+  const invNum = `INV-${client.id.slice(0, 6).toUpperCase()}`;
+  const issueDate = today();
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1100, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '2rem', overflowY: 'auto', backdropFilter: 'blur(6px)' }}>
+      <div style={{ width: '100%', maxWidth: '640px', background: '#fff', borderRadius: '16px', padding: '3rem', color: '#111', marginTop: '40px', boxShadow: '0 40px 80px rgba(0,0,0,0.6)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
+          <div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#FE6462', letterSpacing: '-0.03em' }}>REVCORE</div>
+            <div style={{ fontSize: '0.78rem', color: '#888', marginTop: '4px' }}>Invoice #{invNum}</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '0.78rem', color: '#888' }}>Issue Date</div>
+            <div style={{ fontWeight: 700 }}>{fmtD(issueDate)}</div>
+            {client.nextDue && <><div style={{ fontSize: '0.78rem', color: '#888', marginTop: '4px' }}>Due Date</div><div style={{ fontWeight: 700 }}>{fmtD(client.nextDue)}</div></>}
+          </div>
+        </div>
+        <div style={{ borderTop: '2px solid #f0f0f0', borderBottom: '2px solid #f0f0f0', padding: '1.5rem 0', marginBottom: '1.5rem' }}>
+          <div style={{ fontSize: '0.7rem', color: '#888', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '0.4rem' }}>BILLED TO</div>
+          <div style={{ fontWeight: 800, fontSize: '1rem' }}>{client.name}</div>
+          {client.company && <div style={{ color: '#555' }}>{client.company}</div>}
+        </div>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '1.5rem' }}>
+          <thead><tr style={{ borderBottom: '1px solid #eee' }}>{['Description', 'Type', 'Amount'].map(h => <th key={h} style={{ textAlign: h === 'Amount' ? 'right' : 'left', padding: '8px 0', fontSize: '0.72rem', color: '#888', fontWeight: 700, letterSpacing: '0.06em' }}>{h}</th>)}</tr></thead>
+          <tbody>
+            <tr><td style={{ padding: '12px 0', fontWeight: 600 }}>{client.pkg || 'Services'}</td><td style={{ padding: '12px 0', color: '#666' }}>{client.planT === 'recurring' ? 'Monthly Retainer' : 'One-Time'}</td><td style={{ padding: '12px 0', textAlign: 'right', fontWeight: 800, fontSize: '1.1rem' }}>{fmtM(monthlyVal(client))}</td></tr>
+          </tbody>
+        </table>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '3rem', paddingTop: '1rem', borderTop: '2px solid #111' }}>
+          <div style={{ fontSize: '0.85rem', color: '#888' }}>Total Due</div>
+          <div style={{ fontWeight: 900, fontSize: '1.4rem' }}>{fmtM(monthlyVal(client))}</div>
+        </div>
+        {client.notes && <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#f8f8f8', borderRadius: '8px', fontSize: '0.8rem', color: '#555' }}><strong>Notes:</strong> {client.notes}</div>}
+        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '2rem' }}>
+          <button onClick={onClose} style={{ padding: '8px 20px', borderRadius: '8px', border: '1px solid #ddd', background: '#fff', cursor: 'pointer', fontWeight: 600 }}>Close</button>
+          <button onClick={() => window.print()} style={{ padding: '8px 20px', borderRadius: '8px', border: 'none', background: '#111', color: '#fff', cursor: 'pointer', fontWeight: 700 }}>Print / Save PDF</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Clients Tab ──────────────────────────────────────────────────────────────
 function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: AppData) => void; partners: Partner[] }) {
   const [search, setSearch] = useState('');
@@ -954,6 +1374,8 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
   const [view, setView] = useState<'pipeline' | 'table'>('pipeline');
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOverStage, setDragOverStage] = useState<Stage | null>(null);
+  const [activityClient, setActivityClient] = useState<Client | null>(null);
+  const [invoiceClient, setInvoiceClient] = useState<Client | null>(null);
 
   const filtered = useMemo(() => data.clients.filter(c => {
     const q = search.toLowerCase();
@@ -1073,7 +1495,7 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
                         onDragStart={e => { e.dataTransfer.effectAllowed = 'move'; setDragId(c.id); }}
                         onDragEnd={() => { setDragId(null); setDragOverStage(null); }}
                         style={{ opacity: dragId === c.id ? 0.4 : 1, transition: 'opacity 0.15s', cursor: 'grab' }}>
-                        <PipeCard c={c} color={color} partnerName={partnerName} onEdit={setModal} PAY_STAT={PAY_STAT} />
+                        <PipeCard c={c} color={color} partnerName={partnerName} onEdit={setModal} onLog={setActivityClient} onInvoice={setInvoiceClient} PAY_STAT={PAY_STAT} />
                       </div>
                     ))}
                   </div>
@@ -1118,6 +1540,8 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
                       <td style={tdStyle}>
                         <div style={{ display: 'flex', gap: '6px' }}>
                           <button onClick={() => setModal(c)} style={{ ...btn('ghost'), padding: '4px 10px' }}>Edit</button>
+                          <button onClick={() => setActivityClient(c)} style={{ ...btn('ghost'), padding: '4px 10px' }}>Log</button>
+                          <button onClick={() => setInvoiceClient(c)} style={{ ...btn('ghost'), padding: '4px 10px' }}>Invoice</button>
                           <button onClick={() => setDelId(c.id)} style={{ ...btn('danger'), padding: '4px 10px' }}>Del</button>
                           {c.ghlId && <a href={`https://app.gohighlevel.com/contacts/${c.ghlId}`} target="_blank" rel="noreferrer" style={{ ...btn('ghost'), padding: '4px 10px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', fontSize: '0.75rem' }}>GHL ↗</a>}
                         </div>
@@ -1145,6 +1569,8 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
       )}
 
       {modal && <ClientModal client={modal === 'add' ? undefined : modal} partners={partners} packages={data.packages ?? []} onSave={saveClient} onClose={() => setModal(null)} />}
+      {activityClient && <ActivityLog clientId={activityClient.id} data={data} setData={setData} onClose={() => setActivityClient(null)} />}
+      {invoiceClient && <InvoiceModal client={invoiceClient} onClose={() => setInvoiceClient(null)} />}
     </div>
   );
 }
@@ -1391,6 +1817,40 @@ function PayoutsTab({ data, setData, partners }: { data: AppData; setData: (d: A
         </div>
         <button onClick={() => setAddModal(true)} style={btn('ghost')}>+ Add Commission</button>
       </div>
+
+      {/* Commission Ledger — per partner */}
+      {partners.length > 0 && (
+        <div style={{ ...glassCard, marginBottom: '1.5rem', padding: 0, overflow: 'hidden' }}>
+          <div style={{ padding: '0.85rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)', fontWeight: 700, color: '#fff', fontSize: '0.88rem', letterSpacing: '-0.01em' }}>Commission Ledger</div>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead><tr>{['Team Member', 'Role', 'Total Earned', 'Paid Out', 'Outstanding', 'Action'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
+            <tbody>
+              {partners.map(p => {
+                const myComms  = data.comms.filter(c => c.partnerId === p.id);
+                const earned   = myComms.reduce((s, c) => s + c.amount, 0);
+                const paid     = myComms.filter(c => c.stat === 'paid').reduce((s, c) => s + c.amount, 0);
+                const owed     = earned - paid;
+                return (
+                  <tr key={p.id} onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')} onMouseLeave={e => (e.currentTarget.style.background = 'transparent')} style={{ transition: 'background 0.15s' }}>
+                    <td style={tdStyle}><div style={{ fontWeight: 700, color: '#fff' }}>{p.name}</div></td>
+                    <td style={tdStyle}><span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', textTransform: 'capitalize' }}>{p.role}</span></td>
+                    <td style={tdStyle}><div style={{ fontWeight: 700, color: '#fff' }}>{fmtM(earned)}</div></td>
+                    <td style={tdStyle}><div style={{ fontWeight: 700, color: '#94D96B' }}>{fmtM(paid)}</div></td>
+                    <td style={tdStyle}><div style={{ fontWeight: 800, color: owed > 0 ? '#F59E0B' : '#94D96B' }}>{fmtM(owed)}</div></td>
+                    <td style={tdStyle}>
+                      {owed > 0 && (
+                        <button onClick={() => {
+                          setData({ ...data, comms: data.comms.map(c => c.partnerId === p.id && c.stat === 'pending' ? { ...c, stat: 'paid', paid: today() } : c) });
+                        }} style={{ ...btn('success'), padding: '4px 12px', fontSize: '0.75rem' }}>Mark All Paid</button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.85rem', marginBottom: '1.5rem' }}>
         {[
@@ -1644,7 +2104,7 @@ function SettingsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [tab, setTab] = useState<Tab>('overview');
-  const [data, setDataRaw] = useState<AppData>({ partners: [], clients: [], comms: [], packages: [] });
+  const [data, setDataRaw] = useState<AppData>({ partners: [], clients: [], comms: [], packages: [], activities: [], goals: [] });
   const [syncStatus, setSyncStatus] = useState<'connecting' | 'live' | 'offline'>('connecting');
   const isSaving = useRef(false);
 
@@ -1701,6 +2161,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     { id: 'overview',  label: 'Overview' },
     { id: 'clients',   label: 'Clients' },
     { id: 'services',  label: 'Services' },
+    { id: 'analytics', label: 'Analytics' },
     { id: 'team',      label: 'Team & Payouts' },
     { id: 'calendar',  label: 'Calendar' },
     { id: 'settings',  label: 'Settings' },
@@ -1741,9 +2202,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       </div>
 
       <main style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 4vw, 3rem)', position: 'relative', zIndex: 1 }}>
-        {tab === 'overview'  && <OverviewTab  data={data} />}
+        {tab === 'overview'  && <OverviewTab  data={data} setData={setData} />}
         {tab === 'clients'   && <ClientsTab   data={data} setData={setData} partners={data.partners} />}
-        {tab === 'services'  && <ServicesTab  data={data} setData={setData} />}
+        {tab === 'services'  && <ServicesTab   data={data} setData={setData} />}
+        {tab === 'analytics' && <AnalyticsTab  data={data} />}
         {tab === 'team'      &&<><TeamTab data={data} setData={setData} /><div style={{ marginTop: '2.5rem' }}><PayoutsTab data={data} setData={setData} partners={data.partners} /></div></>}
         {tab === 'calendar'  && <CalendarTab  data={data} />}
         {tab === 'settings'  && <SettingsTab  data={data} setData={setData} />}
