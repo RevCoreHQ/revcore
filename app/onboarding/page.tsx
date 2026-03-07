@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { CheckCircle, ArrowRight, FolderOpen, Camera, AlertCircle } from 'lucide-react';
+import Link from 'next/link';
 import SpaceBackground from '@/components/SpaceBackground';
 
 const WEBHOOK_URL = 'https://hooks.zapier.com/hooks/catch/25618535/uwiidgu/';
@@ -211,12 +212,14 @@ export default function OnboardingPage() {
         }}>
           <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <img
-                src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png"
-                alt="RevCore"
-                style={{ height: '22px', width: 'auto', filter: 'brightness(0) invert(1)' }}
-              />
-              <span style={{ fontWeight: 700, fontSize: '1rem', color: 'white', letterSpacing: '-0.01em' }}>RevCore</span>
+              <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+                <img
+                  src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png"
+                  alt="RevCore"
+                  style={{ height: '22px', width: 'auto', filter: 'brightness(0) invert(1)' }}
+                />
+                <span style={{ fontWeight: 700, fontSize: '1rem', color: 'white', letterSpacing: '-0.01em' }}>RevCore</span>
+              </Link>
               <span style={{
                 background: 'rgba(148,217,107,0.12)', color: '#94D96B',
                 fontSize: '0.62rem', fontWeight: 700,
