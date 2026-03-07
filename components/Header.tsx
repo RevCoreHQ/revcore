@@ -26,7 +26,6 @@ const navLinks = [
       { label: 'Presentation Software', href: '/software#presentation' },
     ],
   },
-  { label: 'Results', href: '/portfolio' },
   { label: 'About', href: '/about' },
   { label: 'Blog', href: '/blog' },
   { label: 'Client Portal', href: '/portal' },
