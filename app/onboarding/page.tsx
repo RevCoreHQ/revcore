@@ -259,12 +259,12 @@ export default function OnboardingPage() {
               lineHeight: 1.08, letterSpacing: '-0.04em', marginBottom: '1.1rem',
             }}>
               <span style={{
-                background: 'linear-gradient(270deg, #ffffff 0%, #ffcfce 20%, #ffffff 40%, #d0dcff 65%, #ffffff 85%, #ffcfce 100%)',
+                background: 'linear-gradient(90deg, #ffffff 0%, #eddeff 18%, #cfd9ff 38%, #ffffff 55%, #ffd8d7 75%, #eddeff 90%, #ffffff 100%)',
                 backgroundSize: '300% auto',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
-                animation: 'titleGlow 8s ease infinite',
+                animation: 'titleGlow 10s linear infinite',
                 display: 'inline',
               }}>
                 Welcome to RevCore.
@@ -670,8 +670,7 @@ export default function OnboardingPage() {
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes titleGlow {
           0%   { background-position: 0% center; }
-          50%  { background-position: 150% center; }
-          100% { background-position: 0% center; }
+          100% { background-position: 300% center; }
         }
         .container { padding: 0 clamp(1.25rem, 4vw, 2rem); margin: 0 auto; }
         @media (max-width: 700px) {
