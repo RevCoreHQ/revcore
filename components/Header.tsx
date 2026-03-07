@@ -39,6 +39,8 @@ export default function Header() {
   const isTracker = pathname?.startsWith('/tracker');
   const isPortal  = pathname?.startsWith('/portal');
 
+  if (isTracker || isPortal) return null;
+
   return (
     <header style={{
       position: 'fixed',
