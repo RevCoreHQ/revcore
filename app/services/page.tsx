@@ -172,9 +172,11 @@ export default function ServicesPage() {
             <span style={{
               fontFamily: 'DM Sans, sans-serif', fontWeight: 800,
               fontSize: 'clamp(2.25rem, 6.5vw, 5rem)', lineHeight: 0.95, letterSpacing: '-0.04em',
-              background: 'linear-gradient(118deg, rgba(13,3,5,0.82) 0%, rgba(92,15,15,0.72) 28%, rgba(181,32,32,0.60) 52%, rgba(122,16,16,0.72) 72%, rgba(26,4,6,0.82) 100%)',
+              background: 'linear-gradient(118deg, #ffffff 0%, #FE6462 22%, #ff9e9d 45%, #ffffff 60%, #FE6462 78%, #ff9e9d 90%, #ffffff 100%)',
+              backgroundSize: '300% auto',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               display: 'block', marginTop: '0.1em',
+              animation: 'doBestShimmer 5s linear infinite',
             }}>do best.</span>
           </div>
         </div>
@@ -265,6 +267,10 @@ export default function ServicesPage() {
       </section>
 
       <style>{`
+        @keyframes doBestShimmer {
+          0%   { background-position: 0% center; }
+          100% { background-position: 300% center; }
+        }
         @media (max-width: 768px) {
           h1 { white-space: normal !important; font-size: clamp(2rem, 10vw, 3rem) !important; }
           div[style*="grid-template-columns: 1fr 1.4fr"],
