@@ -106,14 +106,123 @@ const stages = [
   },
 ];
 
+function ServiceCard({ service }: { service: (typeof services)[0] }) {
+  const [mx, setMx] = useState(0);
+  const [my, setMy] = useState(0);
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      onMouseMove={(e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        setMx(e.clientX - r.left);
+        setMy(e.clientY - r.top);
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        borderRadius: '20px',
+        background: `radial-gradient(380px at ${mx}px ${my}px, ${service.accent}${hovered ? '1a' : '00'} 0%, transparent 65%), ${service.color}`,
+        border: `1px solid ${hovered ? service.accent + '45' : 'rgba(255,255,255,0.07)'}`,
+        padding: '2rem 2.25rem 2.25rem',
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '300px',
+        cursor: 'pointer',
+        position: 'relative',
+        overflow: 'hidden',
+        transition: 'border-color 0.25s ease, box-shadow 0.3s ease, transform 0.4s cubic-bezier(0.22,1,0.36,1)',
+        transform: hovered ? 'translateY(-6px)' : 'translateY(0)',
+        boxShadow: hovered
+          ? `0 0 0 1px ${service.accent}28, 0 28px 70px rgba(0,0,0,0.5), 0 8px 24px ${service.accent}18`
+          : '0 2px 16px rgba(0,0,0,0.25)',
+      }}
+    >
+      {/* Top accent shimmer */}
+      <div style={{
+        position: 'absolute', top: 0, left: '8%', right: '8%', height: '1px',
+        background: `linear-gradient(90deg, transparent, ${service.accent}80, transparent)`,
+        opacity: hovered ? 1 : 0.35,
+        transition: 'opacity 0.3s ease',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Watermark number */}
+      <div style={{
+        position: 'absolute', bottom: '-14px', right: '1.25rem',
+        fontSize: '7.5rem', fontWeight: 900, color: `${service.accent}08`,
+        lineHeight: 1, userSelect: 'none', pointerEvents: 'none',
+        letterSpacing: '-0.05em',
+      }}>
+        {service.number}
+      </div>
+
+      {/* Header row */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.75rem' }}>
+        <span style={{
+          fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.14em',
+          color: `${service.accent}70`, textTransform: 'uppercase',
+        }}>
+          {service.number}
+        </span>
+        <div style={{
+          width: '34px', height: '34px', borderRadius: '50%',
+          border: `1px solid ${hovered ? service.accent + '55' : service.accent + '25'}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: service.accent,
+          background: hovered ? `${service.accent}15` : 'transparent',
+          transition: 'all 0.25s ease',
+          transform: hovered ? 'rotate(-45deg)' : 'rotate(0deg)',
+          flexShrink: 0,
+        }}>
+          <ArrowRight size={13} />
+        </div>
+      </div>
+
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+        <h3 style={{
+          fontSize: '1.28rem', fontWeight: 700, color: 'white',
+          marginBottom: '0.6rem', lineHeight: 1.2, letterSpacing: '-0.02em',
+        }}>
+          {service.title}
+        </h3>
+        <p style={{
+          fontSize: '0.84rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.65,
+          marginBottom: hovered ? '1rem' : '0',
+          transition: 'margin 0.25s ease',
+        }}>
+          {hovered ? service.description : service.short}
+        </p>
+        <div style={{
+          display: 'flex', flexWrap: 'wrap', gap: '5px',
+          maxHeight: hovered ? '80px' : '0',
+          overflow: 'hidden',
+          transition: 'max-height 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.25s ease',
+          opacity: hovered ? 1 : 0,
+        }}>
+          {service.tags.map((tag) => (
+            <span key={tag} style={{
+              padding: '3px 10px', borderRadius: '100px',
+              background: `${service.accent}10`, color: `${service.accent}bb`,
+              fontSize: '0.68rem', fontWeight: 600,
+              border: `1px solid ${service.accent}22`,
+            }}>
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Services() {
-  const [hovered, setHovered] = useState<number | null>(null);
   const { ref: headerRef, inView: headerIn } = useScrollReveal();
   const { ref: cardsRef, inView: cardsIn } = useScrollReveal({ threshold: 0.05 });
   const { ref: diagramRef, inView: diagramIn } = useScrollReveal({ threshold: 0.1 });
 
   return (
-    <section style={{ padding: '120px 0', background: 'var(--color-bg)' }}>
+    <section style={{ padding: '120px 0', background: '#070b0f' }}>
       <div className="container">
         <div
           ref={headerRef as React.Ref<HTMLDivElement>}
@@ -139,74 +248,13 @@ export default function Services() {
         </div>
 
         {/* Service cards */}
-        <div ref={cardsRef as React.Ref<HTMLDivElement>} style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>
+        <div
+          ref={cardsRef as React.Ref<HTMLDivElement>}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}
+        >
           {services.map((service, i) => (
-            <div
-              key={service.number}
-              onMouseEnter={() => setHovered(i)}
-              onMouseLeave={() => setHovered(null)}
-              style={{
-                borderRadius: '20px',
-                background: service.color,
-                padding: '2.25rem',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                cursor: 'pointer',
-                minHeight: '280px',
-                ...scaleUp(cardsIn, i * 130),
-                ...(cardsIn && {
-                  transition: `opacity 0.9s cubic-bezier(0.22,1,0.36,1) ${i * 130}ms, transform 0.9s cubic-bezier(0.22,1,0.36,1) ${i * 130}ms, box-shadow 0.3s ease`,
-                  transform: hovered === i ? 'translateY(-8px) scale(1)' : 'translateY(0) scale(1)',
-                  boxShadow: hovered === i ? '0 24px 60px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.12)',
-                }),
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', fontWeight: 600, letterSpacing: '0.1em' }}>
-                  {service.number}
-                </span>
-                <div style={{
-                  width: '36px', height: '36px', borderRadius: '50%',
-                  border: `1px solid ${service.accent}55`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: service.accent,
-                  background: hovered === i ? `${service.accent}22` : 'transparent',
-                  transition: 'background 0.2s',
-                }}>
-                  <ArrowRight size={14} />
-                </div>
-              </div>
-
-              <div>
-                <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '1.3rem', fontWeight: 700, color: 'white', marginBottom: '0.6rem', lineHeight: 1.2 }}>
-                  {service.title}
-                </h3>
-                <p style={{
-                  fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', lineHeight: '1.65',
-                  overflow: 'hidden', transition: 'max-height 0.4s ease',
-                  maxHeight: hovered === i ? '160px' : '48px',
-                }}>
-                  {hovered === i ? service.description : service.short}
-                </p>
-                <div style={{
-                  display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '1rem',
-                  opacity: hovered === i ? 1 : 0,
-                  transition: 'opacity 0.3s ease',
-                  pointerEvents: hovered === i ? 'auto' : 'none',
-                }}>
-                  {service.tags.map((tag) => (
-                    <span key={tag} style={{
-                      padding: '3px 10px', borderRadius: '100px',
-                      background: `${service.accent}1a`, color: service.accent,
-                      fontSize: '0.7rem', fontWeight: 600,
-                      border: `1px solid ${service.accent}33`,
-                    }}>
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+            <div key={service.number} style={{ ...scaleUp(cardsIn, i * 100) }}>
+              <ServiceCard service={service} />
             </div>
           ))}
         </div>
@@ -221,8 +269,7 @@ export default function Services() {
           overflow: 'hidden',
           ...fadeUp(diagramIn, 0),
         }}>
-          <SpaceBackground opacity={0.45} />
-          {/* Background grid texture */}
+          <SpaceBackground opacity={0.45} parallax={0.15} />
           <div style={{
             position: 'absolute', inset: 0,
             backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)',
@@ -230,7 +277,6 @@ export default function Services() {
             pointerEvents: 'none',
           }} />
 
-          {/* Header */}
           <div style={{ marginBottom: '2.5rem', position: 'relative' }}>
             <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '6px' }}>
               System Architecture
@@ -240,10 +286,7 @@ export default function Services() {
             </h3>
           </div>
 
-          {/* Flow stages */}
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0', position: 'relative', overflowX: 'auto', paddingBottom: '4px' }}>
-
-            {/* Animated horizontal base line */}
             <svg style={{ position: 'absolute', top: '28px', left: 0, width: '100%', height: '2px', pointerEvents: 'none' }} preserveAspectRatio="none">
               <line x1="0" y1="1" x2="100%" y2="1" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
               <line x1="0" y1="1" x2="100%" y2="1"
@@ -256,18 +299,14 @@ export default function Services() {
 
             {stages.map((stage, si) => (
               <div key={stage.step} style={{ display: 'flex', alignItems: 'flex-start', flex: si === stages.length - 1 ? '0 0 auto' : '1 1 0', minWidth: si === stages.length - 1 ? '160px' : '140px' }}>
-
-                {/* Stage column */}
                 <div style={{ flex: 1, paddingRight: '1rem' }}>
-                  {/* Stage label + step */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
                     <div style={{
                       width: '28px', height: '28px', borderRadius: '50%',
                       background: si === stages.length - 1 ? 'rgba(148,217,107,0.15)' : 'rgba(255,255,255,0.06)',
                       border: si === stages.length - 1 ? '1px solid rgba(148,217,107,0.4)' : '1px solid rgba(255,255,255,0.1)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      flexShrink: 0,
-                      zIndex: 1, position: 'relative',
+                      flexShrink: 0, zIndex: 1, position: 'relative',
                     }}>
                       <span style={{ fontSize: '0.6rem', fontWeight: 700, color: si === stages.length - 1 ? '#94D96B' : 'rgba(255,255,255,0.4)', letterSpacing: '0.05em' }}>
                         {stage.step}
@@ -277,8 +316,6 @@ export default function Services() {
                       {stage.label}
                     </span>
                   </div>
-
-                  {/* Nodes */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {stage.nodes.map((node, ni) => (
                       <div key={ni} style={{
@@ -300,17 +337,8 @@ export default function Services() {
                     ))}
                   </div>
                 </div>
-
-                {/* Arrow connector (not after last stage) */}
                 {si < stages.length - 1 && (
-                  <div style={{
-                    flexShrink: 0,
-                    width: '32px',
-                    paddingTop: '6px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
+                  <div style={{ flexShrink: 0, width: '32px', paddingTop: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <svg width="24" height="16" viewBox="0 0 24 16" fill="none">
                       <path d="M0 8h18M14 3l6 5-6 5" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -320,7 +348,6 @@ export default function Services() {
             ))}
           </div>
 
-          {/* Bottom footnote */}
           <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
             <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.25)', maxWidth: '400px', lineHeight: 1.6 }}>
               Built as a unified system, not disconnected services. Each stage is optimized to feed qualified, high-intent buyers to the next.
@@ -351,10 +378,10 @@ export default function Services() {
           animation: diagram-flow 1.4s linear infinite;
         }
         @media (max-width: 900px) {
-          section > .container > div:nth-child(2) { grid-template-columns: repeat(2, 1fr) !important; }
+          .services-cards { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (max-width: 600px) {
-          section > .container > div:nth-child(2) { grid-template-columns: 1fr !important; }
+          .services-cards { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </section>
