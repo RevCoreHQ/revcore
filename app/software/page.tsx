@@ -876,7 +876,7 @@ function SoftwareHero() {
         {/* Fade into Quoting section */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '160px', background: 'linear-gradient(to bottom, transparent, #060c06)', pointerEvents: 'none', zIndex: 4 }} />
         {/* Content */}
-        <div className="container" style={{ textAlign: 'center', maxWidth: '1000px', position: 'relative', zIndex: 5, paddingTop: '160px', paddingBottom: '140px' }}>
+        <div className="container" style={{ textAlign: 'center', maxWidth: '1000px', position: 'relative', zIndex: 5, paddingTop: '200px', paddingBottom: '100px' }}>
           <div style={{ ...fadeUp(inView, 0) }}>
             <div style={{ display: 'inline-flex', gap: '8px', marginBottom: '1.75rem' }}>
               <span style={{ padding: '4px 14px', borderRadius: '100px', background: 'rgba(148,217,107,0.1)', color: '#94D96B', fontSize: '0.72rem', fontWeight: 700, border: '1px solid rgba(148,217,107,0.25)', boxShadow: '0 0 16px rgba(148,217,107,0.12)' }}>
