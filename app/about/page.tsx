@@ -65,11 +65,21 @@ const timeline = [
 
 export default function AboutPage() {
   const heroImgRef = useRef<HTMLDivElement>(null);
+  const agencyRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
+    if (agencyRef.current) {
+      agencyRef.current.style.filter = 'brightness(1.2) saturate(1.3)';
+    }
     const onScroll = () => {
       if (heroImgRef.current) {
         heroImgRef.current.style.transform = `translateY(${window.scrollY * 0.25}px)`;
+      }
+      if (agencyRef.current) {
+        const progress = Math.min(1, window.scrollY / 280);
+        const brightness = 1.2 + progress * 2.0;
+        const saturate = 1.3 + progress * 1.0;
+        agencyRef.current.style.filter = `brightness(${brightness}) saturate(${saturate})`;
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -106,31 +116,32 @@ export default function AboutPage() {
               willChange: 'transform',
             }}
           />
-          {/* Dark vignette */}
+          {/* Base dark overlay */}
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)' }} />
+          {/* Space stars — above base overlay */}
+          <SpaceBackground opacity={0.75} />
+          {/* Gradient vignette */}
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.55) 100%)',
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.72) 100%)',
             zIndex: 1,
           }} />
-          {/* Space stars */}
-          <div style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}>
-            <SpaceBackground opacity={0.45} />
-          </div>
           {/* Lower grain */}
           <div style={{
             position: 'absolute', inset: 0,
             backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 512 512\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.68\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
-            backgroundSize: '220px 220px', opacity: 0.12, mixBlendMode: 'soft-light', pointerEvents: 'none', zIndex: 2,
+            backgroundSize: '220px 220px', opacity: 0.14, mixBlendMode: 'soft-light', pointerEvents: 'none', zIndex: 2,
           }} />
-          {/* Upper grain — sits above text */}
+          {/* Upper grain */}
           <div style={{
             position: 'absolute', inset: 0,
             backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 512 512\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n2\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n2)\'/%3E%3C/svg%3E")',
-            backgroundSize: '180px 180px', opacity: 0.09, mixBlendMode: 'overlay', pointerEvents: 'none', zIndex: 4,
+            backgroundSize: '180px 180px', opacity: 0.09, mixBlendMode: 'overlay', pointerEvents: 'none', zIndex: 3,
           }} />
+          {/* Text content */}
           <div style={{
             position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
-            justifyContent: 'center', alignItems: 'flex-start', padding: '0 52px', zIndex: 5,
+            justifyContent: 'center', alignItems: 'flex-start', padding: '0 52px', zIndex: 4,
           }}>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -145,60 +156,59 @@ export default function AboutPage() {
               fontSize: 'clamp(3.5rem, 10vw, 8rem)', lineHeight: 0.9, letterSpacing: '-0.04em',
               color: 'transparent', WebkitTextStroke: '1.5px rgba(255,255,255,0.72)', display: 'block', userSelect: 'none',
             }}>Not Another</span>
-            <span style={{
-              fontFamily: 'DM Sans, sans-serif', fontWeight: 800,
-              fontSize: 'clamp(2.5rem, 7vw, 5.5rem)', lineHeight: 0.95, letterSpacing: '-0.04em',
-              background: 'linear-gradient(118deg, rgba(13,3,5,0.82) 0%, rgba(92,15,15,0.72) 28%, rgba(181,32,32,0.60) 52%, rgba(122,16,16,0.72) 72%, rgba(26,4,6,0.82) 100%)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-              display: 'block', userSelect: 'none', marginTop: '0.1em',
-            }}>Marketing Agency.</span>
+            <span
+              ref={agencyRef}
+              className="about-agency"
+              style={{
+                fontFamily: 'DM Sans, sans-serif', fontWeight: 800,
+                fontSize: 'clamp(2.5rem, 7vw, 5.5rem)', lineHeight: 1, letterSpacing: '-0.04em',
+                display: 'block', userSelect: 'none', marginTop: '0.1em', paddingBottom: '0.1em',
+                willChange: 'filter',
+              }}
+            >Marketing Agency.</span>
           </div>
         </div>
       </section>
 
-      {/* ── Who we are — story intro ── */}
-      <section ref={hero.ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#ffffff' }}>
-        <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
-            <div>
-              <div style={{ ...slideFromBottomLeft(hero.inView, 0) }}>
-                <div className="section-tag">Who We Are</div>
-                <h2 style={{
-                  fontFamily: 'DM Sans, sans-serif', fontWeight: 800,
-                  fontSize: 'clamp(2rem, 4vw, 3.25rem)', lineHeight: 1.1,
-                  letterSpacing: '-0.03em', marginBottom: '1.5rem',
-                }}>
-                  A boutique growth firm built{' '}
-                  <span style={{ color: 'var(--color-accent)', fontStyle: 'italic' }}>exclusively</span>{' '}
-                  for home service contractors.
-                </h2>
-              </div>
-              <div style={{ ...fadeUp(hero.inView, 200) }}>
-                <p style={{ fontSize: '1.0625rem', lineHeight: '1.85', color: 'var(--color-gray)', marginBottom: '1.25rem' }}>
-                  RevCore is not a generalist agency. We don't take on e-commerce brands, SaaS companies, or restaurants. We do one thing: help contractors in trades like roofing, HVAC, solar, windows, and siding grow their revenue fast, with systems that actually work in the field.
-                </p>
-                <p style={{ fontSize: '1.0625rem', lineHeight: '1.85', color: 'var(--color-gray)' }}>
-                  Instead of sending you to four different vendors for your CRM, your ads, your software, and your training, we handle all of it. One team. One point of contact. Everything custom-built around your business.
-                </p>
-              </div>
+      {/* ── Who we are ── */}
+      <section ref={hero.ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
+        <SpaceBackground opacity={0.22} />
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ ...fadeUp(hero.inView, 0) }}>
+            <div className="section-tag" style={{ color: 'rgba(255,255,255,0.35)' }}>
+              <span style={{ width: '24px', height: '2px', background: '#FE6462', display: 'block' }} />
+              Who We Are
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', ...fadeUp(hero.inView, 350) }}>
-              {[
-                { label: 'All tools connect', sub: 'into your RevCore CRM', color: '#0f1a10', accent: '#94D96B' },
-                { label: 'Custom to your trade', sub: 'no generic templates', color: '#0a0f1a', accent: '#6B8EFE' },
-                { label: '1 point of contact', sub: 'for your entire stack', color: '#1a0a0a', accent: '#FE6462' },
-                { label: 'In-home training', sub: 'your team, your market', color: '#1a150a', accent: '#FEB64A' },
-              ].map((c) => (
-                <div key={c.label} style={{
-                  background: c.color, borderRadius: '20px', padding: '1.75rem',
-                  aspectRatio: '1/1', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
-                  border: `1px solid ${c.accent}20`,
-                }}>
-                  <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '1rem', fontWeight: 800, color: c.accent, lineHeight: 1.2, marginBottom: '4px' }}>{c.label}</div>
-                  <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)' }}>{c.sub}</div>
-                </div>
-              ))}
-            </div>
+          </div>
+          <AnimatedText
+            as="h2"
+            inView={hero.inView}
+            delay={100}
+            stagger={65}
+            style={{
+              fontSize: 'clamp(2.25rem, 4.5vw, 3.5rem)', fontWeight: 800,
+              lineHeight: 1.1, letterSpacing: '-0.03em',
+              color: 'white', maxWidth: '820px', marginBottom: '3rem',
+            }}
+          >
+            Not a generalist agency. A revenue firm built exclusively for the trades.
+          </AnimatedText>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', marginBottom: '3.5rem', ...fadeUp(hero.inView, 400) }}>
+            <p style={{ fontSize: '1.0625rem', lineHeight: '1.85', color: 'rgba(255,255,255,0.45)' }}>
+              RevCore is not a generalist agency. We don&apos;t take on e-commerce brands, SaaS companies, or restaurants. We do one thing: help contractors in trades like roofing, HVAC, solar, windows, and siding grow their revenue fast — with systems that actually work in the field.
+            </p>
+            <p style={{ fontSize: '1.0625rem', lineHeight: '1.85', color: 'rgba(255,255,255,0.45)' }}>
+              Instead of sending you to four different vendors for your CRM, your ads, your software, and your training, we handle all of it. One team. One point of contact. Everything custom-built around your business.
+            </p>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', ...fadeUp(hero.inView, 550) }}>
+            {['Roofing', 'HVAC', 'Solar', 'Windows & Siding', 'Gutters', 'Painting', 'Plumbing', 'Pest Control'].map((trade) => (
+              <span key={trade} style={{
+                padding: '6px 18px', borderRadius: '100px',
+                background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)', fontWeight: 500,
+              }}>{trade}</span>
+            ))}
           </div>
         </div>
       </section>
@@ -398,9 +408,24 @@ export default function AboutPage() {
       </section>
 
       <style>{`
+        .about-agency {
+          background: linear-gradient(118deg,
+            #ffffff 0%, #FE6462 20%, #ff9e9d 42%, #ffffff 58%, #FE6462 76%, #ff9e9d 88%, #ffffff 100%
+          );
+          background-size: 300% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: agencyShimmer 5s linear infinite;
+        }
+        @keyframes agencyShimmer {
+          0%   { background-position: 0% center; }
+          100% { background-position: 300% center; }
+        }
         @media (max-width: 768px) {
           .about-grid-2 { grid-template-columns: 1fr !important; }
           .about-stats { grid-template-columns: repeat(2, 1fr) !important; }
+          div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </>
