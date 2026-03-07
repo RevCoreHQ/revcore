@@ -826,59 +826,101 @@ function SoftwareCTA() {
 
 /* ─── Hero ───────────────────────────────────────────────────────────────── */
 function SoftwareHero() {
-  const { ref, inView } = useScrollReveal({ threshold: 0.15 });
+  const { ref, inView } = useScrollReveal({ threshold: 0.1 });
+  const heroImgRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (heroImgRef.current) {
+        heroImgRef.current.style.transform = `translateY(${window.scrollY * 0.22}px)`;
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '160px', paddingBottom: '120px', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
-      <SpaceBackground />
-      {/* Nebula glow beneath headline */}
-      <div style={{ position: 'absolute', top: '45%', left: '50%', transform: 'translate(-50%, -50%)', width: '900px', height: '500px', background: 'radial-gradient(ellipse, rgba(107,142,254,0.04) 0%, rgba(148,217,107,0.02) 45%, transparent 70%)', pointerEvents: 'none' }} />
-      {/* Fade into Quoting section */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '140px', background: 'linear-gradient(to bottom, transparent, #060c06)', pointerEvents: 'none', zIndex: 2 }} />
-      <div className="container" style={{ textAlign: 'center', maxWidth: '1000px', position: 'relative', zIndex: 1 }}>
-        <div style={{ ...fadeUp(inView, 0) }}>
-          <div style={{ display: 'inline-flex', gap: '8px', marginBottom: '1.75rem' }}>
-            <span style={{ padding: '4px 14px', borderRadius: '100px', background: 'rgba(148,217,107,0.1)', color: '#94D96B', fontSize: '0.72rem', fontWeight: 700, border: '1px solid rgba(148,217,107,0.25)', boxShadow: '0 0 16px rgba(148,217,107,0.12)' }}>
-              Scope
-            </span>
-            <span style={{ padding: '4px 14px', borderRadius: '100px', background: 'rgba(107,142,254,0.1)', color: '#6B8EFE', fontSize: '0.72rem', fontWeight: 700, border: '1px solid rgba(107,142,254,0.25)', boxShadow: '0 0 16px rgba(107,142,254,0.12)' }}>
-              Pitch
-            </span>
-            <span style={{ padding: '4px 14px', borderRadius: '100px', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.45)', fontSize: '0.72rem', fontWeight: 700, border: '1px solid rgba(255,255,255,0.1)' }}>
-              RevCore Pro
-            </span>
+    <section style={{ background: '#070b0f', paddingTop: '80px' }}>
+      <div
+        ref={ref as React.Ref<HTMLDivElement>}
+        style={{ margin: '12px 12px 0', borderRadius: '24px', overflow: 'hidden', position: 'relative', minHeight: '86vh', background: '#0d1117' }}
+      >
+        {/* Parallax background image */}
+        <div
+          ref={heroImgRef}
+          style={{
+            position: 'absolute', inset: '-10% 0',
+            backgroundImage: 'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac98d7618c8d796f604f22.png)',
+            backgroundSize: 'cover', backgroundPosition: 'center',
+            willChange: 'transform',
+          }}
+        />
+        {/* Dark overlay — slightly darker than about page */}
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)' }} />
+        {/* Stars */}
+        <SpaceBackground opacity={0.7} />
+        {/* Gradient vignette */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.08) 42%, rgba(0,0,0,0.72) 100%)', zIndex: 1 }} />
+        {/* Grain layer 1 */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 512 512\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.68\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
+          backgroundSize: '220px 220px', opacity: 0.10, mixBlendMode: 'soft-light', pointerEvents: 'none', zIndex: 2,
+        }} />
+        {/* Grain layer 2 */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 512 512\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n2\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n2)\'/%3E%3C/svg%3E")',
+          backgroundSize: '180px 180px', opacity: 0.07, mixBlendMode: 'overlay', pointerEvents: 'none', zIndex: 3,
+        }} />
+        {/* Fade into Quoting section */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '160px', background: 'linear-gradient(to bottom, transparent, #060c06)', pointerEvents: 'none', zIndex: 4 }} />
+        {/* Content */}
+        <div className="container" style={{ textAlign: 'center', maxWidth: '1000px', position: 'relative', zIndex: 5, paddingTop: '160px', paddingBottom: '140px' }}>
+          <div style={{ ...fadeUp(inView, 0) }}>
+            <div style={{ display: 'inline-flex', gap: '8px', marginBottom: '1.75rem' }}>
+              <span style={{ padding: '4px 14px', borderRadius: '100px', background: 'rgba(148,217,107,0.1)', color: '#94D96B', fontSize: '0.72rem', fontWeight: 700, border: '1px solid rgba(148,217,107,0.25)', boxShadow: '0 0 16px rgba(148,217,107,0.12)' }}>
+                Scope
+              </span>
+              <span style={{ padding: '4px 14px', borderRadius: '100px', background: 'rgba(107,142,254,0.1)', color: '#6B8EFE', fontSize: '0.72rem', fontWeight: 700, border: '1px solid rgba(107,142,254,0.25)', boxShadow: '0 0 16px rgba(107,142,254,0.12)' }}>
+                Pitch
+              </span>
+              <span style={{ padding: '4px 14px', borderRadius: '100px', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.45)', fontSize: '0.72rem', fontWeight: 700, border: '1px solid rgba(255,255,255,0.1)' }}>
+                RevCore Pro
+              </span>
+            </div>
           </div>
-        </div>
-        <div style={{ ...fadeUp(inView, 150), marginBottom: '1.5rem' }}>
-          <h1 style={{
-            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 800, lineHeight: 1.05,
-            letterSpacing: '-0.03em', margin: 0, whiteSpace: 'nowrap',
-            background: 'linear-gradient(110deg, #fff 0%, #fff 15%, #6B8EFE 38%, #94D96B 58%, #fff 82%, #fff 100%)',
-            backgroundSize: '250% 100%',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-            animation: 'gradientShift 12s ease-in-out infinite',
-          }}>
-            Software that closes jobs.
-          </h1>
-        </div>
-        <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '1.1rem', lineHeight: '1.8', marginBottom: '3rem', maxWidth: '680px', margin: '0 auto 3rem', ...fadeUp(inView, 600) }}>
-          Scope and Pitch, two purpose-built tools that work together, from the first quote to the signed contract and the five-star review. Available separately, or bundled as RevCore Pro.
-        </p>
-        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap', ...fadeUp(inView, 750) }}>
-          <a href="#quoting"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #94D96B 0%, #6fb847 100%)', color: '#0a0a0a', padding: '14px 28px', borderRadius: '100px', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none', boxShadow: '0 4px 16px rgba(148,217,107,0.2)', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(148,217,107,0.3)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(148,217,107,0.2)'; }}
-          >
-            Explore Scope ↓
-          </a>
-          <a href="#presentation"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #6B8EFE 0%, #4a6dea 100%)', color: 'white', padding: '14px 28px', borderRadius: '100px', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none', boxShadow: '0 4px 16px rgba(107,142,254,0.2)', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(107,142,254,0.3)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(107,142,254,0.2)'; }}
-          >
-            Explore Pitch ↓
-          </a>
+          <div style={{ ...fadeUp(inView, 150), marginBottom: '1.5rem' }}>
+            <h1 style={{
+              fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 800, lineHeight: 1.05,
+              letterSpacing: '-0.03em', margin: 0, whiteSpace: 'nowrap',
+              background: 'linear-gradient(110deg, #fff 0%, #fff 15%, #6B8EFE 38%, #94D96B 58%, #fff 82%, #fff 100%)',
+              backgroundSize: '250% 100%',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+              animation: 'gradientShift 12s ease-in-out infinite',
+            }}>
+              Software that closes jobs.
+            </h1>
+          </div>
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '1.1rem', lineHeight: '1.8', maxWidth: '680px', margin: '0 auto 3rem', ...fadeUp(inView, 600) }}>
+            Scope and Pitch, two purpose-built tools that work together, from the first quote to the signed contract and the five-star review. Available separately, or bundled as RevCore Pro.
+          </p>
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap', ...fadeUp(inView, 750) }}>
+            <a href="#quoting"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #94D96B 0%, #6fb847 100%)', color: '#0a0a0a', padding: '14px 28px', borderRadius: '100px', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none', boxShadow: '0 4px 16px rgba(148,217,107,0.2)', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(148,217,107,0.3)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(148,217,107,0.2)'; }}
+            >
+              Explore Scope ↓
+            </a>
+            <a href="#presentation"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #6B8EFE 0%, #4a6dea 100%)', color: 'white', padding: '14px 28px', borderRadius: '100px', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none', boxShadow: '0 4px 16px rgba(107,142,254,0.2)', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(107,142,254,0.3)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(107,142,254,0.2)'; }}
+            >
+              Explore Pitch ↓
+            </a>
+          </div>
         </div>
       </div>
     </section>
