@@ -225,14 +225,23 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
 }
 
 /* ─── Quote + e-signature (Scope demo) ──────────────────────────────────── */
-type SigState = 'signing' | 'signed';
-function QuoteSignatureApp() {
-  const [sigState, setSigState] = useState<SigState>('signing');
+type SigState = 'idle' | 'signing' | 'signed';
+function QuoteSignatureApp({ signTrigger, onSigned }: { signTrigger?: boolean; onSigned?: () => void }) {
+  const [sigState, setSigState] = useState<SigState>('idle');
 
+  // When parent triggers signing (e.g. next button clicked)
   useEffect(() => {
-    const t = setTimeout(() => setSigState('signed'), 1200);
+    if (!signTrigger || sigState !== 'idle') return;
+    setSigState('signing');
+    const t = setTimeout(() => { setSigState('signed'); onSigned?.(); }, 2600);
     return () => clearTimeout(t);
-  }, []);
+  }, [signTrigger]);
+
+  const sign = () => {
+    if (sigState !== 'idle') return;
+    setSigState('signing');
+    setTimeout(() => { setSigState('signed'); onSigned?.(); }, 2600);
+  };
 
   const lineItems = [
     { desc: 'Arch. Shingles (28 sq)', price: '$9,800' },
@@ -248,7 +257,7 @@ function QuoteSignatureApp() {
         <div style={{ background: '#94D96B', color: '#0a0a0a', fontSize: '8px', fontWeight: 800, padding: '3px 10px', borderRadius: '100px', letterSpacing: '0.1em' }}>ESTIMATE</div>
       </div>
 
-      <div style={{ padding: '10px 13px', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ padding: '10px 13px 12px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         {/* Customer + estimate meta */}
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
           <div>
@@ -270,7 +279,7 @@ function QuoteSignatureApp() {
             <span style={{ fontSize: '7.5px', color: '#aaa', fontWeight: 700, letterSpacing: '0.07em' }}>TOTAL</span>
           </div>
           {lineItems.map((item, i) => (
-            <div key={item.desc} style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '6px 10px', borderBottom: i < lineItems.length - 1 ? '1px solid #f3f3f3' : 'none', alignItems: 'center' }}>
+            <div key={item.desc} style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '7px 10px', borderBottom: i < lineItems.length - 1 ? '1px solid #f3f3f3' : 'none', alignItems: 'center' }}>
               <span style={{ fontSize: '10px', color: '#333' }}>{item.desc}</span>
               <span style={{ fontSize: '10px', fontWeight: 700, color: '#1a1a1a' }}>{item.price}</span>
             </div>
@@ -280,7 +289,7 @@ function QuoteSignatureApp() {
         {/* Totals */}
         <div style={{ padding: '8px 11px', background: '#f9f9f9', borderRadius: '8px', border: '1px solid #ebebeb' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#999', marginBottom: '6px', paddingBottom: '6px', borderBottom: '1px solid #e8e8e8' }}>
-            <span>Subtotal (incl. tear-off & disposal)</span><span style={{ fontWeight: 600, color: '#555' }}>$13,450</span>
+            <span>Subtotal (incl. tear-off &amp; disposal)</span><span style={{ fontWeight: 600, color: '#555' }}>$13,450</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 800 }}>
             <span>Total Due</span><span style={{ color: '#16a34a' }}>$13,450</span>
@@ -291,12 +300,14 @@ function QuoteSignatureApp() {
         <div>
           <div style={{ fontSize: '7.5px', color: '#999', fontWeight: 700, letterSpacing: '0.07em', marginBottom: '5px' }}>CUSTOMER SIGNATURE</div>
           <div
+            onClick={sign}
             style={{
-              border: sigState === 'signed' ? '1.5px solid #94D96B' : '1.5px dashed #d8d8d8',
+              border: sigState === 'signed' ? '1.5px solid #94D96B' : sigState === 'signing' ? '1.5px dashed #bbb' : '1.5px dashed #d8d8d8',
               borderRadius: '10px',
-              height: '58px',
+              height: '64px',
               position: 'relative',
               overflow: 'hidden',
+              cursor: sigState === 'idle' ? 'pointer' : 'default',
               background: sigState === 'signed' ? 'rgba(148,217,107,0.05)' : '#fafafa',
               transition: 'border-color 0.4s ease, background 0.4s ease',
               display: 'flex',
@@ -304,19 +315,29 @@ function QuoteSignatureApp() {
               justifyContent: 'center',
             }}
           >
-            <svg width="185" height="52" viewBox="0 0 185 58" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M 12,44 C 4,26 16,7 30,17 C 42,25 38,46 24,50 C 12,53 4,42 12,32 L 30,25 C 46,17 62,21 66,35 C 70,49 58,57 46,55 M 76,13 L 70,55 M 68,27 C 80,11 100,11 100,27 C 100,43 88,57 76,55 M 108,25 C 118,9 140,11 140,27 L 132,57 M 148,15 L 158,57 M 148,55 L 160,17"
-                stroke="#1e1e1e"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                pathLength="1"
-                strokeDasharray="1"
-                strokeDashoffset={sigState === 'signed' ? '0' : '1'}
-                style={{ animation: sigState === 'signing' ? 'drawSignature 1.1s cubic-bezier(0.25,0,0.2,1) forwards' : 'none' }}
-              />
-            </svg>
+            {sigState === 'idle' && (
+              <div style={{ textAlign: 'center', pointerEvents: 'none' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.2, display: 'block', margin: '0 auto 3px' }}>
+                  <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <div style={{ fontSize: '8.5px', color: '#bbb', fontWeight: 500 }}>Tap here to sign</div>
+              </div>
+            )}
+            {sigState !== 'idle' && (
+              <svg width="185" height="52" viewBox="0 0 185 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M 12,44 C 4,26 16,7 30,17 C 42,25 38,46 24,50 C 12,53 4,42 12,32 L 30,25 C 46,17 62,21 66,35 C 70,49 58,57 46,55 M 76,13 L 70,55 M 68,27 C 80,11 100,11 100,27 C 100,43 88,57 76,55 M 108,25 C 118,9 140,11 140,27 L 132,57 M 148,15 L 158,57 M 148,55 L 160,17"
+                  stroke="#1e1e1e"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  pathLength="1"
+                  strokeDasharray="1"
+                  strokeDashoffset={sigState === 'signed' ? '0' : '1'}
+                  style={{ animation: sigState === 'signing' ? 'drawSignature 2.4s cubic-bezier(0.3,0,0.15,1) forwards' : 'none' }}
+                />
+              </svg>
+            )}
             {sigState === 'signed' && (
               <div style={{ position: 'absolute', bottom: '5px', right: '8px', fontSize: '8px', color: '#16a34a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '3px', animation: 'sigBadgeIn 0.4s ease both' }}>
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="#16a34a" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -360,6 +381,33 @@ function QuotingSection() {
   const { ref, inView } = useScrollRevealBidirectional({ threshold: 0.06 });
   const [demoOpen, setDemoOpen] = useState(false);
   const [demoStep, setDemoStep] = useState(0);
+  const [sigTrigger, setSigTrigger] = useState(false);
+  const [isSigned, setIsSigned] = useState(false);
+  const pendingStepRef = React.useRef<number | null>(null);
+  const advanceTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Reset signature state when leaving the estimate step
+  useEffect(() => {
+    if (demoStep !== 3) {
+      setSigTrigger(false);
+      setIsSigned(false);
+      if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+    }
+  }, [demoStep]);
+
+  const handleStep = (n: number) => {
+    // Intercept forward navigation away from estimate step if not yet signed
+    if (demoStep === 3 && n > 3 && !isSigned) {
+      pendingStepRef.current = n;
+      setSigTrigger(true);
+      // Advance after animation completes (2.4s) + small buffer
+      advanceTimerRef.current = setTimeout(() => {
+        setDemoStep(n);
+      }, 2700);
+      return;
+    }
+    setDemoStep(n);
+  };
   const quotingFeatures = [
     { icon: <FileText size={16} />, title: 'On-Site Quote Generation', desc: 'Build accurate, professional proposals at the door with your pricing built in. No office trips.' },
     { icon: <Layers size={16} />, title: 'Good / Better / Best Tiers', desc: 'Present three options on every job — proven to increase average ticket size by 34%.' },
@@ -378,11 +426,11 @@ function QuotingSection() {
         accent="#94D96B"
         steps={QUOTING_STEPS}
         step={demoStep}
-        onStep={setDemoStep}
+        onStep={handleStep}
         ipadContent={
           <IpadMockup width="100%" accentGlow="rgba(148,217,107,0.6)">
             {QUOTING_STEPS[demoStep].tab === 'estimate' ? (
-              <QuoteSignatureApp />
+              <QuoteSignatureApp signTrigger={sigTrigger} onSigned={() => setIsSigned(true)} />
             ) : (
               <QuotingApp controlledTab={QUOTING_STEPS[demoStep].tab} />
             )}
