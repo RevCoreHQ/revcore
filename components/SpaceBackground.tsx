@@ -1,7 +1,7 @@
 'use client';
 import { useRef, useEffect } from 'react';
 
-export default function SpaceBackground({ opacity = 1, fixed = false }: { opacity?: number; fixed?: boolean }) {
+export default function SpaceBackground({ opacity = 1, fixed = false, parallax = 0 }: { opacity?: number; fixed?: boolean; parallax?: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -21,6 +21,16 @@ export default function SpaceBackground({ opacity = 1, fixed = false }: { opacit
     }
     resize();
     window.addEventListener('resize', resize);
+
+    // Parallax: translate canvas opposite to scroll direction
+    let onScroll: (() => void) | undefined;
+    if (parallax) {
+      onScroll = () => {
+        if (canvas) canvas.style.transform = `translateY(${-window.scrollY * parallax}px)`;
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // apply immediately in case page is already scrolled
+    }
 
     function rand(a: number, b: number) { return Math.random() * (b - a) + a; }
 
@@ -106,8 +116,9 @@ export default function SpaceBackground({ opacity = 1, fixed = false }: { opacit
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
+      if (onScroll) window.removeEventListener('scroll', onScroll);
     };
-  }, [opacity, fixed]);
+  }, [opacity, fixed, parallax]);
 
   return (
     <canvas
@@ -116,7 +127,8 @@ export default function SpaceBackground({ opacity = 1, fixed = false }: { opacit
         position: fixed ? 'fixed' : 'absolute',
         inset: 0,
         width: '100%',
-        height: '100%',
+        // Extra height when parallax is on so stars fill the section even when canvas shifts up
+        height: parallax ? '120%' : '100%',
         pointerEvents: 'none',
         zIndex: 0,
       }}

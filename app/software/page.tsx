@@ -438,7 +438,7 @@ function QuotingSection() {
         }
       />
       <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#060c06', position: 'relative', overflow: 'hidden' }}>
-        <SpaceBackground />
+        <SpaceBackground parallax={0.15} />
         {/* Fade into Presentation section */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '140px', background: 'linear-gradient(to bottom, transparent, #06080f)', pointerEvents: 'none', zIndex: 2 }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
@@ -554,7 +554,7 @@ function PresentationSection() {
         }
       />
       <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#06080f', position: 'relative', overflow: 'hidden' }}>
-        <SpaceBackground />
+        <SpaceBackground parallax={0.15} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
 
@@ -858,7 +858,7 @@ function SoftwareHero() {
         {/* Dark overlay — slightly darker than about page */}
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)' }} />
         {/* Stars */}
-        <SpaceBackground opacity={0.7} />
+        <SpaceBackground opacity={0.7} parallax={0.15} />
         {/* Gradient vignette */}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.08) 42%, rgba(0,0,0,0.72) 100%)', zIndex: 1 }} />
         {/* Grain layer 1 */}

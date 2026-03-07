@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 const ACCENT = '#6DBE7A';
 const BG = '#0b0e0d';
@@ -24,6 +24,12 @@ const IMAGES = {
     'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9e573bffadf82d9b864f3.png',
   ],
 };
+
+/* ─── Preload all images so slides are instant ───────────────────────────── */
+const ALL_SRCS = [
+  IMAGES.hero, IMAGES.patio, IMAGES.gardenBed, IMAGES.nightLight,
+  IMAGES.waterFeature, IMAGES.lawnInstall, ...IMAGES.gallery,
+];
 
 /* ─── Shared components ──────────────────────────────────────────────────── */
 function StatusBar({ slide, total, overlay }: { slide: number; total: number; overlay?: boolean }) {
@@ -54,7 +60,7 @@ function SlideWrap({ children, style, bg }: { children: React.ReactNode; style?:
     <div style={{ background: BG, height: '100%', position: 'relative', overflow: 'hidden', ...style }}>
       {bg && (
         <>
-          <img src={bg} alt="" draggable={false} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', userSelect: 'none', pointerEvents: 'none', zIndex: 0 }} />
+          <img src={bg} alt="" draggable={false} loading="eager" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', userSelect: 'none', pointerEvents: 'none', zIndex: 0 }} />
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(8,12,10,0.82)', pointerEvents: 'none', zIndex: 1 }} />
         </>
       )}
@@ -101,7 +107,7 @@ function SlideIntro({ slideIdx, total }: { slideIdx: number; total: number }) {
   return (
     <div style={{ height: '100%', position: 'relative', overflow: 'hidden', background: '#080e0a' }}>
       {IMAGES.hero ? (
-        <img src={IMAGES.hero} alt="" draggable={false} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', userSelect: 'none' }} />
+        <img src={IMAGES.hero} alt="" draggable={false} loading="eager" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', userSelect: 'none' }} />
       ) : (
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, #0c1f10 0%, #0a1a0d 100%)' }} />
       )}
@@ -446,6 +452,12 @@ export default function PitchApp({ controlledSlide }: { controlledSlide?: number
   const [slide, setSlide] = useState(0);
   const [dir, setDir] = useState(1);
   const isControlled = controlledSlide !== undefined;
+
+  // Preload all slide images on mount so transitions are instant
+  useEffect(() => {
+    ALL_SRCS.forEach((src) => { const img = new Image(); img.src = src; });
+  }, []);
+
   useEffect(() => {
     if (controlledSlide !== undefined) {
       setDir(controlledSlide > slide ? 1 : -1);
@@ -458,11 +470,13 @@ export default function PitchApp({ controlledSlide }: { controlledSlide?: number
   const prev = () => slide > 0 && go(slide - 1);
   const next = () => slide < SLIDE_COUNT - 1 && go(slide + 1);
 
+  const currentSlide = useMemo(() => renderSlide(slide), [slide]);
+
   return (
     <div style={{ background: BG, fontFamily: '-apple-system, "DM Sans", sans-serif', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-        <div key={slide} style={{ height: '100%', animation: `pitchSlide${dir > 0 ? 'In' : 'Back'} 0.3s cubic-bezier(0.22,1,0.36,1)` }}>
-          {renderSlide(slide)}
+        <div key={slide} style={{ height: '100%', willChange: 'transform, opacity', animation: `pitchSlide${dir > 0 ? 'In' : 'Back'} 0.2s cubic-bezier(0.22,1,0.36,1)` }}>
+          {currentSlide}
         </div>
       </div>
 
