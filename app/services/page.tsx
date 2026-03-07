@@ -121,7 +121,7 @@ export default function ServicesPage() {
       <section style={{ background: '#ffffff', paddingTop: '80px' }}>
         <div style={{
           margin: '12px', borderRadius: '24px', overflow: 'hidden',
-          position: 'relative', height: '88vh', minHeight: '480px', background: '#0d1117',
+          position: 'relative', height: '60vh', minHeight: '420px', background: '#0d1117',
         }}>
           <div
             ref={heroImgRef}

@@ -433,8 +433,8 @@ function ClientModal({ client, partners, packages, onSave, onClose }: { client?:
 
         {section('Sales Team')}
         <div style={gr}>
-          {field('Setter', sel(f.setterId, v => set('setterId', v), [['', '— None —'], ...partners.map(p => [p.id, p.name] as [string, string])]))}
-          {field('Closer', sel(f.closerId, v => set('closerId', v), [['', '— None —'], ...partners.map(p => [p.id, p.name] as [string, string])]))}
+          {field('Setter', sel(f.setterId, v => set('setterId', v), [['', '— None —'], ...partners.filter(p => p.active !== false).map(p => [p.id, p.name] as [string, string])]))}
+          {field('Closer', sel(f.closerId, v => set('closerId', v), [['', '— None —'], ...partners.filter(p => p.active !== false).map(p => [p.id, p.name] as [string, string])]))}
         </div>
 
         {section('Initial Commission (Deal Close)')}
@@ -1119,7 +1119,7 @@ function PipeCard({ c, color, partnerName, onEdit, onLog, onInvoice, PAY_STAT: P
 function AnalyticsTab({ data }: { data: AppData }) {
   const [section, setSection] = useState<'leaderboard' | 'churn' | 'cashflow' | 'revenue'>('leaderboard');
 
-  const partners = data.partners;
+  const partners = data.partners.filter(p => p.active !== false);
   const clients  = data.clients;
   const comms    = data.comms;
 
@@ -1584,7 +1584,7 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
         )}
         <select value={partnerF} onChange={e => setPartnerF(e.target.value)} style={{ ...inp, width: 'auto', cursor: 'pointer' }}>
           <option value="all">All Team Members</option>
-          {partners.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+          {partners.filter(p => p.active !== false).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </select>
       </div>
 
@@ -1832,7 +1832,7 @@ function TeamTab({ data, setData }: { data: AppData; setData: (d: AppData) => vo
             <div style={{ fontWeight: 700, color: '#fff', fontSize: '1rem' }}>{selected === 'all' ? 'All Team' : pName(selected)}</div>
             <select value={selected} onChange={e => setSelected(e.target.value)} style={{ ...inp, width: 'auto', cursor: 'pointer' }}>
               <option value="all">All Team Members</option>
-              {partners.map(p => <option key={p.id} value={p.id}>{p.name} ({p.role})</option>)}
+              {partners.filter(p => p.active !== false).map(p => <option key={p.id} value={p.id}>{p.name} ({p.role})</option>)}
             </select>
           </div>
 
