@@ -36,11 +36,12 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const pathname = usePathname();
-  const isTracker = pathname?.startsWith('/tracker');
-  const isPortal  = pathname?.startsWith('/portal');
-  const isDark    = pathname?.startsWith('/software');
+  const isTracker    = pathname?.startsWith('/tracker');
+  const isPortal     = pathname?.startsWith('/portal');
+  const isOnboarding = pathname?.startsWith('/onboarding');
+  const isDark       = pathname?.startsWith('/software');
 
-  if (isTracker || isPortal) return null;
+  if (isTracker || isPortal || isOnboarding) return null;
 
   const navColor   = isDark ? 'rgba(255,255,255,0.75)' : '#0A0A0A';
   const bgColor    = isDark ? 'rgba(7,11,15,0.92)'     : '#ffffff';
