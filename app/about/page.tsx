@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import SpaceBackground from '@/components/SpaceBackground';
@@ -63,6 +64,18 @@ const timeline = [
 ];
 
 export default function AboutPage() {
+  const heroImgRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (heroImgRef.current) {
+        heroImgRef.current.style.transform = `translateY(${window.scrollY * 0.25}px)`;
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const hero = useScrollReveal({ threshold: 0.1 });
   const statsSection = useScrollReveal({ threshold: 0.08 });
   const pillarsSection = useScrollReveal({ threshold: 0.05 });
@@ -83,24 +96,41 @@ export default function AboutPage() {
           minHeight: '420px',
           background: '#0d1117',
         }}>
-          <div style={{
-            position: 'absolute', inset: '-10% 0',
-            backgroundImage: 'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9c640cc83074a8516f0d7.png)',
-            backgroundSize: 'cover', backgroundPosition: 'center top',
-          }} />
+          {/* Parallax background image */}
+          <div
+            ref={heroImgRef}
+            style={{
+              position: 'absolute', inset: '-10% 0',
+              backgroundImage: 'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac7965618c8dfc285b4e82.png)',
+              backgroundSize: 'cover', backgroundPosition: 'center top',
+              willChange: 'transform',
+            }}
+          />
+          {/* Dark vignette */}
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 45%, rgba(0,0,0,0.65) 100%)',
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.55) 100%)',
             zIndex: 1,
           }} />
+          {/* Space stars */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}>
+            <SpaceBackground opacity={0.45} />
+          </div>
+          {/* Lower grain */}
           <div style={{
             position: 'absolute', inset: 0,
             backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 512 512\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.68\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
             backgroundSize: '220px 220px', opacity: 0.12, mixBlendMode: 'soft-light', pointerEvents: 'none', zIndex: 2,
           }} />
+          {/* Upper grain — sits above text */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 512 512\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n2\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n2)\'/%3E%3C/svg%3E")',
+            backgroundSize: '180px 180px', opacity: 0.09, mixBlendMode: 'overlay', pointerEvents: 'none', zIndex: 4,
+          }} />
           <div style={{
             position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
-            justifyContent: 'center', alignItems: 'flex-start', padding: '0 52px', zIndex: 3,
+            justifyContent: 'center', alignItems: 'flex-start', padding: '0 52px', zIndex: 5,
           }}>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
