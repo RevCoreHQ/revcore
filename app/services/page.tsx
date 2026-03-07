@@ -127,7 +127,7 @@ export default function ServicesPage() {
             ref={heroImgRef}
             style={{
               position: 'absolute', inset: '-10% 0',
-              backgroundImage: 'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac7965b003fa52d21b8088.png)',
+              backgroundImage: 'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac9a94b2a274d908f9b89a.png)',
               backgroundSize: 'cover', backgroundPosition: '50% 22%',
               willChange: 'transform',
             }}

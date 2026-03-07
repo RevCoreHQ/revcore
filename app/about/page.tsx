@@ -129,7 +129,7 @@ export default function AboutPage() {
             ref={heroImgRef}
             style={{
               position: 'absolute', inset: '-10% 0',
-              backgroundImage: 'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac9a94b2a274d908f9b89a.png)',
+              backgroundImage: 'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac7965618c8dfc285b4e82.png)',
               backgroundSize: 'cover', backgroundPosition: 'center top',
               willChange: 'transform',
             }}
