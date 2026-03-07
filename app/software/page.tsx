@@ -273,6 +273,8 @@ function QuotingSection() {
       />
       <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#060c06', position: 'relative', overflow: 'hidden' }}>
         <SpaceBackground opacity={0.15} />
+        {/* Fade into Presentation section */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '140px', background: 'linear-gradient(to bottom, transparent, #06080f)', pointerEvents: 'none', zIndex: 2 }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
 
@@ -492,6 +494,8 @@ function InFieldSection() {
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '80px 0', background: '#06080f', position: 'relative', overflow: 'hidden' }}>
       <SpaceBackground opacity={0.1} />
+      {/* Fade into Integration section */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100px', background: 'linear-gradient(to bottom, transparent, #0a0a0a)', pointerEvents: 'none', zIndex: 2 }} />
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView, 0) }}>
           <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '0.75rem' }}>In the field</div>
@@ -664,6 +668,8 @@ function SoftwareHero() {
       <SpaceBackground />
       {/* Nebula glow beneath headline */}
       <div style={{ position: 'absolute', top: '45%', left: '50%', transform: 'translate(-50%, -50%)', width: '900px', height: '500px', background: 'radial-gradient(ellipse, rgba(107,142,254,0.04) 0%, rgba(148,217,107,0.02) 45%, transparent 70%)', pointerEvents: 'none' }} />
+      {/* Fade into Quoting section */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '140px', background: 'linear-gradient(to bottom, transparent, #060c06)', pointerEvents: 'none', zIndex: 2 }} />
       <div className="container" style={{ textAlign: 'center', maxWidth: '1000px', position: 'relative', zIndex: 1 }}>
         <div style={{ ...fadeUp(inView, 0) }}>
           <div style={{ display: 'inline-flex', gap: '8px', marginBottom: '1.75rem' }}>
