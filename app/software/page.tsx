@@ -272,7 +272,6 @@ function QuotingSection() {
         }
       />
       <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#060c06', position: 'relative', overflow: 'hidden' }}>
-        <SpaceBackground opacity={0.15} />
         {/* Fade into Presentation section */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '140px', background: 'linear-gradient(to bottom, transparent, #06080f)', pointerEvents: 'none', zIndex: 2 }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
@@ -388,7 +387,6 @@ function PresentationSection() {
         }
       />
       <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#06080f', position: 'relative', overflow: 'hidden' }}>
-        <SpaceBackground opacity={0.15} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
 
@@ -476,24 +474,23 @@ function InFieldSection() {
   const { ref, inView } = useScrollReveal({ threshold: 0.1 });
   const photos = [
     {
-      url: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac8f8436702f23d94db789.png',
-      tag: 'Pitch',
-      tagColor: '#6B8EFE',
-      caption: 'Closed at the kitchen table',
-      sub: 'Present, build trust, handle objections, collect an e-signature, all before you stand up.',
-    },
-    {
       url: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac8f84618c8d48205efad9.png',
       tag: 'Scope',
       tagColor: '#94D96B',
       caption: 'Built in the car before you walk in',
       sub: 'Your rep pulls up the job, builds a quote, and steps inside with numbers already locked.',
     },
+    {
+      url: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac8f8436702f23d94db789.png',
+      tag: 'Pitch',
+      tagColor: '#6B8EFE',
+      caption: 'Closed at the kitchen table',
+      sub: 'Present, build trust, handle objections, collect an e-signature, all before you stand up.',
+    },
   ];
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '80px 0', background: '#06080f', position: 'relative', overflow: 'hidden' }}>
-      <SpaceBackground opacity={0.1} />
       {/* Fade into Integration section */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100px', background: 'linear-gradient(to bottom, transparent, #0a0a0a)', pointerEvents: 'none', zIndex: 2 }} />
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
@@ -549,7 +546,6 @@ function IntegrationBanner() {
   const { ref, inView } = useScrollReveal({ threshold: 0.12 });
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '80px 0', background: '#0A0A0A', position: 'relative', overflow: 'hidden' }}>
-      <SpaceBackground opacity={0.15} />
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{
           borderRadius: '24px',
@@ -610,7 +606,6 @@ function SoftwareCTA() {
   const { ref, inView } = useScrollReveal({ threshold: 0.2 });
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '140px 0', background: '#070b0f', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-      <SpaceBackground />
       {/* Centered nebula glow */}
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '900px', height: '500px', background: 'radial-gradient(ellipse, rgba(254,100,98,0.04) 0%, rgba(107,142,254,0.02) 45%, transparent 70%)', pointerEvents: 'none' }} />
       <div className="container" style={{ maxWidth: '660px', position: 'relative', zIndex: 1 }}>
@@ -665,7 +660,6 @@ function SoftwareHero() {
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '160px', paddingBottom: '120px', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
-      <SpaceBackground />
       {/* Nebula glow beneath headline */}
       <div style={{ position: 'absolute', top: '45%', left: '50%', transform: 'translate(-50%, -50%)', width: '900px', height: '500px', background: 'radial-gradient(ellipse, rgba(107,142,254,0.04) 0%, rgba(148,217,107,0.02) 45%, transparent 70%)', pointerEvents: 'none' }} />
       {/* Fade into Quoting section */}
@@ -723,6 +717,8 @@ function SoftwareHero() {
 export default function SoftwarePage() {
   return (
     <>
+      {/* Single fixed star layer covers the whole page */}
+      <SpaceBackground fixed />
       <SoftwareHero />
       <div id="quoting"><QuotingSection /></div>
       <div id="presentation"><PresentationSection /></div>
