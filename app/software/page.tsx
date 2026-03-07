@@ -58,9 +58,9 @@ interface QuotingDemoStep extends DemoStep { tab: 'dashboard' | 'quote' | 'jobs'
 interface PitchDemoStep extends DemoStep { slide: number; }
 
 const QUOTING_STEPS: QuotingDemoStep[] = [
-  { tab: 'dashboard', tag: 'Live Dashboard', title: 'Every metric,\nat a glance.', desc: 'Revenue, open quotes, follow-ups, and new reviews updated in real time — no more switching between platforms.', bullets: ['$89.3K tracked this month', '12 open quotes monitored', '7 follow-ups queued automatically'] },
+  { tab: 'dashboard', tag: 'Live Dashboard', title: 'Every metric,\nat a glance.', desc: 'Revenue, open quotes, follow-ups, and new reviews updated in real time, no more switching between platforms.', bullets: ['$89.3K tracked this month', '12 open quotes monitored', '7 follow-ups queued automatically'] },
   { tab: 'quote', tag: 'Quote Builder', title: 'Quote built\nbefore you leave.', desc: 'Add line items from your pre-built catalog, adjust quantities, and fire off a professional quote at the door.', bullets: ['Pre-loaded pricing catalog', 'Live total calculation', 'One-tap send via SMS or email'] },
-  { tab: 'jobs', tag: 'Job Pipeline', title: 'Every job,\nevery status.', desc: 'See every active quote with its current status and dollar value. Viewed, signed, or cold — you always know.', bullets: ['Color-coded job statuses', 'Dollar value at a glance', 'Tap any job to act instantly'] },
+  { tab: 'jobs', tag: 'Job Pipeline', title: 'Every job,\nevery status.', desc: 'See every active quote with its current status and dollar value. Viewed, signed, or cold, you always know.', bullets: ['Color-coded job statuses', 'Dollar value at a glance', 'Tap any job to act instantly'] },
   { tab: 'followup', tag: 'Automation', title: 'Follow-ups that\nrun while you sleep.', desc: 'When a quote goes cold, timed SMS and email sequences fire automatically. Your team focuses on closing, not chasing.', bullets: ['Multi-touch: 24h, 72h, 7-day triggers', 'Auto-fires on quote status change', 'Progress tracked per contact'] },
 ];
 
@@ -68,7 +68,7 @@ const PITCH_STEPS: PitchDemoStep[] = [
   { slide: 0, tag: 'Brand Intro', title: 'Walk in with\na presentation.', desc: 'Customers trust what they can see. Open with a branded, customer-personalized intro before you say a word.', bullets: ['Personalized per customer name', 'Your logo, brand, and photos', 'Credibility built on slide one'] },
   { slide: 2, tag: 'Your Process', title: 'Show them exactly\nwhat happens.', desc: 'A clear 4-step walkthrough eliminates objections before they\'re even asked. Transparency closes deals.', bullets: ['Step-by-step visual timeline', 'Removes friction and uncertainty', 'Sets professional expectations early'] },
   { slide: 7, tag: 'Project Gallery', title: 'Proof they\ncan see.', desc: 'Six project photos built right into the presentation. Real jobs that close deals by letting your work speak.', bullets: ['Full-bleed project photos', 'Labeled by service type', 'Always current from your portfolio'] },
-  { slide: 6, tag: 'Pricing Tiers', title: 'Good, Better,\nBest pricing.', desc: 'Present three tiers so the customer picks a level — not whether to buy. Proven to increase average ticket 34%.', bullets: ['Interactive tier selection', 'Monthly pricing displayed clearly', 'No long-term contract messaging'] },
+  { slide: 6, tag: 'Pricing Tiers', title: 'Good, Better,\nBest pricing.', desc: 'Present three tiers so the customer picks a level, not whether to buy. Proven to increase average ticket 34%.', bullets: ['Interactive tier selection', 'Monthly pricing displayed clearly', 'No long-term contract messaging'] },
   { slide: 9, tag: 'E-Signature', title: 'Close the deal\non the spot.', desc: 'The final slide collects a digital signature and submits the contract. Signed and scheduled before you leave.', bullets: ['Tap-to-sign on the iPad', 'Full contract summary visible', 'Instant confirmation sent'] },
 ];
 
@@ -180,7 +180,7 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
           <path d="M5 1v4H1m0 0l4-4m-4 4l4 4" stroke="white" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
           <rect x="6" y="6" width="5" height="5" rx="1" stroke="white" strokeWidth="1.3" opacity="0.5"/>
         </svg>
-        <span style={{ fontSize: '0.67rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500, letterSpacing: '0.04em' }}>Live &amp; interactive — click around</span>
+        <span style={{ fontSize: '0.67rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500, letterSpacing: '0.04em' }}>Live &amp; interactive, click around</span>
       </div>
     </div>
   );
@@ -315,7 +315,7 @@ function QuotingSection() {
 
               {/* Description */}
               <p style={{ color: 'rgba(255,255,255,0.42)', lineHeight: '1.85', marginBottom: '2.25rem', fontSize: '0.93rem', ...fadeUp(inView, 300) }}>
-                Most contractors lose 40% of quotes because they never follow up. Scope eliminates that — with a built-in pipeline, automated sequences, and review requests that run without lifting a finger.
+                Most contractors lose 40% of quotes because they never follow up. Scope eliminates that, with a built-in pipeline, automated sequences, and review requests that run without lifting a finger.
               </p>
 
               {/* Features */}
@@ -354,7 +354,7 @@ function PresentationSection() {
   const [demoStep, setDemoStep] = useState(0);
   const pitchFeatures = [
     { icon: <Monitor size={16} />, title: 'Trade-Specific Decks', desc: 'Built for your exact trade — roofing, HVAC, solar, windows, siding, and more. Not a template.' },
-    { icon: <Layers size={16} />, title: 'Before & After Comparisons', desc: 'Photo-heavy slides showing real transformations. Homeowners buy emotion — give it to them.' },
+    { icon: <Layers size={16} />, title: 'Before & After Comparisons', desc: 'Photo-heavy slides showing real transformations. Homeowners buy emotion, give it to them.' },
     { icon: <FileText size={16} />, title: 'Financing On-Screen', desc: 'Display monthly payment options inside the presentation. Remove sticker shock on the spot.' },
     { icon: <Star size={16} />, title: 'Built-in Social Proof', desc: 'Reviews, photos, certifications, and warranties surfaced at exactly the right moment.' },
     { icon: <CheckCircle size={16} />, title: 'iPad-Ready & Offline', desc: 'Works without internet. No loading screens in the field. Flawless on any device.' },
@@ -415,7 +415,7 @@ function PresentationSection() {
 
               {/* Description */}
               <p style={{ color: 'rgba(255,255,255,0.42)', lineHeight: '1.85', marginBottom: '2.25rem', fontSize: '0.93rem', ...fadeUp(inView, 300) }}>
-                Your competitors show up with a pen and a brochure. Pitch puts you in a different category entirely — a custom interactive presentation that makes homeowners feel confident they&apos;re hiring the best.
+                Your competitors show up with a pen and a brochure. Pitch puts you in a different category entirely, a custom interactive presentation that makes homeowners feel confident they&apos;re hiring the best.
               </p>
 
               {/* Features */}
@@ -507,7 +507,7 @@ function IntegrationBanner() {
           {/* Bottom — "all in 1" value prop */}
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: '2rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
             {[
-              { label: '1 point of contact', sub: 'Not 3–4 vendors. One team that knows your whole business.' },
+              { label: '1 point of contact', sub: 'Not 3 to 4 vendors. One team that knows your whole business.' },
               { label: '100% custom-built', sub: 'Every pipeline, sequence, and script built for your trade and market.' },
               { label: 'Zero handoff chaos', sub: 'Your ads, software, training, and CRM all speak the same language.' },
             ].map((item) => (
@@ -606,7 +606,7 @@ function SoftwareHero() {
           </h1>
         </div>
         <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '1.1rem', lineHeight: '1.75', marginBottom: '2.5rem', ...fadeUp(inView, 600) }}>
-          Scope and Pitch — two purpose-built tools that work together, from the first quote to the signed contract and the five-star review. Available separately, or bundled as RevCore Pro.
+          Scope and Pitch, two purpose-built tools that work together, from the first quote to the signed contract and the five-star review. Available separately, or bundled as RevCore Pro.
         </p>
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', ...fadeUp(inView, 750) }}>
           <a href="#quoting" style={{
