@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { useScrollReveal, fadeUp, slideFromLeft, slideFromRight } from '@/hooks/useScrollReveal';
@@ -125,6 +126,26 @@ function ServiceCard({ service, inView, index }: { service: typeof services[0]; 
 }
 
 export default function ServicesPage() {
+  const heroImgRef = useRef<HTMLDivElement>(null);
+  const doBestRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (doBestRef.current) {
+      doBestRef.current.style.filter = 'brightness(1.2) saturate(1.3)';
+    }
+    const onScroll = () => {
+      if (heroImgRef.current) {
+        heroImgRef.current.style.transform = `translateY(${window.scrollY * 0.25}px)`;
+      }
+      if (doBestRef.current) {
+        const progress = Math.min(1, window.scrollY / 700);
+        doBestRef.current.style.filter = `brightness(${1.2 + progress * 2.0}) saturate(${1.3 + progress * 1.0})`;
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const heroSection = useScrollReveal({ threshold: 0.1 });
   const cardsSection = useScrollReveal({ threshold: 0.04 });
   const crmSection = useScrollReveal({ threshold: 0.15 });
@@ -137,31 +158,49 @@ export default function ServicesPage() {
           margin: '12px', borderRadius: '24px', overflow: 'hidden',
           position: 'relative', height: '48vh', minHeight: '360px', background: '#0d1117',
         }}>
-          <div style={{
-            position: 'absolute', inset: '-10% 0',
-            backgroundImage: 'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9c640cc83074a8516f0d7.png)',
-            backgroundSize: 'cover', backgroundPosition: 'center top',
-          }} />
+          {/* Parallax background image */}
+          <div
+            ref={heroImgRef}
+            style={{
+              position: 'absolute', inset: '-10% 0',
+              backgroundImage: 'url(https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac7965b003fa52d21b8088.png)',
+              backgroundSize: 'cover', backgroundPosition: 'center top',
+              willChange: 'transform',
+            }}
+          />
+          {/* Base dark overlay */}
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)' }} />
+          {/* Space stars */}
+          <SpaceBackground opacity={0.75} />
+          {/* Gradient vignette */}
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 45%, rgba(0,0,0,0.65) 100%)',
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.72) 100%)',
             zIndex: 1,
           }} />
+          {/* Lower grain */}
           <div style={{
             position: 'absolute', inset: 0,
             backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 512 512\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.68\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
-            backgroundSize: '220px 220px', opacity: 0.12, mixBlendMode: 'soft-light', pointerEvents: 'none', zIndex: 2,
+            backgroundSize: '220px 220px', opacity: 0.14, mixBlendMode: 'soft-light', pointerEvents: 'none', zIndex: 2,
           }} />
+          {/* Upper grain */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 512 512\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n2\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n2)\'/%3E%3C/svg%3E")',
+            backgroundSize: '180px 180px', opacity: 0.09, mixBlendMode: 'overlay', pointerEvents: 'none', zIndex: 3,
+          }} />
+          {/* Text content */}
           <div style={{
             position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
-            justifyContent: 'center', alignItems: 'flex-start', padding: '0 52px', zIndex: 3,
+            justifyContent: 'center', alignItems: 'flex-start', padding: '0 52px', zIndex: 4,
           }}>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
               fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.15em',
               textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', marginBottom: '1.25rem',
             }}>
-              <span style={{ width: '24px', height: '2px', background: '#FE6462', display: 'block' }} />
+              <span style={{ width: '24px', height: '2px', background: '#94D96B', display: 'block' }} />
               Services
             </div>
             <span style={{
@@ -169,15 +208,16 @@ export default function ServicesPage() {
               fontSize: 'clamp(3rem, 9vw, 7rem)', lineHeight: 0.9, letterSpacing: '-0.04em',
               color: 'transparent', WebkitTextStroke: '1.5px rgba(255,255,255,0.72)', display: 'block',
             }}>What we</span>
-            <span style={{
-              fontFamily: 'DM Sans, sans-serif', fontWeight: 800,
-              fontSize: 'clamp(2.25rem, 6.5vw, 5rem)', lineHeight: 0.95, letterSpacing: '-0.04em',
-              background: 'linear-gradient(118deg, #ffffff 0%, #FE6462 22%, #ff9e9d 45%, #ffffff 60%, #FE6462 78%, #ff9e9d 90%, #ffffff 100%)',
-              backgroundSize: '300% auto',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-              display: 'block', marginTop: '0.1em',
-              animation: 'doBestShimmer 5s linear infinite',
-            }}>do best.</span>
+            <span
+              ref={doBestRef}
+              className="services-do-best"
+              style={{
+                fontFamily: 'DM Sans, sans-serif', fontWeight: 800,
+                fontSize: 'clamp(2.25rem, 6.5vw, 5rem)', lineHeight: 1, letterSpacing: '-0.04em',
+                display: 'block', marginTop: '0.1em', paddingBottom: '0.1em',
+                willChange: 'filter',
+              }}
+            >do best.</span>
           </div>
         </div>
       </section>
@@ -267,6 +307,16 @@ export default function ServicesPage() {
       </section>
 
       <style>{`
+        .services-do-best {
+          background: linear-gradient(118deg,
+            #ffffff 0%, #94D96B 18%, #d4f5a8 38%, #ffffff 52%, #FEB64A 70%, #ffe0a0 84%, #ffffff 100%
+          );
+          background-size: 300% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: doBestShimmer 5s linear infinite;
+        }
         @keyframes doBestShimmer {
           0%   { background-position: 0% center; }
           100% { background-position: 300% center; }
