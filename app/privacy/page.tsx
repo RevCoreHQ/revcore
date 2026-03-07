@@ -19,8 +19,8 @@ const sections = [
     body: `We use the information we collect to provide, operate, and improve our services; respond to your inquiries and communicate with you about our services; send you marketing and promotional communications (you may opt out at any time); analyze usage trends to improve your experience; and comply with legal obligations. We do not sell your personal information to third parties.`,
   },
   {
-    title: '3. Sharing of Information',
-    body: `We may share your information with third-party service providers who assist us in operating our website and delivering our services (such as CRM platforms, email providers, and analytics tools). These providers are contractually obligated to protect your data. We may also disclose your information if required by law, court order, or government authority, or to protect the rights, property, or safety of our company or others.`,
+    title: '3. Your Information Stays Private',
+    body: `We do not sell, rent, trade, or otherwise share your personal information with any third parties. Information you provide to RevCore is used solely to deliver and improve your service experience. It stays within our organization and is never disclosed to outside parties except as strictly required by law, court order, or government authority.`,
   },
   {
     title: '4. Cookies and Tracking',
