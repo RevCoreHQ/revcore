@@ -529,7 +529,7 @@ function SoftwareCTA() {
     <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '140px 0', background: '#070b0f', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
       <SpaceBackground />
       {/* Centered nebula glow */}
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '900px', height: '500px', background: 'radial-gradient(ellipse, rgba(254,100,98,0.08) 0%, rgba(107,142,254,0.05) 45%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '900px', height: '500px', background: 'radial-gradient(ellipse, rgba(254,100,98,0.04) 0%, rgba(107,142,254,0.02) 45%, transparent 70%)', pointerEvents: 'none' }} />
       <div className="container" style={{ maxWidth: '660px', position: 'relative', zIndex: 1 }}>
         {/* Eyebrow pill */}
         <div style={{ ...fadeUp(inView, 0), marginBottom: '1.75rem' }}>
@@ -556,9 +556,9 @@ function SoftwareCTA() {
             <span style={{ position: 'absolute', inset: '-8px', borderRadius: '100px', border: '1px solid rgba(254,100,98,0.4)', animation: 'heroBtnPulse 2.6s ease-out infinite', pointerEvents: 'none' }} />
             <span style={{ position: 'absolute', inset: '-8px', borderRadius: '100px', border: '1px solid rgba(254,100,98,0.2)', animation: 'heroBtnPulse 2.6s ease-out 1s infinite', pointerEvents: 'none' }} />
             <Link href="/contact"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg, #FE6462 0%, #e84f4d 100%)', color: 'white', padding: '15px 30px', borderRadius: '100px', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none', boxShadow: '0 0 50px rgba(254,100,98,0.4), 0 4px 20px rgba(254,100,98,0.25)', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 0 70px rgba(254,100,98,0.55), 0 8px 30px rgba(254,100,98,0.35)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 50px rgba(254,100,98,0.4), 0 4px 20px rgba(254,100,98,0.25)'; }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg, #FE6462 0%, #e84f4d 100%)', color: 'white', padding: '15px 30px', borderRadius: '100px', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none', boxShadow: '0 0 28px rgba(254,100,98,0.22), 0 4px 16px rgba(254,100,98,0.14)', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 0 40px rgba(254,100,98,0.32), 0 8px 24px rgba(254,100,98,0.2)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 28px rgba(254,100,98,0.22), 0 4px 16px rgba(254,100,98,0.14)'; }}
             >
               Book a demo <ArrowRight size={16} />
             </Link>
