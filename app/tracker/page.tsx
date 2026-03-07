@@ -384,12 +384,28 @@ function ClientDrillCard({ client, partners, comms }: { client: Client; partners
   );
 }
 
+/* ─── KpiCardcard (top-level so React doesn't remount on parent re-renders) ─── */
+function KpiCard({ label, value, sub, color, delay, onClick }: { label: string; value: string; sub?: string; color: string; delay: number; onClick?: () => void }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={onClick}
+      style={{ ...glassCard, borderTop: `3px solid ${color}`, animation: `cardReveal 0.5s cubic-bezier(0.16,1,0.3,1) ${delay}s both`, cursor: onClick ? 'pointer' : 'default', transform: hov && onClick ? 'translateY(-5px)' : 'none', boxShadow: hov && onClick ? `0 16px 40px rgba(0,0,0,0.35), 0 0 0 1px ${color}28` : 'none', background: hov && onClick ? 'rgba(255,255,255,0.055)' : 'rgba(255,255,255,0.03)', transition: 'transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s, background 0.25s' }}>
+      <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.07em', textTransform: 'uppercase' as const, marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
+        {label}
+        {onClick && <span style={{ opacity: hov ? 0.7 : 0.2, transition: 'opacity 0.2s', fontSize: '0.9rem' }}>↗</span>}
+      </div>
+      <div style={{ fontSize: '1.8rem', fontWeight: 800, color, letterSpacing: '-0.03em', lineHeight: 1 }}>{value}</div>
+      {sub && <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', marginTop: '0.4rem' }}>{sub}</div>}
+    </div>
+  );
+}
+
 /* ─── Overview tab ────────────────────────────────────────────────────────── */
 function OverviewTab({ data }: { data: AppData }) {
   const [drill, setDrill] = useState<{ title: string; subtitle: string; content: React.ReactNode } | null>(null);
 
   // Retainer MRR: only true recurring clients that are active (exclude at-risk / paused / churned)
-  const retainerClients = data.clients.filter(c => c.planT === 'recurring' && c.stage !== 'churned' && c.stage !== 'at-risk' && c.stage !== 'paused');
+  const retainerClients = data.clients.filter(c => c.planT === 'recurring' && !c.pkg.toLowerCase().includes('ppa') && c.stage !== 'churned' && c.stage !== 'at-risk' && c.stage !== 'paused');
   const retainerMRR   = retainerClients.reduce((s, c) => s + c.amount, 0);
   // 15-Appt clients: manually charged monthly — treat as recurring revenue when active
   const apptActive    = data.clients.filter(c => c.planT === 'one-time' && c.stage === 'active');
@@ -435,21 +451,6 @@ function OverviewTab({ data }: { data: AppData }) {
     </div>
   );
 
-  // Hoverable KPI card
-  const KPI = ({ label, value, sub, color, delay, onClick }: { label: string; value: string; sub?: string; color: string; delay: number; onClick?: () => void }) => {
-    const [hov, setHov] = useState(false);
-    return (
-      <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={onClick}
-        style={{ ...glassCard, borderTop: `3px solid ${color}`, animation: `cardReveal 0.5s cubic-bezier(0.16,1,0.3,1) ${delay}s both`, cursor: onClick ? 'pointer' : 'default', transform: hov && onClick ? 'translateY(-5px)' : 'none', boxShadow: hov && onClick ? `0 16px 40px rgba(0,0,0,0.35), 0 0 0 1px ${color}28` : 'none', background: hov && onClick ? 'rgba(255,255,255,0.055)' : 'rgba(255,255,255,0.03)', transition: 'transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s, background 0.25s' }}>
-        <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.07em', textTransform: 'uppercase' as const, marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
-          {label}
-          {onClick && <span style={{ opacity: hov ? 0.7 : 0.2, transition: 'opacity 0.2s', fontSize: '0.9rem' }}>↗</span>}
-        </div>
-        <div style={{ fontSize: '1.8rem', fontWeight: 800, color, letterSpacing: '-0.03em', lineHeight: 1 }}>{value}</div>
-        {sub && <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', marginTop: '0.4rem' }}>{sub}</div>}
-      </div>
-    );
-  };
 
   return (
     <div>
@@ -466,25 +467,25 @@ function OverviewTab({ data }: { data: AppData }) {
 
       {/* Revenue KPIs */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1.25rem' }}>
-        <KPI label="Retainer MRR" value={fmtM(retainerMRR)} sub={`${retainerClients.length} active retainer${retainerClients.length !== 1 ? 's' : ''}${ppaActive.length > 0 ? ` · ${ppaActive.length} PPA est. $1.5–2.8k/mo` : ''}`} color="#94D96B" delay={0}
+        <KpiCard label="Retainer MRR" value={fmtM(retainerMRR)} sub={`${retainerClients.length} active retainer${retainerClients.length !== 1 ? 's' : ''}${ppaActive.length > 0 ? ` · ${ppaActive.length} PPA est. $1.5–2.8k/mo` : ''}`} color="#94D96B" delay={0}
           onClick={() => setDrill({ title: 'Retainer MRR', subtitle: `${retainerClients.length} active recurring clients`, content: <>{retainerClients.sort((a,b) => b.amount - a.amount).map(c => <ClientDrillCard key={c.id} client={c} partners={data.partners} comms={data.comms} />)}</> })} />
-        <KPI label="Total Monthly Revenue" value={fmtM(totalMonthly)} sub={`${fmtM(retainerMRR)} retainer + ${apptActive.length} 15-appt client${apptActive.length !== 1 ? 's' : ''}`} color="#6B8EFE" delay={0.06}
+        <KpiCard label="Total Monthly Revenue" value={fmtM(totalMonthly)} sub={`${fmtM(retainerMRR)} retainer + ${apptActive.length} 15-appt client${apptActive.length !== 1 ? 's' : ''}`} color="#6B8EFE" delay={0.06}
           onClick={() => setDrill({ title: 'Total Monthly Revenue', subtitle: `${fmtM(retainerMRR)} retainer MRR + ${fmtM(apptMonthly)} 15-appt`, content: <>{[...retainerClients, ...apptActive].sort((a,b) => b.amount - a.amount).map(c => <ClientDrillCard key={c.id} client={c} partners={data.partners} comms={data.comms} />)}</> })} />
-        <KPI label="Active Clients" value={String(activeClients.length)} sub={`${data.clients.length} total · ${atRiskClients.length} at risk`} color="#94D96B" delay={0.12}
+        <KpiCard label="Active Clients" value={String(activeClients.length)} sub={`${data.clients.length} total · ${atRiskClients.length} at risk`} color="#94D96B" delay={0.12}
           onClick={() => setDrill({ title: 'Active Clients', subtitle: `${activeClients.length} clients currently active`, content: <>{activeClients.sort((a,b) => b.amount - a.amount).map(c => <ClientDrillCard key={c.id} client={c} partners={data.partners} comms={data.comms} />)}</> })} />
-        <KPI label="Payment Issues" value={String(issueClients.length)} sub={`${data.clients.filter(c=>c.payStat==='failed').length} failed · ${data.clients.filter(c=>c.payStat==='overdue').length} overdue`} color={issueClients.length > 0 ? '#FE6462' : '#94D96B'} delay={0.18}
+        <KpiCard label="Payment Issues" value={String(issueClients.length)} sub={`${data.clients.filter(c=>c.payStat==='failed').length} failed · ${data.clients.filter(c=>c.payStat==='overdue').length} overdue`} color={issueClients.length > 0 ? '#FE6462' : '#94D96B'} delay={0.18}
           onClick={() => setDrill({ title: 'Payment Issues', subtitle: `${issueClients.length} clients with payment problems`, content: issueClients.length === 0 ? <p style={{color:'rgba(255,255,255,0.4)'}}>No payment issues.</p> : <>{issueClients.map(c => <ClientDrillCard key={c.id} client={c} partners={data.partners} comms={data.comms} />)}</> })} />
       </div>
 
       {/* Commission KPIs */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
-        <KPI label="Total Commissions Owed" value={fmtM(totalPending)} sub={`${data.comms.filter(c => c.stat === 'pending').length} unpaid entries`} color="#F59E0B" delay={0.22}
+        <KpiCard label="Total Commissions Owed" value={fmtM(totalPending)} sub={`${data.comms.filter(c => c.stat === 'pending').length} unpaid entries`} color="#F59E0B" delay={0.22}
           onClick={() => setDrill({ title: 'All Pending Commissions', subtitle: `${data.comms.filter(c=>c.stat==='pending').length} unpaid · ${fmtM(totalPending)} total`, content: commDrill(data.comms.filter(c=>c.stat==='pending'), 'setter/closer') })} />
-        <KPI label="Total Paid Out" value={fmtM(totalPaid)} sub={`${data.comms.filter(c => c.stat === 'paid').length} entries paid`} color="#94D96B" delay={0.28}
+        <KpiCard label="Total Paid Out" value={fmtM(totalPaid)} sub={`${data.comms.filter(c => c.stat === 'paid').length} entries paid`} color="#94D96B" delay={0.28}
           onClick={() => setDrill({ title: 'Paid Commissions', subtitle: `${data.comms.filter(c=>c.stat==='paid').length} paid · ${fmtM(totalPaid)} total`, content: commDrill(data.comms.filter(c=>c.stat==='paid'), 'setter/closer') })} />
-        <KPI label="Setter Commissions" value={fmtM(setterPending)} sub={`Paid out: ${fmtM(setterPaid)}`} color="#FE6462" delay={0.34}
+        <KpiCard label="Setter Commissions" value={fmtM(setterPending)} sub={`Paid out: ${fmtM(setterPaid)}`} color="#FE6462" delay={0.34}
           onClick={() => setDrill({ title: 'Setter Commissions', subtitle: `${setterPendingComms.length} pending · ${fmtM(setterPending)} owed`, content: commDrill([...setterPendingComms, ...setterPaidComms], 'setter') })} />
-        <KPI label="Closer Commissions" value={fmtM(closerPending)} sub={`Paid out: ${fmtM(closerPaid)}`} color="#6B8EFE" delay={0.40}
+        <KpiCard label="Closer Commissions" value={fmtM(closerPending)} sub={`Paid out: ${fmtM(closerPaid)}`} color="#6B8EFE" delay={0.40}
           onClick={() => setDrill({ title: 'Closer Commissions', subtitle: `${closerPendingComms.length} pending · ${fmtM(closerPending)} owed`, content: commDrill([...closerPendingComms, ...closerPaidComms], 'closer') })} />
       </div>
 
