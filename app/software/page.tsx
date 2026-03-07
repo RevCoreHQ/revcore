@@ -224,6 +224,153 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
   );
 }
 
+/* ─── Quote + e-signature (Scope demo) ──────────────────────────────────── */
+type SigState = 'idle' | 'signing' | 'signed';
+function QuoteSignatureApp() {
+  const [sigState, setSigState] = useState<SigState>('idle');
+
+  useEffect(() => {
+    const t1 = setTimeout(() => {
+      setSigState('signing');
+      const t2 = setTimeout(() => setSigState('signed'), 1500);
+      return () => clearTimeout(t2);
+    }, 1800);
+    return () => clearTimeout(t1);
+  }, []);
+
+  const sign = () => {
+    if (sigState !== 'idle') return;
+    setSigState('signing');
+    setTimeout(() => setSigState('signed'), 1500);
+  };
+
+  const lineItems = [
+    { desc: 'Roof Tear-Off & Disposal', price: '$1,800' },
+    { desc: 'Architectural Shingles (28 sq)', price: '$9,800' },
+    { desc: 'Ice & Water Shield', price: '$1,200' },
+    { desc: 'Ridge Vent System', price: '$650' },
+  ];
+
+  return (
+    <div style={{ background: '#fff', height: '100%', overflowY: 'auto', fontFamily: 'DM Sans, sans-serif', color: '#1a1a1a', display: 'flex', flexDirection: 'column', fontSize: '11px' }}>
+      {/* Header bar */}
+      <div style={{ background: '#0d0d0d', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+        <div style={{ color: '#fff', fontWeight: 800, fontSize: '13px', letterSpacing: '-0.02em' }}>RevCore</div>
+        <div style={{ background: '#94D96B', color: '#0a0a0a', fontSize: '8px', fontWeight: 800, padding: '3px 10px', borderRadius: '100px', letterSpacing: '0.1em' }}>ESTIMATE</div>
+      </div>
+
+      <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {/* Customer + estimate meta */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
+          <div>
+            <div style={{ fontSize: '8px', color: '#999', fontWeight: 600, letterSpacing: '0.06em', marginBottom: '3px' }}>BILL TO</div>
+            <div style={{ fontWeight: 700, fontSize: '11px' }}>John & Sarah Miller</div>
+            <div style={{ fontSize: '9.5px', color: '#666', lineHeight: 1.5 }}>4821 Oakwood Drive<br />Austin, TX 78701</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '8px', color: '#999', fontWeight: 600, letterSpacing: '0.06em', marginBottom: '3px' }}>ESTIMATE #</div>
+            <div style={{ fontWeight: 700, fontSize: '11px' }}>RC-2847</div>
+            <div style={{ fontSize: '9.5px', color: '#666', lineHeight: 1.5 }}>March 8, 2026<br /><span style={{ color: '#94D96B', fontWeight: 600 }}>Valid 30 days</span></div>
+          </div>
+        </div>
+
+        {/* Line items */}
+        <div style={{ border: '1px solid #ebebeb', borderRadius: '8px', overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '6px 10px', background: '#f8f8f8', borderBottom: '1px solid #ebebeb' }}>
+            <span style={{ fontSize: '8px', color: '#999', fontWeight: 700, letterSpacing: '0.06em' }}>DESCRIPTION</span>
+            <span style={{ fontSize: '8px', color: '#999', fontWeight: 700, letterSpacing: '0.06em' }}>TOTAL</span>
+          </div>
+          {lineItems.map((item, i) => (
+            <div key={item.desc} style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '7px 10px', borderBottom: i < lineItems.length - 1 ? '1px solid #f3f3f3' : 'none', alignItems: 'center' }}>
+              <span style={{ fontSize: '10px', color: '#333' }}>{item.desc}</span>
+              <span style={{ fontSize: '10px', fontWeight: 600, color: '#1a1a1a' }}>{item.price}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Totals */}
+        <div style={{ padding: '10px 12px', background: '#f9f9f9', borderRadius: '8px', border: '1px solid #ebebeb' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9.5px', color: '#777', marginBottom: '4px' }}>
+            <span>Subtotal</span><span>$13,450</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9.5px', color: '#777', paddingBottom: '8px', borderBottom: '1px solid #e0e0e0', marginBottom: '8px' }}>
+            <span>Tax (0%)</span><span>$0.00</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', fontWeight: 800 }}>
+            <span>Total Due</span><span style={{ color: '#16a34a' }}>$13,450</span>
+          </div>
+        </div>
+
+        {/* Signature area */}
+        <div style={{ marginTop: 'auto' }}>
+          <div style={{ fontSize: '8px', color: '#999', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '6px' }}>CUSTOMER SIGNATURE</div>
+          <div
+            onClick={sign}
+            style={{
+              border: sigState === 'signed' ? '1.5px solid #94D96B' : '1.5px dashed #d0d0d0',
+              borderRadius: '10px',
+              height: '72px',
+              position: 'relative',
+              overflow: 'hidden',
+              cursor: sigState === 'idle' ? 'pointer' : 'default',
+              background: sigState === 'signed' ? 'rgba(148,217,107,0.06)' : sigState === 'signing' ? '#fafafa' : '#fafafa',
+              transition: 'border-color 0.4s ease, background 0.4s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {sigState === 'idle' && (
+              <div style={{ textAlign: 'center', pointerEvents: 'none' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.25, marginBottom: '3px' }}>
+                  <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <div style={{ fontSize: '9px', color: '#bbb', fontWeight: 500 }}>Tap to sign</div>
+              </div>
+            )}
+            {(sigState === 'signing' || sigState === 'signed') && (
+              <svg width="210" height="64" viewBox="0 0 210 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: 'visible' }}>
+                <path
+                  d="M 14,46 C 11,28 19,16 29,24 C 37,30 33,46 21,48 C 13,50 9,42 12,35 L 27,31 C 35,25 47,21 53,31 C 57,39 51,51 39,49 M 63,17 L 61,53 M 61,29 C 67,21 79,19 83,29 C 87,39 79,51 69,49 M 91,29 C 95,19 109,19 111,29 L 107,53 M 117,29 C 121,19 135,19 137,29 L 133,53 M 143,33 C 147,25 157,23 159,33 L 155,55 M 163,19 L 169,55"
+                  stroke="#1a1a1a"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  pathLength="1"
+                  strokeDasharray="1"
+                  strokeDashoffset={sigState === 'signed' ? '0' : '1'}
+                  style={{ animation: sigState === 'signing' ? 'drawSignature 1.4s cubic-bezier(0.3,0,0.2,1) forwards' : 'none' }}
+                />
+              </svg>
+            )}
+            {sigState === 'signed' && (
+              <div style={{ position: 'absolute', bottom: '6px', right: '8px', fontSize: '8px', color: '#16a34a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '3px', animation: 'sigBadgeIn 0.4s ease both' }}>
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="#16a34a" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Accepted
+              </div>
+            )}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px' }}>
+            <div style={{ fontSize: '8px', color: '#ccc' }}>x________________________</div>
+            <div style={{ fontSize: '8px', color: '#bbb' }}>March 8, 2026</div>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes drawSignature {
+          from { stroke-dashoffset: 1; }
+          to   { stroke-dashoffset: 0; }
+        }
+        @keyframes sigBadgeIn {
+          from { opacity: 0; transform: translateY(4px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 /* ─── Stat pill ──────────────────────────────────────────────────────────── */
 function StatPill({ value, label, accent, inView, delay }: { value: string; label: string; accent: string; inView: boolean; delay: number }) {
   return (
@@ -261,10 +408,7 @@ function QuotingSection() {
         ipadContent={
           <IpadMockup width="100%" accentGlow="rgba(148,217,107,0.6)">
             {QUOTING_STEPS[demoStep].tab === 'estimate' ? (
-              <div style={{ width: '100%', height: '100%', overflowY: 'auto', background: '#c8c8c8' }}>
-                <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac90bc7bdf3846d4d43e3a.jpg" alt="Estimate page 1" style={{ width: '100%', display: 'block', marginBottom: '3px' }} />
-                <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac90bc618c8d98805f2c81.jpg" alt="Estimate page 2" style={{ width: '100%', display: 'block' }} />
-              </div>
+              <QuoteSignatureApp />
             ) : (
               <QuotingApp controlledTab={QUOTING_STEPS[demoStep].tab} />
             )}
