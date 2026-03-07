@@ -332,7 +332,7 @@ function ClientModal({ client, partners, onSave, onClose }: { client?: Client; p
 function DrillPanel({ title, subtitle, onClose, children }: { title: string; subtitle: string; onClose: () => void; children: React.ReactNode }) {
   return (
     <>
-      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(7,11,15,0.92)', zIndex: 900, animation: 'drillFadeIn 0.2s ease both' }} />
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: '#070b0f', zIndex: 900, animation: 'drillFadeIn 0.2s ease both' }} />
       <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: 'min(580px,100vw)', background: '#0b0f16', borderLeft: '1px solid rgba(255,255,255,0.08)', zIndex: 901, display: 'flex', flexDirection: 'column', animation: 'drillSlideIn 0.38s cubic-bezier(0.16,1,0.3,1) both', boxShadow: '-24px 0 80px rgba(0,0,0,0.6)' }}>
         <div style={{ padding: '1.5rem 1.75rem', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexShrink: 0 }}>
           <div>
