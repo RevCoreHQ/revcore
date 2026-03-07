@@ -895,38 +895,52 @@ function TeamTab({ data, setData }: { data: AppData; setData: (d: AppData) => vo
 
           <div style={{ ...glassCard, animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
             <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '1rem' }}>
-              Roster ({partners.filter(p => p.active !== false).length} active{partners.filter(p => p.active === false).length > 0 ? ` · ${partners.filter(p => p.active === false).length} terminated` : ''})
+              Active Roster ({partners.filter(p => p.active !== false).length})
             </div>
-            {partners.length === 0 ? (
-              <div style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.83rem' }}>No team members yet.</div>
-            ) : partners.map(p => {
-              const isActive = p.active !== false;
-              return (
-                <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer', opacity: isActive ? 1 : 0.45 }}
-                  onClick={() => setSelected(selected === p.id ? 'all' : p.id)}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                    <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: selected === p.id ? 'rgba(254,100,98,0.25)' : 'rgba(254,100,98,0.1)', border: `1px solid ${selected === p.id ? 'rgba(254,100,98,0.6)' : 'rgba(254,100,98,0.25)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.82rem', fontWeight: 800, color: '#FE6462', transition: 'all 0.2s' }}>
-                      {p.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: 700, color: selected === p.id ? '#fff' : 'rgba(255,255,255,0.8)', fontSize: '0.86rem' }}>{p.name}</div>
-                      <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)', textTransform: 'capitalize' }}>
-                        {p.role}{!isActive && <span style={{ color: '#FE6462', marginLeft: '4px' }}>· terminated</span>}
-                      </div>
-                    </div>
+            {partners.filter(p => p.active !== false).length === 0 ? (
+              <div style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.83rem' }}>No active team members.</div>
+            ) : partners.filter(p => p.active !== false).map(p => (
+              <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer' }}
+                onClick={() => setSelected(selected === p.id ? 'all' : p.id)}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                  <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: selected === p.id ? 'rgba(254,100,98,0.25)' : 'rgba(254,100,98,0.1)', border: `1px solid ${selected === p.id ? 'rgba(254,100,98,0.6)' : 'rgba(254,100,98,0.25)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.82rem', fontWeight: 800, color: '#FE6462', transition: 'all 0.2s' }}>
+                    {p.name.charAt(0).toUpperCase()}
                   </div>
-                  <div style={{ display: 'flex', gap: '4px' }} onClick={e => e.stopPropagation()}>
-                    {isActive
-                      ? <button onClick={() => terminateMember(p.id)} style={{ ...btn('danger'), padding: '3px 10px', fontSize: '0.68rem' }}>Terminate</button>
-                      : <>
-                          <button onClick={() => reactivateMember(p.id)} style={{ ...btn('ghost'), padding: '3px 10px', fontSize: '0.68rem' }}>Reactivate</button>
-                          <button onClick={() => setDelId(p.id)} style={{ ...btn('danger'), padding: '3px 8px', fontSize: '0.68rem' }}>×</button>
-                        </>
-                    }
+                  <div>
+                    <div style={{ fontWeight: 700, color: selected === p.id ? '#fff' : 'rgba(255,255,255,0.8)', fontSize: '0.86rem' }}>{p.name}</div>
+                    <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)', textTransform: 'capitalize' }}>{p.role}</div>
                   </div>
                 </div>
-              );
-            })}
+                <div onClick={e => e.stopPropagation()}>
+                  <button onClick={() => terminateMember(p.id)} style={{ ...btn('danger'), padding: '3px 10px', fontSize: '0.68rem' }}>Terminate</button>
+                </div>
+              </div>
+            ))}
+
+            {partners.filter(p => p.active === false).length > 0 && (
+              <>
+                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '1.25rem', marginBottom: '0.5rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  Terminated ({partners.filter(p => p.active === false).length})
+                </div>
+                {partners.filter(p => p.active === false).map(p => (
+                  <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.04)', opacity: 0.45 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                      <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.78rem', fontWeight: 800, color: 'rgba(255,255,255,0.4)' }}>
+                        {p.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 600, color: 'rgba(255,255,255,0.5)', fontSize: '0.84rem' }}>{p.name}</div>
+                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.25)', textTransform: 'capitalize' }}>{p.role}</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '4px' }} onClick={e => e.stopPropagation()}>
+                      <button onClick={() => reactivateMember(p.id)} style={{ ...btn('ghost'), padding: '3px 10px', fontSize: '0.68rem' }}>Reactivate</button>
+                      <button onClick={() => setDelId(p.id)} style={{ ...btn('danger'), padding: '3px 8px', fontSize: '0.68rem' }}>×</button>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
         </div>
 
