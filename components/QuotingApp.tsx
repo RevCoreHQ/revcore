@@ -106,28 +106,28 @@ function Dashboard() {
   ];
   const activity = [
     { name: 'Thompson quote viewed', time: '4 min ago', color: ACCENT, initials: 'TH' },
-    { name: 'Auto follow-up → Garcia', time: '22 min ago', color: '#6B8EFE', initials: 'GA' },
-    { name: 'Williams signed!', time: '1 hr ago', color: '#FEB64A', initials: 'WL' },
-    { name: 'Review request → Davis', time: '2 hrs ago', color: '#4FC3F7', initials: 'DV' },
+    { name: 'Auto follow-up sent to Garcia', time: '22 min ago', color: '#6B8EFE', initials: 'GA' },
+    { name: 'Williams signed estimate!', time: '1 hr ago', color: '#FEB64A', initials: 'WL' },
+    { name: 'Review request sent to Davis', time: '2 hrs ago', color: '#4FC3F7', initials: 'DV' },
   ];
   return (
     <div style={{ padding: '14px' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '16px' }}>
         {stats.map((s) => (
           <div key={s.label} style={{ background: `${s.color}0a`, border: `1px solid ${s.color}20`, borderRadius: '12px', padding: '12px' }}>
-            <div style={{ fontSize: '1.15rem', fontWeight: 800, color: s.color, lineHeight: 1, letterSpacing: '-0.02em' }}>{s.value}</div>
-            <div style={{ fontSize: '0.57rem', color: 'rgba(255,255,255,0.3)', marginTop: '3px', marginBottom: '4px' }}>{s.label}</div>
-            <div style={{ fontSize: '0.54rem', color: `${s.color}80` }}>{s.sub}</div>
+            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: s.color, lineHeight: 1, letterSpacing: '-0.02em' }}>{s.value}</div>
+            <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.38)', marginTop: '4px', marginBottom: '4px' }}>{s.label}</div>
+            <div style={{ fontSize: '0.58rem', color: `${s.color}90` }}>{s.sub}</div>
           </div>
         ))}
       </div>
-      <div style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.22)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '9px', fontWeight: 600 }}>Recent Activity</div>
+      <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '9px', fontWeight: 700 }}>Recent Activity</div>
       {activity.map((a) => (
-        <div key={a.name} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+        <div key={a.name} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
           <Avatar initials={a.initials} color={a.color} />
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.72)', fontWeight: 500 }}>{a.name}</div>
-            <div style={{ fontSize: '0.54rem', color: 'rgba(255,255,255,0.25)', marginTop: '1px' }}>{a.time}</div>
+            <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.78)', fontWeight: 500 }}>{a.name}</div>
+            <div style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.3)', marginTop: '2px' }}>{a.time}</div>
           </div>
         </div>
       ))}
@@ -254,15 +254,15 @@ export default function QuotingApp({ controlledTab }: { controlledTab?: Tab } = 
     <div style={{ background: BG, fontFamily: '-apple-system, "DM Sans", sans-serif', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <StatusBar center="RevCore Quoting" />
       {/* Tab bar */}
-      <div style={{ display: 'flex', background: BG, padding: '2px 0 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ display: 'flex', background: BG, padding: '6px 0 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             style={{
-              flex: 1, padding: '7px 2px 9px', border: 'none', cursor: 'pointer', background: 'transparent',
+              flex: 1, padding: '6px 2px 8px', border: 'none', cursor: 'pointer', background: 'transparent',
               color: tab === t.id ? ACCENT : 'rgba(255,255,255,0.28)',
-              fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px',
+              fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
               borderBottom: `2px solid ${tab === t.id ? ACCENT : 'transparent'}`,
               marginBottom: '-1px', transition: 'all 0.15s',
             }}

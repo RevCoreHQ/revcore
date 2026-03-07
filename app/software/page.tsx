@@ -225,132 +225,106 @@ function SoftwareDemoOverlay({ open, onClose, ipadSide, accent, steps, step, onS
 }
 
 /* ─── Quote + e-signature (Scope demo) ──────────────────────────────────── */
-type SigState = 'idle' | 'signing' | 'signed';
+type SigState = 'signing' | 'signed';
 function QuoteSignatureApp() {
-  const [sigState, setSigState] = useState<SigState>('idle');
+  const [sigState, setSigState] = useState<SigState>('signing');
 
   useEffect(() => {
-    const t1 = setTimeout(() => {
-      setSigState('signing');
-      const t2 = setTimeout(() => setSigState('signed'), 1500);
-      return () => clearTimeout(t2);
-    }, 1800);
-    return () => clearTimeout(t1);
+    const t = setTimeout(() => setSigState('signed'), 1200);
+    return () => clearTimeout(t);
   }, []);
 
-  const sign = () => {
-    if (sigState !== 'idle') return;
-    setSigState('signing');
-    setTimeout(() => setSigState('signed'), 1500);
-  };
-
   const lineItems = [
-    { desc: 'Roof Tear-Off & Disposal', price: '$1,800' },
-    { desc: 'Architectural Shingles (28 sq)', price: '$9,800' },
+    { desc: 'Arch. Shingles (28 sq)', price: '$9,800' },
     { desc: 'Ice & Water Shield', price: '$1,200' },
-    { desc: 'Ridge Vent System', price: '$650' },
+    { desc: 'Ridge Vent + Labor', price: '$2,450' },
   ];
 
   return (
-    <div style={{ background: '#fff', height: '100%', overflowY: 'auto', fontFamily: 'DM Sans, sans-serif', color: '#1a1a1a', display: 'flex', flexDirection: 'column', fontSize: '11px' }}>
+    <div style={{ background: '#fff', height: '100%', overflow: 'hidden', fontFamily: 'DM Sans, sans-serif', color: '#1a1a1a', display: 'flex', flexDirection: 'column', fontSize: '11px' }}>
       {/* Header bar */}
-      <div style={{ background: '#0d0d0d', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+      <div style={{ background: '#0d0d0d', padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
         <div style={{ color: '#fff', fontWeight: 800, fontSize: '13px', letterSpacing: '-0.02em' }}>RevCore</div>
         <div style={{ background: '#94D96B', color: '#0a0a0a', fontSize: '8px', fontWeight: 800, padding: '3px 10px', borderRadius: '100px', letterSpacing: '0.1em' }}>ESTIMATE</div>
       </div>
 
-      <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div style={{ padding: '10px 13px', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {/* Customer + estimate meta */}
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
           <div>
-            <div style={{ fontSize: '8px', color: '#999', fontWeight: 600, letterSpacing: '0.06em', marginBottom: '3px' }}>BILL TO</div>
-            <div style={{ fontWeight: 700, fontSize: '11px' }}>John & Sarah Miller</div>
-            <div style={{ fontSize: '9.5px', color: '#666', lineHeight: 1.5 }}>4821 Oakwood Drive<br />Austin, TX 78701</div>
+            <div style={{ fontSize: '7.5px', color: '#999', fontWeight: 700, letterSpacing: '0.07em', marginBottom: '2px' }}>BILL TO</div>
+            <div style={{ fontWeight: 700, fontSize: '11px', lineHeight: 1.2 }}>John & Sarah Miller</div>
+            <div style={{ fontSize: '9px', color: '#888', lineHeight: 1.4 }}>4821 Oakwood Dr, Austin TX</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '8px', color: '#999', fontWeight: 600, letterSpacing: '0.06em', marginBottom: '3px' }}>ESTIMATE #</div>
-            <div style={{ fontWeight: 700, fontSize: '11px' }}>RC-2847</div>
-            <div style={{ fontSize: '9.5px', color: '#666', lineHeight: 1.5 }}>March 8, 2026<br /><span style={{ color: '#94D96B', fontWeight: 600 }}>Valid 30 days</span></div>
+            <div style={{ fontSize: '7.5px', color: '#999', fontWeight: 700, letterSpacing: '0.07em', marginBottom: '2px' }}>ESTIMATE</div>
+            <div style={{ fontWeight: 700, fontSize: '11px', lineHeight: 1.2 }}>RC-2847</div>
+            <div style={{ fontSize: '9px', color: '#94D96B', fontWeight: 600 }}>Valid 30 days</div>
           </div>
         </div>
 
         {/* Line items */}
         <div style={{ border: '1px solid #ebebeb', borderRadius: '8px', overflow: 'hidden' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '6px 10px', background: '#f8f8f8', borderBottom: '1px solid #ebebeb' }}>
-            <span style={{ fontSize: '8px', color: '#999', fontWeight: 700, letterSpacing: '0.06em' }}>DESCRIPTION</span>
-            <span style={{ fontSize: '8px', color: '#999', fontWeight: 700, letterSpacing: '0.06em' }}>TOTAL</span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '5px 10px', background: '#f5f5f5', borderBottom: '1px solid #ebebeb' }}>
+            <span style={{ fontSize: '7.5px', color: '#aaa', fontWeight: 700, letterSpacing: '0.07em' }}>DESCRIPTION</span>
+            <span style={{ fontSize: '7.5px', color: '#aaa', fontWeight: 700, letterSpacing: '0.07em' }}>TOTAL</span>
           </div>
           {lineItems.map((item, i) => (
-            <div key={item.desc} style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '7px 10px', borderBottom: i < lineItems.length - 1 ? '1px solid #f3f3f3' : 'none', alignItems: 'center' }}>
+            <div key={item.desc} style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '6px 10px', borderBottom: i < lineItems.length - 1 ? '1px solid #f3f3f3' : 'none', alignItems: 'center' }}>
               <span style={{ fontSize: '10px', color: '#333' }}>{item.desc}</span>
-              <span style={{ fontSize: '10px', fontWeight: 600, color: '#1a1a1a' }}>{item.price}</span>
+              <span style={{ fontSize: '10px', fontWeight: 700, color: '#1a1a1a' }}>{item.price}</span>
             </div>
           ))}
         </div>
 
         {/* Totals */}
-        <div style={{ padding: '10px 12px', background: '#f9f9f9', borderRadius: '8px', border: '1px solid #ebebeb' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9.5px', color: '#777', marginBottom: '4px' }}>
-            <span>Subtotal</span><span>$13,450</span>
+        <div style={{ padding: '8px 11px', background: '#f9f9f9', borderRadius: '8px', border: '1px solid #ebebeb' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#999', marginBottom: '6px', paddingBottom: '6px', borderBottom: '1px solid #e8e8e8' }}>
+            <span>Subtotal (incl. tear-off & disposal)</span><span style={{ fontWeight: 600, color: '#555' }}>$13,450</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9.5px', color: '#777', paddingBottom: '8px', borderBottom: '1px solid #e0e0e0', marginBottom: '8px' }}>
-            <span>Tax (0%)</span><span>$0.00</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', fontWeight: 800 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 800 }}>
             <span>Total Due</span><span style={{ color: '#16a34a' }}>$13,450</span>
           </div>
         </div>
 
         {/* Signature area */}
-        <div style={{ marginTop: 'auto' }}>
-          <div style={{ fontSize: '8px', color: '#999', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '6px' }}>CUSTOMER SIGNATURE</div>
+        <div>
+          <div style={{ fontSize: '7.5px', color: '#999', fontWeight: 700, letterSpacing: '0.07em', marginBottom: '5px' }}>CUSTOMER SIGNATURE</div>
           <div
-            onClick={sign}
             style={{
-              border: sigState === 'signed' ? '1.5px solid #94D96B' : '1.5px dashed #d0d0d0',
+              border: sigState === 'signed' ? '1.5px solid #94D96B' : '1.5px dashed #d8d8d8',
               borderRadius: '10px',
-              height: '72px',
+              height: '58px',
               position: 'relative',
               overflow: 'hidden',
-              cursor: sigState === 'idle' ? 'pointer' : 'default',
-              background: sigState === 'signed' ? 'rgba(148,217,107,0.06)' : sigState === 'signing' ? '#fafafa' : '#fafafa',
+              background: sigState === 'signed' ? 'rgba(148,217,107,0.05)' : '#fafafa',
               transition: 'border-color 0.4s ease, background 0.4s ease',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            {sigState === 'idle' && (
-              <div style={{ textAlign: 'center', pointerEvents: 'none' }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.25, marginBottom: '3px' }}>
-                  <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <div style={{ fontSize: '9px', color: '#bbb', fontWeight: 500 }}>Tap to sign</div>
-              </div>
-            )}
-            {(sigState === 'signing' || sigState === 'signed') && (
-              <svg width="210" height="64" viewBox="0 0 210 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: 'visible' }}>
-                <path
-                  d="M 14,46 C 11,28 19,16 29,24 C 37,30 33,46 21,48 C 13,50 9,42 12,35 L 27,31 C 35,25 47,21 53,31 C 57,39 51,51 39,49 M 63,17 L 61,53 M 61,29 C 67,21 79,19 83,29 C 87,39 79,51 69,49 M 91,29 C 95,19 109,19 111,29 L 107,53 M 117,29 C 121,19 135,19 137,29 L 133,53 M 143,33 C 147,25 157,23 159,33 L 155,55 M 163,19 L 169,55"
-                  stroke="#1a1a1a"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  pathLength="1"
-                  strokeDasharray="1"
-                  strokeDashoffset={sigState === 'signed' ? '0' : '1'}
-                  style={{ animation: sigState === 'signing' ? 'drawSignature 1.4s cubic-bezier(0.3,0,0.2,1) forwards' : 'none' }}
-                />
-              </svg>
-            )}
+            <svg width="185" height="52" viewBox="0 0 185 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M 12,44 C 4,26 16,7 30,17 C 42,25 38,46 24,50 C 12,53 4,42 12,32 L 30,25 C 46,17 62,21 66,35 C 70,49 58,57 46,55 M 76,13 L 70,55 M 68,27 C 80,11 100,11 100,27 C 100,43 88,57 76,55 M 108,25 C 118,9 140,11 140,27 L 132,57 M 148,15 L 158,57 M 148,55 L 160,17"
+                stroke="#1e1e1e"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                pathLength="1"
+                strokeDasharray="1"
+                strokeDashoffset={sigState === 'signed' ? '0' : '1'}
+                style={{ animation: sigState === 'signing' ? 'drawSignature 1.1s cubic-bezier(0.25,0,0.2,1) forwards' : 'none' }}
+              />
+            </svg>
             {sigState === 'signed' && (
-              <div style={{ position: 'absolute', bottom: '6px', right: '8px', fontSize: '8px', color: '#16a34a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '3px', animation: 'sigBadgeIn 0.4s ease both' }}>
+              <div style={{ position: 'absolute', bottom: '5px', right: '8px', fontSize: '8px', color: '#16a34a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '3px', animation: 'sigBadgeIn 0.4s ease both' }}>
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="#16a34a" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 Accepted
               </div>
             )}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
             <div style={{ fontSize: '8px', color: '#ccc' }}>x________________________</div>
             <div style={{ fontSize: '8px', color: '#bbb' }}>March 8, 2026</div>
           </div>
@@ -416,6 +390,7 @@ function QuotingSection() {
         }
       />
       <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#060c06', position: 'relative', overflow: 'hidden' }}>
+        <SpaceBackground />
         {/* Fade into Presentation section */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '140px', background: 'linear-gradient(to bottom, transparent, #06080f)', pointerEvents: 'none', zIndex: 2 }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
@@ -531,6 +506,7 @@ function PresentationSection() {
         }
       />
       <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#06080f', position: 'relative', overflow: 'hidden' }}>
+        <SpaceBackground />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
 
@@ -618,14 +594,14 @@ function InFieldSection() {
   const { ref, inView } = useScrollReveal({ threshold: 0.1 });
   const photos = [
     {
-      url: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac8f84618c8d48205efad9.png',
+      url: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac8f8436702f23d94db789.png',
       tag: 'Scope',
       tagColor: '#94D96B',
       caption: 'Built in the car before you walk in',
       sub: 'Your rep pulls up the job, builds a quote, and steps inside with numbers already locked.',
     },
     {
-      url: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac8f8436702f23d94db789.png',
+      url: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac8f84618c8d48205efad9.png',
       tag: 'Pitch',
       tagColor: '#6B8EFE',
       caption: 'Closed at the kitchen table',
@@ -635,6 +611,7 @@ function InFieldSection() {
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '80px 0', background: '#06080f', position: 'relative', overflow: 'hidden' }}>
+      <SpaceBackground />
       {/* Fade into Integration section */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100px', background: 'linear-gradient(to bottom, transparent, #0a0a0a)', pointerEvents: 'none', zIndex: 2 }} />
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
@@ -750,6 +727,7 @@ function SoftwareCTA() {
   const { ref, inView } = useScrollReveal({ threshold: 0.2 });
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '140px 0', background: '#070b0f', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+      <SpaceBackground />
       {/* Centered nebula glow */}
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '900px', height: '500px', background: 'radial-gradient(ellipse, rgba(254,100,98,0.04) 0%, rgba(107,142,254,0.02) 45%, transparent 70%)', pointerEvents: 'none' }} />
       <div className="container" style={{ maxWidth: '660px', position: 'relative', zIndex: 1 }}>
@@ -804,6 +782,7 @@ function SoftwareHero() {
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '160px', paddingBottom: '120px', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
+      <SpaceBackground />
       {/* Nebula glow beneath headline */}
       <div style={{ position: 'absolute', top: '45%', left: '50%', transform: 'translate(-50%, -50%)', width: '900px', height: '500px', background: 'radial-gradient(ellipse, rgba(107,142,254,0.04) 0%, rgba(148,217,107,0.02) 45%, transparent 70%)', pointerEvents: 'none' }} />
       {/* Fade into Quoting section */}
@@ -861,8 +840,6 @@ function SoftwareHero() {
 export default function SoftwarePage() {
   return (
     <>
-      {/* Single fixed star layer covers the whole page */}
-      <SpaceBackground fixed />
       <SoftwareHero />
       <div id="quoting"><QuotingSection /></div>
       <div id="presentation"><PresentationSection /></div>
