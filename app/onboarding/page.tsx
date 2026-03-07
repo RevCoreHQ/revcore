@@ -641,7 +641,7 @@ export default function OnboardingPage() {
         select:-webkit-autofill,
         select:-webkit-autofill:hover,
         select:-webkit-autofill:focus {
-          -webkit-box-shadow: 0 0 0 1000px rgba(255,255,255,0.05) inset !important;
+          -webkit-box-shadow: 0 0 0 1000px #0f1318 inset !important;
           -webkit-text-fill-color: rgba(255,255,255,0.9) !important;
           caret-color: white;
           border-color: rgba(255,255,255,0.1) !important;
