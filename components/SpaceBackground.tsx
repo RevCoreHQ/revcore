@@ -26,7 +26,7 @@ export default function SpaceBackground({ opacity = 1, fixed = false, parallax =
     let onScroll: (() => void) | undefined;
     if (parallax) {
       onScroll = () => {
-        if (canvas) canvas.style.transform = `translateY(${-window.scrollY * parallax}px)`;
+        if (canvas) canvas.style.transform = `translateY(${window.scrollY * parallax}px)`;
       };
       window.addEventListener('scroll', onScroll, { passive: true });
       onScroll(); // apply immediately in case page is already scrolled
