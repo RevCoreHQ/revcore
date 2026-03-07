@@ -54,13 +54,14 @@ function Feature({ icon, title, desc, accent }: { icon: React.ReactNode; title: 
 
 /* ─── Demo data ──────────────────────────────────────────────────────────── */
 interface DemoStep { tag: string; title: string; desc: string; bullets: string[]; }
-interface QuotingDemoStep extends DemoStep { tab: 'dashboard' | 'quote' | 'jobs' | 'followup'; }
+interface QuotingDemoStep extends DemoStep { tab: 'dashboard' | 'quote' | 'jobs' | 'followup' | 'estimate'; }
 interface PitchDemoStep extends DemoStep { slide: number; }
 
 const QUOTING_STEPS: QuotingDemoStep[] = [
   { tab: 'dashboard', tag: 'Live Dashboard', title: 'Every metric,\nat a glance.', desc: 'Revenue, open quotes, follow-ups, and new reviews updated in real time, no more switching between platforms.', bullets: ['$89.3K tracked this month', '12 open quotes monitored', '7 follow-ups queued automatically'] },
   { tab: 'quote', tag: 'Quote Builder', title: 'Quote built\nbefore you leave.', desc: 'Add line items from your pre-built catalog, adjust quantities, and fire off a professional quote at the door.', bullets: ['Pre-loaded pricing catalog', 'Live total calculation', 'One-tap send via SMS or email'] },
   { tab: 'jobs', tag: 'Job Pipeline', title: 'Every job,\nevery status.', desc: 'See every active quote with its current status and dollar value. Viewed, signed, or cold, you always know.', bullets: ['Color-coded job statuses', 'Dollar value at a glance', 'Tap any job to act instantly'] },
+  { tab: 'estimate', tag: 'Sign & Send', title: 'Signed on iPad.\nIn their inbox in minutes.', desc: 'Your rep collects a signature right on the iPad. It auto-uploads into a branded PDF and hits the customer\'s phone in seconds. Contractors who send same-day estimates close 3 to 4 times more jobs.', bullets: ['Digital signature collected on the iPad', 'Auto-uploads into branded PDF instantly', 'Customer copy delivered in minutes'] },
   { tab: 'followup', tag: 'Automation', title: 'Follow-ups that\nrun while you sleep.', desc: 'When a quote goes cold, timed SMS and email sequences fire automatically. Your team focuses on closing, not chasing.', bullets: ['Multi-touch: 24h, 72h, 7-day triggers', 'Auto-fires on quote status change', 'Progress tracked per contact'] },
 ];
 
@@ -259,7 +260,14 @@ function QuotingSection() {
         onStep={setDemoStep}
         ipadContent={
           <IpadMockup width="100%" accentGlow="rgba(148,217,107,0.6)">
-            <QuotingApp controlledTab={QUOTING_STEPS[demoStep].tab} />
+            {QUOTING_STEPS[demoStep].tab === 'estimate' ? (
+              <div style={{ width: '100%', height: '100%', overflowY: 'auto', background: '#c8c8c8' }}>
+                <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac90bc7bdf3846d4d43e3a.jpg" alt="Estimate page 1" style={{ width: '100%', display: 'block', marginBottom: '3px' }} />
+                <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac90bc618c8d98805f2c81.jpg" alt="Estimate page 2" style={{ width: '100%', display: 'block' }} />
+              </div>
+            ) : (
+              <QuotingApp controlledTab={QUOTING_STEPS[demoStep].tab} />
+            )}
           </IpadMockup>
         }
       />
@@ -466,18 +474,18 @@ function InFieldSection() {
   const { ref, inView } = useScrollReveal({ threshold: 0.1 });
   const photos = [
     {
-      url: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac8f84618c8d48205efad9.png',
-      tag: 'Scope',
-      tagColor: '#94D96B',
-      caption: 'Built in the car before you walk in',
-      sub: 'Your rep pulls up the job, builds a quote, and steps inside with numbers already locked.',
-    },
-    {
       url: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac8f8436702f23d94db789.png',
       tag: 'Pitch',
       tagColor: '#6B8EFE',
       caption: 'Closed at the kitchen table',
       sub: 'Present, build trust, handle objections, collect an e-signature, all before you stand up.',
+    },
+    {
+      url: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac8f84618c8d48205efad9.png',
+      tag: 'Scope',
+      tagColor: '#94D96B',
+      caption: 'Built in the car before you walk in',
+      sub: 'Your rep pulls up the job, builds a quote, and steps inside with numbers already locked.',
     },
   ];
 
@@ -491,14 +499,14 @@ function InFieldSection() {
             This is what it looks like on a real job.
           </h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
           {photos.map((p, i) => (
             <div key={p.tag} style={{ borderRadius: '20px', overflow: 'hidden', border: `1px solid ${p.tagColor}18`, ...fadeUp(inView, 100 + i * 120) }}>
-              <div style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden' }}>
+              <div style={{ position: 'relative', overflow: 'hidden' }}>
                 <img
                   src={p.url}
                   alt={p.caption}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.6s cubic-bezier(0.22,1,0.36,1)' }}
+                  style={{ width: '100%', height: 'auto', display: 'block', transition: 'transform 0.6s cubic-bezier(0.22,1,0.36,1)' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLImageElement).style.transform = 'scale(1.03)'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLImageElement).style.transform = 'scale(1)'; }}
                 />
@@ -511,6 +519,20 @@ function InFieldSection() {
                 <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem', marginBottom: '0.35rem' }}>{p.caption}</div>
                 <p style={{ color: 'rgba(255,255,255,0.38)', fontSize: '0.82rem', lineHeight: '1.65', margin: 0 }}>{p.sub}</p>
               </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Speed + signature callout */}
+        <div style={{ marginTop: '2.5rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', ...fadeUp(inView, 380) }}>
+          {[
+            { stat: '< 5 min', label: 'From conversation to a completed estimate', accent: '#94D96B' },
+            { stat: 'On-site', label: 'Digital signature collected before you leave', accent: '#6B8EFE' },
+            { stat: 'Instant', label: 'Signed PDF delivered to the customer\'s phone', accent: '#94D96B' },
+          ].map((item) => (
+            <div key={item.stat} style={{ padding: '1.25rem 1.5rem', borderRadius: '14px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', textAlign: 'center' }}>
+              <div style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, fontSize: '1.35rem', color: item.accent, marginBottom: '0.4rem' }}>{item.stat}</div>
+              <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.38)', lineHeight: '1.55', margin: 0 }}>{item.label}</p>
             </div>
           ))}
         </div>
