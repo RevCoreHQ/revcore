@@ -6,7 +6,8 @@ import SpaceBackground from '@/components/SpaceBackground';
 const PASS  = 'revcore2024';
 const STORE = 'rcTrackerV1';
 
-type Tab       = 'overview' | 'clients' | 'services' | 'analytics' | 'team' | 'calendar' | 'settings';
+type Tab       = 'overview' | 'clients' | 'services' | 'analytics' | 'team' | 'calendar' | 'settings' | 'my-dashboard' | 'my-clients' | 'my-ledger' | 'goals';
+type UserRole  = 'super_admin' | 'admin' | 'sales_manager' | 'finance' | 'setter' | 'closer';
 type Stage     = 'onboarding' | 'balance-pending' | 'active' | 'at-risk' | 'paused' | 'churned';
 type PlanT     = 'recurring' | 'one-time';
 type InitCommT = 'pct' | 'fixed' | 'none';
@@ -38,6 +39,8 @@ interface ServicePkg { id: string; name: string; price: number; planT: PlanT; de
 interface Activity { id: string; clientId: string; type: 'call' | 'email' | 'note' | 'payment' | 'issue'; note: string; at: string; }
 interface MonthlyGoal { month: string; revenueTarget: number; newClientsTarget: number; }
 interface AppData { partners: Partner[]; clients: Client[]; comms: Commission[]; packages: ServicePkg[]; activities: Activity[]; goals: MonthlyGoal[]; }
+interface RcUser { id: string; username: string; email: string; name: string; role: UserRole; partner_id: string; password_hash: string; is_active: boolean; created_at: string; }
+interface Session { userId: string; username: string; name: string; role: UserRole; partnerId: string; }
 
 const PPA_MONTHLY = 2000; // estimated monthly revenue per PPA client
 const monthlyVal = (c: Client) => c.pkg.toLowerCase().includes('ppa') ? PPA_MONTHLY : c.amount;
@@ -95,6 +98,62 @@ const PAY_STAT: Record<PayStat, { label: string; color: string }> = {
   failed:  { label: 'Failed',  color: '#FE6462' },
 };
 
+const ROLE_LABELS: Record<UserRole, string> = {
+  super_admin: 'Super Admin', admin: 'Admin', sales_manager: 'Sales Manager',
+  finance: 'Finance', setter: 'Setter', closer: 'Closer',
+};
+const ROLE_COLORS: Record<UserRole, string> = {
+  super_admin: '#FE6462', admin: '#FEB64A', sales_manager: '#6B8EFE',
+  finance: '#94D96B', setter: '#26D9B0', closer: '#a78bfa',
+};
+const ROLE_TABS: Record<UserRole, { id: Tab; label: string }[]> = {
+  super_admin: [
+    { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
+    { id: 'services', label: 'Services' }, { id: 'analytics', label: 'Analytics' },
+    { id: 'team', label: 'Team & Payouts' }, { id: 'calendar', label: 'Calendar' },
+    { id: 'settings', label: 'Settings' },
+  ],
+  admin: [
+    { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
+    { id: 'services', label: 'Services' }, { id: 'analytics', label: 'Analytics' },
+    { id: 'team', label: 'Team & Payouts' }, { id: 'calendar', label: 'Calendar' },
+    { id: 'settings', label: 'Settings' },
+  ],
+  sales_manager: [
+    { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
+    { id: 'analytics', label: 'Analytics' }, { id: 'team', label: 'Team' },
+    { id: 'calendar', label: 'Calendar' }, { id: 'settings', label: 'Settings' },
+  ],
+  finance: [
+    { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
+    { id: 'services', label: 'Services' }, { id: 'analytics', label: 'Analytics' },
+    { id: 'team', label: 'Team & Payouts' }, { id: 'settings', label: 'Settings' },
+  ],
+  setter: [
+    { id: 'my-dashboard', label: 'My Dashboard' }, { id: 'my-clients', label: 'My Clients' },
+    { id: 'my-ledger', label: 'My Ledger' }, { id: 'goals', label: 'Goals & Tasks' },
+  ],
+  closer: [
+    { id: 'my-dashboard', label: 'My Dashboard' }, { id: 'my-clients', label: 'My Clients' },
+    { id: 'my-ledger', label: 'My Ledger' }, { id: 'goals', label: 'Goals & Tasks' },
+  ],
+};
+
+async function hashPassword(pw: string): Promise<string> {
+  const data = new TextEncoder().encode(pw + 'rc_v1_salt');
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+function generatePassword(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
+  return Array.from(crypto.getRandomValues(new Uint8Array(14))).map(b => chars[b % chars.length]).join('');
+}
+function generateUsername(name: string): string {
+  const parts = name.trim().toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/);
+  const base = parts.length >= 2 ? `${parts[0]}.${parts[parts.length - 1]}` : parts[0] || 'user';
+  return base + String(Math.floor(Math.random() * 90) + 10);
+}
+
 // Defaults: setter 10%, closer 25%
 const blankC = (): Omit<Client, 'id' | 'at'> => ({
   name: '', company: '', pkg: '', planT: 'recurring', start: '', renewal: '', amount: 0, nextDue: '',
@@ -125,41 +184,130 @@ const thStyle: React.CSSProperties = { textAlign: 'left', padding: '0.65rem 0.85
 const tdStyle: React.CSSProperties = { padding: '0.75rem 0.85rem', fontSize: '0.84rem', color: 'rgba(255,255,255,0.8)', borderBottom: '1px solid rgba(255,255,255,0.05)', verticalAlign: 'middle' };
 
 // ─── Login ────────────────────────────────────────────────────────────────────
-function Login({ onLogin }: { onLogin: () => void }) {
-  const [pass, setPass] = useState(''); const [show, setShow] = useState(false); const [err, setErr] = useState(''); const [loading, setLoading] = useState(false);
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault(); setErr('');
-    if (pass !== PASS) { setErr('Incorrect password.'); return; }
-    setLoading(true);
-    setTimeout(() => { sessionStorage.setItem('rcTrackerAuth', '1'); onLogin(); }, 600);
+function Login({ onLogin }: { onLogin: (s: Session) => void }) {
+  const [mode, setMode] = useState<'loading' | 'setup' | 'login'>('loading');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [show, setShow] = useState(false);
+  const [err, setErr] = useState('');
+  const [loading, setLoading] = useState(false);
+  // Setup-mode fields
+  const [setupKey, setSetupKey] = useState('');
+  const [setupName, setSetupName] = useState('');
+  const [setupUser, setSetupUser] = useState('');
+  const [setupPass, setSetupPass] = useState('');
+  const [showSetup, setShowSetup] = useState(false);
+
+  useEffect(() => {
+    if (!hasSupabase || !supabase) { setMode('login'); return; }
+    supabase.from('rc_users').select('*', { count: 'exact', head: true })
+      .then(({ count }) => setMode((count ?? 0) === 0 ? 'setup' : 'login'));
+  }, []);
+
+  const EyeBtn = ({ vis, toggle }: { vis: boolean; toggle: () => void }) => (
+    <button type="button" onClick={toggle} style={{ position: 'absolute', right: '0.85rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.4)', padding: 0 }}>
+      {vis
+        ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>}
+    </button>
+  );
+
+  const doLogin = async (e: React.FormEvent) => {
+    e.preventDefault(); setErr(''); setLoading(true);
+    try {
+      if (!supabase) throw new Error('No database connection.');
+      const { data: rows } = await supabase.from('rc_users').select('*').eq('username', username.toLowerCase().trim()).eq('is_active', true);
+      if (!rows?.length) { setErr('Invalid username or password.'); return; }
+      const user = rows[0] as RcUser;
+      const hash = await hashPassword(password);
+      if (hash !== user.password_hash) { setErr('Invalid username or password.'); return; }
+      const session: Session = { userId: user.id, username: user.username, name: user.name, role: user.role, partnerId: user.partner_id || '' };
+      sessionStorage.setItem('rcTrackerSession', JSON.stringify(session));
+      onLogin(session);
+    } catch (ex: unknown) { setErr(ex instanceof Error ? ex.message : 'Login failed.'); }
+    finally { setLoading(false); }
   };
+
+  const doSetup = async (e: React.FormEvent) => {
+    e.preventDefault(); setErr(''); setLoading(true);
+    try {
+      if (setupKey !== PASS) { setErr('Incorrect setup key.'); return; }
+      if (!setupName.trim() || !setupUser.trim()) { setErr('Name and username are required.'); return; }
+      if (setupPass.length < 8) { setErr('Password must be at least 8 characters.'); return; }
+      const hash = await hashPassword(setupPass);
+      const user: RcUser = { id: uid(), username: setupUser.toLowerCase().trim(), email: '', name: setupName.trim(), role: 'super_admin', partner_id: '', password_hash: hash, is_active: true, created_at: new Date().toISOString() };
+      const { error } = await supabase!.from('rc_users').insert(user);
+      if (error) { setErr(error.message); return; }
+      const session: Session = { userId: user.id, username: user.username, name: user.name, role: 'super_admin', partnerId: '' };
+      sessionStorage.setItem('rcTrackerSession', JSON.stringify(session));
+      onLogin(session);
+    } catch (ex: unknown) { setErr(ex instanceof Error ? ex.message : 'Setup failed.'); }
+    finally { setLoading(false); }
+  };
+
+  const iconBox = (
+    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '72px', height: '72px', background: 'linear-gradient(135deg,rgba(254,100,98,0.15),rgba(254,100,98,0.05))', border: '1px solid rgba(254,100,98,0.3)', borderRadius: '20px', marginBottom: '1.25rem', boxShadow: '0 0 40px rgba(254,100,98,0.15)' }}>
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FE6462" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+    </div>
+  );
+
+  if (mode === 'loading') return (
+    <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+      <SpaceBackground fixed />
+      <div style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'DM Sans, sans-serif', position: 'relative', zIndex: 1 }}>Loading…</div>
+    </div>
+  );
+
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', fontFamily: 'DM Sans, sans-serif', paddingTop: 'calc(80px + 2rem)', position: 'relative', overflow: 'hidden' }}>
       <SpaceBackground fixed />
       <div style={{ width: '100%', maxWidth: '420px', position: 'relative', zIndex: 1, animation: 'trackerFadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both' }}>
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '72px', height: '72px', background: 'linear-gradient(135deg,rgba(254,100,98,0.15),rgba(254,100,98,0.05))', border: '1px solid rgba(254,100,98,0.3)', borderRadius: '20px', marginBottom: '1.25rem', boxShadow: '0 0 40px rgba(254,100,98,0.15)' }}>
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FE6462" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-          </div>
-          <h1 style={{ color: '#fff', fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.04em', margin: '0 0 0.4rem', lineHeight: 1.1 }}>RevCore<br />Financial Tracker</h1>
-          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem', margin: 0 }}>Internal use only · Authorized access required</p>
+          {iconBox}
+          <h1 style={{ color: '#fff', fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.04em', margin: '0 0 0.4rem', lineHeight: 1.1 }}>RevCore<br />{mode === 'setup' ? 'First Time Setup' : 'Tracker'}</h1>
+          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem', margin: 0 }}>{mode === 'setup' ? 'Create your super admin account to get started' : 'Internal use only · Authorized access required'}</p>
         </div>
         <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '24px', padding: '2rem', backdropFilter: 'blur(20px)', boxShadow: '0 20px 60px rgba(0,0,0,0.4)' }}>
-          <form onSubmit={submit}>
-            <label style={lbl}>Access Password</label>
-            <div style={{ position: 'relative', marginBottom: '1.25rem' }}>
-              <input type={show ? 'text' : 'password'} value={pass} onChange={e => setPass(e.target.value)} placeholder="Enter password" required style={{ ...inp, paddingRight: '3rem' }}
-                onFocus={e => e.target.style.borderColor = 'rgba(254,100,98,0.6)'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.12)'} />
-              <button type="button" onClick={() => setShow(!show)} style={{ position: 'absolute', right: '0.85rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.4)', padding: 0 }}>
-                {show ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                       : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>}
-              </button>
-            </div>
-            {err && <div style={{ background: 'rgba(254,100,98,0.1)', border: '1px solid rgba(254,100,98,0.3)', borderRadius: '10px', padding: '0.65rem 1rem', color: '#FE6462', fontSize: '0.83rem', marginBottom: '1rem' }}>{err}</div>}
-            <button type="submit" disabled={loading} style={{ ...btn('primary'), width: '100%', padding: '0.85rem', fontSize: '0.92rem' }}>
-              {loading ? 'Authenticating…' : 'Access Tracker'}
-            </button>
-          </form>
+          {mode === 'setup' ? (
+            <form onSubmit={doSetup}>
+              <label style={lbl}>Setup Key</label>
+              <div style={{ marginBottom: '1rem' }}>
+                <input type="password" value={setupKey} onChange={e => setSetupKey(e.target.value)} placeholder="Enter setup key" required style={inp} onFocus={e => e.target.style.borderColor='rgba(254,100,98,0.6)'} onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'} />
+              </div>
+              <label style={lbl}>Your Full Name</label>
+              <div style={{ marginBottom: '1rem' }}>
+                <input type="text" value={setupName} onChange={e => { setSetupName(e.target.value); if (!setupUser) setSetupUser(generateUsername(e.target.value)); }} placeholder="Hayden Mitchell" required style={inp} onFocus={e => e.target.style.borderColor='rgba(254,100,98,0.6)'} onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'} />
+              </div>
+              <label style={lbl}>Username</label>
+              <div style={{ marginBottom: '1rem' }}>
+                <input type="text" value={setupUser} onChange={e => setSetupUser(e.target.value)} placeholder="hayden.m" required style={inp} onFocus={e => e.target.style.borderColor='rgba(254,100,98,0.6)'} onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'} />
+              </div>
+              <label style={lbl}>Password</label>
+              <div style={{ position: 'relative', marginBottom: '1.25rem' }}>
+                <input type={showSetup ? 'text' : 'password'} value={setupPass} onChange={e => setSetupPass(e.target.value)} placeholder="Min 8 characters" required style={{ ...inp, paddingRight: '7rem' }} onFocus={e => e.target.style.borderColor='rgba(254,100,98,0.6)'} onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'} />
+                <div style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: '4px', alignItems: 'center' }}>
+                  <button type="button" onClick={() => setSetupPass(generatePassword())} style={{ background: 'rgba(254,100,98,0.15)', border: '1px solid rgba(254,100,98,0.3)', borderRadius: '6px', color: '#FE6462', fontSize: '0.68rem', fontWeight: 700, cursor: 'pointer', padding: '3px 7px', fontFamily: 'DM Sans' }}>Gen</button>
+                  <EyeBtn vis={showSetup} toggle={() => setShowSetup(v => !v)} />
+                </div>
+              </div>
+              {err && <div style={{ background: 'rgba(254,100,98,0.1)', border: '1px solid rgba(254,100,98,0.3)', borderRadius: '10px', padding: '0.65rem 1rem', color: '#FE6462', fontSize: '0.83rem', marginBottom: '1rem' }}>{err}</div>}
+              <button type="submit" disabled={loading} style={{ ...btn('primary'), width: '100%', padding: '0.85rem', fontSize: '0.92rem' }}>{loading ? 'Creating account…' : 'Create Super Admin'}</button>
+            </form>
+          ) : (
+            <form onSubmit={doLogin}>
+              <label style={lbl}>Username</label>
+              <div style={{ marginBottom: '1rem' }}>
+                <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="your.username" required style={inp} onFocus={e => e.target.style.borderColor='rgba(254,100,98,0.6)'} onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'} />
+              </div>
+              <label style={lbl}>Password</label>
+              <div style={{ position: 'relative', marginBottom: '1.25rem' }}>
+                <input type={show ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter password" required style={{ ...inp, paddingRight: '3rem' }} onFocus={e => e.target.style.borderColor='rgba(254,100,98,0.6)'} onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'} />
+                <EyeBtn vis={show} toggle={() => setShow(v => !v)} />
+              </div>
+              {err && <div style={{ background: 'rgba(254,100,98,0.1)', border: '1px solid rgba(254,100,98,0.3)', borderRadius: '10px', padding: '0.65rem 1rem', color: '#FE6462', fontSize: '0.83rem', marginBottom: '1rem' }}>{err}</div>}
+              <button type="submit" disabled={loading} style={{ ...btn('primary'), width: '100%', padding: '0.85rem', fontSize: '0.92rem' }}>{loading ? 'Signing in…' : 'Sign In'}</button>
+            </form>
+          )}
         </div>
         <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.18)', fontSize: '0.73rem', marginTop: '1.25rem' }}>RevCore Internal Tools · Confidential</p>
       </div>
@@ -2017,8 +2165,319 @@ function CalendarTab({ data }: { data: AppData }) {
   );
 }
 
+// ─── My Dashboard Tab ─────────────────────────────────────────────────────────
+function MyDashboardTab({ data, session }: { data: AppData; session: Session }) {
+  const myClients = data.clients.filter(c => session.partnerId && (c.setterId === session.partnerId || c.closerId === session.partnerId) && c.stage !== 'churned');
+  const myComms = data.comms.filter(c => c.partnerId === session.partnerId);
+  const pendingTotal = myComms.filter(c => c.stat === 'pending').reduce((s, c) => s + c.amount, 0);
+  const paidTotal = myComms.filter(c => c.stat === 'paid').reduce((s, c) => s + c.amount, 0);
+  return (
+    <div>
+      <div style={{ marginBottom: '2rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
+        <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.2rem', letterSpacing: '-0.03em' }}>Welcome back, {session.name.split(' ')[0]}</h2>
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>{ROLE_LABELS[session.role]} · Your activity at a glance</p>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: '1rem', marginBottom: '2rem' }}>
+        {[
+          { label: 'Active Clients', value: myClients.filter(c => c.stage === 'active').length, color: '#94D96B' },
+          { label: 'Total Assigned', value: myClients.length, color: '#6B8EFE' },
+          { label: 'Pending Commissions', value: fmtM(pendingTotal), color: '#F59E0B' },
+          { label: 'Paid to Date', value: fmtM(paidTotal), color: '#94D96B' },
+        ].map((m, i) => (
+          <div key={m.label} style={{ ...card, borderColor: m.color + '22', animation: `cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 0.06}s both` }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>{m.label}</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: m.color }}>{m.value}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ ...glassCard, animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.24s both' }}>
+        <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '1rem' }}>My Recent Clients</div>
+        {myClients.length === 0
+          ? <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.83rem', margin: 0 }}>No clients assigned yet.</p>
+          : <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {myClients.slice(0, 6).map(c => (
+                <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.65rem 0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div><span style={{ color: '#fff', fontWeight: 600, fontSize: '0.88rem' }}>{c.name}</span><span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.78rem', marginLeft: '0.5rem' }}>{c.company}</span></div>
+                  <span style={badge(STAGES[c.stage].color)}>{STAGES[c.stage].label}</span>
+                </div>
+              ))}
+            </div>
+        }
+      </div>
+    </div>
+  );
+}
+
+// ─── My Clients Tab ───────────────────────────────────────────────────────────
+function MyClientsTab({ data, session }: { data: AppData; session: Session }) {
+  const myClients = data.clients.filter(c => session.partnerId && (c.setterId === session.partnerId || c.closerId === session.partnerId));
+  return (
+    <div>
+      <div style={{ marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
+        <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.2rem', letterSpacing: '-0.03em' }}>My Clients</h2>
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>{myClients.length} client{myClients.length !== 1 ? 's' : ''} assigned to you</p>
+      </div>
+      {myClients.length === 0
+        ? <div style={{ ...glassCard, textAlign: 'center', padding: '3rem' }}><p style={{ color: 'rgba(255,255,255,0.3)', margin: 0 }}>No clients assigned yet.</p></div>
+        : <div style={{ ...glassCard, padding: 0, overflow: 'hidden', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.06s both' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead><tr>{['Client', 'Company', 'Package', 'Stage', 'Pay Status', 'Monthly Value', 'Your Role'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
+              <tbody>
+                {myClients.map(c => {
+                  const isSetter = c.setterId === session.partnerId, isCloser = c.closerId === session.partnerId;
+                  return (
+                    <tr key={c.id} onMouseEnter={e => (e.currentTarget.style.background='rgba(255,255,255,0.02)')} onMouseLeave={e => (e.currentTarget.style.background='transparent')}>
+                      <td style={tdStyle}><span style={{ fontWeight: 600, color: '#fff' }}>{c.name}</span></td>
+                      <td style={tdStyle}>{c.company}</td>
+                      <td style={tdStyle}>{c.pkg}</td>
+                      <td style={tdStyle}><span style={badge(STAGES[c.stage].color)}>{STAGES[c.stage].label}</span></td>
+                      <td style={tdStyle}><span style={badge(PAY_STAT[c.payStat].color)}>{PAY_STAT[c.payStat].label}</span></td>
+                      <td style={tdStyle}>{fmtM(monthlyVal(c))}</td>
+                      <td style={tdStyle}><span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>{isSetter && isCloser ? 'Both' : isSetter ? 'Setter' : 'Closer'}</span></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+      }
+    </div>
+  );
+}
+
+// ─── My Ledger Tab ────────────────────────────────────────────────────────────
+function MyLedgerTab({ data, session }: { data: AppData; session: Session }) {
+  const myComms = data.comms.filter(c => c.partnerId === session.partnerId);
+  const pending = myComms.filter(c => c.stat === 'pending');
+  const paid = myComms.filter(c => c.stat === 'paid');
+  return (
+    <div>
+      <div style={{ marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
+        <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.2rem', letterSpacing: '-0.03em' }}>My Ledger</h2>
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>All commissions tied to your deals</p>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
+        <div style={{ ...card, borderColor: '#F59E0B22', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.06s both' }}>
+          <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Pending</div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#F59E0B' }}>{fmtM(pending.reduce((s, c) => s + c.amount, 0))}</div>
+          <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.3)', marginTop: '4px' }}>{pending.length} entr{pending.length !== 1 ? 'ies' : 'y'}</div>
+        </div>
+        <div style={{ ...card, borderColor: '#94D96B22', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.12s both' }}>
+          <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Paid to Date</div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#94D96B' }}>{fmtM(paid.reduce((s, c) => s + c.amount, 0))}</div>
+          <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.3)', marginTop: '4px' }}>{paid.length} entr{paid.length !== 1 ? 'ies' : 'y'}</div>
+        </div>
+      </div>
+      {myComms.length === 0
+        ? <div style={{ ...glassCard, textAlign: 'center', padding: '3rem' }}><p style={{ color: 'rgba(255,255,255,0.3)', margin: 0 }}>No commissions recorded yet.</p></div>
+        : <div style={{ ...glassCard, padding: 0, overflow: 'hidden', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.18s both' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead><tr>{['Client', 'Company', 'Type', 'Amount', 'Due Date', 'Status', 'Paid On'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
+              <tbody>
+                {myComms.map(c => {
+                  const cl = data.clients.find(x => x.id === c.clientId);
+                  return (
+                    <tr key={c.id} onMouseEnter={e => (e.currentTarget.style.background='rgba(255,255,255,0.02)')} onMouseLeave={e => (e.currentTarget.style.background='transparent')}>
+                      <td style={tdStyle}><span style={{ fontWeight: 600, color: '#fff' }}>{cl?.name || '—'}</span></td>
+                      <td style={tdStyle}>{cl?.company || '—'}</td>
+                      <td style={tdStyle}><span style={{ textTransform: 'capitalize', fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>{c.commT} · {c.role}</span></td>
+                      <td style={{ ...tdStyle, fontWeight: 700, color: '#FEB64A' }}>{fmtM(c.amount)}</td>
+                      <td style={tdStyle}>{c.due ? fmtD(c.due) : '—'}</td>
+                      <td style={tdStyle}><span style={badge(c.stat === 'paid' ? '#94D96B' : '#F59E0B')}>{c.stat === 'paid' ? 'Paid' : 'Pending'}</span></td>
+                      <td style={tdStyle}>{c.stat === 'paid' && c.paid ? fmtD(c.paid) : '—'}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+      }
+    </div>
+  );
+}
+
+// ─── Goals Tab (setter/closer — Phase 3 placeholder) ──────────────────────────
+function GoalsTab({ session }: { session: Session }) {
+  return (
+    <div>
+      <div style={{ marginBottom: '2rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
+        <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.2rem', letterSpacing: '-0.03em' }}>Goals & Tasks</h2>
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>Your weekly targets and daily check-ins</p>
+      </div>
+      <div style={{ ...glassCard, textAlign: 'center', padding: '4rem 2rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.06s both' }}>
+        <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🎯</div>
+        <div style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', marginBottom: '0.5rem' }}>Coming in Phase 3</div>
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem', maxWidth: '360px', margin: '0 auto' }}>
+          Daily dial tracking, appointment goals, weekly check-ins, and your show rate will all live here. Your sales manager will set your targets.
+        </p>
+        <div style={{ marginTop: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(107,142,254,0.1)', border: '1px solid rgba(107,142,254,0.2)', borderRadius: '100px', padding: '6px 16px' }}>
+          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#6B8EFE', display: 'block' }} />
+          <span style={{ fontSize: '0.78rem', color: '#6B8EFE', fontWeight: 600 }}>Logged in as {session.name}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── User Management Section ──────────────────────────────────────────────────
+function UserManagementSection({ data }: { data: AppData }) {
+  const [users, setUsers] = useState<RcUser[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
+  const [newU, setNewU] = useState({ name: '', email: '', username: '', password: '', role: 'setter' as UserRole, partner_id: '' });
+  const [creating, setCreating] = useState(false);
+  const [createErr, setCreateErr] = useState('');
+  const [copied, setCopied] = useState<string | null>(null);
+  const [lastCreds, setLastCreds] = useState<{ username: string; password: string } | null>(null);
+
+  const refreshUsers = async () => {
+    if (!supabase) return;
+    const { data: u } = await supabase.from('rc_users').select('*').order('created_at', { ascending: false });
+    setUsers((u || []) as RcUser[]);
+  };
+
+  useEffect(() => {
+    if (!supabase) { setLoadingUsers(false); return; }
+    refreshUsers().then(() => setLoadingUsers(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault(); setCreateErr(''); setCreating(true);
+    try {
+      if (!supabase) throw new Error('No database');
+      const pass = newU.password || generatePassword();
+      const hash = await hashPassword(pass);
+      const user: RcUser = { id: uid(), username: newU.username.toLowerCase().trim(), email: newU.email.trim(), name: newU.name.trim(), role: newU.role, partner_id: newU.partner_id, password_hash: hash, is_active: true, created_at: new Date().toISOString() };
+      const { error } = await supabase.from('rc_users').insert(user);
+      if (error) { setCreateErr(error.message); return; }
+      setLastCreds({ username: user.username, password: pass });
+      await refreshUsers();
+      setNewU({ name: '', email: '', username: '', password: '', role: 'setter', partner_id: '' });
+      setShowCreate(false);
+    } catch (ex: unknown) { setCreateErr(ex instanceof Error ? ex.message : 'Failed'); }
+    finally { setCreating(false); }
+  };
+
+  const toggleActive = async (u: RcUser) => {
+    if (!supabase) return;
+    await supabase.from('rc_users').update({ is_active: !u.is_active }).eq('id', u.id);
+    await refreshUsers();
+  };
+
+  const copy = (text: string, key: string) => {
+    navigator.clipboard.writeText(text).then(() => { setCopied(key); setTimeout(() => setCopied(null), 2000); });
+  };
+
+  const CopyBtn = ({ text, k }: { text: string; k: string }) => (
+    <button type="button" onClick={() => copy(text, k)} style={{ background: copied === k ? 'rgba(148,217,107,0.15)' : 'rgba(255,255,255,0.07)', border: `1px solid ${copied === k ? 'rgba(148,217,107,0.3)' : 'rgba(255,255,255,0.1)'}`, borderRadius: '6px', color: copied === k ? '#94D96B' : 'rgba(255,255,255,0.5)', fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer', padding: '3px 10px', fontFamily: 'DM Sans', transition: 'all 0.2s' }}>
+      {copied === k ? 'Copied!' : 'Copy'}
+    </button>
+  );
+
+  return (
+    <div style={{ ...glassCard, marginBottom: '1rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.18s both' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
+        <div>
+          <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem' }}>Team Access</div>
+          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.83rem', margin: '0.2rem 0 0' }}>Create and manage team member logins.</p>
+        </div>
+        <button onClick={() => { setShowCreate(v => !v); setCreateErr(''); setLastCreds(null); }} style={btn('primary')}>+ New User</button>
+      </div>
+
+      {lastCreds && (
+        <div style={{ background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.25)', borderRadius: '12px', padding: '1rem 1.25rem', marginBottom: '1.25rem' }}>
+          <div style={{ fontWeight: 700, color: '#94D96B', fontSize: '0.83rem', marginBottom: '0.6rem' }}>User created — share these credentials:</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.78rem', width: '72px' }}>Username</span>
+              <code style={{ color: '#fff', fontSize: '0.83rem', background: 'rgba(255,255,255,0.06)', padding: '2px 8px', borderRadius: '6px', flex: 1 }}>{lastCreds.username}</code>
+              <CopyBtn text={lastCreds.username} k="user" />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.78rem', width: '72px' }}>Password</span>
+              <code style={{ color: '#fff', fontSize: '0.83rem', background: 'rgba(255,255,255,0.06)', padding: '2px 8px', borderRadius: '6px', flex: 1 }}>{lastCreds.password}</code>
+              <CopyBtn text={lastCreds.password} k="pass" />
+            </div>
+          </div>
+          <button onClick={() => setLastCreds(null)} style={{ marginTop: '0.75rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', fontSize: '0.75rem', cursor: 'pointer', padding: 0, fontFamily: 'DM Sans' }}>Dismiss</button>
+        </div>
+      )}
+
+      {showCreate && (
+        <form onSubmit={handleCreate} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '1.25rem', marginBottom: '1.25rem' }}>
+          <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.85rem', marginBottom: '1rem' }}>New Team Member</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+            <div>
+              <label style={lbl}>Full Name</label>
+              <input value={newU.name} onChange={e => { const n = e.target.value; setNewU(p => ({ ...p, name: n, username: p.username || generateUsername(n) })); }} placeholder="Jane Smith" required style={inp} onFocus={e => e.target.style.borderColor='rgba(254,100,98,0.6)'} onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'} />
+            </div>
+            <div>
+              <label style={lbl}>Email (optional)</label>
+              <input value={newU.email} onChange={e => setNewU(p => ({ ...p, email: e.target.value }))} placeholder="jane@email.com" style={inp} onFocus={e => e.target.style.borderColor='rgba(254,100,98,0.6)'} onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'} />
+            </div>
+            <div>
+              <label style={lbl}>Username</label>
+              <input value={newU.username} onChange={e => setNewU(p => ({ ...p, username: e.target.value }))} placeholder="jane.smith42" required style={inp} onFocus={e => e.target.style.borderColor='rgba(254,100,98,0.6)'} onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'} />
+            </div>
+            <div>
+              <label style={lbl}>Role</label>
+              <select value={newU.role} onChange={e => setNewU(p => ({ ...p, role: e.target.value as UserRole }))} style={{ ...inp, cursor: 'pointer' }}>
+                {(Object.keys(ROLE_LABELS) as UserRole[]).filter(r => r !== 'super_admin').map(r => (
+                  <option key={r} value={r}>{ROLE_LABELS[r]}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label style={lbl}>Link to Partner (optional)</label>
+              <select value={newU.partner_id} onChange={e => setNewU(p => ({ ...p, partner_id: e.target.value }))} style={{ ...inp, cursor: 'pointer' }}>
+                <option value="">— None —</option>
+                {data.partners.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={lbl}>Password</label>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <input value={newU.password} onChange={e => setNewU(p => ({ ...p, password: e.target.value }))} placeholder="Leave blank to auto-generate" style={{ ...inp, flex: 1 }} onFocus={e => e.target.style.borderColor='rgba(254,100,98,0.6)'} onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'} />
+                <button type="button" onClick={() => setNewU(p => ({ ...p, password: generatePassword() }))} style={{ ...btn('ghost'), whiteSpace: 'nowrap', fontSize: '0.72rem', padding: '0 0.75rem' }}>Gen</button>
+              </div>
+            </div>
+          </div>
+          {createErr && <div style={{ background: 'rgba(254,100,98,0.1)', border: '1px solid rgba(254,100,98,0.3)', borderRadius: '8px', padding: '0.6rem 0.85rem', color: '#FE6462', fontSize: '0.82rem', marginBottom: '0.75rem' }}>{createErr}</div>}
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <button type="submit" disabled={creating} style={btn('primary')}>{creating ? 'Creating…' : 'Create User'}</button>
+            <button type="button" onClick={() => setShowCreate(false)} style={btn('ghost')}>Cancel</button>
+          </div>
+        </form>
+      )}
+
+      {loadingUsers
+        ? <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.83rem', padding: '0.5rem 0' }}>Loading…</div>
+        : users.length === 0
+          ? <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.83rem', padding: '0.5rem 0' }}>No team members yet.</div>
+          : <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {users.map(u => {
+                const partner = data.partners.find(p => p.id === u.partner_id);
+                return (
+                  <div key={u.id} style={{ display: 'grid', gridTemplateColumns: '1fr auto auto auto', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px', opacity: u.is_active ? 1 : 0.45 }}>
+                    <div>
+                      <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.88rem' }}>{u.name}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', marginTop: '2px' }}>@{u.username}{partner ? ` · ${partner.name}` : ''}</div>
+                    </div>
+                    <span style={badge(ROLE_COLORS[u.role])}>{ROLE_LABELS[u.role]}</span>
+                    <span style={{ fontSize: '0.72rem', color: u.is_active ? '#94D96B' : 'rgba(255,255,255,0.3)', fontWeight: 600 }}>{u.is_active ? 'Active' : 'Inactive'}</span>
+                    <button onClick={() => toggleActive(u)} style={{ ...btn(u.is_active ? 'danger' : 'ghost'), fontSize: '0.73rem', padding: '4px 12px' }}>{u.is_active ? 'Deactivate' : 'Activate'}</button>
+                  </div>
+                );
+              })}
+            </div>
+      }
+    </div>
+  );
+}
+
 // ─── Settings Tab ─────────────────────────────────────────────────────────────
-function SettingsTab({ data, setData }: { data: AppData; setData: (d: AppData) => void }) {
+function SettingsTab({ data, setData, session }: { data: AppData; setData: (d: AppData) => void; session: Session }) {
   const exportData = () => {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -2036,8 +2495,10 @@ function SettingsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
     <div style={{ maxWidth: '560px' }}>
       <div style={{ marginBottom: '2rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
         <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.2rem', letterSpacing: '-0.03em' }}>Settings</h2>
-        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>Team members are managed in the Team tab</p>
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>Manage your account, data, and team access</p>
       </div>
+
+      {session.role === 'super_admin' && <UserManagementSection data={data} />}
 
       <div style={{ ...glassCard, marginBottom: '1rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.06s both' }}>
         <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '0.4rem' }}>Data Management</div>
@@ -2071,8 +2532,9 @@ function SettingsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
 }
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
-function Dashboard({ onLogout }: { onLogout: () => void }) {
-  const [tab, setTab] = useState<Tab>('overview');
+function Dashboard({ onLogout, session }: { onLogout: () => void; session: Session }) {
+  const roleTabs = ROLE_TABS[session.role];
+  const [tab, setTab] = useState<Tab>(roleTabs[0]?.id ?? 'overview');
   const [data, setDataRaw] = useState<AppData>({ partners: [], clients: [], comms: [], packages: [], activities: [], goals: [] });
   const [syncStatus, setSyncStatus] = useState<'connecting' | 'live' | 'offline'>('connecting');
   const isSaving = useRef(false);
@@ -2126,15 +2588,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     }
   };
 
-  const tabs: { id: Tab; label: string }[] = [
-    { id: 'overview',  label: 'Overview' },
-    { id: 'clients',   label: 'Clients' },
-    { id: 'services',  label: 'Services' },
-    { id: 'analytics', label: 'Analytics' },
-    { id: 'team',      label: 'Team & Payouts' },
-    { id: 'calendar',  label: 'Calendar' },
-    { id: 'settings',  label: 'Settings' },
-  ];
+  const tabs = roleTabs;
 
   const pendingCount = data.comms.filter(c => c.stat === 'pending').length;
 
@@ -2156,6 +2610,11 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             {pendingCount} pending
           </button>
         )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0,0,0,0.4)', border: `1px solid ${ROLE_COLORS[session.role]}30`, borderRadius: '100px', padding: '3px 10px 3px 6px', backdropFilter: 'blur(8px)' }}>
+          <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: ROLE_COLORS[session.role] + '25', border: `1px solid ${ROLE_COLORS[session.role]}50`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: 800, color: ROLE_COLORS[session.role] }}>{session.name.charAt(0).toUpperCase()}</span>
+          <span style={{ fontSize: '0.72rem', fontWeight: 600, color: 'rgba(255,255,255,0.6)' }}>{session.name.split(' ')[0]}</span>
+          <span style={{ fontSize: '0.65rem', color: ROLE_COLORS[session.role], fontWeight: 700, opacity: 0.8 }}>{ROLE_LABELS[session.role]}</span>
+        </div>
         <button onClick={onLogout} style={{ ...btn('ghost'), fontSize: '0.78rem', padding: '5px 14px', backdropFilter: 'blur(8px)' }}>Sign out</button>
       </div>
 
@@ -2171,13 +2630,17 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       </div>
 
       <main style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 4vw, 3rem)', position: 'relative', zIndex: 1 }}>
-        {tab === 'overview'  && <OverviewTab  data={data} setData={setData} />}
-        {tab === 'clients'   && <ClientsTab   data={data} setData={setData} partners={data.partners} />}
-        {tab === 'services'  && <ServicesTab   data={data} setData={setData} />}
-        {tab === 'analytics' && <AnalyticsTab  data={data} />}
-        {tab === 'team'      &&<><TeamTab data={data} setData={setData} /><div style={{ marginTop: '2.5rem' }}><PayoutsTab data={data} setData={setData} partners={data.partners} /></div></>}
-        {tab === 'calendar'  && <CalendarTab  data={data} />}
-        {tab === 'settings'  && <SettingsTab  data={data} setData={setData} />}
+        {tab === 'overview'      && <OverviewTab  data={data} setData={setData} />}
+        {tab === 'clients'       && <ClientsTab   data={data} setData={setData} partners={data.partners} />}
+        {tab === 'services'      && <ServicesTab   data={data} setData={setData} />}
+        {tab === 'analytics'     && <AnalyticsTab  data={data} />}
+        {tab === 'team'          && <><TeamTab data={data} setData={setData} /><div style={{ marginTop: '2.5rem' }}><PayoutsTab data={data} setData={setData} partners={data.partners} /></div></>}
+        {tab === 'calendar'      && <CalendarTab  data={data} />}
+        {tab === 'settings'      && <SettingsTab  data={data} setData={setData} session={session} />}
+        {tab === 'my-dashboard'  && <MyDashboardTab data={data} session={session} />}
+        {tab === 'my-clients'    && <MyClientsTab   data={data} session={session} />}
+        {tab === 'my-ledger'     && <MyLedgerTab    data={data} session={session} />}
+        {tab === 'goals'         && <GoalsTab        session={session} />}
       </main>
 
       <style>{`
@@ -2200,17 +2663,18 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function TrackerPage() {
-  const [auth, setAuth]       = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    setAuth(sessionStorage.getItem('rcTrackerAuth') === '1');
+    const stored = sessionStorage.getItem('rcTrackerSession');
+    if (stored) { try { setSession(JSON.parse(stored)); } catch {} }
     setChecked(true);
   }, []);
 
-  const logout = () => { sessionStorage.removeItem('rcTrackerAuth'); setAuth(false); };
+  const logout = () => { sessionStorage.removeItem('rcTrackerSession'); setSession(null); };
 
   if (!checked) return null;
-  if (!auth) return <Login onLogin={() => setAuth(true)} />;
-  return <Dashboard onLogout={logout} />;
+  if (!session) return <Login onLogin={(s) => setSession(s)} />;
+  return <Dashboard onLogout={logout} session={session} />;
 }
