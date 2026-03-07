@@ -494,6 +494,180 @@ function KpiCard({ label, value, sub, color, delay, onClick }: { label: string; 
   );
 }
 
+/* ─── Revenue & Growth Chart ─────────────────────────────────────────────── */
+function RevenueChart({ data }: { data: AppData }) {
+  const [hovIdx, setHovIdx]     = useState<number | null>(null);
+  const [revealed, setRevealed] = useState(false);
+  const revPathRef = useRef<SVGPathElement>(null);
+  const cliPathRef = useRef<SVGPathElement>(null);
+  const [revLen, setRevLen] = useState(1000);
+  const [cliLen, setCliLen] = useState(1000);
+
+  // Last 12 months
+  const pts = useMemo(() => {
+    const months: string[] = [];
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i);
+      months.push(d.toISOString().slice(0, 7));
+    }
+    return months.map(m => {
+      const active = data.clients.filter(c => c.at && c.at.slice(0, 7) <= m && c.stage !== 'churned');
+      const newC   = data.clients.filter(c => c.at?.startsWith(m));
+      return {
+        label:      new Date(m + '-15').toLocaleString('en-US', { month: 'short', year: '2-digit' }),
+        revenue:    active.reduce((s, c) => s + c.amount, 0),
+        clients:    active.length,
+        newClients: newC.length,
+      };
+    });
+  }, [data.clients]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setRevealed(true);
+      if (revPathRef.current) setRevLen(revPathRef.current.getTotalLength());
+      if (cliPathRef.current) setCliLen(cliPathRef.current.getTotalLength());
+    }, 80);
+    return () => clearTimeout(t);
+  }, [pts]);
+
+  const W = 900, H = 220, PL = 60, PR = 20, PT = 16, PB = 36;
+  const iW = W - PL - PR, iH = H - PT - PB;
+
+  const maxRev = Math.max(...pts.map(p => p.revenue), 1);
+  const maxCli = Math.max(...pts.map(p => p.clients), 1);
+  const x  = (i: number) => PL + (i / (pts.length - 1)) * iW;
+  const yR = (v: number) => PT + iH - (v / maxRev) * iH;
+  const yC = (v: number) => PT + iH - (v / maxCli) * iH;
+
+  const smooth = (points: [number, number][]) => {
+    if (points.length < 2) return `M${points[0]?.[0] ?? 0} ${points[0]?.[1] ?? 0}`;
+    let d = `M ${points[0][0]} ${points[0][1]}`;
+    for (let i = 1; i < points.length; i++) {
+      const cx = (points[i-1][0] + points[i][0]) / 2;
+      d += ` C ${cx} ${points[i-1][1]}, ${cx} ${points[i][1]}, ${points[i][0]} ${points[i][1]}`;
+    }
+    return d;
+  };
+
+  const revPts: [number,number][] = pts.map((p,i) => [x(i), yR(p.revenue)]);
+  const cliPts: [number,number][] = pts.map((p,i) => [x(i), yC(p.clients)]);
+  const revPath  = smooth(revPts);
+  const cliPath  = smooth(cliPts);
+  const revArea  = revPath  + ` L ${x(pts.length-1)} ${PT+iH} L ${x(0)} ${PT+iH} Z`;
+  const cliArea  = cliPath  + ` L ${x(pts.length-1)} ${PT+iH} L ${x(0)} ${PT+iH} Z`;
+  const fmtK = (v: number) => v >= 1000 ? `$${(v/1000).toFixed(1)}k` : `$${v}`;
+
+  const tip = hovIdx !== null ? pts[hovIdx] : null;
+  const tipX = hovIdx !== null ? (x(hovIdx) / W) * 100 : 0;
+  const tipLeft = hovIdx !== null && hovIdx > pts.length * 0.65;
+
+  return (
+    <div style={{ ...glassCard, marginBottom: '1.25rem', animation: 'cardReveal 0.5s cubic-bezier(0.16,1,0.3,1) 0.42s both' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.1rem' }}>
+        <div>
+          <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem', letterSpacing: '-0.01em' }}>Revenue & Growth</div>
+          <div style={{ fontSize: '0.74rem', color: 'rgba(255,255,255,0.3)', marginTop: '2px' }}>Cumulative MRR vs active clients · last 12 months</div>
+        </div>
+        <div style={{ display: 'flex', gap: '1.1rem', fontSize: '0.73rem' }}>
+          {[['#94D96B','#26D9B0','MRR'],['#6B8EFE','#B47AFF','Clients']].map(([c1,c2,label]) => (
+            <span key={label} style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'rgba(255,255,255,0.45)' }}>
+              <span style={{ width: '22px', height: '2.5px', background: `linear-gradient(to right,${c1},${c2})`, display: 'inline-block', borderRadius: '2px', boxShadow: `0 0 6px ${c1}88` }} />
+              {label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ position: 'relative' }} onMouseLeave={() => setHovIdx(null)}>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', overflow: 'visible', display: 'block' }}>
+          <defs>
+            <linearGradient id="rcRevGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stopColor="#94D96B" stopOpacity="0.45" />
+              <stop offset="100%" stopColor="#94D96B" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="rcCliGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stopColor="#6B8EFE" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#6B8EFE" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="rcRevLine" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#94D96B" /><stop offset="100%" stopColor="#26D9B0" />
+            </linearGradient>
+            <linearGradient id="rcCliLine" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#6B8EFE" /><stop offset="100%" stopColor="#B47AFF" />
+            </linearGradient>
+            <filter id="glowGreen"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="glowBlue"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+
+          {/* Horizontal grid lines */}
+          {[0.25, 0.5, 0.75, 1].map(t => (
+            <g key={t}>
+              <line x1={PL} y1={PT + iH*(1-t)} x2={PL+iW} y2={PT + iH*(1-t)} stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+              <text x={PL-6} y={PT + iH*(1-t) + 4} textAnchor="end" style={{ fontSize: '9px', fill: 'rgba(255,255,255,0.22)', fontFamily: 'DM Sans,sans-serif' }}>{fmtK(maxRev*t)}</text>
+            </g>
+          ))}
+
+          {/* Area fills (fade in) */}
+          <path d={revArea} fill="url(#rcRevGrad)" style={{ opacity: revealed ? 1 : 0, transition: 'opacity 1.2s ease 0.6s' }} />
+          <path d={cliArea} fill="url(#rcCliGrad)" style={{ opacity: revealed ? 1 : 0, transition: 'opacity 1.2s ease 0.8s' }} />
+
+          {/* Lines (stroke-dashoffset reveal) */}
+          <path ref={revPathRef} d={revPath} fill="none" stroke="url(#rcRevLine)" strokeWidth="2.5" strokeLinecap="round"
+            filter="url(#glowGreen)"
+            strokeDasharray={revLen} strokeDashoffset={revealed ? 0 : revLen}
+            style={{ transition: 'stroke-dashoffset 1.6s cubic-bezier(0.16,1,0.3,1) 0.1s' }} />
+          <path ref={cliPathRef} d={cliPath} fill="none" stroke="url(#rcCliLine)" strokeWidth="2" strokeLinecap="round"
+            filter="url(#glowBlue)"
+            strokeDasharray={cliLen} strokeDashoffset={revealed ? 0 : cliLen}
+            style={{ transition: 'stroke-dashoffset 1.6s cubic-bezier(0.16,1,0.3,1) 0.35s' }} />
+
+          {/* Hover vertical line + dots */}
+          {hovIdx !== null && (
+            <>
+              <line x1={x(hovIdx)} y1={PT} x2={x(hovIdx)} y2={PT+iH} stroke="rgba(255,255,255,0.12)" strokeWidth="1" strokeDasharray="4 3" />
+              <circle cx={x(hovIdx)} cy={yR(pts[hovIdx].revenue)} r="5" fill="#94D96B" stroke="#070b0f" strokeWidth="2.5" filter="url(#glowGreen)" />
+              <circle cx={x(hovIdx)} cy={yC(pts[hovIdx].clients)} r="4.5" fill="#6B8EFE" stroke="#070b0f" strokeWidth="2.5" filter="url(#glowBlue)" />
+            </>
+          )}
+
+          {/* Invisible hover zones */}
+          {pts.map((_, i) => (
+            <rect key={i} x={x(i) - iW/(pts.length*2)} y={PT} width={iW/pts.length} height={iH}
+              fill="transparent" onMouseEnter={() => setHovIdx(i)} style={{ cursor: 'crosshair' }} />
+          ))}
+
+          {/* X axis labels */}
+          {pts.map((p, i) => (
+            <text key={i} x={x(i)} y={H-6} textAnchor="middle"
+              style={{ fontSize: '9px', fill: hovIdx===i ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.28)', fontFamily: 'DM Sans,sans-serif', transition: 'fill 0.15s', fontWeight: hovIdx===i ? '700' : '400' }}>
+              {p.label}
+            </text>
+          ))}
+        </svg>
+
+        {/* Tooltip */}
+        {tip && (
+          <div style={{ position: 'absolute', top: '8px', left: tipLeft ? 'auto' : `calc(${tipX}% + 14px)`, right: tipLeft ? `calc(${100-tipX}% + 14px)` : 'auto', background: 'rgba(13,17,23,0.97)', border: '1px solid rgba(255,255,255,0.13)', borderRadius: '12px', padding: '0.6rem 0.9rem', pointerEvents: 'none', zIndex: 10, minWidth: '130px', boxShadow: '0 8px 32px rgba(0,0,0,0.6)' }}>
+            <div style={{ fontWeight: 700, color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', marginBottom: '6px', letterSpacing: '0.04em', textTransform: 'uppercase' }}>{tip.label}</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
+              <span style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.4)' }}>MRR</span>
+              <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#94D96B' }}>{fmtM(tip.revenue)}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: tip.newClients > 0 ? '3px' : 0 }}>
+              <span style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.4)' }}>Clients</span>
+              <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#6B8EFE' }}>{tip.clients}</span>
+            </div>
+            {tip.newClients > 0 && (
+              <div style={{ fontSize: '0.7rem', color: '#26D9B0', marginTop: '4px', paddingTop: '4px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>+{tip.newClients} new this month</div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Overview tab ────────────────────────────────────────────────────────── */
 function OverviewTab({ data }: { data: AppData }) {
   const [drill, setDrill] = useState<{ title: string; subtitle: string; content: React.ReactNode } | null>(null);
@@ -562,6 +736,9 @@ function OverviewTab({ data }: { data: AppData }) {
         <KpiCard label="Churned Clients" value={String(churnedClients.length)} sub={churnedClients.length > 0 ? `${fmtM(churnedClients.reduce((s,c)=>s+c.amount,0))} lost MRR` : 'None churned'} color={churnedClients.length > 0 ? '#FE6462' : '#94D96B'} delay={0.40}
           onClick={() => setDrill({ title: 'Churned Clients', subtitle: `${churnedClients.length} churned`, content: churnedClients.length === 0 ? <p style={{color:'rgba(255,255,255,0.4)'}}>No churned clients.</p> : <>{churnedClients.map(c=><ClientDrillCard key={c.id} client={c} partners={data.partners} comms={data.comms}/>)}</> })} />
       </div>
+
+      {/* Chart */}
+      <RevenueChart data={data} />
 
       {/* Pipeline breakdown + Recent Clients */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.25rem', marginBottom: '1.25rem' }}>
@@ -1426,6 +1603,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       </main>
 
       <style>{`
+        @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
         @keyframes drillSlideIn { from { transform:translateX(100%) } to { transform:translateX(0) } }
         @keyframes drillFadeIn { from { opacity:0 } to { opacity:1 } }
         @keyframes trackerFadeUp { from { opacity:0; transform:translateY(28px) } to { opacity:1; transform:translateY(0) } }
