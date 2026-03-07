@@ -5,7 +5,7 @@ import { supabase, hasSupabase } from '@/lib/supabase';
 const PASS  = 'revcore2024';
 const STORE = 'rcTrackerV1';
 
-type Tab       = 'overview' | 'clients' | 'team' | 'calendar' | 'settings';
+type Tab       = 'overview' | 'clients' | 'services' | 'team' | 'calendar' | 'settings';
 type Stage     = 'onboarding' | 'balance-pending' | 'active' | 'at-risk' | 'paused' | 'churned';
 type PlanT     = 'recurring' | 'one-time';
 type InitCommT = 'pct' | 'fixed' | 'none';
@@ -32,7 +32,8 @@ interface Commission {
   commT: 'initial' | 'renewal'; amount: number;
   due: string; paid: string; stat: CommStat; notes: string;
 }
-interface AppData { partners: Partner[]; clients: Client[]; comms: Commission[]; }
+interface ServicePkg { id: string; name: string; price: number; planT: PlanT; description: string; }
+interface AppData { partners: Partner[]; clients: Client[]; comms: Commission[]; packages: ServicePkg[]; }
 
 const PPA_MONTHLY = 2000; // estimated monthly revenue per PPA client
 const monthlyVal = (c: Client) => c.pkg.toLowerCase().includes('ppa') ? PPA_MONTHLY : c.amount;
@@ -195,7 +196,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
 }
 
 // ─── Client Modal ─────────────────────────────────────────────────────────────
-function ClientModal({ client, partners, onSave, onClose }: { client?: Client; partners: Partner[]; onSave: (c: Omit<Client, 'id' | 'at'>, isNew: boolean) => void; onClose: () => void }) {
+function ClientModal({ client, partners, packages, onSave, onClose }: { client?: Client; partners: Partner[]; packages: ServicePkg[]; onSave: (c: Omit<Client, 'id' | 'at'>, isNew: boolean) => void; onClose: () => void }) {
   const [f, setF] = useState<Omit<Client, 'id' | 'at'>>(client ? { ...client } : blankC());
   const set = (k: keyof typeof f, v: unknown) => setF(p => {
     const next = { ...p, [k]: v };
@@ -254,6 +255,21 @@ function ClientModal({ client, partners, onSave, onClose }: { client?: Client; p
         </div>
 
         {section('Payment Details')}
+        {packages.length > 0 && (
+          <div style={{ marginBottom: '0.85rem' }}>
+            <label style={lbl}>Quick Fill from Standard Package</label>
+            <select defaultValue="" onChange={e => {
+              const pkg = packages.find(p => p.id === e.target.value);
+              if (!pkg) return;
+              setF(p => ({ ...p, pkg: pkg.name, amount: pkg.price, planT: pkg.planT }));
+              e.target.value = '';
+            }} style={{ ...inp, cursor: 'pointer' }}>
+              <option value="">— Select a package to fill —</option>
+              {packages.map(p => <option key={p.id} value={p.id}>{p.name} · {fmtM(p.price)}{p.planT === 'recurring' ? '/mo' : ''}</option>)}
+            </select>
+            <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.25)', marginTop: '0.3rem' }}>Fills package name, amount, and plan type. You can override any field after.</div>
+          </div>
+        )}
         <div style={gr}>
           {field('Plan Type', sel(f.planT, v => set('planT', v as PlanT), [['recurring', 'Recurring'], ['one-time', 'One-Time']]))}
           {field('Payment Amount ($)', numInp(f.amount, v => set('amount', v)))}
@@ -842,6 +858,92 @@ function PipeCard({ c, color, partnerName, onEdit, PAY_STAT: PS }: { c: Client; 
   );
 }
 
+// ─── Services Tab ─────────────────────────────────────────────────────────────
+function ServicesTab({ data, setData }: { data: AppData; setData: (d: AppData) => void }) {
+  const [modal, setModal] = useState<'add' | ServicePkg | null>(null);
+  const [f, setF] = useState<Omit<ServicePkg, 'id'>>({ name: '', price: 0, planT: 'recurring', description: '' });
+
+  const openAdd = () => { setF({ name: '', price: 0, planT: 'recurring', description: '' }); setModal('add'); };
+  const openEdit = (pkg: ServicePkg) => { setF({ name: pkg.name, price: pkg.price, planT: pkg.planT, description: pkg.description }); setModal(pkg); };
+  const save = () => {
+    if (!f.name.trim()) return;
+    if (modal === 'add') {
+      setData({ ...data, packages: [...(data.packages ?? []), { ...f, id: uid() }] });
+    } else {
+      setData({ ...data, packages: (data.packages ?? []).map(p => p.id === (modal as ServicePkg).id ? { ...f, id: p.id } : p) });
+    }
+    setModal(null);
+  };
+  const del = (id: string) => setData({ ...data, packages: (data.packages ?? []).filter(p => p.id !== id) });
+
+  const pkgs = data.packages ?? [];
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
+        <div>
+          <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.2rem', letterSpacing: '-0.03em' }}>Services & Packages</h2>
+          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>Standard packages — select these when adding clients, then override price as needed</p>
+        </div>
+        <button onClick={openAdd} style={btn('primary')}>+ Add Package</button>
+      </div>
+
+      {pkgs.length === 0 ? (
+        <div style={{ ...glassCard, padding: '3rem', textAlign: 'center', color: 'rgba(255,255,255,0.25)', fontSize: '0.88rem' }}>
+          No packages yet. Add your standard offerings above.
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+          {pkgs.map((pkg, i) => (
+            <div key={pkg.id} style={{ ...glassCard, padding: '1.25rem 1.5rem', borderLeft: `3px solid ${pkg.planT === 'recurring' ? '#94D96B' : '#6B8EFE'}`, animation: `cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 0.05}s both` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#fff', lineHeight: 1.2 }}>{pkg.name}</div>
+                <span style={{ ...badge(pkg.planT === 'recurring' ? '#94D96B' : '#6B8EFE') as React.CSSProperties }}>{pkg.planT === 'recurring' ? 'Recurring' : 'One-Time'}</span>
+              </div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: pkg.planT === 'recurring' ? '#94D96B' : '#6B8EFE', marginBottom: '0.4rem' }}>
+                {fmtM(pkg.price)}{pkg.planT === 'recurring' && <span style={{ fontSize: '0.75rem', fontWeight: 400, color: 'rgba(255,255,255,0.35)' }}>/mo</span>}
+              </div>
+              {pkg.description && <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.35)', marginBottom: '0.85rem', lineHeight: 1.4 }}>{pkg.description}</div>}
+              <div style={{ display: 'flex', gap: '6px', marginTop: pkg.description ? 0 : '0.85rem' }}>
+                <button onClick={() => openEdit(pkg)} style={{ ...btn('ghost'), padding: '4px 12px', fontSize: '0.75rem' }}>Edit</button>
+                <button onClick={() => del(pkg.id)} style={{ ...btn('danger'), padding: '4px 12px', fontSize: '0.75rem' }}>Delete</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {modal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', backdropFilter: 'blur(6px)' }}>
+          <div style={{ width: '100%', maxWidth: '480px', background: '#0d1117', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', padding: '2rem', boxShadow: '0 40px 80px rgba(0,0,0,0.6)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ color: '#fff', fontSize: '1.1rem', fontWeight: 800, margin: 0 }}>{modal === 'add' ? 'New Package' : 'Edit Package'}</h2>
+              <button onClick={() => setModal(null)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1.4rem', lineHeight: 1 }}>×</button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <div><label style={lbl}>Package Name *</label><input type="text" value={f.name} onChange={e => setF(p => ({ ...p, name: e.target.value }))} placeholder="e.g. 15 Appointments" style={inp} /></div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
+                <div><label style={lbl}>Price ($)</label><input type="number" value={f.price || ''} onChange={e => setF(p => ({ ...p, price: parseFloat(e.target.value) || 0 }))} style={inp} /></div>
+                <div><label style={lbl}>Plan Type</label>
+                  <select value={f.planT} onChange={e => setF(p => ({ ...p, planT: e.target.value as PlanT }))} style={{ ...inp, cursor: 'pointer' }}>
+                    <option value="recurring">Recurring</option>
+                    <option value="one-time">One-Time</option>
+                  </select>
+                </div>
+              </div>
+              <div><label style={lbl}>Description</label><input type="text" value={f.description} onChange={e => setF(p => ({ ...p, description: e.target.value }))} placeholder="e.g. 15 booked appointments/month" style={inp} /></div>
+            </div>
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+              <button onClick={() => setModal(null)} style={btn('ghost')}>Cancel</button>
+              <button onClick={save} disabled={!f.name.trim()} style={{ ...btn('primary'), opacity: !f.name.trim() ? 0.4 : 1 }}>Save Package</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Clients Tab ──────────────────────────────────────────────────────────────
 function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: AppData) => void; partners: Partner[] }) {
   const [search, setSearch] = useState('');
@@ -1042,7 +1144,7 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
         </div>
       )}
 
-      {modal && <ClientModal client={modal === 'add' ? undefined : modal} partners={partners} onSave={saveClient} onClose={() => setModal(null)} />}
+      {modal && <ClientModal client={modal === 'add' ? undefined : modal} partners={partners} packages={data.packages ?? []} onSave={saveClient} onClose={() => setModal(null)} />}
     </div>
   );
 }
@@ -1542,7 +1644,7 @@ function SettingsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [tab, setTab] = useState<Tab>('overview');
-  const [data, setDataRaw] = useState<AppData>({ partners: [], clients: [], comms: [] });
+  const [data, setDataRaw] = useState<AppData>({ partners: [], clients: [], comms: [], packages: [] });
   const [syncStatus, setSyncStatus] = useState<'connecting' | 'live' | 'offline'>('connecting');
   const isSaving = useRef(false);
 
@@ -1598,6 +1700,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const tabs: { id: Tab; label: string }[] = [
     { id: 'overview',  label: 'Overview' },
     { id: 'clients',   label: 'Clients' },
+    { id: 'services',  label: 'Services' },
     { id: 'team',      label: 'Team & Payouts' },
     { id: 'calendar',  label: 'Calendar' },
     { id: 'settings',  label: 'Settings' },
@@ -1640,7 +1743,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       <main style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 4vw, 3rem)', position: 'relative', zIndex: 1 }}>
         {tab === 'overview'  && <OverviewTab  data={data} />}
         {tab === 'clients'   && <ClientsTab   data={data} setData={setData} partners={data.partners} />}
-        {tab === 'team'      && <><TeamTab data={data} setData={setData} /><div style={{ marginTop: '2.5rem' }}><PayoutsTab data={data} setData={setData} partners={data.partners} /></div></>}
+        {tab === 'services'  && <ServicesTab  data={data} setData={setData} />}
+        {tab === 'team'      &&<><TeamTab data={data} setData={setData} /><div style={{ marginTop: '2.5rem' }}><PayoutsTab data={data} setData={setData} partners={data.partners} /></div></>}
         {tab === 'calendar'  && <CalendarTab  data={data} />}
         {tab === 'settings'  && <SettingsTab  data={data} setData={setData} />}
       </main>
