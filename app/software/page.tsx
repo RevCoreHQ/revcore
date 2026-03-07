@@ -462,6 +462,63 @@ function PresentationSection() {
   );
 }
 
+function InFieldSection() {
+  const { ref, inView } = useScrollReveal({ threshold: 0.1 });
+  const photos = [
+    {
+      url: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac8f84618c8d48205efad9.png',
+      tag: 'Scope',
+      tagColor: '#94D96B',
+      caption: 'Built in the car before you walk in',
+      sub: 'Your rep pulls up the job, builds a quote, and steps inside with numbers already locked.',
+    },
+    {
+      url: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac8f8436702f23d94db789.png',
+      tag: 'Pitch',
+      tagColor: '#6B8EFE',
+      caption: 'Closed at the kitchen table',
+      sub: 'Present, build trust, handle objections, collect an e-signature, all before you stand up.',
+    },
+  ];
+
+  return (
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '80px 0', background: '#06080f', position: 'relative', overflow: 'hidden' }}>
+      <SpaceBackground opacity={0.1} />
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView, 0) }}>
+          <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '0.75rem' }}>In the field</div>
+          <h2 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 'clamp(1.5rem, 2.5vw, 2rem)', fontWeight: 800, color: 'white', letterSpacing: '-0.03em', margin: 0 }}>
+            This is what it looks like on a real job.
+          </h2>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          {photos.map((p, i) => (
+            <div key={p.tag} style={{ borderRadius: '20px', overflow: 'hidden', border: `1px solid ${p.tagColor}18`, ...fadeUp(inView, 100 + i * 120) }}>
+              <div style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden' }}>
+                <img
+                  src={p.url}
+                  alt={p.caption}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.6s cubic-bezier(0.22,1,0.36,1)' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLImageElement).style.transform = 'scale(1.03)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLImageElement).style.transform = 'scale(1)'; }}
+                />
+                <div style={{ position: 'absolute', top: '14px', left: '14px', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '100px', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: `1px solid ${p.tagColor}30` }}>
+                  <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: p.tagColor, flexShrink: 0 }} />
+                  <span style={{ fontSize: '0.65rem', fontWeight: 700, color: p.tagColor, letterSpacing: '0.1em' }}>{p.tag}</span>
+                </div>
+              </div>
+              <div style={{ padding: '1.25rem 1.5rem', background: 'rgba(255,255,255,0.02)' }}>
+                <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem', marginBottom: '0.35rem' }}>{p.caption}</div>
+                <p style={{ color: 'rgba(255,255,255,0.38)', fontSize: '0.82rem', lineHeight: '1.65', margin: 0 }}>{p.sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function IntegrationBanner() {
   const { ref, inView } = useScrollReveal({ threshold: 0.12 });
   return (
@@ -641,6 +698,7 @@ export default function SoftwarePage() {
       <SoftwareHero />
       <div id="quoting"><QuotingSection /></div>
       <div id="presentation"><PresentationSection /></div>
+      <InFieldSection />
       <IntegrationBanner />
       <SoftwareCTA />
 
