@@ -318,7 +318,7 @@ export default function OnboardingPage() {
                   <InputField label="Company Name" name="companyName" value={form.companyName} onChange={set} required placeholder="ABC Roofing Co." />
                   <InputField label="Your Full Name" name="fullName" value={form.fullName} onChange={set} required placeholder="John Smith" />
                   <InputField label="Role / Title" name="role" value={form.role} onChange={set} required placeholder="Owner, Sales Manager" />
-                  <InputField label="Primary Niche / Industry" name="primaryNiche" value={form.primaryNiche} onChange={set} required placeholder="Roofing, HVAC, Solar, Siding..." />
+                  <InputField label="Primary Niche / Industry" name="primaryNiche" value={form.primaryNiche} onChange={set} required placeholder="Roofing, Windows, Remodeling, Siding..." />
                   <InputField label="Best Email" name="email" value={form.email} onChange={set} required type="email" placeholder="john@company.com" />
                   <InputField label="Personal Cell" name="phone" value={form.phone} onChange={set} required type="tel" placeholder="(555) 000-0000" />
                   <InputField label="Business Phone" name="businessPhone" value={form.businessPhone} onChange={set} placeholder="(555) 000-0000" />
@@ -399,7 +399,7 @@ export default function OnboardingPage() {
                       value={form.service}
                       onChange={set}
                       required
-                      placeholder="e.g. Roofing, HVAC, Solar, Siding, Gutters"
+                      placeholder="e.g. Roofing, Windows, Interior Remodeling, Siding, Decks"
                     />
                   </div>
                   <div style={{ gridColumn: '1 / -1' }}>

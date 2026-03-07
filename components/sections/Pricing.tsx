@@ -3,16 +3,12 @@ import { ArrowRight } from 'lucide-react';
 
 const industries = [
   { name: 'Roofing', color: '#1a0f0f', accent: '#FE6462' },
-  { name: 'HVAC', color: '#0f1a1a', accent: '#4FC3F7' },
-  { name: 'Solar', color: '#1a1a0f', accent: '#FEB64A' },
-  { name: 'Windows & Doors', color: '#0f0f1a', accent: '#6B8EFE' },
-  { name: 'Siding', color: '#1a0f1a', accent: '#FE6462' },
-  { name: 'Plumbing', color: '#0f1a10', accent: '#94D96B' },
-  { name: 'Electrical', color: '#1a1a0a', accent: '#FEB64A' },
-  { name: 'Pools', color: '#0a1a1a', accent: '#4FC3F7' },
-  { name: 'Remodeling', color: '#1a0a0a', accent: '#94D96B' },
-  { name: 'Painting', color: '#0a0a1a', accent: '#FE6462' },
-  { name: 'Fencing', color: '#0a1a0a', accent: '#94D96B' },
+  { name: 'Window Companies', color: '#0f0f1a', accent: '#6B8EFE' },
+  { name: 'Interior Remodeling', color: '#1a0a0a', accent: '#94D96B' },
+  { name: 'General Contractors', color: '#0f1a10', accent: '#94D96B' },
+  { name: 'Stucco & Siding', color: '#1a0f1a', accent: '#FE6462' },
+  { name: 'Decks & Patios', color: '#1a150a', accent: '#FEB64A' },
+  { name: 'Pool Contractors', color: '#0a1a1a', accent: '#4FC3F7' },
   { name: 'Landscaping', color: '#0f1a0f', accent: '#94D96B' },
 ];
 

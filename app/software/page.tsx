@@ -353,7 +353,7 @@ function PresentationSection() {
   const [demoOpen, setDemoOpen] = useState(false);
   const [demoStep, setDemoStep] = useState(0);
   const pitchFeatures = [
-    { icon: <Monitor size={16} />, title: 'Trade-Specific Decks', desc: 'Built for your exact trade — roofing, HVAC, solar, windows, siding, and more. Not a template.' },
+    { icon: <Monitor size={16} />, title: 'Trade-Specific Decks', desc: 'Built for your exact trade — roofing, windows, remodeling, siding, decks, pools, and more. Not a template.' },
     { icon: <Layers size={16} />, title: 'Before & After Comparisons', desc: 'Photo-heavy slides showing real transformations. Homeowners buy emotion, give it to them.' },
     { icon: <FileText size={16} />, title: 'Financing On-Screen', desc: 'Display monthly payment options inside the presentation. Remove sticker shock on the spot.' },
     { icon: <Star size={16} />, title: 'Built-in Social Proof', desc: 'Reviews, photos, certifications, and warranties surfaced at exactly the right moment.' },

@@ -195,14 +195,14 @@ export default function AboutPage() {
           </AnimatedText>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', marginBottom: '3.5rem', ...fadeUp(hero.inView, 400) }}>
             <p style={{ fontSize: '1.0625rem', lineHeight: '1.85', color: 'rgba(255,255,255,0.45)' }}>
-              RevCore is not a generalist agency. We don&apos;t take on e-commerce brands, SaaS companies, or restaurants. We do one thing: help contractors in trades like roofing, HVAC, solar, windows, and siding grow their revenue fast — with systems that actually work in the field.
+              RevCore is not a generalist agency. We don&apos;t take on e-commerce brands, SaaS companies, or restaurants. We do one thing: help home improvement contractors — roofers, remodelers, window companies, pool builders, landscapers, and more — grow their revenue fast, with systems that actually work in the field.
             </p>
             <p style={{ fontSize: '1.0625rem', lineHeight: '1.85', color: 'rgba(255,255,255,0.45)' }}>
               Instead of sending you to four different vendors for your CRM, your ads, your software, and your training, we handle all of it. One team. One point of contact. Everything custom-built around your business.
             </p>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', ...fadeUp(hero.inView, 550) }}>
-            {['Roofing', 'HVAC', 'Solar', 'Windows & Siding', 'Gutters', 'Painting', 'Plumbing', 'Pest Control'].map((trade) => (
+            {['Roofing', 'Windows', 'Interior Remodeling', 'General Contracting', 'Stucco & Siding', 'Decks & Patios', 'Pool Contractors', 'Landscaping', '+ More'].map((trade) => (
               <span key={trade} style={{
                 padding: '6px 18px', borderRadius: '100px',
                 background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
