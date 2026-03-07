@@ -6,7 +6,7 @@ import SpaceBackground from '@/components/SpaceBackground';
 const PASS  = 'revcore2024';
 const STORE = 'rcTrackerV1';
 
-type Tab       = 'overview' | 'clients' | 'services' | 'analytics' | 'team' | 'calendar' | 'settings' | 'my-dashboard' | 'my-clients' | 'my-ledger' | 'goals';
+type Tab       = 'overview' | 'clients' | 'services' | 'analytics' | 'team' | 'calendar' | 'settings' | 'my-dashboard' | 'my-clients' | 'my-ledger' | 'goals' | 'goals-mgmt';
 type UserRole  = 'super_admin' | 'admin' | 'sales_manager' | 'finance' | 'setter' | 'closer';
 type Stage     = 'onboarding' | 'balance-pending' | 'active' | 'at-risk' | 'paused' | 'churned';
 type PlanT     = 'recurring' | 'one-time';
@@ -38,7 +38,10 @@ interface Commission {
 interface ServicePkg { id: string; name: string; price: number; planT: PlanT; description: string; }
 interface Activity { id: string; clientId: string; type: 'call' | 'email' | 'note' | 'payment' | 'issue'; note: string; at: string; }
 interface MonthlyGoal { month: string; revenueTarget: number; newClientsTarget: number; }
-interface AppData { partners: Partner[]; clients: Client[]; comms: Commission[]; packages: ServicePkg[]; activities: Activity[]; goals: MonthlyGoal[]; }
+interface TeamGoal { id: string; partnerId: string; dialsPerDay: number; bookedPerWeek: number; attendedPerWeek: number; setBy: string; updatedAt: string; }
+interface DailyLog { id: string; partnerId: string; date: string; dials: number; bookedAppts: number; attendedAppts: number; notes: string; submittedAt: string; }
+interface Task { id: string; assignedToPartnerId: string; assignedByUserId: string; title: string; description: string; dueDate: string; isCompleted: boolean; completedAt: string; createdAt: string; }
+interface AppData { partners: Partner[]; clients: Client[]; comms: Commission[]; packages: ServicePkg[]; activities: Activity[]; goals: MonthlyGoal[]; teamGoals: TeamGoal[]; dailyLogs: DailyLog[]; tasks: Task[]; }
 interface RcUser { id: string; username: string; email: string; name: string; role: UserRole; partner_id: string; password_hash: string; is_active: boolean; created_at: string; }
 interface Session { userId: string; username: string; name: string; role: UserRole; partnerId: string; }
 
@@ -49,6 +52,19 @@ const uid   = () => Math.random().toString(36).slice(2, 10);
 const fmtD  = (d: string) => d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
 const fmtM  = (n: number) => '$' + (n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const today = () => new Date().toISOString().slice(0, 10);
+// Returns Monday of the week containing d (or today)
+const getMonday = (d: Date = new Date()): string => { const dt = new Date(d); dt.setDate(dt.getDate() - ((dt.getDay() + 6) % 7)); return dt.toISOString().slice(0, 10); };
+const normalizeData = (raw: Partial<AppData>): AppData => ({
+  partners:  raw.partners  ?? [],
+  clients:   raw.clients   ?? [],
+  comms:     raw.comms     ?? [],
+  packages:  raw.packages  ?? [],
+  activities: raw.activities ?? [],
+  goals:     raw.goals     ?? [],
+  teamGoals: raw.teamGoals ?? [],
+  dailyLogs: raw.dailyLogs ?? [],
+  tasks:     raw.tasks     ?? [],
+});
 
 function calcInit(c: Client, role: 'setter' | 'closer'): number {
   const t = role === 'setter' ? c.setterInitT : c.closerInitT;
@@ -110,18 +126,19 @@ const ROLE_TABS: Record<UserRole, { id: Tab; label: string }[]> = {
   super_admin: [
     { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
     { id: 'services', label: 'Services' }, { id: 'analytics', label: 'Analytics' },
-    { id: 'team', label: 'Team & Payouts' }, { id: 'calendar', label: 'Calendar' },
-    { id: 'settings', label: 'Settings' },
+    { id: 'team', label: 'Team & Payouts' }, { id: 'goals-mgmt', label: 'Goals & Tasks' },
+    { id: 'calendar', label: 'Calendar' }, { id: 'settings', label: 'Settings' },
   ],
   admin: [
     { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
     { id: 'services', label: 'Services' }, { id: 'analytics', label: 'Analytics' },
-    { id: 'team', label: 'Team & Payouts' }, { id: 'calendar', label: 'Calendar' },
-    { id: 'settings', label: 'Settings' },
+    { id: 'team', label: 'Team & Payouts' }, { id: 'goals-mgmt', label: 'Goals & Tasks' },
+    { id: 'calendar', label: 'Calendar' }, { id: 'settings', label: 'Settings' },
   ],
   sales_manager: [
     { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
     { id: 'analytics', label: 'Analytics' }, { id: 'team', label: 'Team' },
+    { id: 'goals-mgmt', label: 'Goals & Tasks' },
     { id: 'calendar', label: 'Calendar' }, { id: 'settings', label: 'Settings' },
   ],
   finance: [
@@ -2296,24 +2313,361 @@ function MyLedgerTab({ data, session }: { data: AppData; session: Session }) {
   );
 }
 
-// ─── Goals Tab (setter/closer — Phase 3 placeholder) ──────────────────────────
-function GoalsTab({ session }: { session: Session }) {
+// ─── Goals Tab (setter/closer) ────────────────────────────────────────────────
+function GoalsTab({ data, setData, session }: { data: AppData; setData: (d: AppData) => void; session: Session }) {
+  const weekStart = getMonday();
+  const weekDates = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(weekStart + 'T00:00:00'); d.setDate(d.getDate() + i); return d.toISOString().slice(0, 10);
+  });
+
+  const myGoal = data.teamGoals.find(g => g.partnerId === session.partnerId);
+  const myTasks = data.tasks.filter(t => t.assignedToPartnerId === session.partnerId);
+  const weekLogs = data.dailyLogs.filter(l => l.partnerId === session.partnerId && l.date >= weekStart && l.date <= weekDates[6]);
+
+  const todayStr = today();
+  const todayLog = weekLogs.find(l => l.date === todayStr);
+
+  const [logForm, setLogForm] = useState({ dials: todayLog?.dials ?? 0, bookedAppts: todayLog?.bookedAppts ?? 0, attendedAppts: todayLog?.attendedAppts ?? 0, notes: todayLog?.notes ?? '' });
+  const [logSaved, setLogSaved] = useState(false);
+
+  // Re-init form if todayLog changes
+  useEffect(() => {
+    setLogForm({ dials: todayLog?.dials ?? 0, bookedAppts: todayLog?.bookedAppts ?? 0, attendedAppts: todayLog?.attendedAppts ?? 0, notes: todayLog?.notes ?? '' });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [todayLog?.id]);
+
+  const saveLog = () => {
+    const existing = data.dailyLogs.find(l => l.partnerId === session.partnerId && l.date === todayStr);
+    let newLogs: DailyLog[];
+    if (existing) {
+      newLogs = data.dailyLogs.map(l => l.id === existing.id ? { ...l, ...logForm, submittedAt: new Date().toISOString() } : l);
+    } else {
+      newLogs = [...data.dailyLogs, { id: uid(), partnerId: session.partnerId, date: todayStr, ...logForm, submittedAt: new Date().toISOString() }];
+    }
+    setData({ ...data, dailyLogs: newLogs });
+    setLogSaved(true);
+    setTimeout(() => setLogSaved(false), 2500);
+  };
+
+  const toggleTask = (taskId: string, done: boolean) => {
+    setData({ ...data, tasks: data.tasks.map(t => t.id === taskId ? { ...t, isCompleted: done, completedAt: done ? new Date().toISOString() : '' } : t) });
+  };
+
+  // Weekly totals
+  const weekDials    = weekLogs.reduce((s, l) => s + l.dials, 0);
+  const weekBooked   = weekLogs.reduce((s, l) => s + l.bookedAppts, 0);
+  const weekAttended = weekLogs.reduce((s, l) => s + l.attendedAppts, 0);
+  const showRate     = weekBooked > 0 ? Math.round((weekAttended / weekBooked) * 100) : null;
+
+  const goalDialsWeek = myGoal ? myGoal.dialsPerDay * 5 : 0;
+  const pct = (val: number, target: number) => target > 0 ? Math.min(100, Math.round((val / target) * 100)) : 0;
+
+  const progressBar = (val: number, target: number, color: string) => (
+    <div style={{ background: 'rgba(255,255,255,0.07)', borderRadius: '100px', height: '7px', overflow: 'hidden', marginTop: '6px' }}>
+      <div style={{ width: `${pct(val, target)}%`, height: '100%', background: color, borderRadius: '100px', transition: 'width 0.5s ease' }} />
+    </div>
+  );
+
+  const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
   return (
     <div>
       <div style={{ marginBottom: '2rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
         <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.2rem', letterSpacing: '-0.03em' }}>Goals & Tasks</h2>
-        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>Your weekly targets and daily check-ins</p>
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>Week of {fmtD(weekStart)}</p>
       </div>
-      <div style={{ ...glassCard, textAlign: 'center', padding: '4rem 2rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.06s both' }}>
-        <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🎯</div>
-        <div style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', marginBottom: '0.5rem' }}>Coming in Phase 3</div>
-        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem', maxWidth: '360px', margin: '0 auto' }}>
-          Daily dial tracking, appointment goals, weekly check-ins, and your show rate will all live here. Your sales manager will set your targets.
-        </p>
-        <div style={{ marginTop: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(107,142,254,0.1)', border: '1px solid rgba(107,142,254,0.2)', borderRadius: '100px', padding: '6px 16px' }}>
-          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#6B8EFE', display: 'block' }} />
-          <span style={{ fontSize: '0.78rem', color: '#6B8EFE', fontWeight: 600 }}>Logged in as {session.name}</span>
+
+      {/* Weekly progress cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}>
+        {[
+          { label: 'Dials This Week', val: weekDials, target: goalDialsWeek, color: '#6B8EFE', suffix: myGoal ? `/ ${goalDialsWeek}` : '' },
+          { label: 'Booked Appts', val: weekBooked, target: myGoal?.bookedPerWeek ?? 0, color: '#FEB64A', suffix: myGoal ? `/ ${myGoal.bookedPerWeek}` : '' },
+          { label: 'Attended Appts', val: weekAttended, target: myGoal?.attendedPerWeek ?? 0, color: '#94D96B', suffix: myGoal ? `/ ${myGoal.attendedPerWeek}` : '' },
+          { label: 'Show Rate', val: showRate ?? 0, target: 100, color: '#26D9B0', suffix: showRate !== null ? '%' : '', override: showRate !== null ? `${showRate}%` : 'N/A' },
+        ].map(({ label, val, target, color, suffix, override }) => (
+          <div key={label} style={{ ...card }}>
+            <div style={{ fontSize: '0.68rem', fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>{label}</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.04em', lineHeight: 1 }}>
+              {override ?? val}<span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500, marginLeft: '4px' }}>{!override && suffix}</span>
+            </div>
+            {target > 0 && progressBar(val, target, color)}
+          </div>
+        ))}
+      </div>
+
+      {/* Today's check-in */}
+      <div style={{ ...glassCard, marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
+        <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem', marginBottom: '0.15rem' }}>Today's Check-in</div>
+        <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.35)', marginBottom: '1.25rem' }}>{fmtD(todayStr)}{todayLog ? ' — already submitted, edit and save to update' : ''}</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
+          {([['Dials Made', 'dials'], ['Booked Appts', 'bookedAppts'], ['Attended Appts', 'attendedAppts']] as const).map(([label, field]) => (
+            <div key={field}>
+              <label style={lbl}>{label}</label>
+              <input type="number" min={0} value={logForm[field]} onChange={e => setLogForm(f => ({ ...f, [field]: Number(e.target.value) }))} style={inp} />
+            </div>
+          ))}
         </div>
+        <div style={{ marginBottom: '1rem' }}>
+          <label style={lbl}>Notes (optional)</label>
+          <input value={logForm.notes} onChange={e => setLogForm(f => ({ ...f, notes: e.target.value }))} placeholder="Any blockers, wins, or context..." style={inp} />
+        </div>
+        <button onClick={saveLog} style={{ ...btn(logSaved ? 'success' : 'primary') }}>
+          {logSaved ? 'Saved!' : todayLog ? 'Update Check-in' : 'Submit Check-in'}
+        </button>
+      </div>
+
+      {/* Weekly breakdown table */}
+      <div style={{ ...glassCard, padding: 0, overflow: 'hidden', marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.15s both' }}>
+        <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+          <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem' }}>Weekly Breakdown</div>
+        </div>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead><tr>{['Day', 'Date', 'Dials', 'Booked', 'Attended', 'Notes'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
+          <tbody>
+            {weekDates.map((date, i) => {
+              const log = weekLogs.find(l => l.date === date);
+              const isToday = date === todayStr;
+              return (
+                <tr key={date} style={{ background: isToday ? 'rgba(107,142,254,0.05)' : undefined }}>
+                  <td style={{ ...tdStyle, fontWeight: 700, color: isToday ? '#6B8EFE' : 'rgba(255,255,255,0.5)' }}>{dayLabels[i]}</td>
+                  <td style={tdStyle}>{fmtD(date)}</td>
+                  <td style={{ ...tdStyle, fontWeight: log?.dials ? 600 : undefined }}>{log?.dials ?? '—'}</td>
+                  <td style={{ ...tdStyle, fontWeight: log?.bookedAppts ? 600 : undefined }}>{log?.bookedAppts ?? '—'}</td>
+                  <td style={{ ...tdStyle, fontWeight: log?.attendedAppts ? 600 : undefined }}>{log?.attendedAppts ?? '—'}</td>
+                  <td style={{ ...tdStyle, color: 'rgba(255,255,255,0.4)', fontSize: '0.78rem' }}>{log?.notes || '—'}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Tasks */}
+      <div style={{ animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.2s both' }}>
+        <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '0.75rem' }}>My Tasks</div>
+        {myTasks.length === 0
+          ? <div style={{ ...glassCard, textAlign: 'center', padding: '2rem', color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem' }}>No tasks assigned yet.</div>
+          : <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {myTasks.map(task => (
+                <div key={task.id} style={{ ...card, display: 'flex', alignItems: 'flex-start', gap: '0.85rem', opacity: task.isCompleted ? 0.55 : 1 }}>
+                  <input type="checkbox" checked={task.isCompleted} onChange={e => toggleTask(task.id, e.target.checked)}
+                    style={{ width: '16px', height: '16px', accentColor: '#94D96B', marginTop: '2px', flexShrink: 0, cursor: 'pointer' }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 600, color: '#fff', fontSize: '0.87rem', textDecoration: task.isCompleted ? 'line-through' : 'none' }}>{task.title}</div>
+                    {task.description && <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>{task.description}</div>}
+                    {task.dueDate && <div style={{ fontSize: '0.72rem', color: task.isCompleted ? 'rgba(255,255,255,0.3)' : '#F59E0B', marginTop: '4px', fontWeight: 600 }}>Due {fmtD(task.dueDate)}</div>}
+                  </div>
+                  {task.isCompleted && <span style={badge('#94D96B')}>Done</span>}
+                </div>
+              ))}
+            </div>
+        }
+      </div>
+    </div>
+  );
+}
+
+// ─── Goals Management Tab (managers) ─────────────────────────────────────────
+function GoalsManagementTab({ data, setData, session }: { data: AppData; setData: (d: AppData) => void; session: Session }) {
+  const weekStart = getMonday();
+  const weekDates = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(weekStart + 'T00:00:00'); d.setDate(d.getDate() + i); return d.toISOString().slice(0, 10);
+  });
+  const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+  const teamMembers = data.partners.filter(p => p.active !== false);
+  const [selectedMember, setSelectedMember] = useState<string>(teamMembers[0]?.id ?? '');
+  const [goalForm, setGoalForm] = useState({ dialsPerDay: 0, bookedPerWeek: 0, attendedPerWeek: 0 });
+  const [goalSaved, setGoalSaved] = useState(false);
+
+  // Task form
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [taskForm, setTaskForm] = useState({ title: '', description: '', dueDate: '' });
+  const [taskMember, setTaskMember] = useState(teamMembers[0]?.id ?? '');
+
+  // Load goal when member changes
+  useEffect(() => {
+    const g = data.teamGoals.find(g => g.partnerId === selectedMember);
+    setGoalForm({ dialsPerDay: g?.dialsPerDay ?? 0, bookedPerWeek: g?.bookedPerWeek ?? 0, attendedPerWeek: g?.attendedPerWeek ?? 0 });
+  }, [selectedMember, data.teamGoals]);
+
+  const saveGoal = () => {
+    const existing = data.teamGoals.find(g => g.partnerId === selectedMember);
+    let newGoals: TeamGoal[];
+    if (existing) {
+      newGoals = data.teamGoals.map(g => g.partnerId === selectedMember ? { ...g, ...goalForm, setBy: session.userId, updatedAt: new Date().toISOString() } : g);
+    } else {
+      newGoals = [...data.teamGoals, { id: uid(), partnerId: selectedMember, ...goalForm, setBy: session.userId, updatedAt: new Date().toISOString() }];
+    }
+    setData({ ...data, teamGoals: newGoals });
+    setGoalSaved(true); setTimeout(() => setGoalSaved(false), 2500);
+  };
+
+  const addTask = () => {
+    if (!taskForm.title.trim()) return;
+    const newTask: Task = { id: uid(), assignedToPartnerId: taskMember, assignedByUserId: session.userId, title: taskForm.title, description: taskForm.description, dueDate: taskForm.dueDate, isCompleted: false, completedAt: '', createdAt: new Date().toISOString() };
+    setData({ ...data, tasks: [...data.tasks, newTask] });
+    setTaskForm({ title: '', description: '', dueDate: '' });
+    setShowTaskForm(false);
+  };
+
+  const deleteTask = (taskId: string) => setData({ ...data, tasks: data.tasks.filter(t => t.id !== taskId) });
+
+  // Team activity view
+  const getMemberWeekLogs = (partnerId: string) =>
+    data.dailyLogs.filter(l => l.partnerId === partnerId && l.date >= weekStart && l.date <= weekDates[6]);
+
+  return (
+    <div>
+      <div style={{ marginBottom: '2rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
+        <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.2rem', letterSpacing: '-0.03em' }}>Goals & Tasks</h2>
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>Set team targets, assign tasks, and track weekly activity</p>
+      </div>
+
+      {/* Team activity summary */}
+      <div style={{ ...glassCard, padding: 0, overflow: 'hidden', marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}>
+        <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem' }}>Team Activity — Week of {fmtD(weekStart)}</div>
+        </div>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead><tr>{['Team Member', 'Role', 'Goal (D/B/A)', 'Dials', 'Booked', 'Attended', 'Show Rate', 'Days Logged'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
+          <tbody>
+            {teamMembers.map(p => {
+              const logs = getMemberWeekLogs(p.id);
+              const goal = data.teamGoals.find(g => g.partnerId === p.id);
+              const dials = logs.reduce((s, l) => s + l.dials, 0);
+              const booked = logs.reduce((s, l) => s + l.bookedAppts, 0);
+              const attended = logs.reduce((s, l) => s + l.attendedAppts, 0);
+              const showRate = booked > 0 ? `${Math.round((attended / booked) * 100)}%` : '—';
+              const daysLogged = logs.length;
+              return (
+                <tr key={p.id} onMouseEnter={e => (e.currentTarget.style.background='rgba(255,255,255,0.02)')} onMouseLeave={e => (e.currentTarget.style.background='transparent')}>
+                  <td style={{ ...tdStyle, fontWeight: 600, color: '#fff' }}>{p.name}</td>
+                  <td style={tdStyle}><span style={{ textTransform: 'capitalize', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>{p.role}</span></td>
+                  <td style={{ ...tdStyle, fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)' }}>{goal ? `${goal.dialsPerDay * 5} / ${goal.bookedPerWeek} / ${goal.attendedPerWeek}` : 'Not set'}</td>
+                  <td style={{ ...tdStyle, fontWeight: dials > 0 ? 700 : undefined, color: dials > 0 ? '#6B8EFE' : 'rgba(255,255,255,0.3)' }}>{dials || '—'}</td>
+                  <td style={{ ...tdStyle, fontWeight: booked > 0 ? 700 : undefined, color: booked > 0 ? '#FEB64A' : 'rgba(255,255,255,0.3)' }}>{booked || '—'}</td>
+                  <td style={{ ...tdStyle, fontWeight: attended > 0 ? 700 : undefined, color: attended > 0 ? '#94D96B' : 'rgba(255,255,255,0.3)' }}>{attended || '—'}</td>
+                  <td style={{ ...tdStyle, fontWeight: 600, color: '#26D9B0' }}>{showRate}</td>
+                  <td style={tdStyle}><span style={{ ...badge(daysLogged >= 5 ? '#94D96B' : daysLogged > 0 ? '#F59E0B' : '#FE6462') }}>{daysLogged}/5 days</span></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Two column: set goals + tasks */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.2fr)', gap: '1.25rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
+        {/* Set goals */}
+        <div style={glassCard}>
+          <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '1rem' }}>Set Weekly Goals</div>
+          <div style={{ marginBottom: '0.9rem' }}>
+            <label style={lbl}>Team Member</label>
+            <select value={selectedMember} onChange={e => setSelectedMember(e.target.value)} style={{ ...inp }}>
+              {teamMembers.map(p => <option key={p.id} value={p.id}>{p.name} ({p.role})</option>)}
+            </select>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+            <div>
+              <label style={lbl}>Dials / Day</label>
+              <input type="number" min={0} value={goalForm.dialsPerDay} onChange={e => setGoalForm(f => ({ ...f, dialsPerDay: Number(e.target.value) }))} style={inp} />
+            </div>
+            <div>
+              <label style={lbl}>Booked / Wk</label>
+              <input type="number" min={0} value={goalForm.bookedPerWeek} onChange={e => setGoalForm(f => ({ ...f, bookedPerWeek: Number(e.target.value) }))} style={inp} />
+            </div>
+            <div>
+              <label style={lbl}>Attended / Wk</label>
+              <input type="number" min={0} value={goalForm.attendedPerWeek} onChange={e => setGoalForm(f => ({ ...f, attendedPerWeek: Number(e.target.value) }))} style={inp} />
+            </div>
+          </div>
+          <button onClick={saveGoal} style={btn(goalSaved ? 'success' : 'primary')}>{goalSaved ? 'Saved!' : 'Save Goals'}</button>
+        </div>
+
+        {/* Tasks */}
+        <div style={glassCard}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem' }}>Assigned Tasks</div>
+            <button onClick={() => setShowTaskForm(v => !v)} style={btn('ghost')}>{showTaskForm ? 'Cancel' : '+ New Task'}</button>
+          </div>
+          {showTaskForm && (
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '1rem', marginBottom: '1rem' }}>
+              <div style={{ marginBottom: '0.75rem' }}>
+                <label style={lbl}>Assign To</label>
+                <select value={taskMember} onChange={e => setTaskMember(e.target.value)} style={inp}>
+                  {teamMembers.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
+              </div>
+              <div style={{ marginBottom: '0.75rem' }}>
+                <label style={lbl}>Task Title</label>
+                <input value={taskForm.title} onChange={e => setTaskForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. Complete onboarding call" style={inp} />
+              </div>
+              <div style={{ marginBottom: '0.75rem' }}>
+                <label style={lbl}>Description (optional)</label>
+                <input value={taskForm.description} onChange={e => setTaskForm(f => ({ ...f, description: e.target.value }))} placeholder="Details..." style={inp} />
+              </div>
+              <div style={{ marginBottom: '0.75rem' }}>
+                <label style={lbl}>Due Date (optional)</label>
+                <input type="date" value={taskForm.dueDate} onChange={e => setTaskForm(f => ({ ...f, dueDate: e.target.value }))} style={inp} />
+              </div>
+              <button onClick={addTask} style={btn('primary')}>Add Task</button>
+            </div>
+          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '340px', overflowY: 'auto' }}>
+            {data.tasks.length === 0
+              ? <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.83rem', textAlign: 'center', padding: '1.5rem 0' }}>No tasks yet.</div>
+              : data.tasks.map(task => {
+                  const member = data.partners.find(p => p.id === task.assignedToPartnerId);
+                  return (
+                    <div key={task.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px', padding: '0.75rem 1rem', display: 'flex', alignItems: 'flex-start', gap: '0.75rem', opacity: task.isCompleted ? 0.55 : 1 }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 600, color: '#fff', fontSize: '0.84rem', textDecoration: task.isCompleted ? 'line-through' : 'none' }}>{task.title}</div>
+                        <div style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
+                          {member?.name ?? 'Unknown'}{task.dueDate ? ` · Due ${fmtD(task.dueDate)}` : ''}
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                        {task.isCompleted && <span style={badge('#94D96B')}>Done</span>}
+                        <button onClick={() => deleteTask(task.id)} style={{ background: 'none', border: 'none', color: 'rgba(255,100,98,0.5)', cursor: 'pointer', fontSize: '0.75rem', padding: '2px 6px', fontFamily: 'inherit' }}>✕</button>
+                      </div>
+                    </div>
+                  );
+                })
+            }
+          </div>
+        </div>
+      </div>
+
+      {/* Daily breakdown per member */}
+      <div style={{ marginTop: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.15s both' }}>
+        <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '0.75rem' }}>Daily Activity Detail</div>
+        {teamMembers.map(p => {
+          const logs = getMemberWeekLogs(p.id);
+          return (
+            <div key={p.id} style={{ ...glassCard, padding: 0, overflow: 'hidden', marginBottom: '1rem' }}>
+              <div style={{ padding: '0.75rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)', fontWeight: 700, color: '#fff', fontSize: '0.84rem' }}>{p.name} <span style={{ fontWeight: 400, color: 'rgba(255,255,255,0.35)', textTransform: 'capitalize' }}>· {p.role}</span></div>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead><tr>{['Day', 'Dials', 'Booked', 'Attended', 'Notes'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
+                <tbody>
+                  {weekDates.map((date, i) => {
+                    const log = logs.find(l => l.date === date);
+                    const isToday = date === today();
+                    return (
+                      <tr key={date} style={{ background: isToday ? 'rgba(107,142,254,0.04)' : undefined }}>
+                        <td style={{ ...tdStyle, fontWeight: 700, color: isToday ? '#6B8EFE' : 'rgba(255,255,255,0.4)', fontSize: '0.78rem' }}>{dayLabels[i]}</td>
+                        <td style={{ ...tdStyle, color: log?.dials ? '#6B8EFE' : 'rgba(255,255,255,0.2)' }}>{log?.dials ?? '—'}</td>
+                        <td style={{ ...tdStyle, color: log?.bookedAppts ? '#FEB64A' : 'rgba(255,255,255,0.2)' }}>{log?.bookedAppts ?? '—'}</td>
+                        <td style={{ ...tdStyle, color: log?.attendedAppts ? '#94D96B' : 'rgba(255,255,255,0.2)' }}>{log?.attendedAppts ?? '—'}</td>
+                        <td style={{ ...tdStyle, color: 'rgba(255,255,255,0.35)', fontSize: '0.77rem' }}>{log?.notes || '—'}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -2535,14 +2889,14 @@ function SettingsTab({ data, setData, session }: { data: AppData; setData: (d: A
 function Dashboard({ onLogout, session }: { onLogout: () => void; session: Session }) {
   const roleTabs = ROLE_TABS[session.role];
   const [tab, setTab] = useState<Tab>(roleTabs[0]?.id ?? 'overview');
-  const [data, setDataRaw] = useState<AppData>({ partners: [], clients: [], comms: [], packages: [], activities: [], goals: [] });
+  const [data, setDataRaw] = useState<AppData>(normalizeData({}));
   const [syncStatus, setSyncStatus] = useState<'connecting' | 'live' | 'offline'>('connecting');
   const isSaving = useRef(false);
 
   // Initial load
   useEffect(() => {
     const loadLocal = () => {
-      try { const s = localStorage.getItem(STORE); if (s) setDataRaw(JSON.parse(s)); } catch {}
+      try { const s = localStorage.getItem(STORE); if (s) setDataRaw(normalizeData(JSON.parse(s))); } catch {}
       setSyncStatus('offline');
     };
     if (hasSupabase && supabase) {
@@ -2550,7 +2904,7 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
         try {
           const { data: row, error } = await supabase!.from('rc_tracker_data').select('value').eq('key', 'appData').single();
           if (error || !row?.value) { loadLocal(); return; }
-          setDataRaw(row.value as AppData);
+          setDataRaw(normalizeData(row.value as Partial<AppData>));
           setSyncStatus('live');
         } catch { loadLocal(); }
       })();
@@ -2569,7 +2923,7 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
           // Ignore updates we triggered ourselves
           if (isSaving.current) return;
           const incoming = (payload.new as { value: AppData }).value;
-          if (incoming) { setDataRaw(incoming); try { localStorage.setItem(STORE, JSON.stringify(incoming)); } catch {} }
+          if (incoming) { const nd = normalizeData(incoming as Partial<AppData>); setDataRaw(nd); try { localStorage.setItem(STORE, JSON.stringify(nd)); } catch {} }
         })
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') setSyncStatus('live');
@@ -2640,7 +2994,8 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
         {tab === 'my-dashboard'  && <MyDashboardTab data={data} session={session} />}
         {tab === 'my-clients'    && <MyClientsTab   data={data} session={session} />}
         {tab === 'my-ledger'     && <MyLedgerTab    data={data} session={session} />}
-        {tab === 'goals'         && <GoalsTab        session={session} />}
+        {tab === 'goals'         && <GoalsTab        data={data} setData={setData} session={session} />}
+        {tab === 'goals-mgmt'    && <GoalsManagementTab data={data} setData={setData} session={session} />}
       </main>
 
       <style>{`
