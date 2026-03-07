@@ -169,7 +169,7 @@ export default function OnboardingPage() {
       });
       setSubmitted(true);
     } catch {
-      setError('Something went wrong. Please try again or email us at hello@revcorehq.com.');
+      setError('Submission error. Please contact your rep directly or email hello@revcorehq.com.');
     } finally {
       setSubmitting(false);
     }
@@ -618,6 +618,21 @@ export default function OnboardingPage() {
       <style>{`
         @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.85); } }
         @keyframes spin { to { transform: rotate(360deg); } }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        textarea:-webkit-autofill,
+        textarea:-webkit-autofill:hover,
+        textarea:-webkit-autofill:focus,
+        select:-webkit-autofill,
+        select:-webkit-autofill:hover,
+        select:-webkit-autofill:focus {
+          -webkit-box-shadow: 0 0 0 1000px rgba(255,255,255,0.05) inset !important;
+          -webkit-text-fill-color: rgba(255,255,255,0.9) !important;
+          caret-color: white;
+          border-color: rgba(255,255,255,0.1) !important;
+          transition: background-color 5000s ease-in-out 0s;
+        }
         @keyframes titleGlow {
           0%   { background-position: 0% center; }
           100% { background-position: 300% center; }
