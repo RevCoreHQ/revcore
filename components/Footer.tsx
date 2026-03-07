@@ -28,13 +28,11 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: '24px', height: '24px', background: 'white', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <rect x="1" y="1" width="4" height="4" fill="#0A0A0A" rx="1"/>
-                  <rect x="7" y="1" width="4" height="4" fill="#0A0A0A" rx="1"/>
-                  <rect x="1" y="7" width="4" height="4" fill="#0A0A0A" rx="1"/>
-                </svg>
-              </div>
+              <img
+                src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png"
+                alt="RevCore"
+                style={{ height: '22px', width: 'auto', filter: 'brightness(0) invert(1)' }}
+              />
               <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, fontSize: '1.25rem', color: 'var(--color-white)' }}>
                 RevCore
               </span>
