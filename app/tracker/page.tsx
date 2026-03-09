@@ -1504,7 +1504,7 @@ function InvoiceModal({ client, onClose }: { client: Client; onClose: () => void
 }
 
 // ─── Whop Import Modal ────────────────────────────────────────────────────────
-interface WhopRow { name: string; email: string; startDate: string; pkg: string; selected: boolean; exists: boolean; }
+interface WhopRow { name: string; email: string; startDate: string; pkg: string; selected: boolean; exists: boolean; startDateNote?: string; }
 
 function parseWhopCSV(raw: string): WhopRow[] {
   const lines = raw.trim().split('\n').map(l => l.trimEnd());
@@ -1587,6 +1587,7 @@ function WhopImportModal({ onClose, onImport, existingClients }: {
   const [rows, setRows] = useState<WhopRow[]>([]);
   const [parsed, setParsed] = useState(false);
   const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [editDateIdx, setEditDateIdx] = useState<number | null>(null);
 
   const parse = () => {
     const parsed = parseWhopCSV(raw).map(r => ({
@@ -1675,7 +1676,31 @@ function WhopImportModal({ onClose, onImport, existingClients }: {
                   </div>
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
                     <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#6B8EFE' }}>{r.pkg || '—'}</div>
-                    <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.3)', marginTop: '1px' }}>Started {fmtD(r.startDate)}</div>
+                    {editDateIdx === i ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }} onClick={e => e.stopPropagation()}>
+                        <input
+                          type="date"
+                          defaultValue={r.startDate}
+                          onBlur={e => {
+                            const val = e.target.value;
+                            if (val && val !== r.startDate) {
+                              setRows(prev => prev.map((row, idx) => idx === i ? { ...row, startDate: val, startDateNote: `Updated from ${row.startDate}` } : row));
+                            }
+                            setEditDateIdx(null);
+                          }}
+                          autoFocus
+                          style={{ ...inp, padding: '2px 6px', fontSize: '0.72rem', width: '130px' }}
+                        />
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '1px', cursor: 'pointer' }} onClick={e => { e.stopPropagation(); if (!r.exists) setEditDateIdx(i); }}>
+                        <span style={{ fontSize: '0.72rem', color: r.startDateNote ? '#F59E0B' : 'rgba(255,255,255,0.3)' }}>
+                          Started {fmtD(r.startDate)}
+                        </span>
+                        {!r.exists && <span style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.2)' }}>✎</span>}
+                        {r.startDateNote && <span style={{ fontSize: '0.62rem', color: '#F59E0B' }}>edited</span>}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -1754,7 +1779,7 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
       isSplit: false, deposit: 0, bal: 0, balNote: '',
       depPaid: false, balPaid: false,
       stage: 'onboarding' as Stage, payStat: 'current' as PayStat,
-      ghlId: '', notes: r.email ? `Email: ${r.email}` : '', at: today(),
+      ghlId: '', notes: [r.email ? `Email: ${r.email}` : '', r.startDateNote ? `Start date updated (original: ${r.startDateNote.replace('Updated from ', '')})` : ''].filter(Boolean).join(' | '), at: today(),
     }));
     setData({ ...data, clients: [...data.clients, ...newClients] });
     setWhopImport(false);
@@ -3231,6 +3256,11 @@ function UserManagementSection({ data }: { data: AppData }) {
   const [createErr, setCreateErr] = useState('');
   const [copied, setCopied] = useState<string | null>(null);
   const [lastCreds, setLastCreds] = useState<{ username: string; password: string } | null>(null);
+  const [editRoleId, setEditRoleId] = useState<string | null>(null);
+  const [editRoleVal, setEditRoleVal] = useState<UserRole>('setter');
+  const [savingRole, setSavingRole] = useState(false);
+  const [resetPassId, setResetPassId] = useState<string | null>(null);
+  const [newPassPlain, setNewPassPlain] = useState<string | null>(null);
 
   const refreshUsers = async () => {
     if (!supabase) return;
@@ -3265,6 +3295,25 @@ function UserManagementSection({ data }: { data: AppData }) {
     if (!supabase) return;
     await supabase.from('rc_users').update({ is_active: !u.is_active }).eq('id', u.id);
     await refreshUsers();
+  };
+
+  const saveRole = async (userId: string) => {
+    if (!supabase) return;
+    setSavingRole(true);
+    await supabase.from('rc_users').update({ role: editRoleVal }).eq('id', userId);
+    await refreshUsers();
+    setSavingRole(false);
+    setEditRoleId(null);
+  };
+
+  const resetPassword = async (u: RcUser) => {
+    if (!supabase) return;
+    setResetPassId(u.id);
+    const newPass = generatePassword();
+    const hash = await hashPassword(newPass);
+    await supabase.from('rc_users').update({ password_hash: hash }).eq('id', u.id);
+    setNewPassPlain(newPass);
+    setResetPassId(null);
   };
 
   const copy = (text: string, key: string) => {
@@ -3353,6 +3402,19 @@ function UserManagementSection({ data }: { data: AppData }) {
         </form>
       )}
 
+      {/* Reset password result banner */}
+      {newPassPlain && (
+        <div style={{ background: 'rgba(107,142,254,0.08)', border: '1px solid rgba(107,142,254,0.25)', borderRadius: '12px', padding: '1rem 1.25rem', marginBottom: '1.25rem' }}>
+          <div style={{ fontWeight: 700, color: '#6B8EFE', fontSize: '0.83rem', marginBottom: '0.6rem' }}>Password reset — new credentials:</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.78rem', width: '72px' }}>Password</span>
+            <code style={{ color: '#fff', fontSize: '0.83rem', background: 'rgba(255,255,255,0.06)', padding: '2px 8px', borderRadius: '6px', flex: 1 }}>{newPassPlain}</code>
+            <CopyBtn text={newPassPlain} k="resetpass" />
+          </div>
+          <button onClick={() => setNewPassPlain(null)} style={{ marginTop: '0.75rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', fontSize: '0.75rem', cursor: 'pointer', padding: 0, fontFamily: 'DM Sans' }}>Dismiss</button>
+        </div>
+      )}
+
       {loadingUsers
         ? <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.83rem', padding: '0.5rem 0' }}>Loading…</div>
         : users.length === 0
@@ -3360,15 +3422,52 @@ function UserManagementSection({ data }: { data: AppData }) {
           : <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {users.map(u => {
                 const partner = data.partners.find(p => p.id === u.partner_id);
+                const isEditingRole = editRoleId === u.id;
                 return (
-                  <div key={u.id} style={{ display: 'grid', gridTemplateColumns: '1fr auto auto auto', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px', opacity: u.is_active ? 1 : 0.45 }}>
-                    <div>
-                      <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.88rem' }}>{u.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', marginTop: '2px' }}>@{u.username}{partner ? ` · ${partner.name}` : ''}</div>
+                  <div key={u.id} style={{ padding: '0.85rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', opacity: u.is_active ? 1 : 0.5 }}>
+                    {/* Main row */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                      <div style={{ flex: 1, minWidth: '120px' }}>
+                        <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.88rem' }}>{u.name}</div>
+                        <div style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.33)', marginTop: '1px' }}>@{u.username}{partner ? ` · ${partner.name}` : ''}</div>
+                      </div>
+                      {/* Role: static badge or inline editor */}
+                      {isEditingRole ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <select value={editRoleVal} onChange={e => setEditRoleVal(e.target.value as UserRole)} style={{ ...inp, padding: '4px 8px', fontSize: '0.78rem', width: 'auto', cursor: 'pointer' }}>
+                            {(Object.keys(ROLE_LABELS) as UserRole[]).filter(r => r !== 'super_admin').map(r => (
+                              <option key={r} value={r}>{ROLE_LABELS[r]}</option>
+                            ))}
+                          </select>
+                          <button onClick={() => saveRole(u.id)} disabled={savingRole} style={{ ...btn('primary'), fontSize: '0.72rem', padding: '4px 12px' }}>{savingRole ? '…' : 'Save'}</button>
+                          <button onClick={() => setEditRoleId(null)} style={{ ...btn('ghost'), fontSize: '0.72rem', padding: '4px 10px' }}>✕</button>
+                        </div>
+                      ) : (
+                        <button onClick={() => { setEditRoleId(u.id); setEditRoleVal(u.role); }} title="Change role" style={{ ...badge(ROLE_COLORS[u.role]), cursor: 'pointer', border: `1px solid ${ROLE_COLORS[u.role]}44`, background: ROLE_COLORS[u.role] + '22', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          {ROLE_LABELS[u.role]} <span style={{ opacity: 0.5, fontSize: '0.65rem' }}>✎</span>
+                        </button>
+                      )}
+                      <span style={{ fontSize: '0.72rem', color: u.is_active ? '#94D96B' : 'rgba(255,255,255,0.3)', fontWeight: 600 }}>{u.is_active ? 'Active' : 'Inactive'}</span>
                     </div>
-                    <span style={badge(ROLE_COLORS[u.role])}>{ROLE_LABELS[u.role]}</span>
-                    <span style={{ fontSize: '0.72rem', color: u.is_active ? '#94D96B' : 'rgba(255,255,255,0.3)', fontWeight: 600 }}>{u.is_active ? 'Active' : 'Inactive'}</span>
-                    <button onClick={() => toggleActive(u)} style={{ ...btn(u.is_active ? 'danger' : 'ghost'), fontSize: '0.73rem', padding: '4px 12px' }}>{u.is_active ? 'Deactivate' : 'Activate'}</button>
+
+                    {/* Credentials + actions row */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '0.6rem', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '7px', padding: '3px 8px' }}>
+                        <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.7rem' }}>user:</span>
+                        <code style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.75rem' }}>{u.username}</code>
+                        <CopyBtn text={u.username} k={`un-${u.id}`} />
+                      </div>
+                      <button
+                        onClick={() => resetPassword(u)}
+                        disabled={resetPassId === u.id}
+                        style={{ ...btn('ghost'), fontSize: '0.72rem', padding: '4px 12px', opacity: resetPassId === u.id ? 0.5 : 1 }}
+                      >
+                        {resetPassId === u.id ? 'Resetting…' : '↺ Reset Password'}
+                      </button>
+                      <button onClick={() => toggleActive(u)} style={{ ...btn(u.is_active ? 'danger' : 'ghost'), fontSize: '0.72rem', padding: '4px 12px', marginLeft: 'auto' }}>
+                        {u.is_active ? 'Deactivate' : 'Activate'}
+                      </button>
+                    </div>
                   </div>
                 );
               })}
@@ -3507,7 +3606,7 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
             {syncStatus === 'live' ? 'Live' : syncStatus === 'offline' ? 'Offline' : 'Connecting…'}
           </span>
         </div>
-        {pendingCount > 0 && (
+        {pendingCount > 0 && (session.role === 'super_admin' || session.role === 'admin') && (
           <button onClick={() => setTab('team')} style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '100px', padding: '3px 12px', fontSize: '0.73rem', fontWeight: 700, color: '#F59E0B', backdropFilter: 'blur(8px)', cursor: 'pointer' }}>
             {pendingCount} pending
           </button>
@@ -3525,7 +3624,7 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
           {tabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '1rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, fontFamily: 'inherit', whiteSpace: 'nowrap', color: tab === t.id ? '#FE6462' : 'rgba(255,255,255,0.4)', borderBottom: tab === t.id ? '2px solid #FE6462' : '2px solid transparent', transition: 'color 0.2s', marginBottom: '-1px', position: 'relative' }}>
               {t.label}
-              {t.id === 'team' && pendingCount > 0 && <span style={{ position: 'absolute', top: '8px', right: '6px', width: '7px', height: '7px', borderRadius: '50%', background: '#F59E0B' }} />}
+              {t.id === 'team' && pendingCount > 0 && (session.role === 'super_admin' || session.role === 'admin') && <span style={{ position: 'absolute', top: '8px', right: '6px', width: '7px', height: '7px', borderRadius: '50%', background: '#F59E0B' }} />}
             </button>
           ))}
         </div>
