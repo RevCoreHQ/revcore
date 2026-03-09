@@ -1503,6 +1503,202 @@ function InvoiceModal({ client, onClose }: { client: Client; onClose: () => void
   );
 }
 
+// ─── Whop Import Modal ────────────────────────────────────────────────────────
+interface WhopRow { name: string; email: string; startDate: string; pkg: string; selected: boolean; exists: boolean; }
+
+function parseWhopCSV(raw: string): WhopRow[] {
+  const lines = raw.trim().split('\n').map(l => l.trimEnd());
+  if (lines.length < 2) return [];
+
+  // Detect delimiter: tab or comma
+  const delim = lines[0].includes('\t') ? '\t' : ',';
+  const splitRow = (line: string) => {
+    if (delim === '\t') return line.split('\t');
+    // CSV split respecting quotes
+    const cells: string[] = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      if (line[i] === '"') { inQ = !inQ; }
+      else if (line[i] === ',' && !inQ) { cells.push(cur); cur = ''; }
+      else { cur += line[i]; }
+    }
+    cells.push(cur);
+    return cells;
+  };
+
+  const headers = splitRow(lines[0]).map(h => h.replace(/"/g, '').trim().toLowerCase());
+  const col = (name: string) => headers.findIndex(h => h.includes(name));
+
+  const colPaidAt   = col('paid at');
+  const colStatus   = col('status');
+  const colDesc     = col('description');
+  const colEmail    = col('email');
+  const colName     = col('customer name');
+
+  if (colName === -1 || colPaidAt === -1) return [];
+
+  // Parse rows
+  const customerMap = new Map<string, { name: string; email: string; dates: string[]; descs: string[] }>();
+
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const cells = splitRow(lines[i]).map(c => c.replace(/"/g, '').trim());
+    const status = colStatus >= 0 ? cells[colStatus]?.toLowerCase() : 'paid';
+    if (status && status !== 'paid') continue;
+    const name  = cells[colName]  ?? '';
+    const email = colEmail >= 0 ? (cells[colEmail] ?? '') : '';
+    const paidAt = cells[colPaidAt] ?? '';
+    const desc  = colDesc >= 0 ? (cells[colDesc] ?? '') : '';
+    if (!name) continue;
+    const key = email || name.toLowerCase();
+    if (!customerMap.has(key)) customerMap.set(key, { name, email, dates: [], descs: [] });
+    const entry = customerMap.get(key)!;
+    if (paidAt) entry.dates.push(paidAt);
+    if (desc) entry.descs.push(desc);
+  }
+
+  const IGNORE_DESCS = ['remaining balance due', 'manual charge', 'meta ad spend'];
+  const cleanPkg = (descs: string[]) => {
+    const real = descs.find(d => !IGNORE_DESCS.some(ig => d.toLowerCase().includes(ig)));
+    if (!real) return descs[0] ?? '';
+    return real
+      .replace(/\s*deposit$/i, '')
+      .replace(/\s*½\s*deposit$/i, '')
+      .replace(/\bRevCore\s*/i, '')
+      .trim();
+  };
+
+  const rows: WhopRow[] = [];
+  customerMap.forEach(({ name, email, dates, descs }) => {
+    if (!dates.length) return;
+    const sorted = [...dates].sort();
+    const startDate = sorted[0].slice(0, 10); // 'YYYY-MM-DD'
+    rows.push({ name, email, startDate, pkg: cleanPkg(descs), selected: true, exists: false });
+  });
+  return rows.sort((a, b) => a.startDate.localeCompare(b.startDate));
+}
+
+function WhopImportModal({ onClose, onImport, existingClients }: {
+  onClose: () => void;
+  onImport: (rows: WhopRow[]) => void;
+  existingClients: Client[];
+}) {
+  const [raw, setRaw] = useState('');
+  const [rows, setRows] = useState<WhopRow[]>([]);
+  const [parsed, setParsed] = useState(false);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+
+  const parse = () => {
+    const parsed = parseWhopCSV(raw).map(r => ({
+      ...r,
+      exists: existingClients.some(c =>
+        c.name.toLowerCase() === r.name.toLowerCase() ||
+        (r.email && c.notes?.toLowerCase().includes(r.email.toLowerCase()))
+      ),
+    }));
+    const sel = new Set(parsed.map((r, i) => r.exists ? -1 : i).filter(i => i >= 0));
+    setRows(parsed);
+    setSelected(sel);
+    setParsed(true);
+  };
+
+  const toggle = (i: number) => setSelected(s => { const n = new Set(s); n.has(i) ? n.delete(i) : n.add(i); return n; });
+  const toggleAll = () => {
+    const nonExisting = rows.map((r, i) => r.exists ? -1 : i).filter(i => i >= 0);
+    setSelected(s => s.size === nonExisting.length ? new Set() : new Set(nonExisting));
+  };
+
+  const doImport = () => {
+    const toImport = rows.filter((_, i) => selected.has(i));
+    onImport(toImport);
+  };
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '2rem', overflowY: 'auto', backdropFilter: 'blur(6px)' }}>
+      <div style={{ width: '100%', maxWidth: '740px', background: '#0d1117', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', padding: '2rem', marginTop: '60px', boxShadow: '0 40px 80px rgba(0,0,0,0.7)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <div>
+            <h2 style={{ color: '#fff', fontSize: '1.2rem', fontWeight: 800, margin: '0 0 0.2rem', letterSpacing: '-0.02em' }}>Import from Whop</h2>
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.78rem', margin: 0 }}>Paste your Whop CSV export below. Columns needed: Customer name, Paid at, Description, Email, Status.</p>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1.4rem', lineHeight: 1, padding: 0 }}>×</button>
+        </div>
+
+        {!parsed ? (
+          <>
+            <textarea
+              value={raw}
+              onChange={e => setRaw(e.target.value)}
+              placeholder={'Paste CSV or TSV data from Whop export here...\n\nInclude the header row. Supports both comma and tab delimited formats.'}
+              style={{ ...inp, height: '260px', resize: 'vertical', fontFamily: 'monospace', fontSize: '0.78rem', lineHeight: 1.5 }}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
+              <button onClick={onClose} style={btn('ghost')}>Cancel</button>
+              <button onClick={parse} disabled={!raw.trim()} style={{ ...btn('primary'), opacity: raw.trim() ? 1 : 0.4 }}>Parse Data</button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <div style={{ fontSize: '0.83rem', color: 'rgba(255,255,255,0.5)' }}>
+                Found <b style={{ color: '#fff' }}>{rows.length}</b> unique customers ·{' '}
+                <b style={{ color: '#94D96B' }}>{selected.size}</b> selected to import ·{' '}
+                <b style={{ color: '#F59E0B' }}>{rows.filter(r => r.exists).length}</b> already exist
+              </div>
+              <button onClick={toggleAll} style={{ ...btn('ghost'), fontSize: '0.75rem', padding: '4px 12px' }}>
+                {selected.size === rows.filter(r => !r.exists).length ? 'Deselect All' : 'Select All'}
+              </button>
+            </div>
+
+            <div style={{ maxHeight: '380px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '1.25rem' }}>
+              {rows.map((r, i) => (
+                <div key={i} onClick={() => !r.exists && toggle(i)} style={{
+                  display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.7rem 0.85rem', borderRadius: '10px',
+                  background: r.exists ? 'rgba(255,255,255,0.02)' : selected.has(i) ? 'rgba(148,217,107,0.07)' : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${r.exists ? 'rgba(255,255,255,0.04)' : selected.has(i) ? 'rgba(148,217,107,0.2)' : 'rgba(255,255,255,0.07)'}`,
+                  cursor: r.exists ? 'default' : 'pointer', opacity: r.exists ? 0.45 : 1, transition: 'all 0.15s',
+                }}>
+                  <div style={{
+                    width: '18px', height: '18px', borderRadius: '5px', flexShrink: 0,
+                    background: selected.has(i) ? '#94D96B22' : 'rgba(255,255,255,0.06)',
+                    border: `2px solid ${selected.has(i) ? '#94D96B' : 'rgba(255,255,255,0.15)'}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {selected.has(i) && <span style={{ color: '#94D96B', fontSize: '11px', lineHeight: 1 }}>✓</span>}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ fontWeight: 700, color: '#fff', fontSize: '0.88rem' }}>{r.name}</span>
+                      {r.exists && <span style={badge('#F59E0B')}>Already exists</span>}
+                    </div>
+                    {r.email && <div style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.3)', marginTop: '1px' }}>{r.email}</div>}
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#6B8EFE' }}>{r.pkg || '—'}</div>
+                    <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.3)', marginTop: '1px' }}>Started {fmtD(r.startDate)}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ padding: '0.75rem 1rem', borderRadius: '10px', background: 'rgba(107,142,254,0.08)', border: '1px solid rgba(107,142,254,0.2)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', marginBottom: '1.25rem' }}>
+              Clients will be imported as <b style={{ color: '#fff' }}>Onboarding</b> stage with amount $0. Edit each client after import to set amounts, commissions, and other details.
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+              <button onClick={() => setParsed(false)} style={btn('ghost')}>← Back</button>
+              <button onClick={onClose} style={btn('ghost')}>Cancel</button>
+              <button onClick={doImport} disabled={selected.size === 0} style={{ ...btn('primary'), opacity: selected.size > 0 ? 1 : 0.4 }}>
+                Import {selected.size} Client{selected.size !== 1 ? 's' : ''}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Clients Tab ──────────────────────────────────────────────────────────────
 function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: AppData) => void; partners: Partner[] }) {
   const [search, setSearch] = useState('');
@@ -1515,6 +1711,7 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
   const [dragOverStage, setDragOverStage] = useState<Stage | null>(null);
   const [activityClient, setActivityClient] = useState<Client | null>(null);
   const [invoiceClient, setInvoiceClient] = useState<Client | null>(null);
+  const [whopImport, setWhopImport] = useState(false);
 
   const filtered = useMemo(() => data.clients.filter(c => {
     const q = search.toLowerCase();
@@ -1546,6 +1743,23 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
     setData({ ...data, clients: data.clients.map(x => x.id === c.id ? { ...x, payStat: stat } : x) });
   };
 
+  const importFromWhop = (rows: WhopRow[]) => {
+    const newClients: Client[] = rows.map(r => ({
+      id: uid(), name: r.name, company: '', pkg: r.pkg,
+      planT: 'recurring' as PlanT, start: r.startDate, renewal: '', amount: 0,
+      nextDue: r.startDate, setterId: '', closerId: '',
+      setterInitT: 'none' as InitCommT, setterInitV: 0,
+      closerInitT: 'none' as InitCommT, closerInitV: 0,
+      ongoingT: 'none' as OngoingT, ongoingFor: 'none' as CommFor, ongoingV: 0,
+      isSplit: false, deposit: 0, bal: 0, balNote: '',
+      depPaid: false, balPaid: false,
+      stage: 'onboarding' as Stage, payStat: 'current' as PayStat,
+      ghlId: '', notes: r.email ? `Email: ${r.email}` : '', at: today(),
+    }));
+    setData({ ...data, clients: [...data.clients, ...newClients] });
+    setWhopImport(false);
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
@@ -1561,6 +1775,7 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
               </button>
             ))}
           </div>
+          <button onClick={() => setWhopImport(true)} style={btn('ghost')}>↑ Import Whop</button>
           <button onClick={() => setModal('add')} style={btn('primary')}>+ Add Client</button>
         </div>
       </div>
@@ -1710,6 +1925,7 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
       {modal && <ClientModal client={modal === 'add' ? undefined : modal} partners={partners} packages={data.packages ?? []} onSave={saveClient} onClose={() => setModal(null)} />}
       {activityClient && <ActivityLog clientId={activityClient.id} data={data} setData={setData} onClose={() => setActivityClient(null)} />}
       {invoiceClient && <InvoiceModal client={invoiceClient} onClose={() => setInvoiceClient(null)} />}
+      {whopImport && <WhopImportModal onClose={() => setWhopImport(false)} onImport={importFromWhop} existingClients={data.clients} />}
     </div>
   );
 }
