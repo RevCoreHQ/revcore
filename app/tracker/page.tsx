@@ -6,7 +6,7 @@ import SpaceBackground from '@/components/SpaceBackground';
 const PASS  = 'revcore2024';
 const STORE = 'rcTrackerV1';
 
-type Tab       = 'overview' | 'clients' | 'services' | 'analytics' | 'team' | 'calendar' | 'settings' | 'my-dashboard' | 'my-clients' | 'my-ledger' | 'goals' | 'goals-mgmt';
+type Tab       = 'overview' | 'clients' | 'services' | 'analytics' | 'team' | 'calendar' | 'payments' | 'settings' | 'my-dashboard' | 'my-clients' | 'my-ledger' | 'goals' | 'goals-mgmt';
 type UserRole  = 'super_admin' | 'admin' | 'sales_manager' | 'finance' | 'setter' | 'closer';
 type Stage     = 'onboarding' | 'balance-pending' | 'active' | 'at-risk' | 'paused' | 'churned';
 type PlanT     = 'recurring' | 'one-time';
@@ -41,7 +41,8 @@ interface MonthlyGoal { month: string; revenueTarget: number; newClientsTarget: 
 interface TeamGoal { id: string; partnerId: string; dialsPerDay: number; bookedPerWeek: number; attendedPerWeek: number; setBy: string; updatedAt: string; }
 interface DailyLog { id: string; partnerId: string; date: string; dials: number; bookedAppts: number; attendedAppts: number; notes: string; submittedAt: string; }
 interface Task { id: string; assignedToPartnerId: string; assignedByUserId: string; title: string; description: string; dueDate: string; isCompleted: boolean; completedAt: string; createdAt: string; }
-interface AppData { partners: Partner[]; clients: Client[]; comms: Commission[]; packages: ServicePkg[]; activities: Activity[]; goals: MonthlyGoal[]; teamGoals: TeamGoal[]; dailyLogs: DailyLog[]; tasks: Task[]; }
+interface PaymentRecord { id: string; clientId: string; month: string; dueDate: string; amount: number; paid: boolean; paidAt: string; }
+interface AppData { partners: Partner[]; clients: Client[]; comms: Commission[]; packages: ServicePkg[]; activities: Activity[]; goals: MonthlyGoal[]; teamGoals: TeamGoal[]; dailyLogs: DailyLog[]; tasks: Task[]; paymentRecords: PaymentRecord[]; }
 interface RcUser { id: string; username: string; email: string; name: string; role: UserRole; partner_id: string; password_hash: string; is_active: boolean; created_at: string; }
 interface Session { userId: string; username: string; name: string; role: UserRole; partnerId: string; }
 
@@ -64,6 +65,7 @@ const normalizeData = (raw: Partial<AppData>): AppData => ({
   teamGoals: raw.teamGoals ?? [],
   dailyLogs: raw.dailyLogs ?? [],
   tasks:     raw.tasks     ?? [],
+  paymentRecords: raw.paymentRecords ?? [],
 });
 
 function calcInit(c: Client, role: 'setter' | 'closer'): number {
@@ -127,13 +129,15 @@ const ROLE_TABS: Record<UserRole, { id: Tab; label: string }[]> = {
     { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
     { id: 'services', label: 'Services' }, { id: 'analytics', label: 'Analytics' },
     { id: 'team', label: 'Team & Payouts' }, { id: 'goals-mgmt', label: 'Goals & Tasks' },
-    { id: 'calendar', label: 'Calendar' }, { id: 'settings', label: 'Settings' },
+    { id: 'calendar', label: 'Calendar' }, { id: 'payments', label: 'Payments' },
+    { id: 'settings', label: 'Settings' },
   ],
   admin: [
     { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
     { id: 'services', label: 'Services' }, { id: 'analytics', label: 'Analytics' },
     { id: 'team', label: 'Team & Payouts' }, { id: 'goals-mgmt', label: 'Goals & Tasks' },
-    { id: 'calendar', label: 'Calendar' }, { id: 'settings', label: 'Settings' },
+    { id: 'calendar', label: 'Calendar' }, { id: 'payments', label: 'Payments' },
+    { id: 'settings', label: 'Settings' },
   ],
   sales_manager: [
     { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
@@ -144,7 +148,8 @@ const ROLE_TABS: Record<UserRole, { id: Tab; label: string }[]> = {
   finance: [
     { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
     { id: 'services', label: 'Services' }, { id: 'analytics', label: 'Analytics' },
-    { id: 'team', label: 'Team & Payouts' }, { id: 'settings', label: 'Settings' },
+    { id: 'team', label: 'Team & Payouts' }, { id: 'payments', label: 'Payments' },
+    { id: 'settings', label: 'Settings' },
   ],
   setter: [
     { id: 'my-dashboard', label: 'My Dashboard' }, { id: 'my-clients', label: 'My Clients' },
@@ -2091,6 +2096,333 @@ function PayoutsTab({ data, setData, partners }: { data: AppData; setData: (d: A
   );
 }
 
+// ─── Payments Tab ─────────────────────────────────────────────────────────────
+function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) => void }) {
+  const [weekOffset, setWeekOffset] = useState(0);
+  const [selectedMonth, setSelectedMonth] = useState(() => today().slice(0, 7)); // 'YYYY-MM'
+  const [selectedClient, setSelectedClient] = useState<string | null>(null);
+
+  const activeClients = data.clients.filter(c => c.stage !== 'churned' && c.stage !== 'paused' && c.planT === 'recurring');
+
+  // Generate payment records for a given month for all active clients
+  const ensureRecordsForMonth = (month: string) => {
+    const newRecords: PaymentRecord[] = [];
+    activeClients.forEach(c => {
+      if (!c.nextDue) return;
+      const existing = data.paymentRecords.find(r => r.clientId === c.id && r.month === month);
+      if (!existing) {
+        // Generate due date: find the occurrence of nextDue that falls in this month
+        const [year, mon] = month.split('-').map(Number);
+        const startDate = new Date(c.start + 'T00:00:00');
+        // Find the due day-of-month from nextDue
+        const nextDueDate = new Date(c.nextDue + 'T00:00:00');
+        const dayOfMonth = nextDueDate.getDate();
+        const dueDate = new Date(year, mon - 1, dayOfMonth);
+        // Only create if client started before or during this month
+        if (startDate <= new Date(year, mon - 1 + 1, 0)) {
+          newRecords.push({
+            id: uid(),
+            clientId: c.id,
+            month,
+            dueDate: dueDate.toISOString().slice(0, 10),
+            amount: monthlyVal(c),
+            paid: false,
+            paidAt: '',
+          });
+        }
+      }
+    });
+    return newRecords;
+  };
+
+  // Get or ensure records for the selected month
+  const monthRecords = useMemo(() => {
+    const existing = data.paymentRecords.filter(r => r.month === selectedMonth);
+    if (existing.length > 0) return existing;
+    return ensureRecordsForMonth(selectedMonth);
+  }, [data.paymentRecords, selectedMonth, activeClients.map(c => c.id).join(',')]);
+
+  const markPaid = (recordId: string) => {
+    // Check if this record exists in data already
+    const existingIdx = data.paymentRecords.findIndex(r => r.id === recordId);
+    let updatedRecords: PaymentRecord[];
+    if (existingIdx >= 0) {
+      updatedRecords = data.paymentRecords.map(r =>
+        r.id === recordId ? { ...r, paid: true, paidAt: today() } : r
+      );
+    } else {
+      // Record was generated but not yet saved — find it in monthRecords and save with paid=true
+      const rec = monthRecords.find(r => r.id === recordId);
+      if (!rec) return;
+      updatedRecords = [...data.paymentRecords, { ...rec, paid: true, paidAt: today() }];
+    }
+
+    // Advance client.nextDue by 1 month after marking paid
+    const record = monthRecords.find(r => r.id === recordId);
+    let updatedClients = data.clients;
+    if (record) {
+      updatedClients = data.clients.map(c => {
+        if (c.id !== record.clientId) return c;
+        const nd = new Date(c.nextDue + 'T00:00:00');
+        nd.setMonth(nd.getMonth() + 1);
+        return { ...c, nextDue: nd.toISOString().slice(0, 10), payStat: 'current' as PayStat };
+      });
+    }
+
+    setData({ ...data, paymentRecords: updatedRecords, clients: updatedClients });
+  };
+
+  const markUnpaid = (recordId: string) => {
+    const existing = data.paymentRecords.find(r => r.id === recordId);
+    if (!existing) return;
+    const updatedRecords = data.paymentRecords.map(r =>
+      r.id === recordId ? { ...r, paid: false, paidAt: '' } : r
+    );
+    setData({ ...data, paymentRecords: updatedRecords });
+  };
+
+  const saveGeneratedRecords = (records: PaymentRecord[]) => {
+    const newOnes = records.filter(r => !data.paymentRecords.find(ex => ex.id === r.id));
+    if (newOnes.length > 0) {
+      setData({ ...data, paymentRecords: [...data.paymentRecords, ...newOnes] });
+    }
+  };
+
+  // Monthly summary
+  const totalExpected = monthRecords.reduce((s, r) => s + r.amount, 0);
+  const totalPaid = monthRecords.filter(r => r.paid).reduce((s, r) => s + r.amount, 0);
+  const totalRemaining = totalExpected - totalPaid;
+  const pctCollected = totalExpected > 0 ? Math.round((totalPaid / totalExpected) * 100) : 0;
+
+  // Weekly view
+  const weekStart = getWeekStart(weekOffset);
+  const weekDays: Date[] = Array.from({ length: 7 }, (_, i) => { const d = new Date(weekStart); d.setDate(d.getDate() + i); return d; });
+  const weekLabel = `${weekDays[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${weekDays[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const todayStr = today();
+
+  const paymentsForDay = (day: Date): PaymentRecord[] => {
+    const ds = day.toISOString().slice(0, 10);
+    return monthRecords.filter(r => r.dueDate === ds);
+  };
+
+  const getClient = (clientId: string) => data.clients.find(c => c.id === clientId);
+
+  // Prev/next month nav
+  const changeMonth = (dir: number) => {
+    const [y, m] = selectedMonth.split('-').map(Number);
+    const d = new Date(y, m - 1 + dir, 1);
+    setSelectedMonth(d.toISOString().slice(0, 7));
+  };
+  const monthLabel = new Date(selectedMonth + '-01T00:00:00').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  const unpaidClients = monthRecords.filter(r => !r.paid).map(r => getClient(r.clientId)).filter(Boolean) as Client[];
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
+        <div>
+          <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.2rem', letterSpacing: '-0.03em' }}>Payments Tracker</h2>
+          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>Track monthly billing for all active clients</p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <button onClick={() => changeMonth(-1)} style={btn('ghost')}>← Prev</button>
+          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', fontWeight: 700, minWidth: '160px', textAlign: 'center' }}>{monthLabel}</span>
+          <button onClick={() => changeMonth(1)} style={btn('ghost')}>Next →</button>
+          {selectedMonth !== today().slice(0, 7) && (
+            <button onClick={() => setSelectedMonth(today().slice(0, 7))} style={btn('primary')}>This Month</button>
+          )}
+        </div>
+      </div>
+
+      {/* Monthly summary cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: '1rem', marginBottom: '2rem' }}>
+        {[
+          { label: 'Total Expected', value: fmtM(totalExpected), color: '#6B8EFE' },
+          { label: 'Total Paid', value: fmtM(totalPaid), color: '#94D96B' },
+          { label: 'Remaining', value: fmtM(totalRemaining), color: totalRemaining > 0 ? '#F59E0B' : '#94D96B' },
+          { label: '% Collected', value: `${pctCollected}%`, color: pctCollected >= 100 ? '#94D96B' : pctCollected >= 75 ? '#6B8EFE' : '#F59E0B' },
+        ].map(stat => (
+          <div key={stat.label} style={{ ...glassCard, borderLeft: `3px solid ${stat.color}`, padding: '1rem 1.25rem' }}>
+            <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.4rem' }}>{stat.label}</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: stat.color, letterSpacing: '-0.03em' }}>{stat.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Weekly calendar */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+        <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem' }}>Week View</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <button onClick={() => setWeekOffset(w => w - 1)} style={btn('ghost')}>← Prev</button>
+          <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.82rem', fontWeight: 600, minWidth: '200px', textAlign: 'center' }}>{weekLabel}</span>
+          <button onClick={() => setWeekOffset(w => w + 1)} style={btn('ghost')}>Next →</button>
+          {weekOffset !== 0 && <button onClick={() => setWeekOffset(0)} style={btn('ghost')}>Today</button>}
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.5rem', marginBottom: '2rem' }}>
+        {weekDays.map((day, i) => {
+          const dayPayments = paymentsForDay(day);
+          const isToday = day.toISOString().slice(0, 10) === todayStr;
+          return (
+            <div key={i} style={{ ...glassCard, minHeight: '130px', padding: '0.75rem', borderColor: isToday ? 'rgba(254,100,98,0.4)' : 'rgba(255,255,255,0.07)', boxShadow: isToday ? '0 0 20px rgba(254,100,98,0.1)' : 'none' }}>
+              <div style={{ marginBottom: '0.5rem' }}>
+                <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>{dayNames[i]}</div>
+                <div style={{ fontSize: '1rem', fontWeight: 800, color: isToday ? '#FE6462' : '#fff', lineHeight: 1 }}>{day.getDate()}</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {dayPayments.map((rec) => {
+                  const client = getClient(rec.clientId);
+                  if (!client) return null;
+                  const isAtRisk = client.stage === 'at-risk';
+                  const color = rec.paid ? '#94D96B' : isAtRisk ? '#F59E0B' : '#6B8EFE';
+                  return (
+                    <div
+                      key={rec.id}
+                      onClick={() => {
+                        // Ensure record is saved before selection
+                        if (!data.paymentRecords.find(r => r.id === rec.id)) {
+                          saveGeneratedRecords(monthRecords);
+                        }
+                        setSelectedClient(selectedClient === rec.id ? null : rec.id);
+                      }}
+                      style={{
+                        padding: '4px 6px', borderRadius: '6px', fontSize: '0.67rem', fontWeight: 700,
+                        lineHeight: 1.3, cursor: 'pointer',
+                        background: rec.paid ? 'rgba(148,217,107,0.13)' : isAtRisk ? 'rgba(245,158,11,0.13)' : 'rgba(107,142,254,0.13)',
+                        color,
+                        border: `1px solid ${color}40`,
+                        textDecoration: rec.paid ? 'line-through' : 'none',
+                        opacity: rec.paid ? 0.6 : 1,
+                      }}
+                    >
+                      {client.name}
+                      {isAtRisk && !rec.paid && <span style={{ marginLeft: '3px', opacity: 0.7 }}>⚠</span>}
+                      <div style={{ fontSize: '0.62rem', fontWeight: 600, color, opacity: 0.75, marginTop: '1px' }}>{fmtM(rec.amount)}</div>
+                    </div>
+                  );
+                })}
+                {dayPayments.length === 0 && <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.12)' }}>—</div>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Full month payment list */}
+      <div style={glassCard}>
+        <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span>{monthLabel} — All Payments ({monthRecords.length} clients)</span>
+          <div style={{ display: 'flex', gap: '6px' }}>
+            <span style={{ fontSize: '0.72rem', color: '#94D96B', fontWeight: 600 }}>{monthRecords.filter(r => r.paid).length} paid</span>
+            <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.3)' }}>·</span>
+            <span style={{ fontSize: '0.72rem', color: '#F59E0B', fontWeight: 600 }}>{monthRecords.filter(r => !r.paid).length} pending</span>
+          </div>
+        </div>
+
+        {monthRecords.length === 0 ? (
+          <div style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.83rem' }}>No active recurring clients found.</div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {monthRecords
+              .sort((a, b) => {
+                // Unpaid at-risk first, then unpaid, then paid
+                const ca = getClient(a.clientId);
+                const cb = getClient(b.clientId);
+                if (!a.paid && ca?.stage === 'at-risk') return -1;
+                if (!b.paid && cb?.stage === 'at-risk') return 1;
+                if (!a.paid && b.paid) return -1;
+                if (a.paid && !b.paid) return 1;
+                return a.dueDate.localeCompare(b.dueDate);
+              })
+              .map((rec) => {
+                const client = getClient(rec.clientId);
+                if (!client) return null;
+                const isAtRisk = client.stage === 'at-risk';
+                const isSelected = selectedClient === rec.id;
+                const accentColor = rec.paid ? '#94D96B' : isAtRisk ? '#F59E0B' : 'rgba(255,255,255,0.25)';
+                return (
+                  <div
+                    key={rec.id}
+                    style={{
+                      padding: '0.85rem 1rem', borderRadius: '12px',
+                      background: isSelected ? 'rgba(255,255,255,0.06)' : 'transparent',
+                      border: `1px solid ${isSelected ? 'rgba(255,255,255,0.12)' : 'transparent'}`,
+                      transition: 'background 0.2s, border-color 0.2s',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
+                      onClick={() => setSelectedClient(isSelected ? null : rec.id)}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        {/* Paid checkbox */}
+                        <div style={{
+                          width: '20px', height: '20px', borderRadius: '6px', flexShrink: 0,
+                          background: rec.paid ? '#94D96B22' : 'rgba(255,255,255,0.05)',
+                          border: `2px solid ${rec.paid ? '#94D96B' : 'rgba(255,255,255,0.15)'}`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          transition: 'all 0.2s',
+                        }}>
+                          {rec.paid && <span style={{ color: '#94D96B', fontSize: '12px', lineHeight: 1 }}>✓</span>}
+                        </div>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ fontWeight: 700, color: rec.paid ? 'rgba(255,255,255,0.4)' : '#fff', fontSize: '0.9rem', textDecoration: rec.paid ? 'line-through' : 'none' }}>{client.name}</span>
+                            {client.company && <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.78rem' }}>{client.company}</span>}
+                            {isAtRisk && <span style={badge('#F59E0B')}>At Risk</span>}
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', marginTop: '2px' }}>
+                            <span>Due {fmtD(rec.dueDate)}</span>
+                            {rec.paid && rec.paidAt && <><span>·</span><span style={{ color: '#94D96B' }}>Paid {fmtD(rec.paidAt)}</span></>}
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <span style={{ fontWeight: 800, color: accentColor, fontSize: '1rem' }}>{fmtM(rec.amount)}</span>
+                        <span style={badge(rec.paid ? '#94D96B' : isAtRisk ? '#F59E0B' : 'rgba(255,255,255,0.4)')}>{rec.paid ? 'Paid' : isAtRisk ? 'At Risk' : 'Pending'}</span>
+                      </div>
+                    </div>
+                    {/* Action row */}
+                    {isSelected && (
+                      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', paddingLeft: '2.25rem' }}>
+                        {!rec.paid ? (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); markPaid(rec.id); setSelectedClient(null); }}
+                            style={{ ...btn('success'), fontSize: '0.8rem', padding: '6px 16px' }}
+                          >
+                            Mark Paid
+                          </button>
+                        ) : (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); markUnpaid(rec.id); setSelectedClient(null); }}
+                            style={{ ...btn('ghost'), fontSize: '0.8rem', padding: '6px 16px' }}
+                          >
+                            Mark Unpaid
+                          </button>
+                        )}
+                        {isAtRisk && !rec.paid && (
+                          <span style={{ fontSize: '0.78rem', color: '#F59E0B', alignSelf: 'center' }}>This client is at risk — follow up before charging.</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+        )}
+      </div>
+
+      {/* Legend */}
+      <div style={{ display: 'flex', gap: '1.25rem', marginTop: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#94D96B' }} /><span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)' }}>Paid</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#6B8EFE' }} /><span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)' }}>Pending</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#F59E0B' }} /><span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)' }}>At Risk</span></div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Calendar Tab ─────────────────────────────────────────────────────────────
 function CalendarTab({ data }: { data: AppData }) {
   const [weekOffset, setWeekOffset] = useState(0);
@@ -2990,6 +3322,7 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
         {tab === 'analytics'     && <AnalyticsTab  data={data} />}
         {tab === 'team'          && <><TeamTab data={data} setData={setData} /><div style={{ marginTop: '2.5rem' }}><PayoutsTab data={data} setData={setData} partners={data.partners} /></div></>}
         {tab === 'calendar'      && <CalendarTab  data={data} />}
+        {tab === 'payments'      && <PaymentsTab  data={data} setData={setData} />}
         {tab === 'settings'      && <SettingsTab  data={data} setData={setData} session={session} />}
         {tab === 'my-dashboard'  && <MyDashboardTab data={data} session={session} />}
         {tab === 'my-clients'    && <MyClientsTab   data={data} session={session} />}
