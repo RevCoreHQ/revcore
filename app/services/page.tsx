@@ -78,22 +78,6 @@ export default function ServicesPage() {
       doBestRef.current.style.backgroundPosition = '0% center';
     }
 
-    // Hash-based deep link: scroll horizontal track to the requested service
-    const hash = window.location.hash.replace('#', '');
-    if (hash) {
-      const idx = services.findIndex(s => s.id === hash);
-      if (idx >= 0) {
-        setTimeout(() => {
-          if (hScrollRef.current && trackRef.current) {
-            const progress = idx / (services.length - 1);
-            const hScrollTop = hScrollRef.current.offsetTop;
-            const totalScroll = hScrollRef.current.offsetHeight - window.innerHeight;
-            window.scrollTo({ top: hScrollTop + progress * totalScroll, behavior: 'smooth' });
-          }
-        }, 350);
-      }
-    }
-
     function updateHeight() {
       if (hScrollRef.current && trackRef.current) {
         const maxTranslate = trackRef.current.scrollWidth - window.innerWidth;
@@ -102,6 +86,24 @@ export default function ServicesPage() {
     }
     updateHeight();
     window.addEventListener('resize', updateHeight);
+
+    // Scroll the horizontal track to a service by id
+    function scrollToService(id: string) {
+      const idx = services.findIndex(s => s.id === id);
+      if (idx < 0 || !hScrollRef.current || !trackRef.current) return;
+      const progress = idx / (services.length - 1);
+      const hScrollTop = hScrollRef.current.offsetTop;
+      const totalScroll = hScrollRef.current.offsetHeight - window.innerHeight;
+      window.scrollTo({ top: hScrollTop + progress * totalScroll, behavior: 'smooth' });
+    }
+
+    // Handle initial hash (navigating from another page)
+    const initialHash = window.location.hash.replace('#', '');
+    if (initialHash) setTimeout(() => scrollToService(initialHash), 400);
+
+    // Handle same-page hash changes (clicking nav dropdown while already on /services)
+    const onHashChange = () => scrollToService(window.location.hash.replace('#', ''));
+    window.addEventListener('hashchange', onHashChange);
 
     const onScroll = () => {
       if (heroImgRef.current) {
@@ -126,6 +128,7 @@ export default function ServicesPage() {
     return () => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', updateHeight);
+      window.removeEventListener('hashchange', onHashChange);
     };
   }, []);
 
