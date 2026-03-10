@@ -53,7 +53,7 @@ const monthlyVal = (c: Client) => c.pkg.toLowerCase().includes('ppa') ? PPA_MONT
 const uid   = () => Math.random().toString(36).slice(2, 10);
 const fmtD  = (d: string) => d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
 const fmtM  = (n: number) => '$' + (n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
 // Returns Monday of the week containing d (or today)
 const getMonday = (d: Date = new Date()): string => { const dt = new Date(d); dt.setDate(dt.getDate() - ((dt.getDay() + 6) % 7)); return dt.toISOString().slice(0, 10); };
 const normalizeData = (raw: Partial<AppData>): AppData => ({
@@ -2361,6 +2361,9 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
   const [editDueDateId, setEditDueDateId] = useState<string | null>(null);
   const [editDueDateVal, setEditDueDateVal] = useState('');
   const [calPopRecId, setCalPopRecId] = useState<string | null>(null);
+  const [paidAmounts, setPaidAmounts] = useState<Record<string, string>>({}); // recId → amount string
+  const [dragRecId, setDragRecId] = useState<string | null>(null);
+  const [dragOverDay, setDragOverDay] = useState<string | null>(null); // local date string
 
   // All non-churned, non-paused clients — everyone with active billing regardless of planT label
   const activeClients = data.clients.filter(c => c.stage !== 'churned' && c.stage !== 'paused');
@@ -2417,30 +2420,31 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
     return [...existing, ...missing];
   }, [data.paymentRecords, selectedMonth, activeClients.map(c => c.id + c.amount + c.nextDue).join(',')]);
 
-  const markPaid = (recordId: string) => {
+  const localNd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+  const markPaid = (recordId: string, amountOverride?: number) => {
+    const record = monthRecords.find(r => r.id === recordId);
+    const finalAmount = amountOverride !== undefined ? amountOverride : record?.amount;
     // Check if this record exists in data already
     const existingIdx = data.paymentRecords.findIndex(r => r.id === recordId);
     let updatedRecords: PaymentRecord[];
     if (existingIdx >= 0) {
       updatedRecords = data.paymentRecords.map(r =>
-        r.id === recordId ? { ...r, paid: true, paidAt: today() } : r
+        r.id === recordId ? { ...r, paid: true, paidAt: today(), ...(finalAmount !== undefined ? { amount: finalAmount } : {}) } : r
       );
     } else {
-      // Record was generated but not yet saved — find it in monthRecords and save with paid=true
-      const rec = monthRecords.find(r => r.id === recordId);
-      if (!rec) return;
-      updatedRecords = [...data.paymentRecords, { ...rec, paid: true, paidAt: today() }];
+      if (!record) return;
+      updatedRecords = [...data.paymentRecords, { ...record, paid: true, paidAt: today(), ...(finalAmount !== undefined ? { amount: finalAmount } : {}) }];
     }
 
     // Advance client.nextDue by exactly 30 days after marking paid
-    const record = monthRecords.find(r => r.id === recordId);
     let updatedClients = data.clients;
     if (record) {
       updatedClients = data.clients.map(c => {
         if (c.id !== record.clientId) return c;
         const nd = new Date((c.nextDue || record.dueDate) + 'T00:00:00');
         nd.setDate(nd.getDate() + 30);
-        return { ...c, nextDue: nd.toISOString().slice(0, 10), payStat: 'current' as PayStat };
+        return { ...c, nextDue: localNd(nd), payStat: 'current' as PayStat };
       });
     }
 
@@ -2463,6 +2467,20 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
     }
   };
 
+  // Move a client's billing anchor (nextDue) to a new date, also update any unsaved record in current month
+  const rescheduleClient = (recId: string, newDateStr: string) => {
+    const rec = monthRecords.find(r => r.id === recId);
+    if (!rec) return;
+    const updatedClients = data.clients.map(c =>
+      c.id === rec.clientId ? { ...c, nextDue: newDateStr } : c
+    );
+    // Update dueDate on the record if it exists in saved data
+    const updatedRecords = data.paymentRecords.map(r =>
+      r.id === recId ? { ...r, dueDate: newDateStr } : r
+    );
+    setData({ ...data, clients: updatedClients, paymentRecords: updatedRecords });
+  };
+
   // Monthly summary
   const totalExpected = monthRecords.reduce((s, r) => s + r.amount, 0);
   const totalPaid = monthRecords.filter(r => r.paid).reduce((s, r) => s + r.amount, 0);
@@ -2476,10 +2494,8 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const todayStr = today();
 
-  const paymentsForDay = (day: Date): PaymentRecord[] => {
-    const ds = day.toISOString().slice(0, 10);
-    return monthRecords.filter(r => r.dueDate === ds);
-  };
+  const localDs = (d: Date) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const paymentsForDay = (day: Date): PaymentRecord[] => monthRecords.filter(r => r.dueDate === localDs(day));
 
   const getClient = (clientId: string) => data.clients.find(c => c.id === clientId);
 
@@ -2588,9 +2604,29 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.5rem', marginBottom: calPopRecId ? '0.75rem' : '1.25rem' }}>
         {weekDays.map((day, i) => {
           const dayPayments = paymentsForDay(day);
-          const isToday = day.toISOString().slice(0, 10) === todayStr;
+          const isToday = localDs(day) === todayStr;
+          const dayStr = localDs(day);
+          const isDragOver = dragOverDay === dayStr && dragRecId !== null;
           return (
-            <div key={i} className={isToday ? 'payments-today-cell' : ''} style={{ ...glassCard, minHeight: '130px', padding: '0.75rem', borderColor: isToday ? 'rgba(254,100,98,0.7)' : 'rgba(255,255,255,0.07)' }}>
+            <div
+              key={i}
+              className={isToday ? 'payments-today-cell' : ''}
+              onDragOver={(e) => { e.preventDefault(); setDragOverDay(dayStr); }}
+              onDragLeave={() => setDragOverDay(null)}
+              onDrop={(e) => {
+                e.preventDefault();
+                const recId = e.dataTransfer.getData('recId');
+                if (recId) rescheduleClient(recId, dayStr);
+                setDragRecId(null);
+                setDragOverDay(null);
+              }}
+              style={{
+                ...glassCard, minHeight: '130px', padding: '0.75rem',
+                borderColor: isDragOver ? 'rgba(107,142,254,0.7)' : isToday ? 'rgba(254,100,98,0.7)' : 'rgba(255,255,255,0.07)',
+                background: isDragOver ? 'rgba(107,142,254,0.07)' : (glassCard as React.CSSProperties).background,
+                transition: 'border-color 0.15s, background 0.15s',
+              }}
+            >
               <div style={{ marginBottom: '0.5rem' }}>
                 <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>{dayNames[i]}</div>
                 <div style={{ fontSize: '1rem', fontWeight: 800, color: isToday ? '#FE6462' : '#fff', lineHeight: 1 }}>{day.getDate()}</div>
@@ -2601,24 +2637,34 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
                   if (!client) return null;
                   const isAtRisk = client.stage === 'at-risk';
                   const isCalSelected = calPopRecId === rec.id;
+                  const isDragging = dragRecId === rec.id;
                   const pillClass = isCalSelected ? 'cal-pill-selected' : rec.paid ? 'cal-pill-paid' : 'cal-pill-unpaid';
                   const pillColor = rec.paid ? '#94D96B' : '#F59E0B';
                   return (
                     <div
                       key={rec.id}
                       className={pillClass}
+                      draggable={!rec.paid}
+                      onDragStart={(e) => {
+                        if (!data.paymentRecords.find(r => r.id === rec.id)) saveGeneratedRecords(monthRecords);
+                        e.dataTransfer.setData('recId', rec.id);
+                        setDragRecId(rec.id);
+                        setCalPopRecId(null);
+                      }}
+                      onDragEnd={() => { setDragRecId(null); setDragOverDay(null); }}
                       onClick={() => {
                         if (!data.paymentRecords.find(r => r.id === rec.id)) saveGeneratedRecords(monthRecords);
                         setCalPopRecId(calPopRecId === rec.id ? null : rec.id);
                       }}
                       style={{
                         padding: '4px 6px', borderRadius: '6px', fontSize: '0.67rem', fontWeight: 700,
-                        lineHeight: 1.3, cursor: 'pointer',
+                        lineHeight: 1.3, cursor: rec.paid ? 'pointer' : 'grab',
                         background: rec.paid ? 'rgba(148,217,107,0.12)' : 'rgba(245,158,11,0.1)',
                         color: pillColor,
                         border: `1px solid ${rec.paid ? 'rgba(148,217,107,0.55)' : 'rgba(245,158,11,0.45)'}`,
-                        opacity: rec.paid ? 0.7 : 1,
+                        opacity: isDragging ? 0.35 : rec.paid ? 0.7 : 1,
                         transition: 'opacity 0.15s',
+                        userSelect: 'none',
                       }}
                     >
                       {client.name}
@@ -2627,7 +2673,7 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
                     </div>
                   );
                 })}
-                {dayPayments.length === 0 && <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.12)' }}>—</div>}
+                {dayPayments.length === 0 && <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.12)' }}>{isDragOver ? '+ drop here' : '—'}</div>}
               </div>
             </div>
           );
@@ -2642,7 +2688,7 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
         const nextDueAfterPay = (() => {
           const nd = new Date((client.nextDue || rec.dueDate) + 'T00:00:00');
           nd.setDate(nd.getDate() + 30);
-          return nd.toISOString().slice(0, 10);
+          return localNd(nd);
         })();
         const lastPay = getLastPaymentDate(client.id);
         return (
@@ -2675,9 +2721,25 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
                 >
                   {client.autoRenew ? '⚡ Auto' : '✋ Manual'}
                 </button>
-                {/* Mark paid / unpaid */}
+                {/* Editable amount + mark paid / unpaid */}
                 {!rec.paid ? (
-                  <button onClick={() => { markPaid(rec.id); setCalPopRecId(null); }} style={{ ...btn('success'), fontSize: '0.8rem', padding: '5px 14px' }}>Mark Paid</button>
+                  <>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>$</span>
+                      <input
+                        type="number"
+                        value={paidAmounts[rec.id] ?? rec.amount}
+                        onChange={e => setPaidAmounts(prev => ({ ...prev, [rec.id]: e.target.value }))}
+                        style={{ ...inp, width: '80px', padding: '4px 6px', fontSize: '0.82rem', height: 'auto', textAlign: 'right' }}
+                      />
+                    </div>
+                    <button onClick={() => {
+                      const amt = paidAmounts[rec.id] !== undefined ? parseFloat(paidAmounts[rec.id]) : undefined;
+                      markPaid(rec.id, amt);
+                      setPaidAmounts(prev => { const n = { ...prev }; delete n[rec.id]; return n; });
+                      setCalPopRecId(null);
+                    }} style={{ ...btn('success'), fontSize: '0.8rem', padding: '5px 14px' }}>Mark Paid</button>
+                  </>
                 ) : (
                   <button onClick={() => { markUnpaid(rec.id); setCalPopRecId(null); }} style={{ ...btn('ghost'), fontSize: '0.8rem', padding: '5px 14px' }}>Mark Unpaid</button>
                 )}
@@ -2818,12 +2880,30 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.75rem', paddingLeft: '2.25rem' }}>
                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
                           {!rec.paid ? (
-                            <button
-                              onClick={(e) => { e.stopPropagation(); markPaid(rec.id); setSelectedClient(null); }}
-                              style={{ ...btn('success'), fontSize: '0.8rem', padding: '6px 16px' }}
-                            >
-                              Mark Paid
-                            </button>
+                            <>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>$</span>
+                                <input
+                                  type="number"
+                                  value={paidAmounts[rec.id] ?? rec.amount}
+                                  onClick={e => e.stopPropagation()}
+                                  onChange={e => { e.stopPropagation(); setPaidAmounts(prev => ({ ...prev, [rec.id]: e.target.value })); }}
+                                  style={{ ...inp, width: '80px', padding: '4px 6px', fontSize: '0.82rem', height: 'auto', textAlign: 'right' }}
+                                />
+                              </div>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const amt = paidAmounts[rec.id] !== undefined ? parseFloat(paidAmounts[rec.id]) : undefined;
+                                  markPaid(rec.id, amt);
+                                  setPaidAmounts(prev => { const n = { ...prev }; delete n[rec.id]; return n; });
+                                  setSelectedClient(null);
+                                }}
+                                style={{ ...btn('success'), fontSize: '0.8rem', padding: '6px 16px' }}
+                              >
+                                Mark Paid
+                              </button>
+                            </>
                           ) : (
                             <button
                               onClick={(e) => { e.stopPropagation(); markUnpaid(rec.id); setSelectedClient(null); }}
