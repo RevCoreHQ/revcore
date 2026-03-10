@@ -14,10 +14,14 @@ interface NicheTab {
   tagline: string;
   subtext: string;
   cta: string;
+  phone: string;
   domain: string;
   accent: string;
   bgColor: string;
+  navItems: string[];
+  services: { name: string; desc: string }[];
   stats: { label: string; value: string }[];
+  trust: string[];
 }
 
 /* ─── Niche Data ─────────────────────────────────────────────────────────── */
@@ -27,72 +31,84 @@ const NICHES: NicheTab[] = [
     label: 'Roofing',
     company: 'Summit Roofing Co.',
     location: 'Dallas, TX',
-    tagline: 'Protecting DFW Homes Since 2009',
-    subtext: 'From storm damage repairs to full replacements, we deliver quality roofing with a lifetime workmanship warranty. Trusted by thousands of Dallas homeowners.',
-    cta: 'Get Free Roof Inspection',
+    tagline: 'Protecting DFW\nHomes Since 2009',
+    subtext: 'Storm damage repairs, full replacements, and new installs. Lifetime workmanship warranty on every job.',
+    cta: 'Get Your Free Inspection',
+    phone: '(214) 555-0182',
     domain: 'summitroofingtx.com',
-    accent: '#E85C2C',
-    bgColor: '#1a0e08',
-    stats: [
-      { value: '4,800+', label: 'Roofs Completed' },
-      { value: 'A+', label: 'BBB Rating' },
-      { value: 'Lifetime', label: 'Workmanship Warranty' },
-      { value: '4.9★', label: '312 Reviews' },
+    accent: '#D95F2C',
+    bgColor: '#100a06',
+    navItems: ['Services', 'Gallery', 'Reviews', 'About', 'Contact'],
+    services: [
+      { name: 'Roof Replacement', desc: 'Full tear-off and install. All materials included.' },
+      { name: 'Storm Damage Repair', desc: 'We work directly with your insurance company.' },
+      { name: 'Gutter Installation', desc: 'Seamless gutters with lifetime clog warranty.' },
     ],
+    stats: [{ value: '4,800+', label: 'Roofs Installed' }, { value: 'A+', label: 'BBB Rating' }, { value: 'Lifetime', label: 'Warranty' }, { value: '4.9★', label: '312 Reviews' }],
+    trust: ['Licensed & Insured', 'BBB Accredited', 'GAF Certified', '5-Year Labor Warranty'],
   },
   {
     id: 'remodeling',
     label: 'Remodeling',
     company: 'Keystone Interiors',
     location: 'Nashville, TN',
-    tagline: 'Where Design Meets Craftsmanship',
-    subtext: 'From kitchens and baths to whole-home renovations, Keystone Interiors brings your vision to life with exceptional craftsmanship and attention to detail.',
+    tagline: 'Where Design Meets\nCraftsmanship',
+    subtext: 'Kitchen, bath, and whole-home renovations built around the way your family lives. No shortcuts.',
     cta: 'Book a Free Design Consult',
+    phone: '(615) 555-0287',
     domain: 'keystoneinteriors.com',
-    accent: '#C9956A',
-    bgColor: '#1a1208',
-    stats: [
-      { value: '12+', label: 'Years in Business' },
-      { value: '340+', label: 'Projects Completed' },
-      { value: '5★', label: 'Houzz Rating' },
-      { value: '$0', label: 'Down to Start' },
+    accent: '#B8825A',
+    bgColor: '#0f0c07',
+    navItems: ['Services', 'Portfolio', 'Process', 'Reviews', 'Contact'],
+    services: [
+      { name: 'Kitchen Remodeling', desc: 'Custom cabinets, countertops, layout redesign.' },
+      { name: 'Bathroom Renovation', desc: 'Full gut-and-rebuild or targeted upgrades.' },
+      { name: 'Whole-Home Remodel', desc: 'Coordinated multi-room transformations.' },
     ],
+    stats: [{ value: '12+', label: 'Years Experience' }, { value: '340+', label: 'Projects Done' }, { value: '5★', label: 'Houzz Rating' }, { value: '$0', label: 'Down to Start' }],
+    trust: ['Licensed Contractor', 'NKBA Member', 'Houzz Pro', 'Insured & Bonded'],
   },
   {
     id: 'windows',
     label: 'Windows',
     company: 'ClearView Windows',
     location: 'Charlotte, NC',
-    tagline: 'Energy-Efficient Windows That Pay For Themselves',
-    subtext: 'Triple-pane technology, professional 1-day installation, and up to 30% energy savings. ClearView makes upgrading your home simple and affordable.',
-    cta: 'Get a Free Energy Assessment',
+    tagline: 'Windows That Pay\nFor Themselves',
+    subtext: 'Triple-pane, energy-rated windows installed in one day. Average 30% reduction on energy bills guaranteed.',
+    cta: 'Get a Free Energy Audit',
+    phone: '(704) 555-0391',
     domain: 'clearviewwindowsnc.com',
-    accent: '#4A90D9',
-    bgColor: '#080f1a',
-    stats: [
-      { value: '30%', label: 'Avg. Energy Savings' },
-      { value: '500+', label: 'Homes Upgraded' },
-      { value: '1-Day', label: 'Installation' },
-      { value: 'Triple', label: 'Pane Glass' },
+    accent: '#3A80C9',
+    bgColor: '#060c14',
+    navItems: ['Products', 'Gallery', 'Energy Savings', 'Financing', 'Contact'],
+    services: [
+      { name: 'Window Replacement', desc: 'Triple-pane, ENERGY STAR rated. One-day install.' },
+      { name: 'Patio & Entry Doors', desc: 'Impact-resistant, custom-framed door systems.' },
+      { name: 'Free Energy Audit', desc: 'We identify exactly where your home is losing heat.' },
     ],
+    stats: [{ value: '30%', label: 'Energy Savings' }, { value: '500+', label: 'Homes Done' }, { value: '1-Day', label: 'Install' }, { value: 'Triple', label: 'Pane Glass' }],
+    trust: ['ENERGY STAR Partner', 'Licensed & Insured', 'Financing Available', '10-Year Warranty'],
   },
   {
     id: 'pool',
     label: 'Pool & Landscape',
     company: 'Meridian Outdoor Living',
-    location: 'Phoenix, AZ',
-    tagline: 'Custom Pools & Outdoor Spaces Built to Last',
-    subtext: 'Award-winning pool design, professional landscaping, and complete outdoor living spaces. Meridian transforms your backyard into a personal oasis.',
-    cta: 'Start Your Outdoor Project',
+    location: 'Scottsdale, AZ',
+    tagline: 'Your Backyard.\nTransformed.',
+    subtext: 'Custom pool design, outdoor kitchens, and full landscape architecture. From concept to your first swim.',
+    cta: 'Start Your Project',
+    phone: '(602) 555-0514',
     domain: 'meridianoutdoorliving.com',
-    accent: '#2ECC8A',
-    bgColor: '#081a10',
-    stats: [
-      { value: '200+', label: 'Pools Built' },
-      { value: 'Award', label: 'Winning Design' },
-      { value: '15+', label: 'Years Experience' },
-      { value: '4.8★', label: 'Google Rating' },
+    accent: '#26B87A',
+    bgColor: '#05100a',
+    navItems: ['Pools', 'Landscaping', 'Gallery', 'Financing', 'Contact'],
+    services: [
+      { name: 'Custom Pool Design', desc: 'Fully engineered, built to your lot and lifestyle.' },
+      { name: 'Outdoor Kitchens', desc: 'Gas grills, pizza ovens, bars, and shade structures.' },
+      { name: 'Landscape Architecture', desc: 'Planting, lighting, turf, and hardscape design.' },
     ],
+    stats: [{ value: '200+', label: 'Pools Built' }, { value: 'Award', label: 'Winning Design' }, { value: '15+', label: 'Years Exp.' }, { value: '4.8★', label: 'Google' }],
+    trust: ['ROC Licensed', 'Fully Insured', 'APSP Member', 'Financing Available'],
   },
 ];
 
@@ -192,20 +208,23 @@ function GmbSection() {
               </div>
             </div>
 
-            {/* Map placeholder */}
-            <div style={{ height: '100px', background: 'linear-gradient(135deg, #e8f0fe 0%, #d2e3fc 50%, #ceead6 100%)', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', inset: 0, opacity: 0.3 }}>
-                {/* Fake map grid lines */}
-                {[20, 40, 60, 80].map(p => (
-                  <div key={p} style={{ position: 'absolute', top: 0, bottom: 0, left: `${p}%`, width: '1px', background: '#9ab0da' }} />
-                ))}
-                {[25, 50, 75].map(p => (
-                  <div key={p} style={{ position: 'absolute', left: 0, right: 0, top: `${p}%`, height: '1px', background: '#9ab0da' }} />
-                ))}
-              </div>
-              {/* Map pin */}
-              <div style={{ position: 'absolute', top: '30%', left: '50%', transform: 'translateX(-50%)' }}>
-                <div style={{ background: '#ea4335', width: '16px', height: '16px', borderRadius: '50% 50% 50% 0', transform: 'rotate(-45deg)', boxShadow: '0 2px 6px rgba(234,67,53,0.4)' }} />
+            {/* Real Dallas TX map */}
+            <div style={{ height: '110px', position: 'relative', overflow: 'hidden' }}>
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d53733.27!2d-96.79699!3d32.77667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1741600000000!5m2!1sen!2sus"
+                width="100%"
+                height="110"
+                style={{ border: 'none', display: 'block', filter: 'grayscale(0.15)' }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Dallas TX map"
+              />
+              {/* Red pin overlay centered on Dallas */}
+              <div style={{ position: 'absolute', top: '38%', left: '50%', transform: 'translate(-50%, -100%)', pointerEvents: 'none', filter: 'drop-shadow(0 3px 6px rgba(234,67,53,0.5))' }}>
+                <svg width="22" height="28" viewBox="0 0 24 32" fill="none">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 20 12 20s12-11 12-20C24 5.37 18.63 0 12 0z" fill="#ea4335" />
+                  <circle cx="12" cy="12" r="5" fill="white" />
+                </svg>
               </div>
             </div>
 
@@ -378,119 +397,122 @@ function WebsiteSection() {
 /* ─── Browser Mockup ─────────────────────────────────────────────────────── */
 function BrowserMockup({ niche, visible }: { niche: NicheTab; visible: boolean }) {
   return (
-    <div
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0px)' : 'translateY(16px)',
-        transition: 'opacity 0.45s cubic-bezier(0.22,1,0.36,1), transform 0.45s cubic-bezier(0.22,1,0.36,1)',
-        position: visible ? 'relative' : 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        pointerEvents: visible ? 'auto' : 'none',
-      }}
-    >
-      {/* Browser shell */}
-      <div style={{
-        borderRadius: '14px',
-        overflow: 'hidden',
-        boxShadow: '0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06)',
-        background: '#1a1d24',
-      }}>
+    <div style={{
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'translateY(0px)' : 'translateY(20px)',
+      transition: 'opacity 0.45s cubic-bezier(0.22,1,0.36,1), transform 0.45s cubic-bezier(0.22,1,0.36,1)',
+      position: visible ? 'relative' : 'absolute',
+      top: 0, left: 0, right: 0,
+      pointerEvents: visible ? 'auto' : 'none',
+    }}>
+      <div style={{ borderRadius: '14px', overflow: 'hidden', boxShadow: '0 40px 100px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.06)', background: '#1a1d24' }}>
+
         {/* Browser chrome */}
-        <div style={{ background: '#1e2128', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-          {/* Traffic lights */}
+        <div style={{ background: '#1e2128', padding: '9px 14px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
             <div style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#ff5f57' }} />
             <div style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#febc2e' }} />
             <div style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#28c840' }} />
           </div>
-          {/* URL bar */}
           <div style={{ flex: 1, background: '#13161c', borderRadius: '6px', padding: '5px 12px', display: 'flex', alignItems: 'center', gap: '7px', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" fill="rgba(148,217,107,0.6)" />
-            </svg>
-            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.45)', fontFamily: 'monospace', letterSpacing: '0.01em' }}>{niche.domain}</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" fill="rgba(148,217,107,0.55)" /></svg>
+            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>{niche.domain}</span>
           </div>
         </div>
 
         {/* Website content */}
-        <div style={{ background: niche.bgColor, fontFamily: 'DM Sans, sans-serif' }}>
-          {/* Site nav */}
-          <div style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${niche.accent}18`, background: `${niche.bgColor}` }}>
-            <div style={{ fontWeight: 800, fontSize: '15px', color: 'white', letterSpacing: '-0.02em' }}>{niche.company}</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)' }}>(555) 400-7890</span>
-              <button style={{ background: niche.accent, color: 'white', border: 'none', borderRadius: '100px', padding: '5px 13px', fontSize: '10px', fontWeight: 700, cursor: 'pointer' }}>{niche.cta.split(' ').slice(0, 2).join(' ')}</button>
+        <div style={{ background: niche.bgColor, fontFamily: 'system-ui, -apple-system, sans-serif', userSelect: 'none' }}>
+
+          {/* Top announcement bar */}
+          <div style={{ background: niche.accent, padding: '5px 20px', textAlign: 'center' }}>
+            <span style={{ fontSize: '10px', color: 'white', fontWeight: 600 }}>Serving {niche.location} & Surrounding Areas · Free Estimates · Call {niche.phone}</span>
+          </div>
+
+          {/* Nav */}
+          <div style={{ padding: '11px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${niche.accent}1a`, background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {/* Logo placeholder */}
+              <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: niche.accent, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ color: 'white', fontWeight: 900, fontSize: '13px' }}>{niche.company[0]}</span>
+              </div>
+              <span style={{ fontWeight: 800, fontSize: '13px', color: 'white', letterSpacing: '-0.02em' }}>{niche.company}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              {niche.navItems.map(item => (
+                <span key={item} style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', fontWeight: 500, cursor: 'pointer' }}>{item}</span>
+              ))}
+              <button style={{ background: niche.accent, color: 'white', border: 'none', borderRadius: '100px', padding: '5px 12px', fontSize: '9px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>{niche.cta}</button>
             </div>
           </div>
 
-          {/* Hero area */}
-          <div style={{
-            padding: '36px 24px 28px',
-            background: `linear-gradient(135deg, ${niche.bgColor} 0%, ${niche.accent}18 100%)`,
-            position: 'relative',
-            overflow: 'hidden',
-          }}>
-            {/* Background accent glow */}
-            <div style={{ position: 'absolute', top: '-40%', right: '-10%', width: '300px', height: '300px', background: `radial-gradient(ellipse, ${niche.accent}18 0%, transparent 70%)`, pointerEvents: 'none' }} />
-
-            <div style={{ position: 'relative', zIndex: 1, maxWidth: '72%' }}>
-              {/* Location badge */}
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '3px 10px', borderRadius: '100px', background: `${niche.accent}18`, border: `1px solid ${niche.accent}30`, marginBottom: '12px' }}>
-                <svg width="8" height="8" viewBox="0 0 24 24" fill={niche.accent}>
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-                </svg>
-                <span style={{ fontSize: '9px', color: niche.accent, fontWeight: 600 }}>{niche.location}</span>
+          {/* Hero — split: text left, image placeholder right */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '180px', position: 'relative', overflow: 'hidden' }}>
+            {/* Left: text */}
+            <div style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: `linear-gradient(135deg, ${niche.bgColor} 0%, ${niche.accent}14 100%)`, position: 'relative', zIndex: 1 }}>
+              {/* Review stars */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '10px' }}>
+                {[1,2,3,4,5].map(i => <svg key={i} width="9" height="9" viewBox="0 0 24 24" fill={niche.accent}><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>)}
+                <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', marginLeft: '3px' }}>4.9 · 312 reviews</span>
               </div>
-
-              <h1 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 'clamp(1.3rem, 2.2vw, 1.9rem)', fontWeight: 800, color: 'white', lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '10px' }}>
-                {niche.tagline}
-              </h1>
-              <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', lineHeight: '1.65', marginBottom: '18px', maxWidth: '420px' }}>
-                {niche.subtext}
-              </p>
-              <button style={{
-                background: `linear-gradient(135deg, ${niche.accent} 0%, ${niche.accent}cc 100%)`,
-                color: 'white',
-                border: 'none',
-                borderRadius: '100px',
-                padding: '9px 20px',
-                fontSize: '11px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                boxShadow: `0 4px 16px ${niche.accent}35`,
-                letterSpacing: '0.01em',
-              }}>{niche.cta}</button>
+              <h1 style={{ fontWeight: 900, fontSize: '22px', color: 'white', lineHeight: 1.1, letterSpacing: '-0.025em', margin: '0 0 10px', whiteSpace: 'pre-line' }}>{niche.tagline}</h1>
+              <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, margin: '0 0 16px', maxWidth: '260px' }}>{niche.subtext}</p>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button style={{ background: niche.accent, color: 'white', border: 'none', borderRadius: '100px', padding: '8px 16px', fontSize: '10px', fontWeight: 700, cursor: 'pointer', boxShadow: `0 4px 14px ${niche.accent}45` }}>{niche.cta}</button>
+                <button style={{ background: 'transparent', color: 'rgba(255,255,255,0.55)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '100px', padding: '8px 14px', fontSize: '10px', fontWeight: 600, cursor: 'pointer' }}>See Our Work</button>
+              </div>
+            </div>
+            {/* Right: image placeholder */}
+            <div style={{ background: `linear-gradient(145deg, ${niche.accent}22 0%, ${niche.accent}08 50%, ${niche.bgColor} 100%)`, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 60% 40%, ${niche.accent}25 0%, transparent 65%)` }} />
+              {/* Photo grid placeholder */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', padding: '16px', width: '100%', position: 'relative', zIndex: 1 }}>
+                {[1,2,3,4].map(i => (
+                  <div key={i} style={{ height: i === 1 ? '88px' : '50px', borderRadius: '8px', background: `${niche.accent}${i === 1 ? '28' : '18'}`, border: `1px solid ${niche.accent}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', gridColumn: i === 1 ? '1 / -1' : 'auto' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2" stroke="white" strokeWidth="1.5"/><circle cx="8.5" cy="8.5" r="1.5" fill="white"/><path d="M21 15l-5-5L5 21" stroke="white" strokeWidth="1.5"/></svg>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Stats bar */}
-          <div style={{
-            background: 'rgba(0,0,0,0.4)',
-            borderTop: `1px solid ${niche.accent}20`,
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 0,
-          }}>
+          <div style={{ background: 'rgba(0,0,0,0.5)', borderTop: `1px solid ${niche.accent}20`, borderBottom: `1px solid ${niche.accent}20`, display: 'grid', gridTemplateColumns: 'repeat(4,1fr)' }}>
             {niche.stats.map((stat, i) => (
-              <div key={i} style={{
-                padding: '14px 12px',
-                textAlign: 'center',
-                borderRight: i < 3 ? `1px solid ${niche.accent}14` : 'none',
-              }}>
-                <div style={{ fontWeight: 800, fontSize: '15px', color: niche.accent, lineHeight: 1.1, marginBottom: '3px' }}>{stat.value}</div>
-                <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.03em' }}>{stat.label}</div>
+              <div key={i} style={{ padding: '12px 10px', textAlign: 'center', borderRight: i < 3 ? `1px solid ${niche.accent}14` : 'none' }}>
+                <div style={{ fontWeight: 800, fontSize: '14px', color: niche.accent, lineHeight: 1, marginBottom: '2px' }}>{stat.value}</div>
+                <div style={{ fontSize: '8px', color: 'rgba(255,255,255,0.38)', letterSpacing: '0.04em' }}>{stat.label}</div>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Built by RevCore badge */}
-        <div style={{ background: '#13161c', padding: '8px 16px', display: 'flex', justifyContent: 'flex-end' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '3px 10px', borderRadius: '100px', background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.18)' }}>
-            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#FE6462' }} />
-            <span style={{ fontSize: '9px', color: 'rgba(254,100,98,0.8)', fontWeight: 700, letterSpacing: '0.08em' }}>BUILT BY REVCORE</span>
+          {/* Services section */}
+          <div style={{ padding: '20px 24px', background: 'rgba(0,0,0,0.2)' }}>
+            <div style={{ fontSize: '8px', fontWeight: 700, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', marginBottom: '12px' }}>Our Services</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '8px' }}>
+              {niche.services.map((svc, i) => (
+                <div key={i} style={{ padding: '12px', borderRadius: '10px', background: `${niche.accent}0d`, border: `1px solid ${niche.accent}1a` }}>
+                  <div style={{ width: '20px', height: '20px', borderRadius: '5px', background: `${niche.accent}25`, marginBottom: '7px' }} />
+                  <div style={{ fontWeight: 700, fontSize: '10px', color: 'white', marginBottom: '4px' }}>{svc.name}</div>
+                  <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.38)', lineHeight: 1.5 }}>{svc.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Trust / certifications bar */}
+          <div style={{ padding: '10px 24px', background: 'rgba(0,0,0,0.35)', borderTop: `1px solid ${niche.accent}12`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+              {niche.trust.map((t, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <svg width="7" height="7" viewBox="0 0 24 24" fill={niche.accent}><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                  <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.38)', fontWeight: 500 }}>{t}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '3px 8px', borderRadius: '100px', background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.18)' }}>
+              <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#FE6462', display: 'inline-block' }} />
+              <span style={{ fontSize: '8px', color: 'rgba(254,100,98,0.75)', fontWeight: 700, letterSpacing: '0.06em' }}>BUILT BY REVCORE</span>
+            </div>
           </div>
         </div>
       </div>

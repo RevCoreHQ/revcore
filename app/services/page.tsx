@@ -25,6 +25,7 @@ const services = [
     description: 'Long-term visibility that compounds over time. We handle local SEO, Google Business optimization, and content strategy so homeowners find you before they find your competitors.',
     deliverables: ['Local SEO Audit', 'Google Business Profile', 'Keyword Strategy', 'Content Planning', 'Review Generation'],
     accent: '#6B8EFE',
+    learnMore: '/growth',
   },
   {
     id: 'automation',
@@ -333,6 +334,16 @@ export default function ServicesPage() {
                       </span>
                     ))}
                   </div>
+                  {'learnMore' in service && service.learnMore && (
+                    <Link
+                      href={service.learnMore as string}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginTop: '1.25rem', fontSize: '0.82rem', fontWeight: 700, color: service.accent, textDecoration: 'none', opacity: 0.85, transition: 'opacity 0.2s' }}
+                      onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+                      onMouseLeave={e => (e.currentTarget.style.opacity = '0.85')}
+                    >
+                      See how it works <ArrowRight size={13} />
+                    </Link>
+                  )}
                 </div>
               </div>
             ))}

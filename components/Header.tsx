@@ -26,7 +26,14 @@ const navLinks = [
       { label: 'Presentation Software', href: '/software#presentation' },
     ],
   },
-  { label: 'Growth', href: '/growth' },
+  {
+    label: 'Growth',
+    href: '/growth',
+    children: [
+      { label: 'Websites & GMB', href: '/growth' },
+      { label: 'SEO Portfolio', href: '/growth#portfolio' },
+    ],
+  },
   { label: 'About', href: '/about' },
   { label: 'Blog', href: '/blog' },
   { label: 'Client Portal', href: '/portal' },
