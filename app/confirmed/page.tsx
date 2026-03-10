@@ -9,7 +9,7 @@ export default function ConfirmedPage() {
   return (
     <VslPage
       eyebrow="Watch Before Your Call"
-      headline="Get 5-10 Qualified Jobs Booked Into Your Calendar Every Month, Done For You"
+      headline="Get 15-25 Qualified Appointments Booked Into Your Calendar Every Month, Done For You"
       subheadline="Watch this quick video before our call (see proof)"
       mainVideoLoomId="82f6b2540f544c91b3926a5f14caed4a"
       ctaText="Ready to see how we can help you add 7 figures to your contracting business?"
