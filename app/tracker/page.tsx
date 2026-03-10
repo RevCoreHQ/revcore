@@ -2358,9 +2358,8 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
   const [selectedMonth, setSelectedMonth] = useState(() => today().slice(0, 7)); // 'YYYY-MM'
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
 
-  // Include recurring clients AND PPA clients (auto-charged monthly regardless of planT)
-  const isPPA = (c: Client) => c.pkg.toLowerCase().includes('ppa') || c.pkg.toLowerCase().includes('pay per appointment');
-  const activeClients = data.clients.filter(c => c.stage !== 'churned' && c.stage !== 'paused' && (c.planT === 'recurring' || isPPA(c)));
+  // All non-churned, non-paused clients — everyone with active billing regardless of planT label
+  const activeClients = data.clients.filter(c => c.stage !== 'churned' && c.stage !== 'paused');
 
   // Generate payment records for a given month, only for clients NOT already in excludeIds
   const ensureRecordsForMonth = (month: string, excludeClientIds: Set<string> = new Set()) => {
