@@ -2366,7 +2366,7 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
   const [dragOverDay, setDragOverDay] = useState<string | null>(null); // local date string
 
   // All non-churned, non-paused clients — everyone with active billing regardless of planT label
-  const activeClients = data.clients.filter(c => c.stage !== 'churned' && c.stage !== 'paused');
+  const activeClients = data.clients.filter(c => c.stage !== 'churned' && c.stage !== 'paused' && !c.pkg.toLowerCase().includes('ppa'));
 
   // Find what date the 30-day billing cycle lands on in a given month (walks 30-day steps from baseDate)
   // Returns null if the cycle doesn't land in that month (e.g. skips due to 31-day months)
