@@ -2554,6 +2554,17 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
         ))}
       </div>
 
+      <style>{`
+        @keyframes todayGlow {
+          0%, 100% { box-shadow: 0 0 0 1px rgba(254,100,98,0.5), 0 0 16px rgba(254,100,98,0.12); }
+          50%       { box-shadow: 0 0 0 1px rgba(254,100,98,0.9), 0 0 28px rgba(254,100,98,0.28); }
+        }
+        .payments-today-cell {
+          animation: todayGlow 2.4s ease-in-out infinite;
+          border-color: rgba(254,100,98,0.7) !important;
+        }
+      `}</style>
+
       {/* Weekly calendar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
         <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem' }}>Week View</div>
@@ -2570,7 +2581,7 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
           const dayPayments = paymentsForDay(day);
           const isToday = day.toISOString().slice(0, 10) === todayStr;
           return (
-            <div key={i} style={{ ...glassCard, minHeight: '130px', padding: '0.75rem', borderColor: isToday ? 'rgba(254,100,98,0.4)' : 'rgba(255,255,255,0.07)', boxShadow: isToday ? '0 0 20px rgba(254,100,98,0.1)' : 'none' }}>
+            <div key={i} className={isToday ? 'payments-today-cell' : ''} style={{ ...glassCard, minHeight: '130px', padding: '0.75rem', borderColor: isToday ? 'rgba(254,100,98,0.7)' : 'rgba(255,255,255,0.07)' }}>
               <div style={{ marginBottom: '0.5rem' }}>
                 <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>{dayNames[i]}</div>
                 <div style={{ fontSize: '1rem', fontWeight: 800, color: isToday ? '#FE6462' : '#fff', lineHeight: 1 }}>{day.getDate()}</div>
