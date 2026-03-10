@@ -3247,7 +3247,7 @@ function GoalsManagementTab({ data, setData, session }: { data: AppData; setData
 }
 
 // ─── User Management Section ──────────────────────────────────────────────────
-function UserManagementSection({ data }: { data: AppData }) {
+function UserManagementSection({ data, setData }: { data: AppData; setData: (d: AppData) => void }) {
   const [users, setUsers] = useState<RcUser[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -3261,6 +3261,9 @@ function UserManagementSection({ data }: { data: AppData }) {
   const [savingRole, setSavingRole] = useState(false);
   const [resetPassId, setResetPassId] = useState<string | null>(null);
   const [newPassPlain, setNewPassPlain] = useState<string | null>(null);
+  const [editPartnerId, setEditPartnerId] = useState<string | null>(null);
+  const [editPartnerVal, setEditPartnerVal] = useState('');
+  const [savingPartner, setSavingPartner] = useState(false);
 
   const refreshUsers = async () => {
     if (!supabase) return;
@@ -3314,6 +3317,15 @@ function UserManagementSection({ data }: { data: AppData }) {
     await supabase.from('rc_users').update({ password_hash: hash }).eq('id', u.id);
     setNewPassPlain(newPass);
     setResetPassId(null);
+  };
+
+  const savePartnerLink = async (userId: string) => {
+    if (!supabase) return;
+    setSavingPartner(true);
+    await supabase.from('rc_users').update({ partner_id: editPartnerVal }).eq('id', userId);
+    await refreshUsers();
+    setSavingPartner(false);
+    setEditPartnerId(null);
   };
 
   const copy = (text: string, key: string) => {
@@ -3415,23 +3427,39 @@ function UserManagementSection({ data }: { data: AppData }) {
         </div>
       )}
 
+      {/* Context note */}
+      <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', background: 'rgba(107,142,254,0.06)', border: '1px solid rgba(107,142,254,0.15)', borderRadius: '8px', padding: '0.6rem 0.85rem', marginBottom: '1rem', lineHeight: 1.5 }}>
+        <b style={{ color: '#6B8EFE' }}>How it works:</b> Each login account must be linked to a team member (partner) so their clients and commissions show up when they log in. Removing access only disables their login — all their historical client and commission data is preserved.
+      </div>
+
       {loadingUsers
         ? <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.83rem', padding: '0.5rem 0' }}>Loading…</div>
         : users.length === 0
           ? <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.83rem', padding: '0.5rem 0' }}>No team members yet.</div>
-          : <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          : <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {users.map(u => {
                 const partner = data.partners.find(p => p.id === u.partner_id);
                 const isEditingRole = editRoleId === u.id;
+                const isEditingPartner = editPartnerId === u.id;
+                const needsPartner = ['setter', 'closer', 'sales_manager', 'finance'].includes(u.role) && !u.partner_id;
+                // Count clients and comms for this partner
+                const clientCount = u.partner_id ? data.clients.filter(c => c.setterId === u.partner_id || c.closerId === u.partner_id).length : 0;
+                const commCount = u.partner_id ? data.comms.filter(c => c.partnerId === u.partner_id).length : 0;
+
                 return (
-                  <div key={u.id} style={{ padding: '0.85rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', opacity: u.is_active ? 1 : 0.5 }}>
-                    {/* Main row */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <div key={u.id} style={{ padding: '1rem 1.1rem', background: 'rgba(255,255,255,0.03)', border: `1px solid ${needsPartner ? 'rgba(254,100,98,0.25)' : 'rgba(255,255,255,0.07)'}`, borderRadius: '14px', opacity: u.is_active ? 1 : 0.55 }}>
+
+                    {/* Row 1: identity + role + status */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '0.65rem' }}>
                       <div style={{ flex: 1, minWidth: '120px' }}>
-                        <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.88rem' }}>{u.name}</div>
-                        <div style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.33)', marginTop: '1px' }}>@{u.username}{partner ? ` · ${partner.name}` : ''}</div>
+                        <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem' }}>{u.name}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '2px' }}>
+                          <code style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.73rem' }}>@{u.username}</code>
+                          <CopyBtn text={u.username} k={`un-${u.id}`} />
+                        </div>
                       </div>
-                      {/* Role: static badge or inline editor */}
+
+                      {/* Role edit */}
                       {isEditingRole ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <select value={editRoleVal} onChange={e => setEditRoleVal(e.target.value as UserRole)} style={{ ...inp, padding: '4px 8px', fontSize: '0.78rem', width: 'auto', cursor: 'pointer' }}>
@@ -3443,29 +3471,55 @@ function UserManagementSection({ data }: { data: AppData }) {
                           <button onClick={() => setEditRoleId(null)} style={{ ...btn('ghost'), fontSize: '0.72rem', padding: '4px 10px' }}>✕</button>
                         </div>
                       ) : (
-                        <button onClick={() => { setEditRoleId(u.id); setEditRoleVal(u.role); }} title="Change role" style={{ ...badge(ROLE_COLORS[u.role]), cursor: 'pointer', border: `1px solid ${ROLE_COLORS[u.role]}44`, background: ROLE_COLORS[u.role] + '22', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <button onClick={() => { setEditRoleId(u.id); setEditRoleVal(u.role); }} title="Change role"
+                          style={{ ...badge(ROLE_COLORS[u.role]), cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                           {ROLE_LABELS[u.role]} <span style={{ opacity: 0.5, fontSize: '0.65rem' }}>✎</span>
                         </button>
                       )}
-                      <span style={{ fontSize: '0.72rem', color: u.is_active ? '#94D96B' : 'rgba(255,255,255,0.3)', fontWeight: 600 }}>{u.is_active ? 'Active' : 'Inactive'}</span>
+
+                      <span style={{ fontSize: '0.72rem', fontWeight: 700, color: u.is_active ? '#94D96B' : '#FE6462' }}>
+                        {u.is_active ? '● Active' : '○ Inactive'}
+                      </span>
                     </div>
 
-                    {/* Credentials + actions row */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '0.6rem', flexWrap: 'wrap' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '7px', padding: '3px 8px' }}>
-                        <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.7rem' }}>user:</span>
-                        <code style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.75rem' }}>{u.username}</code>
-                        <CopyBtn text={u.username} k={`un-${u.id}`} />
-                      </div>
-                      <button
-                        onClick={() => resetPassword(u)}
-                        disabled={resetPassId === u.id}
-                        style={{ ...btn('ghost'), fontSize: '0.72rem', padding: '4px 12px', opacity: resetPassId === u.id ? 0.5 : 1 }}
-                      >
+                    {/* Row 2: partner link */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.55rem 0.75rem', background: partner ? 'rgba(148,217,107,0.05)' : 'rgba(254,100,98,0.05)', border: `1px solid ${partner ? 'rgba(148,217,107,0.15)' : 'rgba(254,100,98,0.2)'}`, borderRadius: '8px', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600, minWidth: '90px' }}>Partner Link</span>
+                      {isEditingPartner ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: 1 }}>
+                          <select value={editPartnerVal} onChange={e => setEditPartnerVal(e.target.value)} style={{ ...inp, padding: '4px 8px', fontSize: '0.78rem', flex: 1, cursor: 'pointer' }}>
+                            <option value="">— No partner link —</option>
+                            {data.partners.map(p => <option key={p.id} value={p.id}>{p.name} ({p.role})</option>)}
+                          </select>
+                          <button onClick={() => savePartnerLink(u.id)} disabled={savingPartner} style={{ ...btn('primary'), fontSize: '0.72rem', padding: '4px 12px' }}>{savingPartner ? '…' : 'Save'}</button>
+                          <button onClick={() => setEditPartnerId(null)} style={{ ...btn('ghost'), fontSize: '0.72rem', padding: '4px 10px' }}>✕</button>
+                        </div>
+                      ) : partner ? (
+                        <>
+                          <div style={{ flex: 1 }}>
+                            <span style={{ fontWeight: 700, color: '#fff', fontSize: '0.83rem' }}>{partner.name}</span>
+                            <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)', marginLeft: '6px' }}>{partner.role}</span>
+                            {clientCount > 0 && <span style={{ fontSize: '0.7rem', color: '#94D96B', marginLeft: '8px' }}>{clientCount} client{clientCount !== 1 ? 's' : ''}</span>}
+                            {commCount > 0 && <span style={{ fontSize: '0.7rem', color: '#6B8EFE', marginLeft: '6px' }}>{commCount} commission{commCount !== 1 ? 's' : ''}</span>}
+                          </div>
+                          <button onClick={() => { setEditPartnerId(u.id); setEditPartnerVal(u.partner_id); }} style={{ ...btn('ghost'), fontSize: '0.7rem', padding: '3px 10px' }}>Change ✎</button>
+                        </>
+                      ) : (
+                        <>
+                          <span style={{ flex: 1, color: '#FE6462', fontSize: '0.78rem', fontWeight: 600 }}>Not linked — this user won't see their clients or commissions</span>
+                          <button onClick={() => { setEditPartnerId(u.id); setEditPartnerVal(''); }} style={{ ...btn('primary'), fontSize: '0.7rem', padding: '3px 12px' }}>Link Now</button>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Row 3: credentials + actions */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                      <button onClick={() => resetPassword(u)} disabled={resetPassId === u.id}
+                        style={{ ...btn('ghost'), fontSize: '0.72rem', padding: '4px 12px', opacity: resetPassId === u.id ? 0.5 : 1 }}>
                         {resetPassId === u.id ? 'Resetting…' : '↺ Reset Password'}
                       </button>
-                      <button onClick={() => toggleActive(u)} style={{ ...btn(u.is_active ? 'danger' : 'ghost'), fontSize: '0.72rem', padding: '4px 12px', marginLeft: 'auto' }}>
-                        {u.is_active ? 'Deactivate' : 'Activate'}
+                      <button onClick={() => toggleActive(u)} style={{ ...btn(u.is_active ? 'danger' : 'ghost'), fontSize: '0.72rem', padding: '4px 14px', marginLeft: 'auto' }}>
+                        {u.is_active ? 'Remove Access' : 'Restore Access'}
                       </button>
                     </div>
                   </div>
@@ -3499,7 +3553,7 @@ function SettingsTab({ data, setData, session }: { data: AppData; setData: (d: A
         <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>Manage your account, data, and team access</p>
       </div>
 
-      {session.role === 'super_admin' && <UserManagementSection data={data} />}
+      {session.role === 'super_admin' && <UserManagementSection data={data} setData={setData} />}
 
       <div style={{ ...glassCard, marginBottom: '1rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.06s both' }}>
         <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '0.4rem' }}>Data Management</div>
