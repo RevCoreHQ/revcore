@@ -783,7 +783,7 @@ function ComparisonSection() {
     'Auto Follow-up Sequences',
     'Photo Gallery & Project Proof',
     'Branded, Personalized Proposals',
-    'Built Specifically for Sales Reps',
+    'Built for In-Home Closers, by Closers',
     'Same-Day Setup, No Onboarding Fee',
     'Dedicated Account Support',
     'GMB & Website Service Included',
