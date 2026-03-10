@@ -520,10 +520,88 @@ function BrowserMockup({ niche, visible }: { niche: NicheTab; visible: boolean }
   );
 }
 
+/* ─── Live iframe tab ────────────────────────────────────────────────────── */
+const LIVE_SITES = [
+  { id: 'aquatic', label: '✦ Live Site', domain: 'aquaticpoolaz.com', url: 'https://www.aquaticpoolaz.com', accent: '#2ECC8A' },
+];
+
+function LiveSiteMockup({ site, visible }: { site: typeof LIVE_SITES[0]; visible: boolean }) {
+  const [blocked, setBlocked] = useState(false);
+  return (
+    <div style={{
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'translateY(0)' : 'translateY(20px)',
+      transition: 'opacity 0.45s cubic-bezier(0.22,1,0.36,1), transform 0.45s cubic-bezier(0.22,1,0.36,1)',
+      position: visible ? 'relative' : 'absolute',
+      top: 0, left: 0, right: 0,
+      pointerEvents: visible ? 'auto' : 'none',
+    }}>
+      <div style={{ borderRadius: '14px', overflow: 'hidden', boxShadow: '0 40px 100px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.06)', background: '#1a1d24' }}>
+        {/* Chrome */}
+        <div style={{ background: '#1e2128', padding: '9px 14px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+            <div style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#ff5f57' }} />
+            <div style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#febc2e' }} />
+            <div style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#28c840' }} />
+          </div>
+          <div style={{ flex: 1, background: '#13161c', borderRadius: '6px', padding: '5px 12px', display: 'flex', alignItems: 'center', gap: '7px', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" fill="rgba(148,217,107,0.55)" /></svg>
+            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>{site.domain}</span>
+          </div>
+          <a href={site.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, padding: '3px 8px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', transition: 'color 0.15s' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.3)')}
+          >Open ↗</a>
+        </div>
+
+        {/* iframe or fallback */}
+        {!blocked ? (
+          <div style={{ position: 'relative', height: '620px', overflow: 'hidden', background: '#fff' }}>
+            <iframe
+              src={site.url}
+              title={site.domain}
+              onError={() => setBlocked(true)}
+              style={{
+                border: 'none',
+                width: '1440px',
+                height: '900px',
+                transform: 'scale(0.72)',
+                transformOrigin: 'top left',
+                pointerEvents: 'auto',
+              }}
+            />
+          </div>
+        ) : (
+          <div style={{ height: '500px', background: '#0d1117', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+            <div style={{ fontSize: '2rem' }}>🔒</div>
+            <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.9rem', textAlign: 'center', maxWidth: '320px', lineHeight: 1.6 }}>
+              This site has iframe embedding disabled. Visit it directly to see the full experience.
+            </p>
+            <a href={site.url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 22px', borderRadius: '100px', background: `${site.accent}18`, border: `1px solid ${site.accent}40`, color: site.accent, fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none' }}>
+              Visit {site.domain} ↗
+            </a>
+          </div>
+        )}
+
+        {/* Footer bar */}
+        <div style={{ background: '#13161c', padding: '8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.2)' }}>Live preview — content loads from {site.domain}</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '3px 8px', borderRadius: '100px', background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.18)' }}>
+            <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#FE6462', display: 'inline-block' }} />
+            <span style={{ fontSize: '8px', color: 'rgba(254,100,98,0.75)', fontWeight: 700, letterSpacing: '0.06em' }}>REVCORE CLIENT</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Portfolio Section ──────────────────────────────────────────────────── */
 function PortfolioSection() {
   const { ref, inView } = useScrollReveal({ threshold: 0.1 });
+  // 0 = first live site, 1+ = niche mockups (offset by LIVE_SITES.length)
   const [activeTab, setActiveTab] = useState(0);
+  const totalLive = LIVE_SITES.length;
 
   return (
     <section
@@ -544,39 +622,49 @@ function PortfolioSection() {
             See What We Build
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.45)', lineHeight: '1.8', maxWidth: '560px', margin: '0 auto', fontSize: '1rem' }}>
-            Every site is custom-designed for your brand, your market, and your customers. Here are a few examples.
+            Every site is custom-designed for your brand, your market, and your customers.
           </p>
         </div>
 
         {/* Tab nav */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '2.5rem', flexWrap: 'wrap' as const, ...fadeUp(inView, 150) }}>
+          {/* Live site tabs first */}
+          {LIVE_SITES.map((site, i) => (
+            <button key={site.id} onClick={() => setActiveTab(i)} style={{
+              padding: '8px 22px', borderRadius: '100px',
+              border: activeTab === i ? `1px solid ${site.accent}70` : '1px solid rgba(255,255,255,0.12)',
+              background: activeTab === i ? `${site.accent}18` : 'rgba(255,255,255,0.05)',
+              color: activeTab === i ? site.accent : 'rgba(255,255,255,0.55)',
+              fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer',
+              fontFamily: 'DM Sans, sans-serif',
+              transition: 'all 0.25s cubic-bezier(0.22,1,0.36,1)',
+            }}>
+              {site.label}
+            </button>
+          ))}
+          {/* Mockup tabs */}
           {NICHES.map((niche, i) => (
-            <button
-              key={niche.id}
-              onClick={() => setActiveTab(i)}
-              style={{
-                padding: '8px 22px',
-                borderRadius: '100px',
-                border: activeTab === i ? `1px solid ${niche.accent}60` : '1px solid rgba(255,255,255,0.1)',
-                background: activeTab === i ? `${niche.accent}14` : 'rgba(255,255,255,0.04)',
-                color: activeTab === i ? niche.accent : 'rgba(255,255,255,0.5)',
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                fontFamily: 'DM Sans, sans-serif',
-                transition: 'all 0.25s cubic-bezier(0.22,1,0.36,1)',
-                letterSpacing: '0.01em',
-              }}
-            >
+            <button key={niche.id} onClick={() => setActiveTab(totalLive + i)} style={{
+              padding: '8px 22px', borderRadius: '100px',
+              border: activeTab === totalLive + i ? `1px solid ${niche.accent}60` : '1px solid rgba(255,255,255,0.1)',
+              background: activeTab === totalLive + i ? `${niche.accent}14` : 'rgba(255,255,255,0.04)',
+              color: activeTab === totalLive + i ? niche.accent : 'rgba(255,255,255,0.5)',
+              fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer',
+              fontFamily: 'DM Sans, sans-serif',
+              transition: 'all 0.25s cubic-bezier(0.22,1,0.36,1)',
+            }}>
               {niche.label}
             </button>
           ))}
         </div>
 
-        {/* Browser mockup container */}
+        {/* Content */}
         <div style={{ position: 'relative', ...scaleUp(inView, 250) }}>
+          {LIVE_SITES.map((site, i) => (
+            <LiveSiteMockup key={site.id} site={site} visible={activeTab === i} />
+          ))}
           {NICHES.map((niche, i) => (
-            <BrowserMockup key={niche.id} niche={niche} visible={activeTab === i} />
+            <BrowserMockup key={niche.id} niche={niche} visible={activeTab === totalLive + i} />
           ))}
         </div>
       </div>
