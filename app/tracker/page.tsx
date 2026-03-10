@@ -2358,7 +2358,9 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
   const [selectedMonth, setSelectedMonth] = useState(() => today().slice(0, 7)); // 'YYYY-MM'
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
 
-  const activeClients = data.clients.filter(c => c.stage !== 'churned' && c.stage !== 'paused' && c.planT === 'recurring');
+  // Include recurring clients AND PPA clients (auto-charged monthly regardless of planT)
+  const isPPA = (c: Client) => c.pkg.toLowerCase().includes('ppa') || c.pkg.toLowerCase().includes('pay per appointment');
+  const activeClients = data.clients.filter(c => c.stage !== 'churned' && c.stage !== 'paused' && (c.planT === 'recurring' || isPPA(c)));
 
   // Generate payment records for a given month, only for clients NOT already in excludeIds
   const ensureRecordsForMonth = (month: string, excludeClientIds: Set<string> = new Set()) => {
@@ -2482,6 +2484,19 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
       .forEach(r => map.set(r.clientId, r));
     return map;
   }, [data.paymentRecords]);
+
+  // Returns the last payment date for a client — from a marked record, or derived from nextDue - 1 month
+  const getLastPaymentDate = (clientId: string): string | null => {
+    const rec = lastPaidMap.get(clientId);
+    if (rec?.paidAt) return rec.paidAt;
+    const client = data.clients.find(c => c.id === clientId);
+    if (client?.nextDue) {
+      const d = new Date(client.nextDue + 'T00:00:00');
+      d.setMonth(d.getMonth() - 1);
+      return d.toISOString().slice(0, 10);
+    }
+    return null;
+  };
 
   const daysAgo = (dateStr: string) => {
     const diff = Math.floor((Date.now() - new Date(dateStr + 'T00:00:00').getTime()) / 86400000);
@@ -2615,9 +2630,7 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
                 const isAtRisk = client.stage === 'at-risk';
                 const isSelected = selectedClient === rec.id;
                 const accentColor = rec.paid ? '#94D96B' : isAtRisk ? '#F59E0B' : 'rgba(255,255,255,0.25)';
-                const lastPaid = lastPaidMap.get(rec.clientId);
-                // For the current record if paid, use its own paidAt; otherwise use the most recent past paid record
-                const lastPaidRecord = rec.paid ? rec : lastPaid;
+                const lastPaymentDate = rec.paid && rec.paidAt ? rec.paidAt : getLastPaymentDate(rec.clientId);
                 return (
                   <div
                     key={rec.id}
@@ -2650,14 +2663,14 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
                           <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', marginTop: '2px', flexWrap: 'wrap' }}>
                             <span>Due {fmtD(rec.dueDate)}</span>
                             {rec.paid && rec.paidAt && <><span>·</span><span style={{ color: '#94D96B' }}>Paid {fmtD(rec.paidAt)}</span></>}
-                            {lastPaidRecord?.paidAt && (
+                            {lastPaymentDate && (
                               <>
                                 <span>·</span>
-                                <span style={{ color: rec.paid ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.4)' }}>
-                                  Last payment: {fmtD(lastPaidRecord.paidAt)}
+                                <span style={{ color: 'rgba(255,255,255,0.4)' }}>
+                                  Last paid: {fmtD(lastPaymentDate)}
                                 </span>
-                                <span style={{ color: rec.paid ? 'rgba(255,255,255,0.2)' : '#F59E0B', fontWeight: 600 }}>
-                                  {daysAgo(lastPaidRecord.paidAt)}
+                                <span style={{ color: rec.paid ? 'rgba(255,255,255,0.25)' : '#F59E0B', fontWeight: 600 }}>
+                                  ({daysAgo(lastPaymentDate)})
                                 </span>
                               </>
                             )}
