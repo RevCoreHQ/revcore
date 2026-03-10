@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import SpaceBackground from '@/components/SpaceBackground';
 import { useScrollReveal, fadeUp, scaleUp } from '@/hooks/useScrollReveal';
@@ -522,11 +522,27 @@ function BrowserMockup({ niche, visible }: { niche: NicheTab; visible: boolean }
 
 /* ─── Live iframe tab ────────────────────────────────────────────────────── */
 const LIVE_SITES = [
-  { id: 'aquatic', label: '✦ Live Site', domain: 'aquaticpoolaz.com', url: 'https://www.aquaticpoolaz.com', accent: '#2ECC8A' },
+  { id: 'aquatic', label: '✦ aquaticpoolaz.com', domain: 'aquaticpoolaz.com', url: 'https://www.aquaticpoolaz.com', accent: '#2ECC8A' },
 ];
 
 function LiveSiteMockup({ site, visible }: { site: typeof LIVE_SITES[0]; visible: boolean }) {
   const [blocked, setBlocked] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.65);
+  const IFRAME_W = 1440;
+  const IFRAME_H = 900;
+
+  useEffect(() => {
+    const update = () => {
+      if (containerRef.current) {
+        setScale(containerRef.current.offsetWidth / IFRAME_W);
+      }
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
   return (
     <div style={{
       opacity: visible ? 1 : 0,
@@ -556,16 +572,16 @@ function LiveSiteMockup({ site, visible }: { site: typeof LIVE_SITES[0]; visible
 
         {/* iframe or fallback */}
         {!blocked ? (
-          <div style={{ position: 'relative', height: '620px', overflow: 'hidden', background: '#fff' }}>
+          <div ref={containerRef} style={{ position: 'relative', overflow: 'hidden', background: '#fff', height: `${IFRAME_H * scale}px` }}>
             <iframe
               src={site.url}
               title={site.domain}
               onError={() => setBlocked(true)}
               style={{
                 border: 'none',
-                width: '1440px',
-                height: '900px',
-                transform: 'scale(0.72)',
+                width: `${IFRAME_W}px`,
+                height: `${IFRAME_H}px`,
+                transform: `scale(${scale})`,
                 transformOrigin: 'top left',
                 pointerEvents: 'auto',
               }}

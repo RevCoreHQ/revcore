@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add app/about/page.tsx)",
+      "Bash(git commit -m \"Slow down Marketing Agency scroll brightness effect\")",
+      "Bash(git push)"
+    ]
+  }
+}
