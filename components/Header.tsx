@@ -26,6 +26,7 @@ const navLinks = [
       { label: 'Presentation Software', href: '/software#presentation' },
     ],
   },
+  { label: 'Growth', href: '/growth' },
   { label: 'About', href: '/about' },
   { label: 'Blog', href: '/blog' },
   { label: 'Client Portal', href: '/portal' },
@@ -38,7 +39,7 @@ export default function Header() {
   const isTracker    = pathname?.startsWith('/tracker');
   const isPortal     = pathname?.startsWith('/portal');
   const isOnboarding = pathname?.startsWith('/onboarding');
-  const isDark       = pathname?.startsWith('/software');
+  const isDark       = pathname?.startsWith('/software') || pathname?.startsWith('/growth');
 
   if (isTracker || isPortal || isOnboarding) return null;
 
