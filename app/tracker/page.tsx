@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { supabase, hasSupabase } from '@/lib/supabase';
 import SpaceBackground from '@/components/SpaceBackground';
+import { AuroraBackground } from '@/components/AuroraBackground';
 
 const PASS  = 'revcore2024';
 const STORE = 'rcTrackerV1';
@@ -3646,6 +3647,7 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', fontFamily: 'DM Sans, sans-serif', color: '#fff', paddingTop: '0', position: 'relative' }}>
       <SpaceBackground fixed />
+      <AuroraBackground style={{ position: 'fixed', zIndex: 0 }} />
 
       {/* Floating sign-out */}
       <div style={{ position: 'fixed', top: '20px', right: '24px', zIndex: 200, display: 'flex', alignItems: 'center', gap: '8px' }}>
