@@ -219,6 +219,26 @@ export default function AboutPage() {
               Instead of sending you to four different vendors for your CRM, your ads, your software, and your training, we handle all of it. One team. One point of contact. Everything custom-built around your business.
             </p>
           </div>
+          {/* Founder story */}
+          <div style={{
+            borderRadius: '20px',
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            padding: '2.25rem 2.5rem',
+            marginBottom: '3rem',
+            position: 'relative',
+            overflow: 'hidden',
+            ...fadeUp(hero.inView, 500),
+          }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '3px', height: '100%', background: 'linear-gradient(180deg, #FE6462 0%, transparent 100%)', borderRadius: '3px 0 0 3px' }} />
+            <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: '#FE6462', marginBottom: '1.25rem' }}>
+              Why RevCore Exists
+            </div>
+            <p style={{ fontSize: '1rem', lineHeight: '1.9', color: 'rgba(255,255,255,0.55)', margin: 0 }}>
+              RevCore was built by someone who lived both sides of the business. Years spent in tech, writing code, building databases, designing automations, custom reporting, information security, and architecting systems from scratch. Then a pivot into home improvement sales, closing at the kitchen table, and helping scale a local family owned company from $1M to $10M in under two years, all while still closing himself. In the last year alone, $3.5M in sold jobs, while simultaneously managing the sales team and building the presentation tools, trackers, and systems this industry was missing. RevCore exists because that person looked for what he needed, couldn&apos;t find it anywhere, and decided to build it himself.
+            </p>
+          </div>
+
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
             {['Roofing', 'Windows', 'Interior Remodeling', 'General Contracting', 'Stucco & Siding', 'Decks & Patios', 'Pool Contractors', 'Landscaping', '+ More'].map((trade, i) => (
               <span key={trade} style={{
