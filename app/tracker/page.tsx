@@ -126,17 +126,17 @@ const ROLE_COLORS: Record<UserRole, string> = {
 };
 const ROLE_TABS: Record<UserRole, { id: Tab; label: string }[]> = {
   super_admin: [
-    { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
-    { id: 'services', label: 'Services' }, { id: 'analytics', label: 'Analytics' },
-    { id: 'team', label: 'Team & Payouts' }, { id: 'goals-mgmt', label: 'Goals & Tasks' },
-    { id: 'calendar', label: 'Calendar' }, { id: 'payments', label: 'Payments' },
+    { id: 'overview', label: 'Overview' }, { id: 'payments', label: 'Payments' },
+    { id: 'clients', label: 'Clients' }, { id: 'services', label: 'Services' },
+    { id: 'analytics', label: 'Analytics' }, { id: 'team', label: 'Team & Payouts' },
+    { id: 'goals-mgmt', label: 'Goals & Tasks' }, { id: 'calendar', label: 'Calendar' },
     { id: 'settings', label: 'Settings' },
   ],
   admin: [
-    { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
-    { id: 'services', label: 'Services' }, { id: 'analytics', label: 'Analytics' },
-    { id: 'team', label: 'Team & Payouts' }, { id: 'goals-mgmt', label: 'Goals & Tasks' },
-    { id: 'calendar', label: 'Calendar' }, { id: 'payments', label: 'Payments' },
+    { id: 'overview', label: 'Overview' }, { id: 'payments', label: 'Payments' },
+    { id: 'clients', label: 'Clients' }, { id: 'services', label: 'Services' },
+    { id: 'analytics', label: 'Analytics' }, { id: 'team', label: 'Team & Payouts' },
+    { id: 'goals-mgmt', label: 'Goals & Tasks' }, { id: 'calendar', label: 'Calendar' },
     { id: 'settings', label: 'Settings' },
   ],
   sales_manager: [
@@ -146,9 +146,9 @@ const ROLE_TABS: Record<UserRole, { id: Tab; label: string }[]> = {
     { id: 'calendar', label: 'Calendar' }, { id: 'settings', label: 'Settings' },
   ],
   finance: [
-    { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
-    { id: 'services', label: 'Services' }, { id: 'analytics', label: 'Analytics' },
-    { id: 'team', label: 'Team & Payouts' }, { id: 'payments', label: 'Payments' },
+    { id: 'overview', label: 'Overview' }, { id: 'payments', label: 'Payments' },
+    { id: 'clients', label: 'Clients' }, { id: 'services', label: 'Services' },
+    { id: 'analytics', label: 'Analytics' }, { id: 'team', label: 'Team & Payouts' },
     { id: 'settings', label: 'Settings' },
   ],
   setter: [
@@ -1504,7 +1504,7 @@ function InvoiceModal({ client, onClose }: { client: Client; onClose: () => void
 }
 
 // ─── Whop Import Modal ────────────────────────────────────────────────────────
-interface WhopRow { name: string; email: string; startDate: string; pkg: string; selected: boolean; exists: boolean; startDateNote?: string; }
+interface WhopRow { name: string; email: string; startDate: string; latestPayDate: string; pkg: string; selected: boolean; exists: boolean; startDateNote?: string; }
 
 function parseWhopCSV(raw: string): WhopRow[] {
   const lines = raw.trim().split('\n').map(l => l.trimEnd());
@@ -1537,8 +1537,11 @@ function parseWhopCSV(raw: string): WhopRow[] {
 
   if (colName === -1 || colPaidAt === -1) return [];
 
+  const IGNORE_DESCS = ['remaining balance due', 'manual charge', 'meta ad spend', 'deposit'];
+  const isRecurring = (desc: string) => !IGNORE_DESCS.some(ig => desc.toLowerCase().includes(ig));
+
   // Parse rows
-  const customerMap = new Map<string, { name: string; email: string; dates: string[]; descs: string[] }>();
+  const customerMap = new Map<string, { name: string; email: string; dates: string[]; recurringDates: string[]; descs: string[] }>();
 
   for (let i = 1; i < lines.length; i++) {
     if (!lines[i].trim()) continue;
@@ -1551,15 +1554,18 @@ function parseWhopCSV(raw: string): WhopRow[] {
     const desc  = colDesc >= 0 ? (cells[colDesc] ?? '') : '';
     if (!name) continue;
     const key = email || name.toLowerCase();
-    if (!customerMap.has(key)) customerMap.set(key, { name, email, dates: [], descs: [] });
+    if (!customerMap.has(key)) customerMap.set(key, { name, email, dates: [], recurringDates: [], descs: [] });
     const entry = customerMap.get(key)!;
-    if (paidAt) entry.dates.push(paidAt);
+    if (paidAt) {
+      entry.dates.push(paidAt);
+      // Track recurring payment dates separately (not one-time deposits/balance/ad spend)
+      if (desc && isRecurring(desc)) entry.recurringDates.push(paidAt);
+    }
     if (desc) entry.descs.push(desc);
   }
 
-  const IGNORE_DESCS = ['remaining balance due', 'manual charge', 'meta ad spend'];
   const cleanPkg = (descs: string[]) => {
-    const real = descs.find(d => !IGNORE_DESCS.some(ig => d.toLowerCase().includes(ig)));
+    const real = descs.find(d => !['remaining balance due', 'manual charge', 'meta ad spend'].some(ig => d.toLowerCase().includes(ig)));
     if (!real) return descs[0] ?? '';
     return real
       .replace(/\s*deposit$/i, '')
@@ -1569,11 +1575,14 @@ function parseWhopCSV(raw: string): WhopRow[] {
   };
 
   const rows: WhopRow[] = [];
-  customerMap.forEach(({ name, email, dates, descs }) => {
+  customerMap.forEach(({ name, email, dates, recurringDates, descs }) => {
     if (!dates.length) return;
-    const sorted = [...dates].sort();
-    const startDate = sorted[0].slice(0, 10); // 'YYYY-MM-DD'
-    rows.push({ name, email, startDate, pkg: cleanPkg(descs), selected: true, exists: false });
+    const sortedAll = [...dates].sort();
+    const startDate = sortedAll[0].slice(0, 10);
+    // Latest recurring payment = basis for nextDue; fall back to any latest payment
+    const latestSorted = (recurringDates.length > 0 ? recurringDates : dates).sort();
+    const latestPayDate = latestSorted[latestSorted.length - 1].slice(0, 10);
+    rows.push({ name, email, startDate, latestPayDate, pkg: cleanPkg(descs), selected: true, exists: false });
   });
   return rows.sort((a, b) => a.startDate.localeCompare(b.startDate));
 }
@@ -1769,10 +1778,15 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
   };
 
   const importFromWhop = (rows: WhopRow[]) => {
-    const newClients: Client[] = rows.map(r => ({
+    const newClients: Client[] = rows.map(r => {
+      // nextDue = latest recurring payment + 1 month
+      const latestDate = new Date(r.latestPayDate + 'T00:00:00');
+      latestDate.setMonth(latestDate.getMonth() + 1);
+      const nextDue = latestDate.toISOString().slice(0, 10);
+      return ({
       id: uid(), name: r.name, company: '', pkg: r.pkg,
       planT: 'recurring' as PlanT, start: r.startDate, renewal: '', amount: 0,
-      nextDue: r.startDate, setterId: '', closerId: '',
+      nextDue, setterId: '', closerId: '',
       setterInitT: 'none' as InitCommT, setterInitV: 0,
       closerInitT: 'none' as InitCommT, closerInitV: 0,
       ongoingT: 'none' as OngoingT, ongoingFor: 'none' as CommFor, ongoingV: 0,
@@ -1780,7 +1794,8 @@ function ClientsTab({ data, setData, partners }: { data: AppData; setData: (d: A
       depPaid: false, balPaid: false,
       stage: 'onboarding' as Stage, payStat: 'current' as PayStat,
       ghlId: '', notes: [r.email ? `Email: ${r.email}` : '', r.startDateNote ? `Start date updated (original: ${r.startDateNote.replace('Updated from ', '')})` : ''].filter(Boolean).join(' | '), at: today(),
-    }));
+    });
+    });
     setData({ ...data, clients: [...data.clients, ...newClients] });
     setWhopImport(false);
   };
@@ -2345,43 +2360,42 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
 
   const activeClients = data.clients.filter(c => c.stage !== 'churned' && c.stage !== 'paused' && c.planT === 'recurring');
 
-  // Generate payment records for a given month for all active clients
-  const ensureRecordsForMonth = (month: string) => {
+  // Generate payment records for a given month, only for clients NOT already in excludeIds
+  const ensureRecordsForMonth = (month: string, excludeClientIds: Set<string> = new Set()) => {
     const newRecords: PaymentRecord[] = [];
+    const [year, mon] = month.split('-').map(Number);
+    const monthEnd = new Date(year, mon, 0); // last day of month
+
     activeClients.forEach(c => {
-      if (!c.nextDue) return;
-      const existing = data.paymentRecords.find(r => r.clientId === c.id && r.month === month);
-      if (!existing) {
-        // Generate due date: find the occurrence of nextDue that falls in this month
-        const [year, mon] = month.split('-').map(Number);
-        const startDate = new Date(c.start + 'T00:00:00');
-        // Find the due day-of-month from nextDue
-        const nextDueDate = new Date(c.nextDue + 'T00:00:00');
-        const dayOfMonth = nextDueDate.getDate();
-        const dueDate = new Date(year, mon - 1, dayOfMonth);
-        // Only create if client started before or during this month
-        if (startDate <= new Date(year, mon - 1 + 1, 0)) {
-          newRecords.push({
-            id: uid(),
-            clientId: c.id,
-            month,
-            dueDate: dueDate.toISOString().slice(0, 10),
-            amount: monthlyVal(c),
-            paid: false,
-            paidAt: '',
-          });
-        }
-      }
+      if (excludeClientIds.has(c.id)) return;
+      // Use nextDue if set, otherwise fall back to start date
+      const baseDate = c.nextDue || c.start;
+      if (!baseDate) return;
+      const startDate = new Date((c.start || baseDate) + 'T00:00:00');
+      // Only show if client started on or before end of this month
+      if (startDate > monthEnd) return;
+      const dayOfMonth = new Date(baseDate + 'T00:00:00').getDate();
+      const dueDate = new Date(year, mon - 1, dayOfMonth);
+      newRecords.push({
+        id: uid(),
+        clientId: c.id,
+        month,
+        dueDate: dueDate.toISOString().slice(0, 10),
+        amount: monthlyVal(c),
+        paid: false,
+        paidAt: '',
+      });
     });
     return newRecords;
   };
 
-  // Get or ensure records for the selected month
+  // Always merge saved records with any missing clients (handles clients added after month was first viewed)
   const monthRecords = useMemo(() => {
     const existing = data.paymentRecords.filter(r => r.month === selectedMonth);
-    if (existing.length > 0) return existing;
-    return ensureRecordsForMonth(selectedMonth);
-  }, [data.paymentRecords, selectedMonth, activeClients.map(c => c.id).join(',')]);
+    const existingClientIds = new Set(existing.map(r => r.clientId));
+    const missing = ensureRecordsForMonth(selectedMonth, existingClientIds);
+    return [...existing, ...missing];
+  }, [data.paymentRecords, selectedMonth, activeClients.map(c => c.id + c.amount + c.nextDue).join(',')]);
 
   const markPaid = (recordId: string) => {
     // Check if this record exists in data already
