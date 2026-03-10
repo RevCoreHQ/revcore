@@ -29,6 +29,7 @@ interface Client {
   stage: Stage; payStat: PayStat; ghlId: string; notes: string; at: string;
   isUpsold?: boolean; origPkg?: string; origAmount?: number; upsoldAt?: string;
   apptTotal?: number; apptDelivered?: number;
+  autoRenew?: boolean;
 }
 interface Commission {
   id: string; clientId: string; partnerId: string; role: 'setter' | 'closer';
@@ -2359,6 +2360,7 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
   const [editDueDateId, setEditDueDateId] = useState<string | null>(null);
   const [editDueDateVal, setEditDueDateVal] = useState('');
+  const [calPopRecId, setCalPopRecId] = useState<string | null>(null);
 
   // All non-churned, non-paused clients — everyone with active billing regardless of planT label
   const activeClients = data.clients.filter(c => c.stage !== 'churned' && c.stage !== 'paused');
@@ -2563,6 +2565,13 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
           animation: todayGlow 2.4s ease-in-out infinite;
           border-color: rgba(254,100,98,0.7) !important;
         }
+        @keyframes unpaidPulse {
+          0%, 100% { border-color: rgba(245,158,11,0.45); box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+          50%       { border-color: rgba(245,158,11,0.85); box-shadow: 0 0 6px rgba(245,158,11,0.2); }
+        }
+        .cal-pill-unpaid { animation: unpaidPulse 2.2s ease-in-out infinite; }
+        .cal-pill-paid   { border-color: rgba(148,217,107,0.55) !important; }
+        .cal-pill-selected { outline: 2px solid rgba(107,142,254,0.8); outline-offset: 1px; }
       `}</style>
 
       {/* Weekly calendar */}
@@ -2576,7 +2585,7 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.5rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.5rem', marginBottom: calPopRecId ? '0.75rem' : '1.25rem' }}>
         {weekDays.map((day, i) => {
           const dayPayments = paymentsForDay(day);
           const isToday = day.toISOString().slice(0, 10) === todayStr;
@@ -2591,30 +2600,30 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
                   const client = getClient(rec.clientId);
                   if (!client) return null;
                   const isAtRisk = client.stage === 'at-risk';
-                  const color = rec.paid ? '#94D96B' : isAtRisk ? '#F59E0B' : '#6B8EFE';
+                  const isCalSelected = calPopRecId === rec.id;
+                  const pillClass = isCalSelected ? 'cal-pill-selected' : rec.paid ? 'cal-pill-paid' : 'cal-pill-unpaid';
+                  const pillColor = rec.paid ? '#94D96B' : '#F59E0B';
                   return (
                     <div
                       key={rec.id}
+                      className={pillClass}
                       onClick={() => {
-                        // Ensure record is saved before selection
-                        if (!data.paymentRecords.find(r => r.id === rec.id)) {
-                          saveGeneratedRecords(monthRecords);
-                        }
-                        setSelectedClient(selectedClient === rec.id ? null : rec.id);
+                        if (!data.paymentRecords.find(r => r.id === rec.id)) saveGeneratedRecords(monthRecords);
+                        setCalPopRecId(calPopRecId === rec.id ? null : rec.id);
                       }}
                       style={{
                         padding: '4px 6px', borderRadius: '6px', fontSize: '0.67rem', fontWeight: 700,
                         lineHeight: 1.3, cursor: 'pointer',
-                        background: rec.paid ? 'rgba(148,217,107,0.13)' : isAtRisk ? 'rgba(245,158,11,0.13)' : 'rgba(107,142,254,0.13)',
-                        color,
-                        border: `1px solid ${color}40`,
-                        textDecoration: rec.paid ? 'line-through' : 'none',
-                        opacity: rec.paid ? 0.6 : 1,
+                        background: rec.paid ? 'rgba(148,217,107,0.12)' : 'rgba(245,158,11,0.1)',
+                        color: pillColor,
+                        border: `1px solid ${rec.paid ? 'rgba(148,217,107,0.55)' : 'rgba(245,158,11,0.45)'}`,
+                        opacity: rec.paid ? 0.7 : 1,
+                        transition: 'opacity 0.15s',
                       }}
                     >
                       {client.name}
                       {isAtRisk && !rec.paid && <span style={{ marginLeft: '3px', opacity: 0.7 }}>⚠</span>}
-                      <div style={{ fontSize: '0.62rem', fontWeight: 600, color, opacity: 0.75, marginTop: '1px' }}>{fmtM(rec.amount)}</div>
+                      <div style={{ fontSize: '0.62rem', fontWeight: 600, color: pillColor, opacity: 0.75, marginTop: '1px' }}>{fmtM(rec.amount)}</div>
                     </div>
                   );
                 })}
@@ -2624,6 +2633,101 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
           );
         })}
       </div>
+
+      {/* Calendar pill detail panel */}
+      {calPopRecId && (() => {
+        const rec = monthRecords.find(r => r.id === calPopRecId);
+        const client = rec ? getClient(rec.clientId) : null;
+        if (!rec || !client) return null;
+        const nextDueAfterPay = (() => {
+          const nd = new Date((client.nextDue || rec.dueDate) + 'T00:00:00');
+          nd.setDate(nd.getDate() + 30);
+          return nd.toISOString().slice(0, 10);
+        })();
+        const lastPay = getLastPaymentDate(client.id);
+        return (
+          <div style={{ ...glassCard, marginBottom: '1.25rem', padding: '1rem 1.25rem', borderColor: 'rgba(107,142,254,0.3)', animation: 'cardReveal 0.2s cubic-bezier(0.16,1,0.3,1) both' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+              {/* Left: client info */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <span style={{ fontWeight: 800, color: '#fff', fontSize: '1rem' }}>{client.name}</span>
+                  {client.company && <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.8rem' }}>{client.company}</span>}
+                  <span style={badge(rec.paid ? '#94D96B' : '#F59E0B')}>{rec.paid ? 'Paid' : 'Pending'}</span>
+                </div>
+                <div style={{ display: 'flex', gap: '1.25rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)', flexWrap: 'wrap' }}>
+                  <span>Due <strong style={{ color: 'rgba(255,255,255,0.75)' }}>{fmtD(rec.dueDate)}</strong></span>
+                  <span>Amount <strong style={{ color: '#6B8EFE' }}>{fmtM(rec.amount)}</strong></span>
+                  {rec.paid && rec.paidAt && <span>Paid on <strong style={{ color: '#94D96B' }}>{fmtD(rec.paidAt)}</strong></span>}
+                  {lastPay && !rec.paid && <span>Last paid <strong style={{ color: 'rgba(255,255,255,0.6)' }}>{fmtD(lastPay)}</strong> ({daysAgo(lastPay)})</span>}
+                  {!rec.paid && <span>Next due after payment <strong style={{ color: 'rgba(255,255,255,0.6)' }}>{fmtD(nextDueAfterPay)}</strong></span>}
+                </div>
+              </div>
+              {/* Right: actions */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                {/* Auto/manual renewal toggle */}
+                <button
+                  onClick={() => {
+                    const updatedClients = data.clients.map(c => c.id === client.id ? { ...c, autoRenew: !c.autoRenew } : c);
+                    setData({ ...data, clients: updatedClients });
+                  }}
+                  style={{ ...btn('ghost'), fontSize: '0.78rem', padding: '5px 12px', borderColor: client.autoRenew ? 'rgba(107,142,254,0.5)' : 'rgba(255,255,255,0.12)', color: client.autoRenew ? '#6B8EFE' : 'rgba(255,255,255,0.4)' }}
+                >
+                  {client.autoRenew ? '⚡ Auto' : '✋ Manual'}
+                </button>
+                {/* Mark paid / unpaid */}
+                {!rec.paid ? (
+                  <button onClick={() => { markPaid(rec.id); setCalPopRecId(null); }} style={{ ...btn('success'), fontSize: '0.8rem', padding: '5px 14px' }}>Mark Paid</button>
+                ) : (
+                  <button onClick={() => { markUnpaid(rec.id); setCalPopRecId(null); }} style={{ ...btn('ghost'), fontSize: '0.8rem', padding: '5px 14px' }}>Mark Unpaid</button>
+                )}
+                <button onClick={() => setCalPopRecId(null)} style={{ ...btn('ghost'), fontSize: '0.8rem', padding: '5px 10px', color: 'rgba(255,255,255,0.3)' }}>✕</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Overdue section */}
+      {(() => {
+        const overdueClients = activeClients.filter(c => c.nextDue && c.nextDue < todayStr);
+        if (overdueClients.length === 0) return null;
+        return (
+          <div style={{ ...glassCard, marginBottom: '1.5rem', borderColor: 'rgba(254,100,98,0.3)', padding: '1rem 1.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.85rem' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#FE6462' }}>Overdue</span>
+              <span style={{ ...badge('#FE6462') }}>{overdueClients.length}</span>
+              <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.3)' }}>payment not confirmed for these clients</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {overdueClients.map(client => {
+                const overdueRec = monthRecords.find(r => r.clientId === client.id && !r.paid);
+                const daysOverdue = Math.floor((Date.now() - new Date(client.nextDue + 'T00:00:00').getTime()) / 86400000);
+                return (
+                  <div key={client.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 0.75rem', borderRadius: '10px', background: 'rgba(254,100,98,0.06)', border: '1px solid rgba(254,100,98,0.15)', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FE6462', flexShrink: 0, boxShadow: '0 0 6px #FE6462' }} />
+                      <div>
+                        <span style={{ fontWeight: 700, color: '#fff', fontSize: '0.88rem' }}>{client.name}</span>
+                        {client.company && <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.75rem', marginLeft: '0.4rem' }}>{client.company}</span>}
+                        <div style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.35)', marginTop: '1px' }}>
+                          Due <strong style={{ color: '#FE6462' }}>{fmtD(client.nextDue)}</strong>
+                          <span style={{ marginLeft: '0.4rem', color: '#FE6462', fontWeight: 700 }}>{daysOverdue}d overdue</span>
+                          <span style={{ marginLeft: '0.5rem' }}>{fmtM(monthlyVal(client))}</span>
+                          {client.autoRenew && <span style={{ marginLeft: '0.5rem', color: '#6B8EFE' }}>⚡ Auto</span>}
+                        </div>
+                      </div>
+                    </div>
+                    {overdueRec && (
+                      <button onClick={() => { markPaid(overdueRec.id); }} style={{ ...btn('ghost'), fontSize: '0.78rem', padding: '4px 12px', borderColor: 'rgba(148,217,107,0.3)', color: '#94D96B' }}>Confirm Paid</button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Full month payment list */}
       <div style={glassCard}>
