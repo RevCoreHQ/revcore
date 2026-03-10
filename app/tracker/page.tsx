@@ -2474,6 +2474,23 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
 
   const unpaidClients = monthRecords.filter(r => !r.paid).map(r => getClient(r.clientId)).filter(Boolean) as Client[];
 
+  // Last paid record per client (across all months)
+  const lastPaidMap = useMemo(() => {
+    const map = new Map<string, PaymentRecord>();
+    data.paymentRecords
+      .filter(r => r.paid && r.paidAt)
+      .sort((a, b) => a.paidAt.localeCompare(b.paidAt))
+      .forEach(r => map.set(r.clientId, r));
+    return map;
+  }, [data.paymentRecords]);
+
+  const daysAgo = (dateStr: string) => {
+    const diff = Math.floor((Date.now() - new Date(dateStr + 'T00:00:00').getTime()) / 86400000);
+    if (diff === 0) return 'today';
+    if (diff === 1) return '1 day ago';
+    return `${diff} days ago`;
+  };
+
   return (
     <div>
       {/* Header */}
@@ -2599,6 +2616,9 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
                 const isAtRisk = client.stage === 'at-risk';
                 const isSelected = selectedClient === rec.id;
                 const accentColor = rec.paid ? '#94D96B' : isAtRisk ? '#F59E0B' : 'rgba(255,255,255,0.25)';
+                const lastPaid = lastPaidMap.get(rec.clientId);
+                // For the current record if paid, use its own paidAt; otherwise use the most recent past paid record
+                const lastPaidRecord = rec.paid ? rec : lastPaid;
                 return (
                   <div
                     key={rec.id}
@@ -2628,9 +2648,20 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
                             {client.company && <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.78rem' }}>{client.company}</span>}
                             {isAtRisk && <span style={badge('#F59E0B')}>At Risk</span>}
                           </div>
-                          <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', marginTop: '2px' }}>
+                          <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', marginTop: '2px', flexWrap: 'wrap' }}>
                             <span>Due {fmtD(rec.dueDate)}</span>
                             {rec.paid && rec.paidAt && <><span>·</span><span style={{ color: '#94D96B' }}>Paid {fmtD(rec.paidAt)}</span></>}
+                            {lastPaidRecord?.paidAt && (
+                              <>
+                                <span>·</span>
+                                <span style={{ color: rec.paid ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.4)' }}>
+                                  Last payment: {fmtD(lastPaidRecord.paidAt)}
+                                </span>
+                                <span style={{ color: rec.paid ? 'rgba(255,255,255,0.2)' : '#F59E0B', fontWeight: 600 }}>
+                                  {daysAgo(lastPaidRecord.paidAt)}
+                                </span>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
