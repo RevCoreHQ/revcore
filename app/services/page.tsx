@@ -78,6 +78,22 @@ export default function ServicesPage() {
       doBestRef.current.style.backgroundPosition = '0% center';
     }
 
+    // Hash-based deep link: scroll horizontal track to the requested service
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+      const idx = services.findIndex(s => s.id === hash);
+      if (idx >= 0) {
+        setTimeout(() => {
+          if (hScrollRef.current && trackRef.current) {
+            const progress = idx / (services.length - 1);
+            const hScrollTop = hScrollRef.current.offsetTop;
+            const totalScroll = hScrollRef.current.offsetHeight - window.innerHeight;
+            window.scrollTo({ top: hScrollTop + progress * totalScroll, behavior: 'smooth' });
+          }
+        }, 350);
+      }
+    }
+
     function updateHeight() {
       if (hScrollRef.current && trackRef.current) {
         const maxTranslate = trackRef.current.scrollWidth - window.innerWidth;

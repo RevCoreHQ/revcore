@@ -11,7 +11,7 @@ const navLinks = [
     label: 'Services',
     href: '/services',
     children: [
-      { label: 'Lead Generation', href: '/services#leads' },
+      { label: 'Lead Generation', href: '/services#appointments' },
       { label: 'Organic Growth', href: '/services#organic' },
       { label: 'Smart Automation', href: '/services#automation' },
       { label: 'Sales Training', href: '/services#training' },
@@ -24,14 +24,6 @@ const navLinks = [
     children: [
       { label: 'Quoting Software', href: '/software#quoting' },
       { label: 'Presentation Software', href: '/software#presentation' },
-    ],
-  },
-  {
-    label: 'Growth',
-    href: '/growth',
-    children: [
-      { label: 'Websites & GMB', href: '/growth' },
-      { label: 'SEO Portfolio', href: '/growth#portfolio' },
     ],
   },
   { label: 'About', href: '/about' },
