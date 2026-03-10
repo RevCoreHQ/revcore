@@ -11,7 +11,7 @@ export default function ConfirmedPage() {
       eyebrow="Watch Before Your Call"
       headline="Add 10+ Jobs/Month With One Simple Shift"
       subheadline="Watch this quick video before our call (see proof)"
-      mainVideoLoomId="0547417968dd4c1ba4d82fad14ac2181"
+      mainVideoLoomId="82f6b2540f544c91b3926a5f14caed4a"
       ctaText="Ready to see how we can help you add 7 figures to your contracting business?"
       modalBadge="Elite Contractors Only"
       modalTitle="Scale Your"
