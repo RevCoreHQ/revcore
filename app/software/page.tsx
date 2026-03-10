@@ -771,6 +771,206 @@ function IntegrationBanner() {
   );
 }
 
+/* ─── Comparison Section ─────────────────────────────────────────────────── */
+function ComparisonSection() {
+  const { ref, inView } = useScrollReveal({ threshold: 0.08 });
+
+  const features = [
+    'iPad Sales Presentation Tool',
+    'In-Field Quote Builder',
+    'Good / Better / Best Pricing',
+    'Digital E-Signature',
+    'Auto Follow-up Sequences',
+    'No CRM Complexity',
+    'Built Specifically for Sales Reps',
+    'Setup in Under 24 Hours',
+    'GMB & Website Service',
+    'No Long-Term Contract Required',
+  ];
+
+  type CheckVal = '✓' | '~' | '✗';
+
+  const competitors: { name: string; values: CheckVal[] }[] = [
+    {
+      name: 'JobNimbus',
+      values: ['✗', '✓', '✗', '✓', '~', '✗', '✗', '✗', '✗', '✗'],
+    },
+    {
+      name: 'Jobber',
+      values: ['✗', '✓', '✗', '✓', '✓', '✗', '✗', '✗', '✗', '✗'],
+    },
+    {
+      name: 'ServiceTitan',
+      values: ['✗', '✓', '~', '✓', '✓', '✗', '✗', '✗', '✗', '✗'],
+    },
+  ];
+
+  const revCoreValues: CheckVal[] = features.map(() => '✓');
+
+  function CheckIcon({ val }: { val: CheckVal }) {
+    if (val === '✓') {
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(148,217,107,0.12)', border: '1px solid rgba(148,217,107,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+              <path d="M1.5 4L3.8 6.3L8.5 1" stroke="#94D96B" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+        </div>
+      );
+    }
+    if (val === '~') {
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: '13px', color: '#F59E0B', fontWeight: 700, lineHeight: 1 }}>~</span>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.18)', fontWeight: 500 }}>✗</span>
+      </div>
+    );
+  }
+
+  return (
+    <section
+      ref={ref as React.Ref<HTMLElement>}
+      style={{ padding: '6rem clamp(1.5rem, 6vw, 6rem)', background: '#080c10', position: 'relative', overflow: 'hidden' }}
+    >
+      {/* Background glow */}
+      <div style={{ position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)', width: '800px', height: '400px', background: 'radial-gradient(ellipse, rgba(148,217,107,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+      <div style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '3.5rem', ...fadeUp(inView, 0) }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', padding: '5px 14px', borderRadius: '100px', background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.2)', marginBottom: '1.5rem' }}>
+            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#94D96B' }} />
+            <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#94D96B', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Feature Comparison</span>
+          </div>
+          <h2 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 800, color: 'white', lineHeight: 1.12, letterSpacing: '-0.025em', marginBottom: '1rem' }}>
+            How We Stack Up
+          </h2>
+          <p style={{ color: 'rgba(255,255,255,0.45)', lineHeight: '1.8', maxWidth: '580px', margin: '0 auto', fontSize: '1rem' }}>
+            RevCore is built for one thing, closing more jobs in the field. The others are built to manage everything else.
+          </p>
+        </div>
+
+        {/* Table wrapper — horizontally scrollable on mobile */}
+        <div style={{ overflowX: 'auto', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.07)', ...scaleUp(inView, 150) }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '640px', fontFamily: 'DM Sans, sans-serif' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                {/* Feature column header */}
+                <th style={{
+                  padding: '1.1rem 1.5rem',
+                  textAlign: 'left',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  color: 'rgba(255,255,255,0.35)',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase' as const,
+                  background: '#0d1117',
+                  position: 'sticky',
+                  left: 0,
+                  zIndex: 2,
+                  minWidth: '220px',
+                }}>
+                  Feature
+                </th>
+                {/* RevCore header — highlighted */}
+                <th style={{
+                  padding: '1.1rem 1.25rem',
+                  textAlign: 'center',
+                  background: 'rgba(148,217,107,0.06)',
+                  borderLeft: '2px solid rgba(148,217,107,0.35)',
+                  borderRight: '1px solid rgba(255,255,255,0.06)',
+                  minWidth: '120px',
+                }}>
+                  <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '4px' }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#94D96B' }}>RevCore</div>
+                    <div style={{ fontSize: '0.65rem', color: 'rgba(148,217,107,0.6)', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>Recommended</div>
+                  </div>
+                </th>
+                {/* Competitor headers */}
+                {competitors.map((comp) => (
+                  <th key={comp.name} style={{
+                    padding: '1.1rem 1.25rem',
+                    textAlign: 'center',
+                    background: '#0d1117',
+                    borderRight: '1px solid rgba(255,255,255,0.05)',
+                    minWidth: '120px',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    color: 'rgba(255,255,255,0.4)',
+                  }}>
+                    {comp.name}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {features.map((feat, rowIdx) => (
+                <tr
+                  key={feat}
+                  style={{
+                    borderBottom: rowIdx < features.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                    background: rowIdx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)',
+                    transition: 'background 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,255,255,0.025)'; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = rowIdx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)'; }}
+                >
+                  {/* Feature name — sticky */}
+                  <td style={{
+                    padding: '0.95rem 1.5rem',
+                    fontSize: '0.875rem',
+                    color: 'rgba(255,255,255,0.65)',
+                    fontWeight: 500,
+                    background: rowIdx % 2 === 0 ? '#0d1117' : '#0e1219',
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 1,
+                  }}>
+                    {feat}
+                  </td>
+                  {/* RevCore value */}
+                  <td style={{
+                    padding: '0.95rem 1.25rem',
+                    textAlign: 'center',
+                    background: 'rgba(148,217,107,0.05)',
+                    borderLeft: '2px solid rgba(148,217,107,0.25)',
+                    borderRight: '1px solid rgba(255,255,255,0.05)',
+                  }}>
+                    <CheckIcon val={revCoreValues[rowIdx]} />
+                  </td>
+                  {/* Competitor values */}
+                  {competitors.map((comp) => (
+                    <td key={comp.name} style={{
+                      padding: '0.95rem 1.25rem',
+                      textAlign: 'center',
+                      borderRight: '1px solid rgba(255,255,255,0.04)',
+                    }}>
+                      <CheckIcon val={comp.values[rowIdx]} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footnote */}
+        <p style={{ textAlign: 'center', fontSize: '0.72rem', color: 'rgba(255,255,255,0.22)', marginTop: '1.25rem', ...fadeUp(inView, 300) }}>
+          Feature availability as of 2025. Competitor features may vary by plan.
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function SoftwareCTA() {
   const { ref, inView } = useScrollReveal({ threshold: 0.2 });
   return (
@@ -935,6 +1135,7 @@ export default function SoftwarePage() {
       <div id="presentation"><PresentationSection /></div>
       <InFieldSection />
       <IntegrationBanner />
+      <ComparisonSection />
       <SoftwareCTA />
 
       <style>{`
