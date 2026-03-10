@@ -9,7 +9,7 @@ export default function BookedPage() {
   return (
     <VslPage
       eyebrow="Watch Before Your Call"
-      headline="Add 10+ Jobs/Month With One Simple Shift"
+      headline="Get 5-10 Qualified Jobs Booked Into Your Calendar Every Month, Done For You"
       subheadline="Watch this quick video before our call (see proof)"
       mainVideoLoomId="0547417968dd4c1ba4d82fad14ac2181"
       ctaText="Ready to see how we can help you add 7 figures to your contracting business?"
