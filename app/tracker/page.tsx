@@ -2357,9 +2357,26 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
   const [weekOffset, setWeekOffset] = useState(0);
   const [selectedMonth, setSelectedMonth] = useState(() => today().slice(0, 7)); // 'YYYY-MM'
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
+  const [editDueDateId, setEditDueDateId] = useState<string | null>(null);
+  const [editDueDateVal, setEditDueDateVal] = useState('');
 
   // All non-churned, non-paused clients — everyone with active billing regardless of planT label
   const activeClients = data.clients.filter(c => c.stage !== 'churned' && c.stage !== 'paused');
+
+  // Find what date the 30-day billing cycle lands on in a given month (walks 30-day steps from baseDate)
+  // Returns null if the cycle doesn't land in that month (e.g. skips due to 31-day months)
+  const findDueDateInMonth = (baseDate: string, month: string): string | null => {
+    const [year, mon] = month.split('-').map(Number);
+    const monthStart = new Date(year, mon - 1, 1);
+    const monthEnd = new Date(year, mon, 0);
+    let d = new Date(baseDate + 'T00:00:00');
+    // Walk backward until before month
+    while (d > monthEnd) d = new Date(d.getTime() - 30 * 86400000);
+    // Walk forward until in or past month
+    while (d < monthStart) d = new Date(d.getTime() + 30 * 86400000);
+    if (d >= monthStart && d <= monthEnd) return d.toISOString().slice(0, 10);
+    return null; // cycle skips this month
+  };
 
   // Generate payment records for a given month, only for clients NOT already in excludeIds
   const ensureRecordsForMonth = (month: string, excludeClientIds: Set<string> = new Set()) => {
@@ -2375,13 +2392,13 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
       const startDate = new Date((c.start || baseDate) + 'T00:00:00');
       // Only show if client started on or before end of this month
       if (startDate > monthEnd) return;
-      const dayOfMonth = new Date(baseDate + 'T00:00:00').getDate();
-      const dueDate = new Date(year, mon - 1, dayOfMonth);
+      const dueDateStr = findDueDateInMonth(baseDate, month);
+      if (!dueDateStr) return; // 30-day cycle skips this month
       newRecords.push({
         id: uid(),
         clientId: c.id,
         month,
-        dueDate: dueDate.toISOString().slice(0, 10),
+        dueDate: dueDateStr,
         amount: monthlyVal(c),
         paid: false,
         paidAt: '',
@@ -2413,14 +2430,14 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
       updatedRecords = [...data.paymentRecords, { ...rec, paid: true, paidAt: today() }];
     }
 
-    // Advance client.nextDue by 1 month after marking paid
+    // Advance client.nextDue by exactly 30 days after marking paid
     const record = monthRecords.find(r => r.id === recordId);
     let updatedClients = data.clients;
     if (record) {
       updatedClients = data.clients.map(c => {
         if (c.id !== record.clientId) return c;
-        const nd = new Date(c.nextDue + 'T00:00:00');
-        nd.setMonth(nd.getMonth() + 1);
+        const nd = new Date((c.nextDue || record.dueDate) + 'T00:00:00');
+        nd.setDate(nd.getDate() + 30);
         return { ...c, nextDue: nd.toISOString().slice(0, 10), payStat: 'current' as PayStat };
       });
     }
@@ -2683,25 +2700,55 @@ function PaymentsTab({ data, setData }: { data: AppData; setData: (d: AppData) =
                     </div>
                     {/* Action row */}
                     {isSelected && (
-                      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', paddingLeft: '2.25rem' }}>
-                        {!rec.paid ? (
-                          <button
-                            onClick={(e) => { e.stopPropagation(); markPaid(rec.id); setSelectedClient(null); }}
-                            style={{ ...btn('success'), fontSize: '0.8rem', padding: '6px 16px' }}
-                          >
-                            Mark Paid
-                          </button>
-                        ) : (
-                          <button
-                            onClick={(e) => { e.stopPropagation(); markUnpaid(rec.id); setSelectedClient(null); }}
-                            style={{ ...btn('ghost'), fontSize: '0.8rem', padding: '6px 16px' }}
-                          >
-                            Mark Unpaid
-                          </button>
-                        )}
-                        {isAtRisk && !rec.paid && (
-                          <span style={{ fontSize: '0.78rem', color: '#F59E0B', alignSelf: 'center' }}>This client is at risk — follow up before charging.</span>
-                        )}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.75rem', paddingLeft: '2.25rem' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                          {!rec.paid ? (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); markPaid(rec.id); setSelectedClient(null); }}
+                              style={{ ...btn('success'), fontSize: '0.8rem', padding: '6px 16px' }}
+                            >
+                              Mark Paid
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); markUnpaid(rec.id); setSelectedClient(null); }}
+                              style={{ ...btn('ghost'), fontSize: '0.8rem', padding: '6px 16px' }}
+                            >
+                              Mark Unpaid
+                            </button>
+                          )}
+                          {isAtRisk && !rec.paid && (
+                            <span style={{ fontSize: '0.78rem', color: '#F59E0B', alignSelf: 'center' }}>This client is at risk — follow up before charging.</span>
+                          )}
+                        </div>
+                        {/* Due date editor — set new anchor date, repeats every 30 days */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Change billing start date:</span>
+                          <input
+                            type="date"
+                            value={editDueDateId === rec.id ? editDueDateVal : (client.nextDue || '')}
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={(e) => { setEditDueDateId(rec.id); setEditDueDateVal(e.target.value); }}
+                            style={{ ...inp, padding: '4px 8px', fontSize: '0.8rem', width: 'auto', height: 'auto' }}
+                          />
+                          {editDueDateId === rec.id && editDueDateVal && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const updatedClients = data.clients.map(c =>
+                                  c.id === client.id ? { ...c, nextDue: editDueDateVal } : c
+                                );
+                                setData({ ...data, clients: updatedClients });
+                                setEditDueDateId(null);
+                                setEditDueDateVal('');
+                              }}
+                              style={{ ...btn('primary'), fontSize: '0.78rem', padding: '4px 12px' }}
+                            >
+                              Save
+                            </button>
+                          )}
+                          <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.25)' }}>repeats every 30 days</span>
+                        </div>
                       </div>
                     )}
                   </div>
