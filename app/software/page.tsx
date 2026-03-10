@@ -781,10 +781,12 @@ function ComparisonSection() {
     'Good / Better / Best Pricing',
     'Digital E-Signature',
     'Auto Follow-up Sequences',
-    'No CRM Complexity',
+    'Photo Gallery & Project Proof',
+    'Branded, Personalized Proposals',
     'Built Specifically for Sales Reps',
-    'Setup in Under 24 Hours',
-    'GMB & Website Service',
+    'Same-Day Setup, No Onboarding Fee',
+    'Dedicated Account Support',
+    'GMB & Website Service Included',
     'No Long-Term Contract Required',
   ];
 
@@ -793,15 +795,16 @@ function ComparisonSection() {
   const competitors: { name: string; values: CheckVal[] }[] = [
     {
       name: 'JobNimbus',
-      values: ['✗', '✓', '✗', '✓', '~', '✗', '✗', '✗', '✗', '✗'],
+      //                Pres  Quote  GBB   Esig  Auto  Photo Brand  Rep   Setup  Supp  GMB   Contract
+      values:          ['✗',  '✓',  '✗',  '✓',  '~',  '✗',  '✗',  '✗',  '✗',  '~',  '✗',  '✗'],
     },
     {
       name: 'Jobber',
-      values: ['✗', '✓', '✗', '✓', '✓', '✗', '✗', '✗', '✗', '✗'],
+      values:          ['✗',  '✓',  '✗',  '✓',  '✓',  '✗',  '~',  '✗',  '✗',  '~',  '✗',  '✗'],
     },
     {
       name: 'ServiceTitan',
-      values: ['✗', '✓', '~', '✓', '✓', '✗', '✗', '✗', '✗', '✗'],
+      values:          ['✗',  '✓',  '~',  '✓',  '✓',  '✗',  '~',  '✗',  '✗',  '✓',  '✗',  '✗'],
     },
   ];
 
@@ -964,7 +967,7 @@ function ComparisonSection() {
 
         {/* Footnote */}
         <p style={{ textAlign: 'center', fontSize: '0.72rem', color: 'rgba(255,255,255,0.22)', marginTop: '1.25rem', ...fadeUp(inView, 300) }}>
-          Feature availability as of 2025. Competitor features may vary by plan.
+          Feature availability as of 2026. Competitor features may vary by plan.
         </p>
       </div>
     </section>
