@@ -235,7 +235,7 @@ export default function AboutPage() {
               Why RevCore Exists
             </div>
             <p style={{ fontSize: '1rem', lineHeight: '1.9', color: 'rgba(255,255,255,0.55)', margin: 0 }}>
-              RevCore was built by someone who lived both sides of the business. Years spent in tech, writing code, building databases, designing automations, custom reporting, information security, and architecting systems from scratch. Then a pivot into home improvement sales, closing at the kitchen table, and helping scale a local family owned company from $1M to $10M in under two years, all while still closing himself. In the last year alone, $3.5M in sold jobs, while simultaneously managing the sales team and building the presentation tools, trackers, and systems this industry was missing. RevCore exists because that person looked for what he needed, couldn&apos;t find it anywhere, and decided to build it himself.
+              I built RevCore because I lived both sides of this business. I spent years in tech, writing code, building databases, designing automations, custom reporting, information security, and architecting systems from scratch. Then I got into home improvement sales, started closing at the kitchen table, and helped scale a local family owned company from $1M to $10M in under two years, all while still closing myself. Last year alone I sold $3.5M in home improvement jobs, while managing the sales team and building the presentation tools, trackers, and systems this industry was missing. I looked for what I needed, couldn&apos;t find it anywhere, and built it myself. That&apos;s RevCore.
             </p>
           </div>
 
