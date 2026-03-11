@@ -322,7 +322,7 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
 }
 
 // ─── Collapsible feature list ──────────────────────────────────────────────────
-function FeatureList({ items, accent, showAll = false, textColor = '#444' }: { items: string[]; accent: string; showAll?: boolean; textColor?: string }) {
+function FeatureList({ items, accent, showAll = false }: { items: string[]; accent: string; showAll?: boolean }) {
   const [expanded, setExpanded] = useState(showAll);
   const preview = items.slice(0, 5);
   const rest = items.slice(5);
@@ -333,7 +333,7 @@ function FeatureList({ items, accent, showAll = false, textColor = '#444' }: { i
       {displayed.map((item, i) => (
         <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '8px' }}>
           <Check size={14} style={{ color: accent, flexShrink: 0, marginTop: '3px' }} />
-          <span style={{ fontSize: '0.875rem', color: textColor, lineHeight: 1.5 }}>{item}</span>
+          <span style={{ fontSize: '0.875rem', color: '#444', lineHeight: 1.5 }}>{item}</span>
         </div>
       ))}
       {!showAll && rest.length > 0 && (
@@ -346,7 +346,7 @@ function FeatureList({ items, accent, showAll = false, textColor = '#444' }: { i
             background: 'none',
             border: 'none',
             cursor: 'pointer',
-            color: textColor === '#444' ? '#999' : 'rgba(255,255,255,0.4)',
+            color: '#999',
             fontSize: '0.8rem',
             fontWeight: 600,
             marginTop: '8px',
@@ -649,46 +649,21 @@ function SalesDeck() {
       </section>
 
       {/* ── Section: Packages ── */}
-      <section style={{ padding: '96px 0', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
-        {/* Subtle grid overlay */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
-          backgroundSize: '64px 64px',
-          pointerEvents: 'none',
-        }} />
-        {/* Central blue ambient glow */}
-        <div style={{
-          position: 'absolute', top: '30%', left: '50%',
-          transform: 'translateX(-50%)',
-          width: '900px', height: '500px',
-          background: 'radial-gradient(ellipse at center, rgba(49,49,245,0.13) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-
-        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+      <section style={{ padding: '96px 0', background: '#F5F5F5' }}>
+        <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
-              textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', marginBottom: '1rem',
-            }}>
-              <span style={{ width: '20px', height: '2px', background: '#6B8EFE', display: 'block' }} />
-              Bundle Packages
-              <span style={{ width: '20px', height: '2px', background: '#6B8EFE', display: 'block' }} />
-            </div>
+            <div className="section-tag" style={{ justifyContent: 'center' }}>Bundle Packages</div>
             <h2 style={{
               fontFamily: 'DM Sans, sans-serif',
               fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
               fontWeight: 800,
               lineHeight: 1.1,
               letterSpacing: '-0.02em',
-              color: 'white',
               marginBottom: '1rem',
             }}>
               Full-stack retainer packages
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.4)', maxWidth: '520px', margin: '0 auto', lineHeight: '1.8' }}>
+            <p style={{ color: 'var(--color-gray)', maxWidth: '520px', margin: '0 auto', lineHeight: '1.8' }}>
               Bundling services into a package is significantly more cost-effective than a la carte. One retainer, one point of contact, all connected.
             </p>
           </div>
@@ -700,15 +675,10 @@ function SalesDeck() {
                 className="card-hover-up"
                 style={{
                   borderRadius: '20px',
-                  background: 'linear-gradient(160deg, #141820 0%, #1c2030 50%, #141820 100%)',
-                  border: pkg.highlight
-                    ? '1px solid rgba(107,142,254,0.35)'
-                    : '1px solid rgba(255,255,255,0.07)',
+                  background: 'white',
+                  border: pkg.highlight ? '2px solid #FE6462' : '1px solid #E5E5E5',
                   overflow: 'hidden',
                   position: 'relative',
-                  boxShadow: pkg.highlight
-                    ? '0px -10px 180px 0px rgba(49,49,245,0.22), inset 0 1px 0 rgba(107,142,254,0.15)'
-                    : '0 4px 24px rgba(0,0,0,0.4)',
                 }}
               >
                 {pkg.highlight && (
@@ -716,15 +686,14 @@ function SalesDeck() {
                     position: 'absolute',
                     top: '16px',
                     right: '16px',
-                    background: 'linear-gradient(135deg, #6B8EFE, #9B7BFE)',
+                    background: '#FE6462',
                     color: 'white',
                     fontSize: '0.65rem',
                     fontWeight: 700,
-                    padding: '4px 12px',
+                    padding: '3px 10px',
                     borderRadius: '100px',
                     letterSpacing: '0.08em',
                     textTransform: 'uppercase',
-                    boxShadow: '0 2px 12px rgba(107,142,254,0.4)',
                   }}>
                     Most Popular
                   </div>
@@ -733,14 +702,13 @@ function SalesDeck() {
                 <div style={{ padding: '2rem 2rem 1.5rem' }}>
                   <h3 style={{
                     fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '1.35rem',
+                    fontSize: '1.25rem',
                     fontWeight: 800,
-                    color: 'white',
                     marginBottom: '0.5rem',
                   }}>
                     {pkg.name}
                   </h3>
-                  <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.875rem', lineHeight: '1.6', marginBottom: '1.75rem' }}>
+                  <p style={{ color: 'var(--color-gray)', fontSize: '0.875rem', lineHeight: '1.6', marginBottom: '1.75rem' }}>
                     {pkg.tagline}
                   </p>
 
@@ -751,11 +719,11 @@ function SalesDeck() {
                         fontSize: '3rem',
                         fontWeight: 800,
                         letterSpacing: '-0.03em',
-                        color: 'white',
+                        color: '#0A0A0A',
                       }}>
                         {pkg.price}
                       </span>
-                      <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.3)' }}>{pkg.period}</span>
+                      <span style={{ fontSize: '0.9rem', color: '#999' }}>{pkg.period}</span>
                     </div>
                     <span style={{ fontSize: '0.8rem', color: pkg.noteColor, fontWeight: 600 }}>
                       {pkg.note}
@@ -763,38 +731,37 @@ function SalesDeck() {
                   </div>
                 </div>
 
-                <div style={{ padding: '1.5rem 2rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ padding: '1.5rem 2rem', borderTop: '1px solid #f0f0f0' }}>
                   <p style={{
                     fontSize: '0.68rem',
                     fontWeight: 700,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,0.28)',
+                    color: 'var(--color-gray)',
                     marginBottom: '1rem',
                   }}>
                     {pkg.id === 'revenue' ? "Everything in Growth Engine, plus" : "What's included"}
                   </p>
-                  <FeatureList items={pkg.includes} accent={pkg.noteColor} textColor="rgba(255,255,255,0.58)" />
+                  <FeatureList items={pkg.includes} accent={pkg.noteColor} />
                 </div>
 
                 <div style={{ padding: '1.5rem 2rem', paddingTop: '0' }}>
                   <button
                     style={{
                       width: '100%',
-                      padding: '14px',
+                      padding: '13px',
                       borderRadius: '100px',
                       fontSize: '0.875rem',
                       fontWeight: 700,
                       cursor: 'pointer',
-                      border: 'none',
-                      background: pkg.highlight
-                        ? 'linear-gradient(135deg, #6B8EFE 0%, #9B7BFE 100%)'
+                      border: pkg.buttonStyle === 'outline' ? '1.5px solid #0A0A0A' : 'none',
+                      background: pkg.buttonStyle === 'primary'
+                        ? '#FE6462'
                         : pkg.buttonStyle === 'gradient'
                         ? 'linear-gradient(135deg, #6B8EFE 0%, #9B7BFE 100%)'
-                        : 'rgba(255,255,255,0.08)',
-                      color: 'white',
+                        : 'transparent',
+                      color: pkg.buttonStyle === 'outline' ? '#0A0A0A' : 'white',
                       transition: 'opacity 0.2s, transform 0.2s',
-                      boxShadow: pkg.highlight ? '0 4px 20px rgba(107,142,254,0.35)' : 'none',
                     }}
                     onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
