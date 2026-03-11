@@ -37,7 +37,7 @@ function FAQItem({ faq, index, inView }: { faq: typeof faqs[0]; index: number; i
   return (
     <div
       style={{
-        borderBottom: '1px solid #EBEBEB',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
         ...fadeUp(inView, stagger(index, 100, 80)),
       }}
     >
@@ -52,7 +52,7 @@ function FAQItem({ faq, index, inView }: { faq: typeof faqs[0]; index: number; i
       >
         <span style={{
           fontFamily: 'DM Sans, sans-serif',
-          fontSize: '1.1rem', fontWeight: 600, color: '#0A0A0A',
+          fontSize: '1.1rem', fontWeight: 600, color: 'white',
           lineHeight: 1.4,
         }}>
           {faq.question}
@@ -60,7 +60,7 @@ function FAQItem({ faq, index, inView }: { faq: typeof faqs[0]; index: number; i
         <ChevronDown
           size={18}
           style={{
-            color: '#CCC',
+            color: 'rgba(255,255,255,0.35)',
             flexShrink: 0,
             transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 0.3s cubic-bezier(0.22,1,0.36,1)',
@@ -75,7 +75,7 @@ function FAQItem({ faq, index, inView }: { faq: typeof faqs[0]; index: number; i
         }}
       >
         <p style={{
-          color: '#777',
+          color: 'rgba(255,255,255,0.45)',
           fontSize: '0.9rem',
           lineHeight: '1.75',
           paddingBottom: '1.5rem',
@@ -93,30 +93,30 @@ export default function FAQ() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '96px 0', background: '#FFFFFF' }}
+      style={{ padding: '96px 0', background: '#0A0A0A' }}
     >
       <div className="container" style={{ maxWidth: '800px' }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
-            textTransform: 'uppercase', color: '#999', marginBottom: '1rem',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '1rem',
           }}>
-            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
+            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
             FAQ
-            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
+            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
           </span>
           <h2 style={{
             fontFamily: 'DM Sans, sans-serif',
             fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)',
-            fontWeight: 800, color: '#0A0A0A',
+            fontWeight: 800, color: 'white',
             letterSpacing: '-0.02em', lineHeight: 1.1,
           }}>
             Common questions
           </h2>
         </div>
 
-        <div style={{ borderTop: '1px solid #EBEBEB' }}>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           {faqs.map((faq, i) => (
             <FAQItem key={i} faq={faq} index={i} inView={inView} />
           ))}

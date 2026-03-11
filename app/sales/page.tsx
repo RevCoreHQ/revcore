@@ -34,7 +34,7 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#FFFFFF',
+      background: '#0A0A0A',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -51,13 +51,13 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
           fontFamily: 'DM Sans, sans-serif',
           fontSize: '1.75rem',
           fontWeight: 800,
-          color: '#0A0A0A',
+          color: 'white',
           marginBottom: '0.5rem',
           letterSpacing: '-0.02em',
         }}>
           RevCore Sales Hub
         </h1>
-        <p style={{ color: '#999', fontSize: '0.875rem' }}>
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.875rem' }}>
           Team access only — enter your password to continue
         </p>
       </div>
@@ -81,7 +81,7 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
               left: '14px',
               top: '50%',
               transform: 'translateY(-50%)',
-              color: '#CCC',
+              color: 'rgba(255,255,255,0.25)',
             }}
           />
           <input
@@ -92,11 +92,11 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
             autoFocus
             style={{
               width: '100%',
-              background: '#FAFAFA',
-              border: `1.5px solid ${error ? '#FE6462' : '#E5E5E5'}`,
+              background: 'rgba(255,255,255,0.04)',
+              border: `1.5px solid ${error ? '#FE6462' : 'rgba(255,255,255,0.08)'}`,
               borderRadius: '12px',
               padding: '14px 14px 14px 40px',
-              color: '#0A0A0A',
+              color: 'white',
               fontSize: '0.9rem',
               outline: 'none',
               transition: 'border-color 0.2s',
@@ -113,8 +113,8 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
         <button
           type="submit"
           style={{
-            background: '#0A0A0A',
-            color: 'white',
+            background: 'white',
+            color: '#000000',
             border: 'none',
             borderRadius: '12px',
             padding: '14px',
@@ -146,15 +146,15 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
 // ─── Main sales deck ──────────────────────────────────────────────────────────
 function SalesDeck() {
   return (
-    <div style={{ background: '#FFFFFF', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ background: '#0A0A0A', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
       {/* Top bar */}
       <div style={{
-        background: '#FFFFFF',
+        background: '#0A0A0A',
         padding: '12px 0',
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        borderBottom: '1px solid #EBEBEB',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
       }}>
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -163,24 +163,24 @@ function SalesDeck() {
               alt="RevCore"
               style={{ height: '24px', width: 'auto' }}
             />
-            <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: '1rem', color: '#0A0A0A' }}>
+            <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: '1rem', color: 'white' }}>
               RevCore
             </span>
             <span style={{
-              background: '#F5F5F5',
-              color: '#999',
+              background: 'rgba(255,255,255,0.08)',
+              color: 'rgba(255,255,255,0.4)',
               fontSize: '0.6rem',
               fontWeight: 700,
               padding: '2px 8px',
               borderRadius: '100px',
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
-              border: '1px solid #E8E8E8',
+              border: '1px solid rgba(255,255,255,0.06)',
             }}>
               Sales Team
             </span>
           </div>
-          <span style={{ color: '#CCC', fontSize: '0.72rem' }}>Internal — do not share</span>
+          <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.72rem' }}>Internal — do not share</span>
         </div>
       </div>
 
