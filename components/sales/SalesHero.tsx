@@ -1,6 +1,5 @@
 'use client';
 
-import SpaceBackground from '@/components/SpaceBackground';
 import GradientText from '@/components/GradientText';
 import MagneticButton from '@/components/MagneticButton';
 import { useScrollReveal, useCountUp, textLineReveal, fadeUp } from '@/hooks/useScrollReveal';
@@ -29,7 +28,7 @@ function HeroStat({ stat, active, index }: { stat: typeof stats[0]; active: bool
         {stat.prefix || ''}{count}{stat.suffix}
       </span>
       <span style={{
-        color: 'rgba(255,255,255,0.3)',
+        color: '#999',
         fontSize: '0.75rem',
         fontWeight: 500,
       }}>
@@ -46,7 +45,7 @@ export default function SalesHero() {
     <section
       ref={ref as React.Ref<HTMLElement>}
       style={{
-        background: '#000000',
+        background: '#FFFFFF',
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
@@ -57,8 +56,6 @@ export default function SalesHero() {
         padding: '120px 2rem 80px',
       }}
     >
-      <SpaceBackground opacity={0.3} />
-
       <div style={{
         position: 'relative',
         zIndex: 1,
@@ -73,11 +70,11 @@ export default function SalesHero() {
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.15em',
-            textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
+            textTransform: 'uppercase', color: '#999',
           }}>
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.2)' }} />
+            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
             For Home Service Contractors
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.2)' }} />
+            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
           </span>
         </div>
 
@@ -87,8 +84,7 @@ export default function SalesHero() {
             display: 'block',
             fontSize: 'clamp(2rem, 4.5vw, 3.5rem)',
             fontWeight: 800,
-            color: 'transparent',
-            WebkitTextStroke: '1.5px rgba(255,255,255,0.5)',
+            color: '#C0C0C0',
             lineHeight: 1.1,
             letterSpacing: '-0.03em',
             ...textLineReveal(inView, 1, 0, 200),
@@ -118,8 +114,7 @@ export default function SalesHero() {
             display: 'block',
             fontSize: 'clamp(2rem, 4.5vw, 3.5rem)',
             fontWeight: 800,
-            color: 'transparent',
-            WebkitTextStroke: '1.5px rgba(255,255,255,0.5)',
+            color: '#C0C0C0',
             lineHeight: 1.1,
             letterSpacing: '-0.03em',
             ...textLineReveal(inView, 3, 0, 200),
@@ -130,7 +125,7 @@ export default function SalesHero() {
 
         {/* Subhead */}
         <p style={{
-          color: 'rgba(255,255,255,0.45)',
+          color: '#777',
           fontSize: '1.1rem',
           lineHeight: '1.7',
           maxWidth: '520px',
@@ -152,7 +147,7 @@ export default function SalesHero() {
           >
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
-              background: 'white', color: '#000000',
+              background: '#0A0A0A', color: 'white',
               padding: '14px 32px', borderRadius: '100px',
               fontWeight: 700, fontSize: '0.875rem',
             }}>
@@ -162,10 +157,10 @@ export default function SalesHero() {
           <MagneticButton href="/contact">
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
-              background: 'transparent', color: 'rgba(255,255,255,0.6)',
+              background: 'transparent', color: '#555',
               padding: '13px 31px', borderRadius: '100px',
               fontWeight: 600, fontSize: '0.875rem',
-              border: '1.5px solid rgba(255,255,255,0.15)',
+              border: '1.5px solid #E0E0E0',
             }}>
               Check Territory
             </span>
@@ -178,7 +173,7 @@ export default function SalesHero() {
           justifyContent: 'center',
           gap: '40px',
           flexWrap: 'wrap',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
+          borderTop: '1px solid #EBEBEB',
           paddingTop: '2rem',
         }}>
           {stats.map((stat, i) => (

@@ -12,7 +12,7 @@ export default function SalesFinalCTA() {
       ref={ref as React.Ref<HTMLElement>}
       style={{
         padding: '120px 0',
-        background: '#000000',
+        background: '#0A0A0A',
         position: 'relative',
         overflow: 'hidden',
       }}

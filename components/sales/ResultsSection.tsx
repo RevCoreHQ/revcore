@@ -36,12 +36,12 @@ function BigStat({ stat, active, index }: { stat: typeof bigStats[0]; active: bo
         {stat.prefix || ''}{count}{stat.suffix}
       </p>
       <p style={{
-        color: 'white', fontWeight: 700, fontSize: '0.95rem',
+        color: '#0A0A0A', fontWeight: 700, fontSize: '0.95rem',
         marginBottom: '4px',
       }}>
         {stat.label}
       </p>
-      <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.78rem' }}>
+      <p style={{ color: '#AAA', fontSize: '0.78rem' }}>
         {stat.note}
       </p>
     </div>
@@ -54,7 +54,7 @@ export default function ResultsSection() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '120px 0', background: '#0A0A0A' }}
+      style={{ padding: '120px 0', background: '#F9F9F9' }}
     >
       <div className="container">
         {/* Header */}
@@ -62,34 +62,34 @@ export default function ResultsSection() {
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
-            textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '1rem',
+            textTransform: 'uppercase', color: '#999', marginBottom: '1rem',
           }}>
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
             Results
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
           </span>
           <h2 style={{
             fontFamily: 'DM Sans, sans-serif',
             fontSize: 'clamp(2rem, 4vw, 3.5rem)',
             fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em',
-            color: 'white',
+            color: '#0A0A0A',
           }}>
             The numbers speak.
           </h2>
         </div>
 
-        {/* Big stats 2x2 */}
+        {/* Big stats */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(4, 1fr)',
           gap: '1px',
-          background: 'rgba(255,255,255,0.06)',
+          background: '#E8E8E8',
           borderRadius: '20px',
           overflow: 'hidden',
           marginBottom: '3rem',
         }}>
           {bigStats.map((stat, i) => (
-            <div key={stat.label} style={{ background: '#0A0A0A' }}>
+            <div key={stat.label} style={{ background: '#FFFFFF' }}>
               <BigStat stat={stat} active={inView} index={i} />
             </div>
           ))}
@@ -105,12 +105,12 @@ export default function ResultsSection() {
             <div key={s.label} style={{ textAlign: 'center' }}>
               <p style={{
                 fontFamily: 'DM Sans, sans-serif', fontSize: '1.5rem',
-                fontWeight: 800, color: 'white', letterSpacing: '-0.02em',
+                fontWeight: 800, color: '#0A0A0A', letterSpacing: '-0.02em',
                 marginBottom: '4px',
               }}>
                 {s.value}
               </p>
-              <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.78rem' }}>
+              <p style={{ color: '#AAA', fontSize: '0.78rem' }}>
                 {s.label}
               </p>
             </div>
@@ -123,7 +123,7 @@ export default function ResultsSection() {
           ...fadeUp(inView, 800),
         }}>
           <p style={{
-            color: 'rgba(255,255,255,0.4)',
+            color: '#777',
             fontSize: '1.1rem',
             lineHeight: 1.8,
             fontStyle: 'italic',
@@ -131,7 +131,7 @@ export default function ResultsSection() {
           }}>
             &ldquo;RevCore&apos;s system changed how we sell. Our reps went from discounting to closing premium jobs consistently.&rdquo;
           </p>
-          <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.8rem', marginTop: '1rem', fontWeight: 600 }}>
+          <p style={{ color: '#BBB', fontSize: '0.8rem', marginTop: '1rem', fontWeight: 600 }}>
             — Roofing contractor, Dallas TX
           </p>
         </div>

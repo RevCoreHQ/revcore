@@ -26,7 +26,7 @@ export default function SalesSoftware() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '96px 0', background: '#0A0A0A' }}
+      style={{ padding: '96px 0', background: '#F9F9F9' }}
     >
       <div className="container">
         {/* Header */}
@@ -34,22 +34,22 @@ export default function SalesSoftware() {
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
-            textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '1rem',
+            textTransform: 'uppercase', color: '#999', marginBottom: '1rem',
           }}>
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
             Software
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
           </span>
           <h2 style={{
             fontFamily: 'DM Sans, sans-serif',
             fontSize: 'clamp(2rem, 4vw, 3rem)',
             fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em',
-            color: 'white', marginBottom: '0.75rem',
+            color: '#0A0A0A', marginBottom: '0.75rem',
           }}>
             Close more deals with our sales tools.
           </h2>
           <p style={{
-            color: 'rgba(255,255,255,0.35)', fontSize: '0.95rem', lineHeight: 1.7,
+            color: '#888', fontSize: '0.95rem', lineHeight: 1.7,
             maxWidth: '500px', margin: '0 auto',
           }}>
             Built in-house for home service contractors — not generic SaaS.
@@ -63,18 +63,18 @@ export default function SalesSoftware() {
               key={sw.id}
               style={{
                 borderRadius: '20px', overflow: 'hidden',
-                background: '#111111',
-                border: '1px solid rgba(255,255,255,0.08)',
-                transition: 'transform 0.4s cubic-bezier(0.22,1,0.36,1), border-color 0.3s',
+                background: '#FFFFFF',
+                border: '1px solid #E8E8E8',
+                transition: 'transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s',
                 ...scaleUp(inView, stagger(i, 100, 150)),
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
+                e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.06)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = '';
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                e.currentTarget.style.boxShadow = 'none';
               }}
             >
               {/* Header */}
@@ -85,13 +85,13 @@ export default function SalesSoftware() {
                 }} />
                 <h3 style={{
                   fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '1.25rem', fontWeight: 800, color: 'white',
+                  fontSize: '1.25rem', fontWeight: 800, color: '#0A0A0A',
                   lineHeight: 1.2, marginBottom: '0.75rem',
                 }}>
                   {sw.name}
                 </h3>
                 <p style={{
-                  color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', lineHeight: 1.7,
+                  color: '#777', fontSize: '0.85rem', lineHeight: 1.7,
                 }}>
                   {sw.description}
                 </p>
@@ -100,40 +100,40 @@ export default function SalesSoftware() {
               {/* Pricing */}
               <div style={{
                 margin: '0 2rem', padding: '1.25rem',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.06)',
+                background: '#F9F9F9',
+                border: '1px solid #F0F0F0',
                 borderRadius: '14px',
                 display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px',
               }}>
                 <div>
                   <p style={{
-                    fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', fontWeight: 700,
+                    fontSize: '0.6rem', color: '#BBB', fontWeight: 700,
                     textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px',
                   }}>
                     Setup fee
                   </p>
                   <p style={{
                     fontFamily: 'DM Sans, sans-serif', fontSize: '1.5rem', fontWeight: 800,
-                    color: 'white', letterSpacing: '-0.02em',
+                    color: '#0A0A0A', letterSpacing: '-0.02em',
                   }}>
                     {sw.setup}
                   </p>
-                  <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.2)' }}>one-time</p>
+                  <p style={{ fontSize: '0.7rem', color: '#BBB' }}>one-time</p>
                 </div>
-                <div style={{ borderLeft: '1px solid rgba(255,255,255,0.06)', paddingLeft: '12px' }}>
+                <div style={{ borderLeft: '1px solid #EBEBEB', paddingLeft: '12px' }}>
                   <p style={{
-                    fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', fontWeight: 700,
+                    fontSize: '0.6rem', color: '#BBB', fontWeight: 700,
                     textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px',
                   }}>
                     Monthly
                   </p>
                   <p style={{
                     fontFamily: 'DM Sans, sans-serif', fontSize: '1.5rem', fontWeight: 800,
-                    color: 'white', letterSpacing: '-0.02em',
+                    color: '#0A0A0A', letterSpacing: '-0.02em',
                   }}>
                     {sw.monthly}
                   </p>
-                  <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.2)' }}>{sw.monthlyNote}</p>
+                  <p style={{ fontSize: '0.7rem', color: '#BBB' }}>{sw.monthlyNote}</p>
                 </div>
               </div>
 
@@ -142,7 +142,7 @@ export default function SalesSoftware() {
                 {sw.features.map((f, fi) => (
                   <div key={fi} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '8px' }}>
                     <Check size={14} style={{ color: sw.accent, flexShrink: 0, marginTop: '3px' }} />
-                    <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{f}</span>
+                    <span style={{ fontSize: '0.85rem', color: '#666', lineHeight: 1.5 }}>{f}</span>
                   </div>
                 ))}
               </div>
@@ -153,8 +153,7 @@ export default function SalesSoftware() {
         {/* Bundle banner */}
         <div style={{
           borderRadius: '20px',
-          background: '#111111',
-          border: '1px solid rgba(148,217,107,0.15)',
+          background: '#0A0A0A',
           padding: '2.5rem 3rem',
           display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: '2rem',
           ...fadeUp(inView, 400),
@@ -162,7 +161,7 @@ export default function SalesSoftware() {
           <div>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '6px',
-              background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.15)',
+              background: 'rgba(148,217,107,0.12)', border: '1px solid rgba(148,217,107,0.2)',
               borderRadius: '100px', padding: '4px 12px', marginBottom: '1rem',
             }}>
               <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#94D96B' }} />
@@ -180,7 +179,7 @@ export default function SalesSoftware() {
               Both tools together
             </h3>
             <p style={{
-              color: 'rgba(255,255,255,0.35)', lineHeight: 1.7,
+              color: 'rgba(255,255,255,0.45)', lineHeight: 1.7,
               maxWidth: '480px', fontSize: '0.875rem',
             }}>
               Get the Quoting Software and iPad Presentation App bundled at a reduced rate. Most clients see 20–35% higher close rates.
@@ -188,7 +187,7 @@ export default function SalesSoftware() {
           </div>
           <div style={{ textAlign: 'right' }}>
             <p style={{
-              fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', fontWeight: 700,
+              fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', fontWeight: 700,
               textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '6px',
             }}>
               Bundle pricing
@@ -200,17 +199,17 @@ export default function SalesSoftware() {
               }}>
                 $1,997
               </span>
-              <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem' }}> setup</span>
+              <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem' }}> setup</span>
             </div>
             <p style={{ color: '#94D96B', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1.25rem' }}>
               + $297/mo per seat
             </p>
             <div style={{
-              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
               borderRadius: '10px', padding: '8px 14px',
               display: 'inline-flex', alignItems: 'center', gap: '8px',
             }}>
-              <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through' }}>
+              <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', textDecoration: 'line-through' }}>
                 $2,494 setup / $344/mo
               </span>
               <span style={{ fontSize: '0.75rem', color: '#94D96B', fontWeight: 700 }}>
