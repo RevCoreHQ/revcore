@@ -5,9 +5,9 @@ import { Check, ChevronDown, ChevronUp, Lock, ArrowRight, Star, Zap, TrendingUp 
 import FunnelDiagram from '@/components/FunnelDiagram';
 import SEOChecker from '@/components/SEOChecker';
 import SpaceBackground from '@/components/SpaceBackground';
-const HERO_PHOTO_URL = 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69aa0c41665b7299ea867c81.jpg';
+const HERO_PHOTO_URL = 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69ac7965618c8dfc285b4e82.png';
 
-const SALES_PASSWORD = 'RevCore2025';
+const SALES_PASSWORD = '  ';
 
 // ─── A la carte services ─────────────────────────────────────────────────────
 const services = [
@@ -81,20 +81,19 @@ const packages = [
     tagline: 'Test the waters. Only pay for results.',
     price: '$2,500',
     period: '/mo',
-    note: '15 appointments ($167/appt) + ad spend',
-    noteColor: '#FE6462',
+    note: '15 appts ($167/appt) + ad spend',
+    accent: '#FE6462',
     highlight: false,
-    buttonStyle: 'outline',
     includes: [
-      '15 qualified appointments / mo',
+      '15 qualified appts / mo',
       'Meta Ads management',
       'Lead qualification & booking',
       'Basic CRM setup',
-      'Automated appointment reminders',
-      'SMS & email follow-up sequences',
-      'Real-time lead notifications',
+      'Appointment reminders',
+      'SMS & email sequences',
+      'Real-time lead alerts',
       'Dedicated landing page',
-      'Weekly performance reports',
+      'Weekly reports',
     ],
   },
   {
@@ -104,44 +103,42 @@ const packages = [
     price: '$3,497',
     period: '/mo',
     note: '+ ad spend (you control budget)',
-    noteColor: '#FE6462',
+    accent: '#6B8EFE',
     highlight: true,
-    buttonStyle: 'primary',
     includes: [
-      '20+ Qualified Appointments per month',
-      'Custom conversion-optimized website',
+      '20+ qualified appts / mo',
+      'Custom website',
       'Local SEO',
-      '24/7 Website chat widget',
-      'Top-of-funnel paid ads management',
-      'Automated appointment reminders',
-      'Full CRM with pipeline tracking',
-      'Lead nurture & follow-up sequences',
+      '24/7 chat widget',
+      'Paid ads management',
+      'Appointment reminders',
+      'Full CRM & pipeline',
+      'Lead nurture sequences',
     ],
   },
   {
     id: 'revenue',
     name: 'Revenue Partner',
-    tagline: 'Complete revenue engine with automation stack and sales optimization.',
+    tagline: 'Complete revenue engine with automation and sales optimization.',
     price: '$4,997',
     period: '/mo',
     note: '+ 4% revenue share on closed deals',
-    noteColor: '#94D96B',
+    accent: '#94D96B',
     highlight: false,
-    buttonStyle: 'gradient',
     includes: [
-      'Everything in Growth Engine, plus:',
+      'Everything in Growth Engine',
       'Google Business optimization',
       'AEO (AI Engine Optimization)',
       'Full automation stack',
-      'Rehash Engine™ (automated follow-up)',
+      'Rehash Engine™',
       'Sales training & scripts',
       'Custom sales presentation',
-      'Pricing configurator & quoting software',
+      'Quoting software',
       'Dedicated success manager',
       '10-step sales framework',
-      'Sales audit & process optimization',
+      'Sales audit & optimization',
       'Monthly strategy sessions',
-      'Review request automation',
+      'Review automation',
       'Referral program',
     ],
   },
@@ -423,65 +420,85 @@ function SalesDeck() {
       </div>
 
       {/* ── Hero ── */}
-      <section style={{ background: '#0A0A0A', padding: '80px 0 100px', position: 'relative', overflow: 'hidden' }}>
-        {/* Hero photo — parallax on scroll */}
-        <div ref={photoRef} style={{
-          position: 'absolute', inset: '-10% 0',
-          backgroundImage: `url(${HERO_PHOTO_URL})`,
-          backgroundSize: 'cover', backgroundPosition: 'center top',
-          opacity: 0.45, willChange: 'transform',
-        }} />
-        {/* Dark vignette */}
+      <section style={{ background: '#0A0A0A', padding: '12px 12px 0' }}>
         <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(10,10,10,0.72) 0%, rgba(10,10,10,0.35) 45%, rgba(10,10,10,0.88) 100%)',
-        }} />
-        <SpaceBackground opacity={0.45} />
-        {/* Grain overlay */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 512 512\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'ns\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.68\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23ns)\'/%3E%3C/svg%3E")',
-          backgroundSize: '220px 220px', opacity: 0.10,
-          mixBlendMode: 'soft-light', pointerEvents: 'none',
-        }} />
-        <div className="container" style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+          borderRadius: '24px',
+          overflow: 'hidden',
+          position: 'relative',
+          height: '60vh',
+          minHeight: '480px',
+          background: '#0d1117',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          {/* Parallax background image */}
+          <div ref={photoRef} style={{
+            position: 'absolute', inset: '-10% 0',
+            backgroundImage: `url(${HERO_PHOTO_URL})`,
+            backgroundSize: 'cover', backgroundPosition: 'center top',
+            willChange: 'transform',
+          }} />
+          {/* Base dark overlay — slightly darker per request */}
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.55)' }} />
+          {/* Space stars */}
+          <SpaceBackground opacity={0.7} />
+          {/* Gradient vignette */}
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '8px',
-            fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.15em',
-            textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: '2rem',
-          }}>
-            <span style={{ width: '24px', height: '2px', background: '#FE6462', display: 'block' }} />
-            Complete Pricing Guide
-            <span style={{ width: '24px', height: '2px', background: '#FE6462', display: 'block' }} />
-          </div>
-          <h1 style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.05, marginBottom: '1.25rem' }}>
-            <span className="sales-hero-line">Built to grow your</span>
-            <span ref={revenueRef} className="sales-hero-accent">revenue.</span>
-            <span className="sales-hero-line">Not just your leads.</span>
-          </h1>
-          <p style={{ color: 'rgba(255,255,255,0.45)', maxWidth: '560px', margin: '0 auto 2.5rem', lineHeight: '1.8', fontSize: '1.0625rem' }}>
-            Everything from individual services to full revenue-partner engagements — plus our proprietary sales software built exclusively for home service contractors.
-          </p>
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            {[
-              { icon: <Zap size={14} />, label: 'Appointments guaranteed' },
-              { icon: <TrendingUp size={14} />, label: 'Pay for performance' },
-              { icon: <Star size={14} />, label: '1 partner per trade per market' },
-            ].map((item, i) => (
-              <div key={i} style={{
-                display: 'flex', alignItems: 'center', gap: '7px',
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '100px',
-                padding: '8px 16px',
-                color: 'rgba(255,255,255,0.6)',
-                fontSize: '0.8rem',
-                fontWeight: 500,
-              }}>
-                <span style={{ color: '#FE6462' }}>{item.icon}</span>
-                {item.label}
-              </div>
-            ))}
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.75) 100%)',
+            zIndex: 1,
+          }} />
+          {/* Film grain layer 1 */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 512 512\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'ns\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.68\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23ns)\'/%3E%3C/svg%3E")',
+            backgroundSize: '220px 220px', opacity: 0.14, mixBlendMode: 'soft-light', pointerEvents: 'none', zIndex: 2,
+          }} />
+          {/* Film grain layer 2 */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 512 512\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'ns2\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23ns2)\'/%3E%3C/svg%3E")',
+            backgroundSize: '180px 180px', opacity: 0.09, mixBlendMode: 'overlay', pointerEvents: 'none', zIndex: 3,
+          }} />
+          {/* Text content */}
+          <div style={{ position: 'relative', zIndex: 4, textAlign: 'center', padding: '0 2rem' }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.15em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: '1.5rem',
+            }}>
+              <span style={{ width: '24px', height: '2px', background: '#FE6462', display: 'block' }} />
+              Complete Pricing Guide
+              <span style={{ width: '24px', height: '2px', background: '#FE6462', display: 'block' }} />
+            </div>
+            <h1 style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.05, marginBottom: '1.25rem' }}>
+              <span className="sales-hero-line">Built to grow your</span>
+              <span ref={revenueRef} className="sales-hero-accent">revenue.</span>
+              <span className="sales-hero-line">Not just your leads.</span>
+            </h1>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '1.5rem' }}>
+              {[
+                { icon: <Zap size={13} />, label: 'Appointments guaranteed' },
+                { icon: <TrendingUp size={13} />, label: 'Pay for performance' },
+                { icon: <Star size={13} />, label: '1 partner per trade per market' },
+              ].map((item, i) => (
+                <div key={i} style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  background: 'rgba(255,255,255,0.07)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '100px',
+                  padding: '7px 14px',
+                  color: 'rgba(255,255,255,0.6)',
+                  fontSize: '0.78rem',
+                  fontWeight: 500,
+                  backdropFilter: 'blur(8px)',
+                }}>
+                  <span style={{ color: '#FE6462' }}>{item.icon}</span>
+                  {item.label}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -657,12 +674,12 @@ function SalesDeck() {
           backgroundSize: '64px 64px',
           pointerEvents: 'none',
         }} />
-        {/* Central blue ambient glow */}
+        {/* Central ambient glow */}
         <div style={{
           position: 'absolute', top: '30%', left: '50%',
           transform: 'translateX(-50%)',
           width: '900px', height: '500px',
-          background: 'radial-gradient(ellipse at center, rgba(49,49,245,0.13) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse at center, rgba(107,142,254,0.1) 0%, transparent 70%)',
           pointerEvents: 'none',
         }} />
 
@@ -693,91 +710,127 @@ function SalesDeck() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', alignItems: 'center' }}>
             {packages.map((pkg) => (
               <div
                 key={pkg.id}
-                className="card-hover-up"
+                className={pkg.highlight ? 'pkg-highlight' : 'card-hover-up'}
                 style={{
                   borderRadius: '20px',
-                  background: 'linear-gradient(160deg, #141820 0%, #1c2030 50%, #141820 100%)',
-                  border: pkg.highlight
-                    ? '1px solid rgba(107,142,254,0.35)'
-                    : '1px solid rgba(255,255,255,0.07)',
+                  background: 'linear-gradient(160deg, #13161e 0%, #1a1e2a 50%, #13161e 100%)',
+                  border: `1px solid ${pkg.accent}30`,
                   overflow: 'hidden',
                   position: 'relative',
+                  transform: pkg.highlight ? 'scale(1.045)' : 'scale(1)',
+                  zIndex: pkg.highlight ? 2 : 1,
                   boxShadow: pkg.highlight
-                    ? '0px -10px 180px 0px rgba(49,49,245,0.22), inset 0 1px 0 rgba(107,142,254,0.15)'
-                    : '0 4px 24px rgba(0,0,0,0.4)',
+                    ? `0 0 0 1px ${pkg.accent}20, 0 -8px 160px 0px ${pkg.accent}28, 0 20px 60px rgba(0,0,0,0.6)`
+                    : '0 4px 24px rgba(0,0,0,0.5)',
+                  transition: 'transform 0.3s ease',
                 }}
               >
+                {/* Colored top accent line */}
+                <div style={{
+                  height: '3px',
+                  background: `linear-gradient(90deg, transparent 0%, ${pkg.accent} 40%, ${pkg.accent} 60%, transparent 100%)`,
+                  opacity: pkg.highlight ? 1 : 0.5,
+                }} />
+
                 {pkg.highlight && (
                   <div style={{
                     position: 'absolute',
-                    top: '16px',
+                    top: '19px',
                     right: '16px',
-                    background: 'linear-gradient(135deg, #6B8EFE, #9B7BFE)',
-                    color: 'white',
-                    fontSize: '0.65rem',
-                    fontWeight: 700,
+                    background: `linear-gradient(135deg, ${pkg.accent}ee, ${pkg.accent}99)`,
+                    color: pkg.accent === '#6B8EFE' ? 'white' : '#0a0a0a',
+                    fontSize: '0.62rem',
+                    fontWeight: 800,
                     padding: '4px 12px',
                     borderRadius: '100px',
-                    letterSpacing: '0.08em',
+                    letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    boxShadow: '0 2px 12px rgba(107,142,254,0.4)',
+                    boxShadow: `0 2px 12px ${pkg.accent}50`,
                   }}>
                     Most Popular
                   </div>
                 )}
 
-                <div style={{ padding: '2rem 2rem 1.5rem' }}>
+                {/* Header */}
+                <div style={{ padding: '1.75rem 2rem 1.5rem' }}>
                   <h3 style={{
                     fontFamily: 'DM Sans, sans-serif',
                     fontSize: '1.35rem',
                     fontWeight: 800,
                     color: 'white',
-                    marginBottom: '0.5rem',
+                    marginBottom: '0.4rem',
                   }}>
                     {pkg.name}
                   </h3>
-                  <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.875rem', lineHeight: '1.6', marginBottom: '1.75rem' }}>
+                  <p style={{ color: 'rgba(255,255,255,0.38)', fontSize: '0.85rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
                     {pkg.tagline}
                   </p>
-
-                  <div style={{ marginBottom: '0.4rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
-                      <span style={{
-                        fontFamily: 'DM Sans, sans-serif',
-                        fontSize: '3rem',
-                        fontWeight: 800,
-                        letterSpacing: '-0.03em',
-                        color: 'white',
-                      }}>
-                        {pkg.price}
-                      </span>
-                      <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.3)' }}>{pkg.period}</span>
-                    </div>
-                    <span style={{ fontSize: '0.8rem', color: pkg.noteColor, fontWeight: 600 }}>
-                      {pkg.note}
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '4px' }}>
+                    <span style={{
+                      fontFamily: 'DM Sans, sans-serif',
+                      fontSize: '2.75rem',
+                      fontWeight: 800,
+                      letterSpacing: '-0.03em',
+                      color: 'white',
+                    }}>
+                      {pkg.price}
                     </span>
+                    <span style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.28)' }}>{pkg.period}</span>
+                  </div>
+                  <span style={{ fontSize: '0.78rem', color: pkg.accent, fontWeight: 600 }}>
+                    {pkg.note}
+                  </span>
+                </div>
+
+                {/* Feature pills */}
+                <div style={{ padding: '1.25rem 2rem 1.75rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                  <p style={{
+                    fontSize: '0.62rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.25)',
+                    marginBottom: '1rem',
+                  }}>
+                    {pkg.id === 'revenue' ? "Includes everything, plus" : "What's included"}
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px' }}>
+                    {pkg.includes.map((feature, i) => (
+                      <span
+                        key={i}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          background: `${pkg.accent}10`,
+                          border: `1px solid ${pkg.accent}22`,
+                          borderRadius: '8px',
+                          padding: '5px 10px',
+                          fontSize: '0.775rem',
+                          fontWeight: 500,
+                          color: 'rgba(255,255,255,0.72)',
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        <span style={{
+                          width: '5px', height: '5px',
+                          borderRadius: '50%',
+                          background: pkg.accent,
+                          flexShrink: 0,
+                          boxShadow: `0 0 6px ${pkg.accent}80`,
+                        }} />
+                        {feature}
+                      </span>
+                    ))}
                   </div>
                 </div>
 
-                <div style={{ padding: '1.5rem 2rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                  <p style={{
-                    fontSize: '0.68rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,0.28)',
-                    marginBottom: '1rem',
-                  }}>
-                    {pkg.id === 'revenue' ? "Everything in Growth Engine, plus" : "What's included"}
-                  </p>
-                  <FeatureList items={pkg.includes} accent={pkg.noteColor} textColor="rgba(255,255,255,0.58)" />
-                </div>
-
-                <div style={{ padding: '1.5rem 2rem', paddingTop: '0' }}>
+                {/* CTA */}
+                <div style={{ padding: '0 2rem 1.75rem' }}>
                   <button
                     style={{
                       width: '100%',
@@ -788,13 +841,11 @@ function SalesDeck() {
                       cursor: 'pointer',
                       border: 'none',
                       background: pkg.highlight
-                        ? 'linear-gradient(135deg, #6B8EFE 0%, #9B7BFE 100%)'
-                        : pkg.buttonStyle === 'gradient'
-                        ? 'linear-gradient(135deg, #6B8EFE 0%, #9B7BFE 100%)'
-                        : 'rgba(255,255,255,0.08)',
+                        ? `linear-gradient(135deg, ${pkg.accent}dd 0%, ${pkg.accent}99 100%)`
+                        : `${pkg.accent}18`,
                       color: 'white',
                       transition: 'opacity 0.2s, transform 0.2s',
-                      boxShadow: pkg.highlight ? '0 4px 20px rgba(107,142,254,0.35)' : 'none',
+                      boxShadow: pkg.highlight ? `0 4px 24px ${pkg.accent}45` : 'none',
                     }}
                     onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
@@ -1066,6 +1117,15 @@ function SalesDeck() {
       </section>
 
       <style>{`
+        @keyframes pkg-glow-pulse {
+          0%, 100% { box-shadow: 0 0 0 1px rgba(107,142,254,0.2), 0 -8px 160px 0px rgba(107,142,254,0.28), 0 20px 60px rgba(0,0,0,0.6); }
+          50%       { box-shadow: 0 0 0 1px rgba(107,142,254,0.35), 0 -8px 200px 0px rgba(107,142,254,0.42), 0 20px 60px rgba(0,0,0,0.6); }
+        }
+        .pkg-highlight {
+          animation: pkg-glow-pulse 3s ease-in-out infinite;
+          transition: transform 0.3s ease;
+        }
+        .pkg-highlight:hover { transform: scale(1.055) !important; }
         .sales-hero-line {
           font-size: clamp(1.6rem, 3.5vw, 3rem);
           color: transparent;
