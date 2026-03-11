@@ -1,45 +1,136 @@
 'use client';
 
-import { Check } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { useScrollReveal, fadeUp, stagger } from '@/hooks/useScrollReveal';
 
 const services = [
   {
     id: 'meta', number: '01', title: 'Meta Ads Management',
+    price: '$1,200', period: '/mo', note: '+ ad spend',
+    accent: '#FE6462',
     description: 'Facebook & Instagram ad campaigns hyper-targeted to homeowners in your service area. Every lead routed directly into your CRM with automated follow-up.',
-    startingAt: '$1,200', period: '/mo', note: '+ ad spend',
-    accent: '#FE6462', color: '#1a0a0a',
     includes: ['Campaign build & creative', 'Audience targeting & retargeting', 'A/B split testing', 'Weekly performance reports', 'Lead routing to CRM'],
   },
   {
     id: 'google', number: '02', title: 'Google Ads Management',
+    price: '$1,200', period: '/mo', note: '+ ad spend',
+    accent: '#FEB64A',
     description: 'Search and Local Services Ads to capture high-intent homeowners the moment they search. We handle setup, bidding, landing pages, and conversion tracking.',
-    startingAt: '$1,200', period: '/mo', note: '+ ad spend',
-    accent: '#FEB64A', color: '#1a150a',
     includes: ['Search & LSA campaigns', 'Keyword research & negative lists', 'Landing page optimization', 'Conversion tracking setup', 'Monthly reporting'],
   },
   {
     id: 'website', number: '03', title: 'Website & Local SEO',
-    description: 'A custom conversion-optimized website built for your trade, plus local SEO that gets you ranking in your market. Built to generate calls and form submissions.',
-    startingAt: '$2,500', period: ' setup', note: '+ $600/mo SEO retainer',
-    accent: '#6B8EFE', color: '#0a0f1a',
+    price: '$2,500', period: ' setup', note: '+ $600/mo SEO retainer',
+    accent: '#6B8EFE',
+    description: 'A custom conversion-optimized website built for your trade, plus local SEO that gets you ranking in your market.',
     includes: ['Custom website design & build', 'Google Business Profile optimization', 'Local keyword strategy', 'Review generation system', 'Monthly SEO reporting'],
   },
   {
     id: 'crm', number: '04', title: 'CRM & Automation Engine',
-    description: 'Your leads, follow-ups, reminders, and rehash campaigns all centralized in one custom CRM. Set up once, runs 24/7 without your team touching anything.',
-    startingAt: '$1,500', period: ' setup', note: '+ $400/mo',
-    accent: '#94D96B', color: '#0a1a0a',
-    includes: ['Custom CRM build & configuration', 'SMS & email follow-up sequences', 'Appointment reminder automation', 'Rehash Engine™ (old lead campaigns)', 'Review request automation'],
+    price: '$1,500', period: ' setup', note: '+ $400/mo',
+    accent: '#94D96B',
+    description: 'Leads, follow-ups, reminders, and rehash campaigns centralized in one custom CRM. Set up once, runs 24/7.',
+    includes: ['Custom CRM build & configuration', 'SMS & email follow-up sequences', 'Appointment reminder automation', 'Rehash Engine™', 'Review request automation'],
   },
   {
     id: 'training', number: '05', title: 'In-Home Sales Training',
-    description: 'We train your reps in the field. Scripts, objection handling, how to present Good/Better/Best options, and how to close at the kitchen table at higher ticket prices.',
-    startingAt: '$2,500', period: '/session', note: 'On-site or virtual',
-    accent: '#FEB64A', color: '#1a150a',
+    price: '$2,500', period: '/session', note: 'On-site or virtual',
+    accent: '#FEB64A',
+    description: 'We train your reps in the field — scripts, objection handling, Good/Better/Best pricing, and how to close at the kitchen table.',
     includes: ['In-home sales scripts', 'Objection handling frameworks', 'Good/Better/Best pricing strategy', 'Role-play & ride-alongs', 'Custom sales presentation build'],
   },
 ];
+
+function ServiceRow({ service, index, inView }: { service: typeof services[0]; index: number; inView: boolean }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div style={{
+      borderBottom: '1px solid rgba(255,255,255,0.06)',
+      ...fadeUp(inView, stagger(index, 100, 80)),
+    }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          width: '100%', padding: '1.5rem 0',
+          display: 'grid', gridTemplateColumns: '40px 1fr auto 40px',
+          alignItems: 'center', gap: '16px',
+          background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
+        }}
+      >
+        <span style={{
+          fontSize: '0.7rem', fontWeight: 700, color: service.accent,
+          letterSpacing: '0.1em', opacity: 0.6,
+        }}>
+          {service.number}
+        </span>
+        <span style={{
+          fontFamily: 'DM Sans, sans-serif',
+          fontSize: '1.1rem', fontWeight: 700, color: 'white', lineHeight: 1.3,
+        }}>
+          {service.title}
+        </span>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+          <span style={{
+            fontFamily: 'DM Sans, sans-serif', fontSize: '1.25rem',
+            fontWeight: 800, color: 'white', letterSpacing: '-0.02em',
+          }}>
+            {service.price}
+          </span>
+          <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.25)' }}>
+            {service.period}
+          </span>
+        </div>
+        <ChevronDown
+          size={16}
+          style={{
+            color: 'rgba(255,255,255,0.3)', justifySelf: 'end',
+            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.3s cubic-bezier(0.22,1,0.36,1)',
+          }}
+        />
+      </button>
+
+      <div style={{
+        maxHeight: open ? '400px' : '0px',
+        overflow: 'hidden',
+        transition: 'max-height 0.5s cubic-bezier(0.22,1,0.36,1)',
+      }}>
+        <div style={{
+          padding: '0 0 1.5rem',
+          display: 'grid', gridTemplateColumns: '40px 1fr',
+          gap: '16px',
+        }}>
+          <div />
+          <div>
+            <p style={{
+              color: 'rgba(255,255,255,0.4)', fontSize: '0.875rem',
+              lineHeight: 1.7, marginBottom: '1rem', maxWidth: '520px',
+            }}>
+              {service.description}
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+              {service.includes.map((item) => (
+                <span key={item} style={{
+                  padding: '5px 12px', borderRadius: '100px',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 500,
+                }}>
+                  {item}
+                </span>
+              ))}
+            </div>
+            <span style={{ fontSize: '0.78rem', color: service.accent, fontWeight: 600 }}>
+              {service.note}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function AlaCarteServices() {
   const { ref, inView } = useScrollReveal({ threshold: 0.05 });
@@ -47,121 +138,50 @@ export default function AlaCarteServices() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '96px 0 80px', background: '#ffffff' }}
+      style={{ padding: '96px 0', background: '#000000' }}
     >
-      <div className="container">
-        <div style={{ marginBottom: '3.5rem', ...fadeUp(inView) }}>
-          <div className="section-tag">A La Carte Services</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'end' }}>
-            <h2 style={{
-              fontFamily: 'DM Sans, sans-serif',
-              fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
-              fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em',
-            }}>
-              Prefer to start with<br />one service?
-            </h2>
-            <p style={{ color: 'var(--color-gray)', lineHeight: '1.8' }}>
-              Pick the services that fit your current stage. Most clients start with one or two and expand.{' '}
-              <a
-                href="#packages"
-                onClick={(e) => { e.preventDefault(); document.querySelector('[data-section="packages"]')?.scrollIntoView({ behavior: 'smooth' }); }}
-                style={{ color: '#6B8EFE', fontWeight: 600, textDecoration: 'none' }}
-              >
-                Bundle into a package for the best rate →
-              </a>
-            </p>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {services.map((service, i) => (
-            <div
-              key={service.id}
-              className="card-hover"
+      <div className="container" style={{ maxWidth: '900px' }}>
+        {/* Header */}
+        <div style={{ marginBottom: '3rem', ...fadeUp(inView) }}>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '1rem',
+          }}>
+            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+            A La Carte
+            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+          </span>
+          <h2 style={{
+            fontFamily: 'DM Sans, sans-serif',
+            fontSize: 'clamp(2rem, 4vw, 3rem)',
+            fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em',
+            color: 'white', marginBottom: '0.75rem',
+          }}>
+            Prefer to start with one service?
+          </h2>
+          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.95rem', lineHeight: 1.7 }}>
+            Pick what fits your stage. Most clients start with one or two and expand.{' '}
+            <button
+              onClick={() => document.querySelector('[data-section="packages"]')?.scrollIntoView({ behavior: 'smooth' })}
               style={{
-                borderRadius: '20px',
-                overflow: 'hidden',
-                border: `1px solid ${service.accent}18`,
-                ...fadeUp(inView, stagger(i, 100, 100)),
+                background: 'none', border: 'none', cursor: 'pointer',
+                color: '#6B8EFE', fontWeight: 600, fontSize: '0.95rem',
+                padding: 0, fontFamily: 'inherit',
               }}
             >
-              <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr 240px', minHeight: '200px' }}>
-                <div style={{
-                  background: service.color, padding: '2rem',
-                  display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-                }}>
-                  <span style={{ fontSize: '0.68rem', color: service.accent, fontWeight: 700, letterSpacing: '0.12em', opacity: 0.7 }}>
-                    {service.number}
-                  </span>
-                  <div>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: service.accent, marginBottom: '0.75rem' }} />
-                    <h3 style={{
-                      fontFamily: 'DM Sans, sans-serif',
-                      fontSize: '1.25rem', fontWeight: 800, color: 'white', lineHeight: 1.2,
-                    }}>
-                      {service.title}
-                    </h3>
-                  </div>
-                </div>
+              Bundle into a package for the best rate →
+            </button>
+          </p>
+        </div>
 
-                <div style={{ padding: '2rem', background: '#fafafa', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <p style={{ color: 'var(--color-gray)', lineHeight: '1.75', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
-                    {service.description}
-                  </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px' }}>
-                    {service.includes.map((d) => (
-                      <span key={d} style={{
-                        padding: '4px 12px', borderRadius: '100px',
-                        background: 'white', fontSize: '0.75rem', fontWeight: 500,
-                        border: `1px solid ${service.accent}30`, color: '#333',
-                      }}>
-                        {d}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div style={{
-                  padding: '2rem', background: 'white',
-                  borderLeft: `3px solid ${service.accent}20`,
-                  display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: '6px',
-                }}>
-                  <p style={{ fontSize: '0.65rem', color: '#999', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
-                    Starting at
-                  </p>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
-                    <span style={{
-                      fontFamily: 'DM Sans, sans-serif', fontSize: '2.25rem', fontWeight: 800,
-                      color: '#0A0A0A', letterSpacing: '-0.02em',
-                    }}>
-                      {service.startingAt}
-                    </span>
-                    <span style={{ fontSize: '0.85rem', color: '#999', fontWeight: 500 }}>
-                      {service.period}
-                    </span>
-                  </div>
-                  <span style={{ fontSize: '0.78rem', color: service.accent, fontWeight: 600 }}>
-                    {service.note}
-                  </span>
-                </div>
-              </div>
-            </div>
+        {/* Accordion rows */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          {services.map((service, i) => (
+            <ServiceRow key={service.id} service={service} index={i} inView={inView} />
           ))}
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 1024px) {
-          div[style*="grid-template-columns: 280px 1fr 240px"] {
-            grid-template-columns: 1fr !important;
-          }
-        }
-        @media (max-width: 900px) {
-          section > .container > div:first-child > div {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }
