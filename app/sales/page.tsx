@@ -79,67 +79,66 @@ const packages = [
     id: 'launchpad',
     name: 'Launchpad',
     tagline: 'Test the waters. Only pay for results.',
-    price: '$2,500',
-    period: '/mo',
-    note: '15 appts ($167/appt) + ad spend',
+    priceMonthly: 2500,
+    note: '+ ad spend',
     accent: '#FE6462',
     highlight: false,
-    includes: [
-      '15 qualified appts / mo',
-      'Meta Ads management',
-      'Lead qualification & booking',
+    heroFeatures: [
+      { label: '15 Qualified Appointments', sub: 'per month, guaranteed' },
+      { label: 'Meta Ads Management', sub: 'full campaign setup & targeting' },
+      { label: 'Lead Booking System', sub: 'qualification, routing & CRM' },
+      { label: 'Automated Follow-up', sub: 'SMS, email & reminders' },
+    ],
+    moreFeatures: [
       'Basic CRM setup',
-      'Appointment reminders',
-      'SMS & email sequences',
-      'Real-time lead alerts',
+      'Real-time lead notifications',
       'Dedicated landing page',
-      'Weekly reports',
+      'Weekly performance reports',
     ],
   },
   {
     id: 'growth',
     name: 'Growth Engine',
     tagline: 'Complete top-of-funnel system with website and SEO.',
-    price: '$3,497',
-    period: '/mo',
+    priceMonthly: 3497,
     note: '+ ad spend (you control budget)',
     accent: '#6B8EFE',
     highlight: true,
-    includes: [
-      '20+ qualified appts / mo',
-      'Custom website',
-      'Local SEO',
-      '24/7 chat widget',
-      'Paid ads management',
-      'Appointment reminders',
-      'Full CRM & pipeline',
+    heroFeatures: [
+      { label: '20+ Qualified Appointments', sub: 'per month, paid ads managed' },
+      { label: 'Custom Website + Local SEO', sub: 'conversion-optimized, built for your trade' },
+      { label: 'Full CRM & Pipeline', sub: 'tracking, nurture & follow-up sequences' },
+      { label: '24/7 Chat Widget', sub: 'capture leads around the clock' },
+    ],
+    moreFeatures: [
+      'Google & Meta ad campaigns',
+      'Automated appointment reminders',
       'Lead nurture sequences',
+      'Monthly performance reporting',
     ],
   },
   {
     id: 'revenue',
     name: 'Revenue Partner',
     tagline: 'Complete revenue engine with automation and sales optimization.',
-    price: '$4,997',
-    period: '/mo',
+    priceMonthly: 4997,
     note: '+ 4% revenue share on closed deals',
     accent: '#94D96B',
     highlight: false,
-    includes: [
-      'Everything in Growth Engine',
+    heroFeatures: [
+      { label: 'Everything in Growth Engine', sub: 'every feature, fully managed' },
+      { label: 'Dedicated Success Manager', sub: 'one point of contact, always' },
+      { label: 'Full Automation Stack', sub: 'Rehash Engine™, review & referral automations' },
+      { label: 'Sales Training & Tools', sub: 'scripts, quoting software & presentation app' },
+    ],
+    moreFeatures: [
       'Google Business optimization',
       'AEO (AI Engine Optimization)',
-      'Full automation stack',
-      'Rehash Engine™',
-      'Sales training & scripts',
       'Custom sales presentation',
-      'Quoting software',
-      'Dedicated success manager',
       '10-step sales framework',
       'Sales audit & optimization',
       'Monthly strategy sessions',
-      'Review automation',
-      'Referral program',
+      'Pricing configurator',
     ],
   },
 ];
@@ -362,6 +361,15 @@ function FeatureList({ items, accent, showAll = false, textColor = '#444' }: { i
 function SalesDeck() {
   const revenueRef = useRef<HTMLSpanElement>(null);
   const photoRef   = useRef<HTMLDivElement>(null);
+  const [isQuarterly, setIsQuarterly] = useState(false);
+  const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
+
+  const fmtPrice = (monthly: number) => {
+    const p = isQuarterly ? Math.round(monthly * 0.9) : monthly;
+    return '$' + p.toLocaleString();
+  };
+  const quarterlyTotal = (monthly: number) => '$' + (Math.round(monthly * 0.9) * 3).toLocaleString();
+  const monthlySavings = (monthly: number) => '$' + Math.round(monthly * 0.1).toLocaleString();
 
   useEffect(() => {
     const onScroll = () => {
@@ -684,7 +692,8 @@ function SalesDeck() {
         }} />
 
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          {/* Section heading */}
+          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
               fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
@@ -697,19 +706,62 @@ function SalesDeck() {
             <h2 style={{
               fontFamily: 'DM Sans, sans-serif',
               fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
-              fontWeight: 800,
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-              color: 'white',
-              marginBottom: '1rem',
+              fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em',
+              color: 'white', marginBottom: '1rem',
             }}>
               Full-stack retainer packages
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.4)', maxWidth: '520px', margin: '0 auto', lineHeight: '1.8' }}>
+            <p style={{ color: 'rgba(255,255,255,0.4)', maxWidth: '520px', margin: '0 auto 2rem', lineHeight: '1.8' }}>
               Bundling services into a package is significantly more cost-effective than a la carte. One retainer, one point of contact, all connected.
             </p>
+
+            {/* Billing toggle */}
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{
+                display: 'flex', alignItems: 'center',
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '100px',
+                padding: '4px',
+                gap: '2px',
+              }}>
+                <button
+                  onClick={() => setIsQuarterly(false)}
+                  style={{
+                    padding: '8px 22px', borderRadius: '100px', border: 'none', cursor: 'pointer',
+                    fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.875rem',
+                    background: !isQuarterly ? 'white' : 'transparent',
+                    color: !isQuarterly ? '#0A0A0A' : 'rgba(255,255,255,0.45)',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  Monthly
+                </button>
+                <button
+                  onClick={() => setIsQuarterly(true)}
+                  style={{
+                    padding: '8px 22px', borderRadius: '100px', border: 'none', cursor: 'pointer',
+                    fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.875rem',
+                    background: isQuarterly ? 'white' : 'transparent',
+                    color: isQuarterly ? '#0A0A0A' : 'rgba(255,255,255,0.45)',
+                    transition: 'all 0.2s',
+                    display: 'flex', alignItems: 'center', gap: '8px',
+                  }}
+                >
+                  Quarterly
+                  <span style={{
+                    background: '#94D96B', color: '#0a0a0a',
+                    fontSize: '0.6rem', fontWeight: 800,
+                    padding: '2px 7px', borderRadius: '100px', letterSpacing: '0.05em',
+                  }}>
+                    SAVE 10%
+                  </span>
+                </button>
+              </div>
+            </div>
           </div>
 
+          {/* Cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', alignItems: 'center' }}>
             {packages.map((pkg) => (
               <div
@@ -738,113 +790,135 @@ function SalesDeck() {
 
                 {pkg.highlight && (
                   <div style={{
-                    position: 'absolute',
-                    top: '19px',
-                    right: '16px',
+                    position: 'absolute', top: '19px', right: '16px',
                     background: `linear-gradient(135deg, ${pkg.accent}ee, ${pkg.accent}99)`,
-                    color: pkg.accent === '#6B8EFE' ? 'white' : '#0a0a0a',
-                    fontSize: '0.62rem',
-                    fontWeight: 800,
-                    padding: '4px 12px',
-                    borderRadius: '100px',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
+                    color: 'white',
+                    fontSize: '0.62rem', fontWeight: 800,
+                    padding: '4px 12px', borderRadius: '100px',
+                    letterSpacing: '0.1em', textTransform: 'uppercase',
                     boxShadow: `0 2px 12px ${pkg.accent}50`,
                   }}>
                     Most Popular
                   </div>
                 )}
 
-                {/* Header */}
-                <div style={{ padding: '1.75rem 2rem 1.5rem' }}>
+                {/* Pricing header */}
+                <div style={{ padding: '1.75rem 1.75rem 1.25rem' }}>
                   <h3 style={{
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '1.35rem',
-                    fontWeight: 800,
-                    color: 'white',
-                    marginBottom: '0.4rem',
+                    fontFamily: 'DM Sans, sans-serif', fontSize: '1.2rem', fontWeight: 800,
+                    color: 'white', marginBottom: '0.3rem',
                   }}>
                     {pkg.name}
                   </h3>
-                  <p style={{ color: 'rgba(255,255,255,0.38)', fontSize: '0.85rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+                  <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.82rem', lineHeight: '1.5', marginBottom: '1.25rem' }}>
                     {pkg.tagline}
                   </p>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '4px' }}>
+
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px', marginBottom: '2px' }}>
                     <span style={{
-                      fontFamily: 'DM Sans, sans-serif',
-                      fontSize: '2.75rem',
-                      fontWeight: 800,
-                      letterSpacing: '-0.03em',
-                      color: 'white',
+                      fontFamily: 'DM Sans, sans-serif', fontSize: '2.5rem', fontWeight: 800,
+                      letterSpacing: '-0.03em', color: 'white',
                     }}>
-                      {pkg.price}
+                      {fmtPrice(pkg.priceMonthly)}
                     </span>
-                    <span style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.28)' }}>{pkg.period}</span>
+                    <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.28)' }}>/mo</span>
                   </div>
-                  <span style={{ fontSize: '0.78rem', color: pkg.accent, fontWeight: 600 }}>
-                    {pkg.note}
-                  </span>
+
+                  {isQuarterly ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>
+                        billed {quarterlyTotal(pkg.priceMonthly)}/quarter
+                      </span>
+                      <span style={{
+                        fontSize: '0.68rem', fontWeight: 700, color: '#94D96B',
+                        background: 'rgba(148,217,107,0.12)', border: '1px solid rgba(148,217,107,0.2)',
+                        padding: '2px 8px', borderRadius: '100px',
+                      }}>
+                        save {monthlySavings(pkg.priceMonthly)}/mo
+                      </span>
+                    </div>
+                  ) : (
+                    <span style={{ fontSize: '0.75rem', color: pkg.accent, fontWeight: 600 }}>
+                      {pkg.note}
+                    </span>
+                  )}
                 </div>
 
-                {/* Feature pills */}
-                <div style={{ padding: '1.25rem 2rem 1.75rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                {/* Hero features — prominent blocks */}
+                <div style={{ padding: '0 1.75rem 1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                   <p style={{
-                    fontSize: '0.62rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,0.25)',
-                    marginBottom: '1rem',
+                    fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.12em',
+                    textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)',
+                    margin: '1rem 0 0.75rem',
                   }}>
-                    {pkg.id === 'revenue' ? "Includes everything, plus" : "What's included"}
+                    What&apos;s included
                   </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px' }}>
-                    {pkg.includes.map((feature, i) => (
-                      <span
-                        key={i}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          background: `${pkg.accent}10`,
-                          border: `1px solid ${pkg.accent}22`,
-                          borderRadius: '8px',
-                          padding: '5px 10px',
-                          fontSize: '0.775rem',
-                          fontWeight: 500,
-                          color: 'rgba(255,255,255,0.72)',
-                          lineHeight: 1.3,
-                        }}
-                      >
-                        <span style={{
-                          width: '5px', height: '5px',
-                          borderRadius: '50%',
-                          background: pkg.accent,
-                          flexShrink: 0,
-                          boxShadow: `0 0 6px ${pkg.accent}80`,
-                        }} />
-                        {feature}
-                      </span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    {pkg.heroFeatures.map((f, i) => (
+                      <div key={i} style={{
+                        background: `${pkg.accent}0e`,
+                        border: `1px solid ${pkg.accent}20`,
+                        borderLeft: `3px solid ${pkg.accent}`,
+                        borderRadius: '8px',
+                        padding: '9px 12px',
+                      }}>
+                        <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'rgba(255,255,255,0.88)', marginBottom: '1px' }}>
+                          {f.label}
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.4 }}>
+                          {f.sub}
+                        </div>
+                      </div>
                     ))}
                   </div>
+
+                  {/* See all expander */}
+                  <button
+                    onClick={() => setExpandedCards(prev => ({ ...prev, [pkg.id]: !prev[pkg.id] }))}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '5px',
+                      background: 'none', border: 'none', cursor: 'pointer',
+                      color: 'rgba(255,255,255,0.35)', fontSize: '0.78rem', fontWeight: 600,
+                      marginTop: '10px', padding: '0', transition: 'color 0.15s',
+                      fontFamily: 'DM Sans, sans-serif',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}
+                  >
+                    <ChevronDown
+                      size={13}
+                      style={{
+                        transform: expandedCards[pkg.id] ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.2s',
+                      }}
+                    />
+                    {expandedCards[pkg.id]
+                      ? 'Show less'
+                      : `See all ${pkg.heroFeatures.length + pkg.moreFeatures.length} features`}
+                  </button>
+
+                  {expandedCards[pkg.id] && (
+                    <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {pkg.moreFeatures.map((f, i) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Check size={12} style={{ color: pkg.accent, flexShrink: 0 }} />
+                          <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)' }}>{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* CTA */}
-                <div style={{ padding: '0 2rem 1.75rem' }}>
+                <div style={{ padding: '1rem 1.75rem 1.75rem' }}>
                   <button
                     style={{
-                      width: '100%',
-                      padding: '14px',
-                      borderRadius: '100px',
-                      fontSize: '0.875rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      border: 'none',
+                      width: '100%', padding: '13px', borderRadius: '100px',
+                      fontSize: '0.875rem', fontWeight: 700, cursor: 'pointer', border: 'none',
                       background: pkg.highlight
                         ? `linear-gradient(135deg, ${pkg.accent}dd 0%, ${pkg.accent}99 100%)`
                         : `${pkg.accent}18`,
-                      color: 'white',
-                      transition: 'opacity 0.2s, transform 0.2s',
+                      color: 'white', transition: 'opacity 0.2s, transform 0.2s',
                       boxShadow: pkg.highlight ? `0 4px 24px ${pkg.accent}45` : 'none',
                     }}
                     onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
