@@ -78,7 +78,7 @@ export default function Hero() {
           -webkit-background-clip: text;
           background-clip: text;
           -webkit-text-fill-color: transparent;
-          animation: revShimmer 10s ease-in-out infinite;
+          animation: revShimmer 14s ease-in-out infinite;
         }
         @keyframes revShimmer {
           0%   { background-position: 160% center; }
@@ -157,6 +157,21 @@ export default function Hero() {
           z-index: 6;
           width: 144px;
           height: 144px;
+          animation: heroFloat 6s ease-in-out infinite;
+        }
+        @keyframes heroFloat {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+        }
+        .hero-sub-label {
+          opacity: 0;
+          transform: translateY(16px);
+          animation: heroLabelIn 1.2s cubic-bezier(0.22,1,0.36,1) forwards;
+        }
+        .hero-sub-label-1 { animation-delay: 0.3s; }
+        .hero-sub-label-2 { animation-delay: 0.6s; }
+        @keyframes heroLabelIn {
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
 
@@ -249,10 +264,10 @@ export default function Hero() {
 
             {/* Sub-labels */}
             <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.875rem', fontWeight: 500 }}>
+              <span className="hero-sub-label hero-sub-label-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.875rem', fontWeight: 500 }}>
                 Lead Generation &amp; Proprietary Automation
               </span>
-              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.875rem', fontWeight: 500 }}>
+              <span className="hero-sub-label hero-sub-label-2" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.875rem', fontWeight: 500 }}>
                 In-Home Sales Training &amp; Revenue Systems
               </span>
               {/* Third label — reveals on scroll */}

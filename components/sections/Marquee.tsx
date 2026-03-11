@@ -8,7 +8,14 @@ export default function Marquee() {
   const doubled = [...items, ...items];
 
   return (
-    <div style={{ background: 'var(--color-primary)', padding: '22px 0', overflow: 'hidden' }}>
+    <div style={{
+      background: 'var(--color-primary)',
+      padding: '22px 0',
+      overflow: 'hidden',
+      position: 'relative',
+      maskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
+      WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
+    }}>
       <div className="marquee-track">
         {doubled.map((item, i) => (
           <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '32px', paddingRight: '32px', whiteSpace: 'nowrap' }}>

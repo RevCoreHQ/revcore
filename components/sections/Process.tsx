@@ -72,7 +72,24 @@ export default function Process() {
           </div>
 
           {/* Right — steps */}
-          <div style={{ display: 'flex', flexDirection: 'column', ...slideFromRight(inView, 100) }}>
+          <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', ...slideFromRight(inView, 100) }}>
+            {/* Animated progress line */}
+            <div style={{
+              position: 'absolute',
+              left: '24px',
+              top: '0',
+              bottom: '0',
+              width: '2px',
+              background: 'var(--color-border)',
+              zIndex: 0,
+            }}>
+              <div style={{
+                width: '100%',
+                height: inView ? '100%' : '0%',
+                background: 'var(--color-accent)',
+                transition: 'height 2.5s cubic-bezier(0.22,1,0.36,1) 0.5s',
+              }} />
+            </div>
             {steps.map((step, i) => (
               <div
                 key={step.number}
@@ -83,11 +100,13 @@ export default function Process() {
                   padding: '2rem 0',
                   borderBottom: i < steps.length - 1 ? '1px solid var(--color-border)' : 'none',
                   cursor: 'default',
+                  position: 'relative',
+                  zIndex: 1,
                   opacity: activeStep !== null && activeStep !== i
                     ? 0.4
                     : inView ? 1 : 0,
                   transform: inView ? 'translateY(0px)' : 'translateY(52px)',
-                  transition: `opacity 0.85s cubic-bezier(0.22,1,0.36,1) ${300 + i * 150}ms, transform 0.85s cubic-bezier(0.22,1,0.36,1) ${300 + i * 150}ms`,
+                  transition: `opacity 0.85s cubic-bezier(0.22,1,0.36,1) ${300 + i * 200}ms, transform 0.85s cubic-bezier(0.22,1,0.36,1) ${300 + i * 200}ms`,
                 }}
               >
                 <div style={{

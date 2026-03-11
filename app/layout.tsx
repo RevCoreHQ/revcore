@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
+import PageLoader from "@/components/PageLoader";
 
 export const metadata: Metadata = {
   title: "RevCore — Revenue Systems for Home Service Contractors",
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <SmoothScroll>
+          <PageLoader />
           <CustomCursor />
           <Header />
           <main>{children}</main>

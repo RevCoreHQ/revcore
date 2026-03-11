@@ -8,6 +8,7 @@ import SoftwareTease from '@/components/sections/SoftwareTease';
 import Industries from '@/components/sections/Pricing';
 import BlogPreview from '@/components/sections/BlogPreview';
 import CTA from '@/components/sections/CTA';
+import SectionDivider from '@/components/SectionDivider';
 
 export default function Home() {
   return (
@@ -15,9 +16,12 @@ export default function Home() {
       <Hero />
       <Marquee />
       <About />
+      <SectionDivider />
       <Services />
       <Stats />
+      <SectionDivider color="var(--color-green)" />
       <Process />
+      <SectionDivider />
       <SoftwareTease />
       <Industries />
       <BlogPreview />

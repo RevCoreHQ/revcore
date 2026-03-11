@@ -1,26 +1,36 @@
+'use client';
+
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import SpaceBackground from '@/components/SpaceBackground';
 import VideoBackground from '@/components/VideoBackground';
+import MagneticButton from '@/components/MagneticButton';
+import { useScrollReveal, blurReveal } from '@/hooks/useScrollReveal';
 
 const VIDEO_URL = 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69aa0befde2e7de2a9765ced.mp4';
 
 export default function CTA() {
+  const { ref, inView } = useScrollReveal({ threshold: 0.15 });
+
   return (
     <section style={{ padding: '80px 0', background: 'var(--color-white)' }}>
       <div className="container">
-        <div style={{
-          background: 'var(--color-primary)',
-          borderRadius: '32px',
-          padding: 'clamp(3rem, 6vw, 6rem)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '2rem',
-          flexWrap: 'wrap',
-          position: 'relative',
-          overflow: 'hidden',
-        }}>
+        <div
+          ref={ref as React.Ref<HTMLDivElement>}
+          style={{
+            background: 'var(--color-primary)',
+            borderRadius: '32px',
+            padding: 'clamp(3rem, 6vw, 6rem)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '2rem',
+            flexWrap: 'wrap',
+            position: 'relative',
+            overflow: 'hidden',
+            ...blurReveal(inView),
+          }}
+        >
           <SpaceBackground opacity={0.6} />
           <VideoBackground src={VIDEO_URL} opacity={0.05} />
 
@@ -65,26 +75,29 @@ export default function CTA() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', position: 'relative' }}>
-            <Link href="/contact" style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              background: 'white', color: 'var(--color-primary)',
-              padding: '14px 32px', borderRadius: '100px',
-              fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none',
-              transition: 'transform 0.2s',
-              whiteSpace: 'nowrap',
-            }}>
-              Book a strategy call <ArrowRight size={16} />
-            </Link>
-            <Link href="/portfolio" style={{
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-              background: 'transparent', color: 'rgba(255,255,255,0.7)',
-              padding: '13px 31px', borderRadius: '100px',
-              fontWeight: 600, fontSize: '0.875rem', textDecoration: 'none',
-              border: '1.5px solid rgba(255,255,255,0.2)',
-              whiteSpace: 'nowrap',
-            }}>
-              See partner results
-            </Link>
+            <MagneticButton href="/contact">
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                background: 'white', color: 'var(--color-primary)',
+                padding: '14px 32px', borderRadius: '100px',
+                fontWeight: 700, fontSize: '0.875rem',
+                whiteSpace: 'nowrap',
+              }}>
+                Book a strategy call <ArrowRight size={16} />
+              </span>
+            </MagneticButton>
+            <MagneticButton href="/portfolio">
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                background: 'transparent', color: 'rgba(255,255,255,0.7)',
+                padding: '13px 31px', borderRadius: '100px',
+                fontWeight: 600, fontSize: '0.875rem',
+                border: '1.5px solid rgba(255,255,255,0.2)',
+                whiteSpace: 'nowrap',
+              }}>
+                See partner results
+              </span>
+            </MagneticButton>
           </div>
         </div>
       </div>
