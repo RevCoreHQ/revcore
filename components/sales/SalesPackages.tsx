@@ -71,7 +71,7 @@ export default function SalesPackages() {
     <section
       ref={ref as React.Ref<HTMLElement>}
       data-section="packages"
-      style={{ padding: '120px 0', background: '#F9F9F9' }}
+      style={{ padding: '120px 0', background: '#000000' }}
     >
       <div className="container">
         {/* Header */}
@@ -79,17 +79,17 @@ export default function SalesPackages() {
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
-            textTransform: 'uppercase', color: '#999', marginBottom: '1rem',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '1rem',
           }}>
-            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
+            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
             Packages
-            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
+            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
           </span>
           <h2 style={{
             fontFamily: 'DM Sans, sans-serif',
             fontSize: 'clamp(2rem, 4vw, 3.5rem)',
             fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em',
-            color: '#0A0A0A', marginBottom: '1.5rem',
+            color: 'white', marginBottom: '1.5rem',
           }}>
             One system. Three ways in.
           </h2>
@@ -98,8 +98,8 @@ export default function SalesPackages() {
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div style={{
               display: 'flex', alignItems: 'center',
-              background: '#FFFFFF',
-              border: '1px solid #E5E5E5',
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: '100px', padding: '4px', gap: '2px',
             }}>
               <button
@@ -107,8 +107,8 @@ export default function SalesPackages() {
                 style={{
                   padding: '8px 22px', borderRadius: '100px', border: 'none', cursor: 'pointer',
                   fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.875rem',
-                  background: !isQuarterly ? '#0A0A0A' : 'transparent',
-                  color: !isQuarterly ? 'white' : '#888',
+                  background: !isQuarterly ? 'rgba(255,255,255,0.1)' : 'transparent',
+                  color: !isQuarterly ? 'white' : 'rgba(255,255,255,0.4)',
                   transition: 'all 0.25s',
                 }}
               >
@@ -119,8 +119,8 @@ export default function SalesPackages() {
                 style={{
                   padding: '8px 22px', borderRadius: '100px', border: 'none', cursor: 'pointer',
                   fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.875rem',
-                  background: isQuarterly ? '#0A0A0A' : 'transparent',
-                  color: isQuarterly ? 'white' : '#888',
+                  background: isQuarterly ? 'rgba(255,255,255,0.1)' : 'transparent',
+                  color: isQuarterly ? 'white' : 'rgba(255,255,255,0.4)',
                   transition: 'all 0.25s',
                   display: 'flex', alignItems: 'center', gap: '8px',
                 }}
@@ -145,9 +145,9 @@ export default function SalesPackages() {
               key={pkg.id}
               style={{
                 borderRadius: '20px',
-                background: '#FFFFFF',
-                border: '1px solid #E8E8E8',
-                borderTop: pkg.highlight ? `2px solid ${pkg.accent}` : '1px solid #E8E8E8',
+                background: '#111111',
+                border: `1px solid rgba(255,255,255,0.08)`,
+                borderTop: pkg.highlight ? `2px solid ${pkg.accent}` : `1px solid rgba(255,255,255,0.08)`,
                 overflow: 'hidden',
                 position: 'relative',
                 transition: 'transform 0.4s cubic-bezier(0.22,1,0.36,1), border-color 0.3s ease, box-shadow 0.4s ease',
@@ -155,10 +155,12 @@ export default function SalesPackages() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = `translateY(-4px)${pkg.highlight ? ' scale(1.02)' : ''}`;
-                e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.08)';
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
+                e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = pkg.highlight ? 'scale(1.02)' : '';
+                e.currentTarget.style.borderColor = pkg.highlight ? pkg.accent : 'rgba(255,255,255,0.08)';
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
@@ -179,32 +181,32 @@ export default function SalesPackages() {
               <div style={{ padding: '2rem 2rem 1.5rem' }}>
                 <h3 style={{
                   fontFamily: 'DM Sans, sans-serif', fontSize: '1.25rem', fontWeight: 800,
-                  color: '#0A0A0A', marginBottom: '0.25rem',
+                  color: 'white', marginBottom: '0.25rem',
                 }}>
                   {pkg.name}
                 </h3>
-                <p style={{ color: '#888', fontSize: '0.82rem', lineHeight: '1.5', marginBottom: '1.5rem' }}>
+                <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.82rem', lineHeight: '1.5', marginBottom: '1.5rem' }}>
                   {pkg.tagline}
                 </p>
 
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px', marginBottom: '4px' }}>
                   <span style={{
                     fontFamily: 'DM Sans, sans-serif', fontSize: '2.75rem', fontWeight: 800,
-                    letterSpacing: '-0.03em', color: '#0A0A0A',
+                    letterSpacing: '-0.03em', color: 'white',
                   }}>
                     {fmtPrice(pkg.priceMonthly)}
                   </span>
-                  <span style={{ fontSize: '0.85rem', color: '#BBB' }}>/mo</span>
+                  <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.25)' }}>/mo</span>
                 </div>
 
                 {isQuarterly ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#AAA' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)' }}>
                       billed {quarterlyTotal(pkg.priceMonthly)}/quarter
                     </span>
                     <span style={{
-                      fontSize: '0.68rem', fontWeight: 700, color: '#3A8F1D',
-                      background: 'rgba(148,217,107,0.12)', border: '1px solid rgba(148,217,107,0.25)',
+                      fontSize: '0.68rem', fontWeight: 700, color: '#94D96B',
+                      background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.15)',
                       padding: '2px 8px', borderRadius: '100px',
                     }}>
                       save {monthlySavings(pkg.priceMonthly)}/mo
@@ -218,10 +220,10 @@ export default function SalesPackages() {
               </div>
 
               {/* Features */}
-              <div style={{ padding: '0 2rem 1.5rem', borderTop: '1px solid #F0F0F0' }}>
+              <div style={{ padding: '0 2rem 1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <p style={{
                   fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.12em',
-                  textTransform: 'uppercase', color: '#BBB',
+                  textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)',
                   margin: '1.25rem 0 1rem',
                 }}>
                   What&apos;s included
@@ -230,7 +232,7 @@ export default function SalesPackages() {
                   {pkg.heroFeatures.map((f, fi) => (
                     <div key={fi} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
                       <Check size={14} style={{ color: pkg.accent, flexShrink: 0, marginTop: '2px' }} />
-                      <span style={{ fontSize: '0.85rem', color: '#555', lineHeight: 1.5 }}>
+                      <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.5 }}>
                         {f}
                       </span>
                     </div>
@@ -242,12 +244,12 @@ export default function SalesPackages() {
                   style={{
                     display: 'flex', alignItems: 'center', gap: '5px',
                     background: 'none', border: 'none', cursor: 'pointer',
-                    color: '#AAA', fontSize: '0.78rem', fontWeight: 600,
+                    color: 'rgba(255,255,255,0.3)', fontSize: '0.78rem', fontWeight: 600,
                     marginTop: '12px', padding: '0', transition: 'color 0.2s',
                     fontFamily: 'DM Sans, sans-serif',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#666')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = '#AAA')}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.3)')}
                 >
                   <ChevronDown
                     size={13}
@@ -263,8 +265,8 @@ export default function SalesPackages() {
                   <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {pkg.moreFeatures.map((f, fi) => (
                       <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <Check size={12} style={{ color: '#CCC', flexShrink: 0 }} />
-                        <span style={{ fontSize: '0.82rem', color: '#888' }}>{f}</span>
+                        <Check size={12} style={{ color: 'rgba(255,255,255,0.2)', flexShrink: 0 }} />
+                        <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)' }}>{f}</span>
                       </div>
                     ))}
                   </div>
@@ -277,9 +279,9 @@ export default function SalesPackages() {
                   style={{
                     width: '100%', padding: '14px', borderRadius: '12px',
                     fontSize: '0.875rem', fontWeight: 700, cursor: 'pointer',
-                    background: pkg.highlight ? pkg.accent : '#0A0A0A',
+                    background: pkg.highlight ? pkg.accent : 'transparent',
                     color: 'white',
-                    border: 'none',
+                    border: pkg.highlight ? 'none' : '1px solid rgba(255,255,255,0.12)',
                     transition: 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s',
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.opacity = '0.85'; }}
@@ -299,12 +301,12 @@ export default function SalesPackages() {
         }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
-            background: 'rgba(148,217,107,0.08)',
-            border: '1px solid rgba(148,217,107,0.2)',
+            background: 'rgba(148,217,107,0.06)',
+            border: '1px solid rgba(148,217,107,0.1)',
             borderRadius: '100px', padding: '8px 20px',
           }}>
             <span style={{ fontSize: '1rem' }}>🛡️</span>
-            <span style={{ color: '#3A8F1D', fontSize: '0.8rem', fontWeight: 700 }}>
+            <span style={{ color: '#94D96B', fontSize: '0.8rem', fontWeight: 700 }}>
               30-Day Performance Guarantee
             </span>
           </div>
