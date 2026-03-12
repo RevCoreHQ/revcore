@@ -47,7 +47,7 @@ function ServiceRow({ service, index, inView }: { service: typeof services[0]; i
 
   return (
     <div style={{
-      borderBottom: '1px solid rgba(255,255,255,0.06)',
+      borderBottom: '1px solid #EBEBEB',
       ...fadeUp(inView, stagger(index, 100, 80)),
     }}>
       <button
@@ -67,25 +67,25 @@ function ServiceRow({ service, index, inView }: { service: typeof services[0]; i
         </span>
         <span style={{
           fontFamily: 'DM Sans, sans-serif',
-          fontSize: '1.1rem', fontWeight: 700, color: 'white', lineHeight: 1.3,
+          fontSize: '1.1rem', fontWeight: 700, color: '#0A0A0A', lineHeight: 1.3,
         }}>
           {service.title}
         </span>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
           <span style={{
             fontFamily: 'DM Sans, sans-serif', fontSize: '1.25rem',
-            fontWeight: 800, color: 'white', letterSpacing: '-0.02em',
+            fontWeight: 800, color: '#0A0A0A', letterSpacing: '-0.02em',
           }}>
             {service.price}
           </span>
-          <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.25)' }}>
+          <span style={{ fontSize: '0.75rem', color: '#BBB' }}>
             {service.period}
           </span>
         </div>
         <ChevronDown
           size={16}
           style={{
-            color: 'rgba(255,255,255,0.3)', justifySelf: 'end',
+            color: '#CCC', justifySelf: 'end',
             transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 0.3s cubic-bezier(0.22,1,0.36,1)',
           }}
@@ -105,7 +105,7 @@ function ServiceRow({ service, index, inView }: { service: typeof services[0]; i
           <div />
           <div>
             <p style={{
-              color: 'rgba(255,255,255,0.4)', fontSize: '0.875rem',
+              color: '#777', fontSize: '0.875rem',
               lineHeight: 1.7, marginBottom: '1rem', maxWidth: '520px',
             }}>
               {service.description}
@@ -114,9 +114,9 @@ function ServiceRow({ service, index, inView }: { service: typeof services[0]; i
               {service.includes.map((item) => (
                 <span key={item} style={{
                   padding: '5px 12px', borderRadius: '100px',
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 500,
+                  background: '#F5F5F5',
+                  border: '1px solid #E8E8E8',
+                  fontSize: '0.75rem', color: '#666', fontWeight: 500,
                 }}>
                   {item}
                 </span>
@@ -138,7 +138,7 @@ export default function AlaCarteServices() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '96px 0', background: '#0A0A0A' }}
+      style={{ padding: '96px 0', background: '#FFFFFF' }}
     >
       <div className="container" style={{ maxWidth: '900px' }}>
         {/* Header */}
@@ -146,21 +146,21 @@ export default function AlaCarteServices() {
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
-            textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '1rem',
+            textTransform: 'uppercase', color: '#999', marginBottom: '1rem',
           }}>
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
             A La Carte
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
           </span>
           <h2 style={{
             fontFamily: 'DM Sans, sans-serif',
             fontSize: 'clamp(2rem, 4vw, 3rem)',
             fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em',
-            color: 'white', marginBottom: '0.75rem',
+            color: '#0A0A0A', marginBottom: '0.75rem',
           }}>
             Prefer to start with one service?
           </h2>
-          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.95rem', lineHeight: 1.7 }}>
+          <p style={{ color: '#888', fontSize: '0.95rem', lineHeight: 1.7 }}>
             Pick what fits your stage. Most clients start with one or two and expand.{' '}
             <button
               onClick={() => document.querySelector('[data-section="packages"]')?.scrollIntoView({ behavior: 'smooth' })}
@@ -176,7 +176,7 @@ export default function AlaCarteServices() {
         </div>
 
         {/* Accordion rows */}
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ borderTop: '1px solid #EBEBEB' }}>
           {services.map((service, i) => (
             <ServiceRow key={service.id} service={service} index={i} inView={inView} />
           ))}

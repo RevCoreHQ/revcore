@@ -57,8 +57,8 @@ function MobileStack() {
           <div
             key={step.number}
             style={{
-              background: '#111111',
-              border: '1px solid rgba(255,255,255,0.08)',
+              background: '#FFFFFF',
+              border: '1px solid #E8E8E8',
               borderRadius: '20px',
               padding: '2rem',
               ...fadeUp(inView, stagger(i, 0, 150)),
@@ -79,13 +79,13 @@ function MobileStack() {
                 </span>
                 <h3 style={{
                   fontFamily: 'DM Sans, sans-serif', fontSize: '1.25rem',
-                  fontWeight: 800, color: 'white', lineHeight: 1.2,
+                  fontWeight: 800, color: '#0A0A0A', lineHeight: 1.2,
                 }}>
                   {step.title}
                 </h3>
               </div>
             </div>
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+            <p style={{ color: '#888', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1.25rem' }}>
               {step.subtitle}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -95,7 +95,7 @@ function MobileStack() {
                     width: '5px', height: '5px', borderRadius: '50%',
                     background: step.accent, flexShrink: 0, marginTop: '7px', opacity: 0.6,
                   }} />
-                  <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.5 }}>
+                  <span style={{ fontSize: '0.85rem', color: '#666', lineHeight: 1.5 }}>
                     {f}
                   </span>
                 </div>
@@ -115,7 +115,7 @@ export default function WhatYouGet() {
   const activeIndex = Math.min(Math.floor(progress * 3), 2);
 
   return (
-    <section style={{ background: '#0A0A0A', padding: isMobile ? '96px 0' : 0 }}>
+    <section style={{ background: '#FFFFFF', padding: isMobile ? '96px 0' : 0 }}>
       <div className="container">
         {/* Header */}
         <div
@@ -130,22 +130,22 @@ export default function WhatYouGet() {
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
-            textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '1rem',
+            textTransform: 'uppercase', color: '#999', marginBottom: '1rem',
           }}>
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
             The System
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+            <span style={{ width: '20px', height: '1px', background: '#DDD' }} />
           </span>
           <h2 style={{
             fontFamily: 'DM Sans, sans-serif',
             fontSize: 'clamp(2rem, 4vw, 3.5rem)',
             fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em',
-            color: 'white', marginBottom: '1rem',
+            color: '#0A0A0A', marginBottom: '1rem',
           }}>
             Three engines. One system.
           </h2>
           <p style={{
-            color: 'rgba(255,255,255,0.4)', fontSize: '1rem', lineHeight: 1.7,
+            color: '#888', fontSize: '1rem', lineHeight: 1.7,
             maxWidth: '500px', margin: '0 auto',
           }}>
             Every piece connects. Scroll to see how leads flow from first click to closed deal.
@@ -177,25 +177,25 @@ export default function WhatYouGet() {
                     style={{
                       display: 'flex', alignItems: 'flex-start', gap: '20px',
                       padding: '24px 0',
-                      opacity: isActive ? 1 : isPast ? 0.3 : 0.15,
+                      opacity: isActive ? 1 : isPast ? 0.35 : 0.2,
                       transform: isActive ? 'translateX(0)' : 'translateX(-8px)',
                       transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1)',
                     }}
                   >
                     <div style={{
                       width: '52px', height: '52px', borderRadius: '14px',
-                      background: isActive ? `${step.accent}15` : 'rgba(255,255,255,0.04)',
-                      border: `1px solid ${isActive ? `${step.accent}30` : 'rgba(255,255,255,0.06)'}`,
+                      background: isActive ? `${step.accent}12` : '#F5F5F5',
+                      border: `1px solid ${isActive ? `${step.accent}30` : '#E8E8E8'}`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       flexShrink: 0,
                       transition: 'all 0.6s ease',
                     }}>
-                      <Icon size={22} style={{ color: isActive ? step.accent : 'rgba(255,255,255,0.2)', transition: 'color 0.6s' }} />
+                      <Icon size={22} style={{ color: isActive ? step.accent : '#CCC', transition: 'color 0.6s' }} />
                     </div>
                     <div>
                       <span style={{
                         fontSize: '0.65rem', fontWeight: 700,
-                        color: isActive ? step.accent : 'rgba(255,255,255,0.2)',
+                        color: isActive ? step.accent : '#CCC',
                         letterSpacing: '0.12em',
                         transition: 'color 0.6s',
                       }}>
@@ -204,13 +204,13 @@ export default function WhatYouGet() {
                       <h3 style={{
                         fontFamily: 'DM Sans, sans-serif',
                         fontSize: '1.75rem', fontWeight: 800,
-                        color: 'white', lineHeight: 1.2,
+                        color: '#0A0A0A', lineHeight: 1.2,
                         marginBottom: '0.25rem',
                       }}>
                         {step.title}
                       </h3>
                       <p style={{
-                        color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem', lineHeight: 1.5,
+                        color: '#888', fontSize: '0.85rem', lineHeight: 1.5,
                       }}>
                         {step.subtitle}
                       </p>
@@ -221,7 +221,7 @@ export default function WhatYouGet() {
 
               {/* Progress bar */}
               <div style={{
-                height: '2px', background: 'rgba(255,255,255,0.06)',
+                height: '2px', background: '#EBEBEB',
                 borderRadius: '2px', marginTop: '8px',
               }}>
                 <div style={{
@@ -250,8 +250,8 @@ export default function WhatYouGet() {
                     }}
                   >
                     <div style={{
-                      background: '#111111',
-                      border: '1px solid rgba(255,255,255,0.08)',
+                      background: '#FAFAFA',
+                      border: '1px solid #E8E8E8',
                       borderTop: `2px solid ${step.accent}`,
                       borderRadius: '20px',
                       padding: '2.5rem',
@@ -263,9 +263,9 @@ export default function WhatYouGet() {
                             style={{
                               display: 'flex', alignItems: 'flex-start', gap: '14px',
                               padding: '14px 18px',
-                              background: 'rgba(255,255,255,0.03)',
+                              background: '#FFFFFF',
                               borderRadius: '12px',
-                              border: '1px solid rgba(255,255,255,0.05)',
+                              border: '1px solid #F0F0F0',
                               opacity: isActive ? 1 : 0,
                               transform: isActive ? 'translateX(0)' : 'translateX(20px)',
                               transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${fi * 100}ms`,
@@ -276,7 +276,7 @@ export default function WhatYouGet() {
                               background: step.accent, flexShrink: 0, marginTop: '7px',
                             }} />
                             <span style={{
-                              fontSize: '0.95rem', color: 'rgba(255,255,255,0.65)',
+                              fontSize: '0.95rem', color: '#555',
                               lineHeight: 1.5, fontWeight: 500,
                             }}>
                               {f}
@@ -289,7 +289,7 @@ export default function WhatYouGet() {
                       <div style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
                         marginTop: '2rem', paddingTop: '1.5rem',
-                        borderTop: '1px solid rgba(255,255,255,0.06)',
+                        borderTop: '1px solid #F0F0F0',
                       }}>
                         <span style={{
                           fontFamily: 'DM Sans, sans-serif',
@@ -300,7 +300,7 @@ export default function WhatYouGet() {
                           {step.number}
                         </span>
                         <div>
-                          <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.25)', fontWeight: 600 }}>
+                          <span style={{ fontSize: '0.7rem', color: '#BBB', fontWeight: 600 }}>
                             Step {i + 1} of 3
                           </span>
                         </div>
