@@ -2,14 +2,20 @@
 
 import { useState } from 'react';
 import { Lock } from 'lucide-react';
+import FunnelDiagram from '@/components/FunnelDiagram';
 import SalesHero from '@/components/sales/SalesHero';
-import SalesPackages from '@/components/sales/SalesPackages';
-import WhatYouGet from '@/components/sales/WhatYouGet';
+import SocialProofBar from '@/components/sales/SocialProofBar';
+import ProblemAgitation from '@/components/sales/ProblemAgitation';
+import SolutionOverview from '@/components/sales/SolutionOverview';
+import HowItWorks from '@/components/sales/HowItWorks';
 import ResultsSection from '@/components/sales/ResultsSection';
+import SalesPackages from '@/components/sales/SalesPackages';
 import AlaCarteServices from '@/components/sales/AlaCarteServices';
 import SalesSoftware from '@/components/sales/SalesSoftware';
 import FAQ from '@/components/sales/FAQ';
 import SalesFinalCTA from '@/components/sales/SalesFinalCTA';
+import SectionDivider from '@/components/SectionDivider';
+import { useScrollReveal, fadeUp } from '@/hooks/useScrollReveal';
 
 const SALES_PASSWORD = '  ';
 
@@ -34,7 +40,7 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#000000',
+      background: '#0A0A0A',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -57,7 +63,7 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
         }}>
           RevCore Sales Hub
         </h1>
-        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.875rem' }}>
+        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.875rem' }}>
           Team access only — enter your password to continue
         </p>
       </div>
@@ -81,7 +87,7 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
               left: '14px',
               top: '50%',
               transform: 'translateY(-50%)',
-              color: 'rgba(255,255,255,0.25)',
+              color: 'rgba(255,255,255,0.3)',
             }}
           />
           <input
@@ -92,8 +98,8 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
             autoFocus
             style={{
               width: '100%',
-              background: 'rgba(255,255,255,0.04)',
-              border: `1.5px solid ${error ? '#FE6462' : 'rgba(255,255,255,0.08)'}`,
+              background: 'rgba(255,255,255,0.06)',
+              border: `1.5px solid ${error ? '#FE6462' : 'rgba(255,255,255,0.1)'}`,
               borderRadius: '12px',
               padding: '14px 14px 14px 40px',
               color: 'white',
@@ -113,8 +119,8 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
         <button
           type="submit"
           style={{
-            background: 'white',
-            color: '#000000',
+            background: '#FE6462',
+            color: 'white',
             border: 'none',
             borderRadius: '12px',
             padding: '14px',
@@ -143,13 +149,51 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
   );
 }
 
+// ─── Funnel diagram section wrapper ──────────────────────────────────────────
+function FunnelSection() {
+  const { ref, inView } = useScrollReveal({ threshold: 0.06 });
+
+  return (
+    <section
+      ref={ref as React.Ref<HTMLElement>}
+      style={{ padding: '96px 0 80px', background: '#F5F5F5' }}
+    >
+      <div className="container">
+        <div style={{ marginBottom: '2.5rem', ...fadeUp(inView) }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
+            textTransform: 'uppercase', color: 'var(--color-gray)', marginBottom: '1rem',
+          }}>
+            <span style={{ width: '20px', height: '2px', background: 'var(--color-accent)', display: 'block' }} />
+            The Full System
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'end' }}>
+            <h2 style={{
+              fontFamily: 'DM Sans, sans-serif',
+              fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
+              fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em',
+            }}>
+              See how every<br />piece connects
+            </h2>
+            <p style={{ color: 'var(--color-gray)', lineHeight: '1.8' }}>
+              This is the exact system your competitors don&apos;t have. Hover each stage to explore how leads flow from first impression to booked appointment.
+            </p>
+          </div>
+        </div>
+        <FunnelDiagram />
+      </div>
+    </section>
+  );
+}
+
 // ─── Main sales deck ──────────────────────────────────────────────────────────
 function SalesDeck() {
   return (
-    <div style={{ background: '#000000', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ background: '#F5F5F5', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
       {/* Top bar */}
       <div style={{
-        background: '#000000',
+        background: '#0A0A0A',
         padding: '12px 0',
         position: 'sticky',
         top: 0,
@@ -167,30 +211,34 @@ function SalesDeck() {
               RevCore
             </span>
             <span style={{
-              background: 'rgba(255,255,255,0.08)',
-              color: 'rgba(255,255,255,0.4)',
-              fontSize: '0.6rem',
+              background: '#FE6462',
+              color: 'white',
+              fontSize: '0.65rem',
               fontWeight: 700,
               padding: '2px 8px',
               borderRadius: '100px',
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
-              border: '1px solid rgba(255,255,255,0.06)',
             }}>
               Sales Team
             </span>
           </div>
-          <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.72rem' }}>Internal — do not share</span>
+          <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.75rem' }}>Internal — do not share</span>
         </div>
       </div>
 
       {/* Conversion-optimized flow */}
       <SalesHero />
+      <SocialProofBar />
+      <ProblemAgitation />
+      <SolutionOverview />
+      <SectionDivider color="#94D96B" />
+      <HowItWorks />
+      <FunnelSection />
+      <ResultsSection />
       <div data-section="packages">
         <SalesPackages />
       </div>
-      <WhatYouGet />
-      <ResultsSection />
       <AlaCarteServices />
       <SalesSoftware />
       <FAQ />

@@ -1,149 +1,196 @@
 'use client';
 
-import { useScrollReveal, useCountUp, scaleUp, fadeUp, stagger } from '@/hooks/useScrollReveal';
+import { useScrollReveal, useCountUp, scaleUp, fadeUp, clipReveal, stagger } from '@/hooks/useScrollReveal';
 
-const bigStats = [
-  { value: 28, suffix: 'x', label: 'Avg ROI', note: 'Across all partners', color: '#FE6462' },
-  { value: 34, suffix: '%', prefix: '+', label: 'Close rate lift', note: 'With software + training', color: '#94D96B' },
-  { value: 28, suffix: 'K', prefix: '$', label: 'Avg ticket', note: 'Per closed job', color: '#6B8EFE' },
-  { value: 91, suffix: '%', label: 'Retention', note: 'Stay past 12 months', color: '#FEB64A' },
+const caseStudies = [
+  {
+    trade: 'ROOFING',
+    tradeColor: '#FE6462',
+    beforeLabel: 'Avg ticket before',
+    beforeValue: '$8K',
+    afterLabel: 'Avg ticket after',
+    afterValue: 28,
+    afterPrefix: '$',
+    afterSuffix: 'K',
+    timeline: 'In 90 days',
+    quote: '"RevCore\'s system changed how we sell. Our reps went from discounting to closing premium jobs."',
+  },
+  {
+    trade: 'REMODELING',
+    tradeColor: '#6B8EFE',
+    beforeLabel: 'Monthly revenue',
+    beforeValue: '$120K',
+    afterLabel: 'Monthly revenue',
+    afterValue: 340,
+    afterPrefix: '$',
+    afterSuffix: 'K',
+    timeline: 'In 6 months',
+    quote: '"We went from 8 jobs a month to 22 — and every one was at a higher ticket."',
+  },
 ];
 
-const secondaryStats = [
-  { value: '60s', label: 'Avg lead response time' },
-  { value: '2,400+', label: 'Appointments booked' },
-  { value: '18%', label: 'Old leads re-engaged' },
+const roiStats = [
+  { label: 'Avg. close rate lift', value: 34, suffix: '%', prefix: '+', note: 'With software + training', color: '#FE6462' },
+  { label: 'Avg. ticket increase', value: 2400, suffix: '', prefix: '+$', note: 'With Good/Better/Best pricing', color: '#94D96B' },
+  { label: 'Lead rehash recovery', value: 18, suffix: '%', prefix: '', note: 'Of old leads re-engaged', color: '#6B8EFE' },
+  { label: 'Client retention', value: 91, suffix: '%', prefix: '', note: 'Stay past 12 months', color: '#FEB64A' },
 ];
 
-function BigStat({ stat, active, index }: { stat: typeof bigStats[0]; active: boolean; index: number }) {
+function RoiStat({ stat, active, index }: { stat: typeof roiStats[0]; active: boolean; index: number }) {
   const count = useCountUp(stat.value, active, 2000);
+  const display = stat.value >= 1000
+    ? `${stat.prefix}${count.toLocaleString()}`
+    : `${stat.prefix}${count}${stat.suffix}`;
 
   return (
     <div style={{
+      background: 'rgba(255,255,255,0.04)',
+      border: '1px solid rgba(255,255,255,0.07)',
+      borderRadius: '16px',
+      padding: '2rem',
       textAlign: 'center',
-      padding: '2.5rem 1.5rem',
       ...scaleUp(active, stagger(index, 200, 150)),
     }}>
       <p style={{
         fontFamily: 'DM Sans, sans-serif',
-        fontSize: 'clamp(3.5rem, 7vw, 5.5rem)',
+        fontSize: '2.5rem',
         fontWeight: 800,
         color: stat.color,
-        letterSpacing: '-0.04em',
-        lineHeight: 1,
-        marginBottom: '8px',
-      }}>
-        {stat.prefix || ''}{count}{stat.suffix}
-      </p>
-      <p style={{
-        color: 'white', fontWeight: 700, fontSize: '0.95rem',
+        letterSpacing: '-0.02em',
         marginBottom: '4px',
       }}>
+        {display}
+      </p>
+      <p style={{ color: 'white', fontWeight: 700, fontSize: '0.875rem', marginBottom: '4px' }}>
         {stat.label}
       </p>
-      <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.78rem' }}>
-        {stat.note}
-      </p>
+      <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.75rem' }}>{stat.note}</p>
     </div>
   );
 }
 
 export default function ResultsSection() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
+  const { ref: statsRef, inView: statsInView } = useScrollReveal({ threshold: 0.15 });
 
   return (
-    <section
-      ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '120px 0', background: '#0A0A0A' }}
-    >
+    <section style={{ padding: '96px 0', background: '#0A0A0A' }}>
       <div className="container">
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '4rem', ...fadeUp(inView) }}>
-          <span style={{
+        <div ref={ref as React.Ref<HTMLDivElement>} style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
-            fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
-            textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '1rem',
+            fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.15em',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: '1.5rem',
+            ...fadeUp(inView),
           }}>
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
-            Results
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
-          </span>
+            <span style={{ width: '24px', height: '2px', background: '#94D96B', display: 'block' }} />
+            Proven Results
+            <span style={{ width: '24px', height: '2px', background: '#94D96B', display: 'block' }} />
+          </div>
           <h2 style={{
             fontFamily: 'DM Sans, sans-serif',
-            fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-            fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em',
-            color: 'white',
+            fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
+            fontWeight: 800, color: 'white',
+            letterSpacing: '-0.02em', lineHeight: 1.1,
+            marginBottom: '1rem',
+            ...clipReveal(inView, 200),
           }}>
-            The numbers speak.
+            What happens when the system is live
           </h2>
         </div>
 
-        {/* Big stats 2x2 */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '1px',
-          background: 'rgba(255,255,255,0.06)',
-          borderRadius: '20px',
-          overflow: 'hidden',
-          marginBottom: '3rem',
-        }}>
-          {bigStats.map((stat, i) => (
-            <div key={stat.label} style={{ background: '#0A0A0A' }}>
-              <BigStat stat={stat} active={inView} index={i} />
-            </div>
-          ))}
-        </div>
-
-        {/* Secondary stats */}
-        <div style={{
-          display: 'flex', justifyContent: 'center', gap: '48px',
-          marginBottom: '4rem',
-          ...fadeUp(inView, 600),
-        }}>
-          {secondaryStats.map((s) => (
-            <div key={s.label} style={{ textAlign: 'center' }}>
-              <p style={{
-                fontFamily: 'DM Sans, sans-serif', fontSize: '1.5rem',
-                fontWeight: 800, color: 'white', letterSpacing: '-0.02em',
-                marginBottom: '4px',
+        {/* Case studies */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '4rem' }}>
+          {caseStudies.map((cs, i) => (
+            <div
+              key={cs.trade}
+              style={{
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.07)',
+                borderRadius: '20px',
+                padding: '2rem',
+                ...scaleUp(inView, stagger(i, 300, 150)),
+              }}
+            >
+              <span style={{
+                background: `${cs.tradeColor}18`,
+                color: cs.tradeColor,
+                fontSize: '0.65rem', fontWeight: 800,
+                padding: '3px 10px', borderRadius: '100px',
+                letterSpacing: '0.1em', textTransform: 'uppercase',
+                border: `1px solid ${cs.tradeColor}30`,
               }}>
-                {s.value}
-              </p>
-              <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.78rem' }}>
-                {s.label}
+                {cs.trade}
+              </span>
+
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '24px',
+                margin: '1.5rem 0',
+              }}>
+                <div>
+                  <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', marginBottom: '4px' }}>
+                    {cs.beforeLabel}
+                  </p>
+                  <p style={{
+                    fontFamily: 'DM Sans, sans-serif', fontSize: '1.75rem', fontWeight: 800,
+                    color: 'rgba(255,255,255,0.4)', textDecoration: 'line-through',
+                    letterSpacing: '-0.02em',
+                  }}>
+                    {cs.beforeValue}
+                  </p>
+                </div>
+                <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '1.5rem' }}>→</span>
+                <div>
+                  <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', marginBottom: '4px' }}>
+                    {cs.afterLabel}
+                  </p>
+                  <p style={{
+                    fontFamily: 'DM Sans, sans-serif', fontSize: '1.75rem', fontWeight: 800,
+                    color: cs.tradeColor, letterSpacing: '-0.02em',
+                  }}>
+                    {cs.afterPrefix}{cs.afterValue}{cs.afterSuffix}
+                  </p>
+                </div>
+                <span style={{
+                  background: 'rgba(148,217,107,0.12)',
+                  color: '#94D96B',
+                  fontSize: '0.7rem', fontWeight: 700,
+                  padding: '4px 10px', borderRadius: '100px',
+                  border: '1px solid rgba(148,217,107,0.2)',
+                  marginLeft: 'auto',
+                }}>
+                  {cs.timeline}
+                </span>
+              </div>
+
+              <p style={{
+                color: 'rgba(255,255,255,0.5)',
+                fontSize: '0.875rem',
+                lineHeight: '1.6',
+                fontStyle: 'italic',
+                borderTop: '1px solid rgba(255,255,255,0.06)',
+                paddingTop: '1rem',
+              }}>
+                {cs.quote}
               </p>
             </div>
           ))}
         </div>
 
-        {/* Testimonial */}
-        <div style={{
-          textAlign: 'center', maxWidth: '600px', margin: '0 auto',
-          ...fadeUp(inView, 800),
-        }}>
-          <p style={{
-            color: 'rgba(255,255,255,0.4)',
-            fontSize: '1.1rem',
-            lineHeight: 1.8,
-            fontStyle: 'italic',
-            fontFamily: 'DM Sans, sans-serif',
-          }}>
-            &ldquo;RevCore&apos;s system changed how we sell. Our reps went from discounting to closing premium jobs consistently.&rdquo;
-          </p>
-          <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.8rem', marginTop: '1rem', fontWeight: 600 }}>
-            — Roofing contractor, Dallas TX
-          </p>
+        {/* ROI stats */}
+        <div
+          ref={statsRef as React.Ref<HTMLDivElement>}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}
+        >
+          {roiStats.map((stat, i) => (
+            <RoiStat key={stat.label} stat={stat} active={statsInView} index={i} />
+          ))}
         </div>
       </div>
 
       <style>{`
         @media (max-width: 900px) {
-          div[style*="grid-template-columns: repeat(4, 1fr)"] {
-            grid-template-columns: repeat(2, 1fr) !important;
-          }
-        }
-        @media (max-width: 500px) {
+          div[style*="grid-template-columns: 1fr 1fr"],
           div[style*="grid-template-columns: repeat(4, 1fr)"] {
             grid-template-columns: 1fr !important;
           }

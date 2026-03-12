@@ -155,19 +155,6 @@ export function useParallax(speed = 0.1) {
   return ref;
 }
 
-// Text line-by-line reveal — staggered entry with blur for headlines
-export const textLineReveal = (
-  inView: boolean,
-  lineIndex: number,
-  baseDelay = 0,
-  interval = 200,
-): React.CSSProperties => ({
-  opacity: inView ? 1 : 0,
-  transform: inView ? 'translateY(0px)' : 'translateY(40px)',
-  filter: inView ? 'blur(0px)' : 'blur(8px)',
-  transition: `opacity 1.2s cubic-bezier(0.22,1,0.36,1) ${baseDelay + lineIndex * interval}ms, transform 1.2s cubic-bezier(0.22,1,0.36,1) ${baseDelay + lineIndex * interval}ms, filter 1.4s cubic-bezier(0.22,1,0.36,1) ${baseDelay + lineIndex * interval}ms`,
-});
-
 // Animate a number from 0 to target when active
 export function useCountUp(target: number, active: boolean, duration = 1800) {
   const [count, setCount] = useState(0);

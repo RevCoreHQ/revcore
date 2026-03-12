@@ -52,7 +52,7 @@ function FAQItem({ faq, index, inView }: { faq: typeof faqs[0]; index: number; i
       >
         <span style={{
           fontFamily: 'DM Sans, sans-serif',
-          fontSize: '1.1rem', fontWeight: 600, color: 'white',
+          fontSize: '1rem', fontWeight: 600, color: 'white',
           lineHeight: 1.4,
         }}>
           {faq.question}
@@ -93,19 +93,19 @@ export default function FAQ() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '96px 0', background: '#000000' }}
+      style={{ padding: '96px 0', background: '#0A0A0A' }}
     >
       <div className="container" style={{ maxWidth: '800px' }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
-          <span style={{
+          <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
-            textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '1rem',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', marginBottom: '1rem',
           }}>
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+            <span style={{ width: '20px', height: '2px', background: '#FE6462', display: 'block' }} />
             FAQ
-            <span style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
-          </span>
+            <span style={{ width: '20px', height: '2px', background: '#FE6462', display: 'block' }} />
+          </div>
           <h2 style={{
             fontFamily: 'DM Sans, sans-serif',
             fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)',
@@ -116,7 +116,7 @@ export default function FAQ() {
           </h2>
         </div>
 
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <div>
           {faqs.map((faq, i) => (
             <FAQItem key={i} faq={faq} index={i} inView={inView} />
           ))}
