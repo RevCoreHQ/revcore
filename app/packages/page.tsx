@@ -798,253 +798,287 @@ export default function PackagesPage() {
 
 /* ═══════════════════════════════════════════════════
    FUNNEL VISUALIZATION
-   4 funnels: Overview → Current → Phase 1 → Phase 2
-   Each funnel has 4 layered sections with text inside
+   Single funnel shown at a time with tab navigation
+   Current (skinniest) → Phase 1 → Phase 2 (widest)
    ═══════════════════════════════════════════════════ */
 const funnelData = [
   {
-    title: 'Overview',
-    color: '#999999',
-    topW: 180, botW: 60,
-    layers: ['Presence', 'Systems', 'Appointments', 'Jobs'],
-  },
-  {
     title: 'Current',
+    subtitle: 'Where you are now',
     color: '#FE6462',
-    topW: 120, botW: 40,
+    topW: 120, botW: 36,
     layers: ['Referrals', 'Call / Text\nTo Set Appt', 'Appointments', 'Jobs'],
   },
   {
     title: 'Phase 1',
+    subtitle: 'Foundation',
     color: '#6B8EFE',
-    topW: 160, botW: 55,
+    topW: 170, botW: 55,
     layers: ['Referrals +\nPaid Ads', 'Auto Booking\nSystem', 'Appt Reminders', 'Jobs'],
   },
   {
     title: 'Phase 2',
+    subtitle: 'Full Scale',
     color: '#94D96B',
-    topW: 190, botW: 70,
+    topW: 220, botW: 75,
     layers: ['Referrals + Paid\nAds + Organic', 'Auto Booking\nSystem', 'Appt Reminders', 'Jobs'],
   },
 ];
 
+/* Generic layer labels shown on the left side */
+const layerLabels = ['Digital Presence', 'Systems', 'Appointments', 'Jobs'];
+
 function FunnelVisualization() {
-  const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const [activeIdx, setActiveIdx] = useState(0);
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
 
-  const cx = 110; // center x in viewBox
-  const vbH = 260;
+  const cx = 150;
+  const vbW = 300;
+  const vbH = 300;
   const layerCount = 4;
   const yStart = 20;
-  const yEnd = vbH - 10;
+  const yEnd = vbH - 20;
   const layerH = (yEnd - yStart) / layerCount;
+
+  const funnel = funnelData[activeIdx];
+
+  const getW = (y: number) => {
+    const t = (y - yStart) / (yEnd - yStart);
+    return funnel.topW + (funnel.botW - funnel.topW) * t;
+  };
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '120px', paddingBottom: '80px', position: 'relative' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
-        <div style={{ textAlign: 'center', marginBottom: '4rem', ...fadeUp(inView) }}>
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Your Growth Path</div>
           <h2 style={S.h2}>From Disconnected to <HL>Fully Automated</HL></h2>
           <p style={S.sub}>See where you are today, and where RevCore takes you.</p>
         </div>
 
-        <div className="fv-row" style={fadeUp(inView, 200)}>
-          {funnelData.map((funnel, fi) => {
-            const isActive = activeIdx === fi;
+        {/* Tab buttons */}
+        <div className="fv-tabs" style={fadeUp(inView, 150)}>
+          {funnelData.map((f, i) => (
+            <button
+              key={i}
+              className={`fv-tab${activeIdx === i ? ' active' : ''}`}
+              onClick={() => setActiveIdx(i)}
+              style={{ '--tab-color': f.color } as React.CSSProperties}
+            >
+              <span className="fv-tab-dot" />
+              <span className="fv-tab-label">{f.title}</span>
+              <span className="fv-tab-sub">{f.subtitle}</span>
+            </button>
+          ))}
+        </div>
 
-            // Calculate left/right edges at each y position
-            const getW = (y: number) => {
-              const t = (y - yStart) / (yEnd - yStart);
-              return funnel.topW + (funnel.botW - funnel.topW) * t;
-            };
-
-            return (
-              <div key={fi} className="fv-col">
-                {/* Arrow between funnels */}
-                {fi > 0 && (
-                  <div className="fv-arrow-wrap">
-                    <svg viewBox="0 0 48 30" className="fv-arrow-svg">
-                      <line x1="4" y1="15" x2="32" y2="15"
-                        stroke={funnel.color} strokeWidth="2" strokeOpacity="0.4"
-                        strokeDasharray="4 3"
-                        style={{
-                          strokeDashoffset: inView ? 0 : 50,
-                          transition: `stroke-dashoffset 1s ease ${0.5 + fi * 0.25}s`,
-                        }}
-                      />
-                      <polygon points="30,8 44,15 30,22" fill={funnel.color}
-                        opacity={inView ? 0.7 : 0}
-                        style={{ transition: `opacity 0.4s ease ${0.7 + fi * 0.25}s` }}
-                      />
-                    </svg>
-                  </div>
-                )}
-
-                {/* Funnel */}
-                <div
-                  className={`fv-funnel${isActive ? ' active' : ''}`}
-                  onMouseEnter={() => setActiveIdx(fi)}
-                  onMouseLeave={() => setActiveIdx(null)}
-                  style={{
-                    '--fv-color': funnel.color,
-                    opacity: inView ? 1 : 0,
-                    transform: inView ? 'translateY(0)' : 'translateY(20px)',
-                    transition: `all 0.6s cubic-bezier(0.22,1,0.36,1) ${fi * 0.15}s`,
-                  } as React.CSSProperties}
-                >
-                  {/* Title above funnel */}
-                  <div className="fv-title" style={{ color: funnel.color }}>{funnel.title}</div>
-
-                  {/* SVG funnel with sections */}
-                  <svg viewBox={`0 0 220 ${vbH}`} className="fv-funnel-svg">
-                    <defs>
-                      <linearGradient id={`fvFill${fi}`} x1="0.5" y1="0" x2="0.5" y2="1">
-                        <stop offset="0%" stopColor={funnel.color} stopOpacity="0.12" />
-                        <stop offset="100%" stopColor={funnel.color} stopOpacity="0.03" />
-                      </linearGradient>
-                    </defs>
-
-                    {/* Full funnel outline */}
-                    <path
-                      d={`M${cx - funnel.topW / 2} ${yStart} L${cx + funnel.topW / 2} ${yStart} L${cx + funnel.botW / 2} ${yEnd} L${cx - funnel.botW / 2} ${yEnd} Z`}
-                      fill={`url(#fvFill${fi})`}
-                      stroke={funnel.color}
-                      strokeWidth="2"
-                      strokeOpacity={isActive ? 1 : 0.5}
-                      className="fv-trap"
-                    />
-
-                    {/* Horizontal section dividers + text labels */}
-                    {funnel.layers.map((label, li) => {
-                      const y1 = yStart + li * layerH;
-                      const y2 = yStart + (li + 1) * layerH;
-                      const midY = (y1 + y2) / 2;
-
-                      // Draw divider line (not on first layer top — that's the outline)
-                      const dividerY = y1;
-                      const divW = getW(dividerY);
-
-                      const lines = label.split('\n');
-
-                      return (
-                        <g key={li}>
-                          {li > 0 && (
-                            <line
-                              x1={cx - divW / 2} y1={dividerY} x2={cx + divW / 2} y2={dividerY}
-                              stroke={funnel.color} strokeWidth="1" strokeOpacity="0.3"
-                            />
-                          )}
-                          {/* Label text centered in section */}
-                          {lines.map((line, lineIdx) => (
-                            <text key={lineIdx}
-                              x={cx} y={midY + (lineIdx - (lines.length - 1) / 2) * 14}
-                              textAnchor="middle" dominantBaseline="central"
-                              fill="#0A0A0A" fontSize="11" fontWeight="600"
-                              fontFamily="DM Sans, sans-serif"
-                              opacity={isActive ? 1 : 0.7}
-                              style={{ transition: 'opacity 0.3s' }}
-                            >
-                              {line}
-                            </text>
-                          ))}
-                        </g>
-                      );
-                    })}
-
-                    {/* Animated dots falling through funnel */}
-                    {inView && [0, 1, 2].map(d => {
-                      const spread = funnel.topW * 0.25;
-                      const offset = (d - 1) * (spread / 1.5);
-                      return (
-                        <circle key={d} r="3" fill={funnel.color}>
-                          <animate attributeName="cy" from={yStart + 5} to={yEnd - 5}
-                            dur={`${2.4 + d * 0.3}s`} begin={`${d * 0.7}s`} repeatCount="indefinite" />
-                          <animate attributeName="cx"
-                            from={`${cx + offset}`}
-                            to={`${cx + offset * (funnel.botW / funnel.topW)}`}
-                            dur={`${2.4 + d * 0.3}s`} begin={`${d * 0.7}s`} repeatCount="indefinite" />
-                          <animate attributeName="opacity"
-                            values="0;0.7;0.7;0" keyTimes="0;0.08;0.8;1"
-                            dur={`${2.4 + d * 0.3}s`} begin={`${d * 0.7}s`} repeatCount="indefinite" />
-                        </circle>
-                      );
-                    })}
-                  </svg>
-                </div>
+        {/* Single funnel display */}
+        <div className="fv-stage" style={fadeUp(inView, 300)}>
+          {/* Left labels */}
+          <div className="fv-labels">
+            {layerLabels.map((label, i) => (
+              <div key={i} className="fv-label" style={{
+                height: `${100 / layerCount}%`,
+                opacity: inView ? 1 : 0,
+                transition: `opacity 0.4s ease ${0.3 + i * 0.1}s`,
+              }}>
+                {label}
               </div>
-            );
-          })}
+            ))}
+          </div>
+
+          {/* Funnel SVG */}
+          <div className="fv-funnel-container" key={activeIdx}>
+            <svg viewBox={`0 0 ${vbW} ${vbH}`} className="fv-funnel-svg">
+              <defs>
+                <linearGradient id="fvFillActive" x1="0.5" y1="0" x2="0.5" y2="1">
+                  <stop offset="0%" stopColor={funnel.color} stopOpacity="0.15" />
+                  <stop offset="100%" stopColor={funnel.color} stopOpacity="0.04" />
+                </linearGradient>
+              </defs>
+
+              {/* Funnel trapezoid */}
+              <path
+                d={`M${cx - funnel.topW / 2} ${yStart} L${cx + funnel.topW / 2} ${yStart} L${cx + funnel.botW / 2} ${yEnd} L${cx - funnel.botW / 2} ${yEnd} Z`}
+                fill="url(#fvFillActive)"
+                stroke={funnel.color}
+                strokeWidth="2"
+                className="fv-trap-anim"
+              />
+
+              {/* Section dividers + text */}
+              {funnel.layers.map((label, li) => {
+                const y1 = yStart + li * layerH;
+                const y2 = yStart + (li + 1) * layerH;
+                const midY = (y1 + y2) / 2;
+                const divW = getW(y1);
+                const lines = label.split('\n');
+
+                return (
+                  <g key={li} className="fv-layer-anim" style={{ animationDelay: `${li * 80}ms` }}>
+                    {li > 0 && (
+                      <line
+                        x1={cx - divW / 2} y1={y1} x2={cx + divW / 2} y2={y1}
+                        stroke={funnel.color} strokeWidth="1" strokeOpacity="0.3"
+                      />
+                    )}
+                    {lines.map((line, lineIdx) => (
+                      <text key={lineIdx}
+                        x={cx} y={midY + (lineIdx - (lines.length - 1) / 2) * 15}
+                        textAnchor="middle" dominantBaseline="central"
+                        fill="#0A0A0A" fontSize="12" fontWeight="600"
+                        fontFamily="DM Sans, sans-serif"
+                      >
+                        {line}
+                      </text>
+                    ))}
+                  </g>
+                );
+              })}
+
+              {/* Animated dots */}
+              {[0, 1, 2].map(d => {
+                const spread = funnel.topW * 0.2;
+                const offset = (d - 1) * spread;
+                return (
+                  <circle key={`${activeIdx}-${d}`} r="3.5" fill={funnel.color}>
+                    <animate attributeName="cy" from={yStart + 8} to={yEnd - 8}
+                      dur={`${2.5 + d * 0.3}s`} begin={`${d * 0.6}s`} repeatCount="indefinite" />
+                    <animate attributeName="cx"
+                      from={`${cx + offset}`}
+                      to={`${cx + offset * (funnel.botW / funnel.topW)}`}
+                      dur={`${2.5 + d * 0.3}s`} begin={`${d * 0.6}s`} repeatCount="indefinite" />
+                    <animate attributeName="opacity"
+                      values="0;0.8;0.8;0" keyTimes="0;0.06;0.8;1"
+                      dur={`${2.5 + d * 0.3}s`} begin={`${d * 0.6}s`} repeatCount="indefinite" />
+                  </circle>
+                );
+              })}
+            </svg>
+          </div>
         </div>
       </div>
 
       <style>{`
-        .fv-row {
+        .fv-tabs {
           display: flex;
-          align-items: flex-start;
           justify-content: center;
+          gap: 12px;
+          margin-bottom: 3rem;
+        }
+        .fv-tab {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 12px 24px;
+          border-radius: 100px;
+          border: 1px solid #E5E5E5;
+          background: #fff;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
+          font-family: inherit;
+        }
+        .fv-tab:hover {
+          border-color: var(--tab-color);
+          box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .fv-tab.active {
+          border-color: var(--tab-color);
+          background: color-mix(in srgb, var(--tab-color) 6%, #fff);
+          box-shadow: 0 2px 16px color-mix(in srgb, var(--tab-color) 15%, transparent);
+        }
+        .fv-tab-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: var(--tab-color);
+          opacity: 0.4;
+          transition: opacity 0.3s;
+        }
+        .fv-tab.active .fv-tab-dot {
+          opacity: 1;
+        }
+        .fv-tab-label {
+          font-weight: 700;
+          font-size: 0.9rem;
+          color: #0A0A0A;
+        }
+        .fv-tab-sub {
+          font-size: 0.78rem;
+          color: #6B6B6B;
+        }
+
+        .fv-stage {
+          display: flex;
+          align-items: stretch;
           gap: 0;
+          max-width: 600px;
+          margin: 0 auto;
         }
-        .fv-col {
-          display: flex;
-          align-items: center;
-        }
-        .fv-arrow-wrap {
-          flex-shrink: 0;
-          display: flex;
-          align-items: center;
-          padding-top: 24px;
-        }
-        .fv-arrow-svg {
-          width: 44px;
-          height: 28px;
-        }
-        .fv-funnel {
+
+        .fv-labels {
           display: flex;
           flex-direction: column;
-          align-items: center;
-          cursor: pointer;
-          transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+          justify-content: stretch;
+          width: 120px;
           flex-shrink: 0;
+          padding: 20px 0;
         }
-        .fv-funnel:hover {
-          transform: translateY(-4px);
+        .fv-label {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          padding-right: 16px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #6B6B6B;
+          text-align: right;
+          line-height: 1.3;
         }
-        .fv-title {
-          font-family: 'DM Sans', sans-serif;
-          font-size: 0.85rem;
-          font-weight: 800;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          margin-bottom: 8px;
+
+        .fv-funnel-container {
+          flex: 1;
+          display: flex;
+          justify-content: center;
+          animation: fvFadeIn 0.5s cubic-bezier(0.22,1,0.36,1);
         }
         .fv-funnel-svg {
-          width: 220px;
-          height: 260px;
-          transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+          width: 100%;
+          max-width: 400px;
+          height: auto;
         }
-        .fv-funnel:hover .fv-funnel-svg {
-          transform: scale(1.04);
+
+        .fv-trap-anim {
+          animation: fvTrapIn 0.6s cubic-bezier(0.22,1,0.36,1);
         }
-        .fv-trap {
-          transition: stroke-opacity 0.3s, filter 0.3s;
+        .fv-layer-anim {
+          animation: fvLayerIn 0.5s cubic-bezier(0.22,1,0.36,1) both;
         }
-        .fv-funnel:hover .fv-trap,
-        .fv-funnel.active .fv-trap {
-          stroke-opacity: 1;
-          filter: drop-shadow(0 0 10px color-mix(in srgb, var(--fv-color) 35%, transparent));
+
+        @keyframes fvFadeIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
         }
-        @media (max-width: 960px) {
-          .fv-row {
+        @keyframes fvTrapIn {
+          from { opacity: 0; transform: scaleY(0.9); }
+          to { opacity: 1; transform: scaleY(1); }
+        }
+        @keyframes fvLayerIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 640px) {
+          .fv-tabs {
             flex-direction: column;
-            align-items: center;
+            align-items: stretch;
           }
-          .fv-col {
-            flex-direction: column;
+          .fv-tab {
+            border-radius: 12px;
           }
-          .fv-arrow-wrap {
-            padding-top: 0;
-            transform: rotate(90deg);
-            margin: -8px 0;
+          .fv-labels {
+            width: 80px;
+            font-size: 0.65rem;
           }
         }
       `}</style>
