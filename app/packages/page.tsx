@@ -799,29 +799,36 @@ export default function PackagesPage() {
 /* ═══════════════════════════════════════════════════
    FUNNEL VISUALIZATION
    Single funnel shown at a time with tab navigation
-   Current (skinniest) → Phase 1 → Phase 2 (widest)
+   Overview → Current → Phase 1 → Phase 2 (widest)
    ═══════════════════════════════════════════════════ */
 const funnelData = [
+  {
+    title: 'Overview',
+    subtitle: 'The funnel explained',
+    color: '#999999',
+    topW: 240, botW: 70,
+    layers: ['Digital Presence', 'Systems', 'Appointments', 'Jobs'],
+  },
   {
     title: 'Current',
     subtitle: 'Where you are now',
     color: '#FE6462',
-    topW: 120, botW: 36,
-    layers: ['Referrals', 'Call / Text\nTo Set Appt', 'Appointments', 'Jobs'],
+    topW: 200, botW: 55,
+    layers: ['Referrals Only', 'Call / Text To Set Appt', 'Appointments', 'Jobs'],
   },
   {
     title: 'Phase 1',
     subtitle: 'Foundation',
     color: '#6B8EFE',
-    topW: 170, botW: 55,
-    layers: ['Referrals +\nPaid Ads', 'Auto Booking\nSystem', 'Appt Reminders', 'Jobs'],
+    topW: 260, botW: 75,
+    layers: ['Referrals + Paid Ads', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
   },
   {
     title: 'Phase 2',
     subtitle: 'Full Scale',
     color: '#94D96B',
-    topW: 220, botW: 75,
-    layers: ['Referrals + Paid\nAds + Organic', 'Auto Booking\nSystem', 'Appt Reminders', 'Jobs'],
+    topW: 320, botW: 95,
+    layers: ['Referrals + Paid Ads + Organic', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
   },
 ];
 
@@ -832,8 +839,8 @@ function FunnelVisualization() {
   const [activeIdx, setActiveIdx] = useState(0);
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
 
-  const cx = 150;
-  const vbW = 300;
+  const cx = 200;
+  const vbW = 400;
   const vbH = 300;
   const layerCount = 4;
   const yStart = 20;
@@ -1012,7 +1019,7 @@ function FunnelVisualization() {
           display: flex;
           align-items: stretch;
           gap: 0;
-          max-width: 600px;
+          max-width: 700px;
           margin: 0 auto;
         }
 
