@@ -70,6 +70,7 @@ export default function PackagesPage() {
     <main style={{ background: '#F5F5F5', color: '#0A0A0A', position: 'relative', overflow: 'hidden' }}>
       <FunnelVisualization />
       <PhoneDemo />
+      <WebsiteDemo />
       <OutcomeSection />
       <SystemDiagram />
       <ExclusivitySection />
@@ -1301,6 +1302,101 @@ function PhoneDemo() {
               {phoneSteps.map((_, i) => (
                 <button key={i} className={`phone-nav-dot${step === i ? ' active' : ''}`} onClick={() => goToStep(i)} />
               ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   WEBSITE DEMO — live site in browser frame
+   ═══════════════════════════════════════════════════ */
+function WebsiteDemo() {
+  const { ref, inView } = useScrollReveal({ threshold: 0.06 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.65);
+  const [blocked, setBlocked] = useState(false);
+  const IFRAME_W = 1440;
+  const IFRAME_H = 900;
+  const SITE_URL = 'https://www.aquaticpoolaz.com';
+  const SITE_DOMAIN = 'aquaticpoolaz.com';
+
+  useEffect(() => {
+    const update = () => {
+      if (containerRef.current) {
+        setScale(containerRef.current.offsetWidth / IFRAME_W);
+      }
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  return (
+    <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
+      <div style={S.container}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
+          <div style={S.eyebrow}>Website Preview</div>
+          <h2 style={S.h2}>Websites That <HL>Convert</HL></h2>
+          <p style={S.sub}>See a real RevCore client website — built to turn visitors into booked appointments.</p>
+        </div>
+
+        <div style={{ ...fadeUp(inView, 200), maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{ borderRadius: '14px', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.06)', background: '#1a1d24' }}>
+
+            {/* Browser chrome */}
+            <div style={{ background: '#1e2128', padding: '9px 14px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                <div style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#ff5f57' }} />
+                <div style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#febc2e' }} />
+                <div style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#28c840' }} />
+              </div>
+              <div style={{ flex: 1, background: '#13161c', borderRadius: '6px', padding: '5px 12px', display: 'flex', alignItems: 'center', gap: '7px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" fill="rgba(148,217,107,0.55)" /></svg>
+                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>{SITE_DOMAIN}</span>
+              </div>
+              <a href={SITE_URL} target="_blank" rel="noopener noreferrer" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, padding: '3px 8px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px' }}>
+                Open ↗
+              </a>
+            </div>
+
+            {/* iframe or fallback */}
+            {!blocked ? (
+              <div ref={containerRef} style={{ position: 'relative', overflow: 'hidden', background: '#fff', height: `${IFRAME_H * scale}px` }}>
+                <iframe
+                  src={SITE_URL}
+                  title={SITE_DOMAIN}
+                  onError={() => setBlocked(true)}
+                  style={{
+                    border: 'none',
+                    width: `${IFRAME_W}px`,
+                    height: `${IFRAME_H}px`,
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'top left',
+                    pointerEvents: 'auto',
+                  }}
+                />
+              </div>
+            ) : (
+              <div style={{ height: '400px', background: '#0d1117', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+                <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.9rem', textAlign: 'center', maxWidth: '320px', lineHeight: 1.6 }}>
+                  This site has iframe embedding disabled. Visit it directly to see the full experience.
+                </p>
+                <a href={SITE_URL} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 22px', borderRadius: '100px', background: 'rgba(46,204,138,0.1)', border: '1px solid rgba(46,204,138,0.3)', color: '#2ECC8A', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none' }}>
+                  Visit {SITE_DOMAIN} ↗
+                </a>
+              </div>
+            )}
+
+            {/* Footer bar */}
+            <div style={{ background: '#13161c', padding: '8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.2)' }}>Live preview — content loads from {SITE_DOMAIN}</span>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '3px 8px', borderRadius: '100px', background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.18)' }}>
+                <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#FE6462', display: 'inline-block' }} />
+                <span style={{ fontSize: '8px', color: 'rgba(254,100,98,0.75)', fontWeight: 700, letterSpacing: '0.06em' }}>REVCORE CLIENT</span>
+              </div>
             </div>
           </div>
         </div>
