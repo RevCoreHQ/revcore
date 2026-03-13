@@ -15,6 +15,7 @@ import SalesSoftware from '@/components/sales/SalesSoftware';
 import FAQ from '@/components/sales/FAQ';
 import SalesFinalCTA from '@/components/sales/SalesFinalCTA';
 import SectionDivider from '@/components/SectionDivider';
+import SpaceBackground from '@/components/SpaceBackground';
 import { useScrollReveal, fadeUp } from '@/hooks/useScrollReveal';
 
 const SALES_PASSWORD = '  ';
@@ -156,14 +157,14 @@ function FunnelSection() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '96px 0 80px', background: '#F5F5F5' }}
+      style={{ padding: '96px 0 80px', background: '#0A0A0A' }}
     >
       <div className="container">
         <div style={{ marginBottom: '2.5rem', ...fadeUp(inView) }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
-            textTransform: 'uppercase', color: 'var(--color-gray)', marginBottom: '1rem',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', marginBottom: '1rem',
           }}>
             <span style={{ width: '20px', height: '2px', background: 'var(--color-accent)', display: 'block' }} />
             The Full System
@@ -173,10 +174,11 @@ function FunnelSection() {
               fontFamily: 'DM Sans, sans-serif',
               fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
               fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em',
+              color: 'white',
             }}>
               See how every<br />piece connects
             </h2>
-            <p style={{ color: 'var(--color-gray)', lineHeight: '1.8' }}>
+            <p style={{ color: 'rgba(255,255,255,0.45)', lineHeight: '1.8' }}>
               This is the exact system your competitors don&apos;t have. Hover each stage to explore how leads flow from first impression to booked appointment.
             </p>
           </div>
@@ -190,7 +192,8 @@ function FunnelSection() {
 // ─── Main sales deck ──────────────────────────────────────────────────────────
 function SalesDeck() {
   return (
-    <div style={{ background: '#F5F5F5', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ background: '#0A0A0A', color: '#fff', minHeight: '100vh', fontFamily: 'Inter, sans-serif', position: 'relative', overflow: 'hidden' }}>
+      <SpaceBackground opacity={0.4} fixed />
       {/* Top bar */}
       <div style={{
         background: '#0A0A0A',

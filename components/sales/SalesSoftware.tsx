@@ -26,7 +26,7 @@ export default function SalesSoftware() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '96px 0', background: '#ffffff' }}
+      style={{ padding: '96px 0', background: '#0A0A0A' }}
     >
       <div className="container">
         <div style={{ marginBottom: '4rem', ...fadeUp(inView) }}>
@@ -36,10 +36,11 @@ export default function SalesSoftware() {
               fontFamily: 'DM Sans, sans-serif',
               fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
               fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em',
+              color: 'white',
             }}>
               Close more deals with<br />our sales software
             </h2>
-            <p style={{ color: 'var(--color-gray)', lineHeight: '1.8' }}>
+            <p style={{ color: 'rgba(255,255,255,0.45)', lineHeight: '1.8' }}>
               Built in-house for home service contractors. Not generic SaaS — tools designed around the in-home sales process, your trade, and your brand.
             </p>
           </div>
@@ -52,7 +53,7 @@ export default function SalesSoftware() {
               className="card-hover-up"
               style={{
                 borderRadius: '20px', overflow: 'hidden',
-                border: `1px solid ${sw.accent}20`, background: 'white',
+                border: `1px solid ${sw.accent}20`, background: 'rgba(255,255,255,0.03)',
                 ...scaleUp(inView, stagger(i, 100, 150)),
               }}
             >
@@ -72,31 +73,31 @@ export default function SalesSoftware() {
               <div style={{ padding: '1.75rem 2rem' }}>
                 <div style={{
                   display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px',
-                  marginBottom: '1.75rem', padding: '1.25rem', background: '#F5F5F5', borderRadius: '14px',
+                  marginBottom: '1.75rem', padding: '1.25rem', background: 'rgba(255,255,255,0.06)', borderRadius: '14px',
                 }}>
                   <div>
-                    <p style={{ fontSize: '0.65rem', color: '#999', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
+                    <p style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
                       Setup fee
                     </p>
                     <p style={{
                       fontFamily: 'DM Sans, sans-serif', fontSize: '1.75rem', fontWeight: 800,
-                      color: '#0A0A0A', letterSpacing: '-0.02em',
+                      color: 'white', letterSpacing: '-0.02em',
                     }}>
                       {sw.setup}
                     </p>
-                    <p style={{ fontSize: '0.72rem', color: '#999' }}>one-time</p>
+                    <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)' }}>one-time</p>
                   </div>
-                  <div style={{ borderLeft: '1px solid #E5E5E5', paddingLeft: '12px' }}>
-                    <p style={{ fontSize: '0.65rem', color: '#999', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
+                  <div style={{ borderLeft: '1px solid rgba(255,255,255,0.08)', paddingLeft: '12px' }}>
+                    <p style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
                       Monthly access
                     </p>
                     <p style={{
                       fontFamily: 'DM Sans, sans-serif', fontSize: '1.75rem', fontWeight: 800,
-                      color: '#0A0A0A', letterSpacing: '-0.02em',
+                      color: 'white', letterSpacing: '-0.02em',
                     }}>
                       {sw.monthly}
                     </p>
-                    <p style={{ fontSize: '0.72rem', color: '#999' }}>{sw.monthlyNote}</p>
+                    <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)' }}>{sw.monthlyNote}</p>
                   </div>
                 </div>
 
@@ -104,7 +105,7 @@ export default function SalesSoftware() {
                   {sw.features.map((f, fi) => (
                     <div key={fi} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '8px' }}>
                       <Check size={14} style={{ color: sw.accent, flexShrink: 0, marginTop: '3px' }} />
-                      <span style={{ fontSize: '0.875rem', color: '#444', lineHeight: 1.5 }}>{f}</span>
+                      <span style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.5 }}>{f}</span>
                     </div>
                   ))}
                 </div>

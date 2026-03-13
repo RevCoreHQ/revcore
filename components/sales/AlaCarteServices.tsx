@@ -47,7 +47,7 @@ export default function AlaCarteServices() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '96px 0 80px', background: '#ffffff' }}
+      style={{ padding: '96px 0 80px', background: '#0A0A0A' }}
     >
       <div className="container">
         <div style={{ marginBottom: '3.5rem', ...fadeUp(inView) }}>
@@ -57,10 +57,11 @@ export default function AlaCarteServices() {
               fontFamily: 'DM Sans, sans-serif',
               fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
               fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em',
+              color: 'white',
             }}>
               Prefer to start with<br />one service?
             </h2>
-            <p style={{ color: 'var(--color-gray)', lineHeight: '1.8' }}>
+            <p style={{ color: 'rgba(255,255,255,0.45)', lineHeight: '1.8' }}>
               Pick the services that fit your current stage. Most clients start with one or two and expand.{' '}
               <a
                 href="#packages"
@@ -104,16 +105,16 @@ export default function AlaCarteServices() {
                   </div>
                 </div>
 
-                <div style={{ padding: '2rem', background: '#fafafa', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <p style={{ color: 'var(--color-gray)', lineHeight: '1.75', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
+                <div style={{ padding: '2rem', background: 'rgba(255,255,255,0.03)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <p style={{ color: 'rgba(255,255,255,0.45)', lineHeight: '1.75', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
                     {service.description}
                   </p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px' }}>
                     {service.includes.map((d) => (
                       <span key={d} style={{
                         padding: '4px 12px', borderRadius: '100px',
-                        background: 'white', fontSize: '0.75rem', fontWeight: 500,
-                        border: `1px solid ${service.accent}30`, color: '#333',
+                        background: 'rgba(255,255,255,0.06)', fontSize: '0.75rem', fontWeight: 500,
+                        border: `1px solid ${service.accent}30`, color: 'rgba(255,255,255,0.6)',
                       }}>
                         {d}
                       </span>
@@ -122,21 +123,21 @@ export default function AlaCarteServices() {
                 </div>
 
                 <div style={{
-                  padding: '2rem', background: 'white',
+                  padding: '2rem', background: 'rgba(255,255,255,0.02)',
                   borderLeft: `3px solid ${service.accent}20`,
                   display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: '6px',
                 }}>
-                  <p style={{ fontSize: '0.65rem', color: '#999', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
+                  <p style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
                     Starting at
                   </p>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
                     <span style={{
                       fontFamily: 'DM Sans, sans-serif', fontSize: '2.25rem', fontWeight: 800,
-                      color: '#0A0A0A', letterSpacing: '-0.02em',
+                      color: 'white', letterSpacing: '-0.02em',
                     }}>
                       {service.startingAt}
                     </span>
-                    <span style={{ fontSize: '0.85rem', color: '#999', fontWeight: 500 }}>
+                    <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>
                       {service.period}
                     </span>
                   </div>

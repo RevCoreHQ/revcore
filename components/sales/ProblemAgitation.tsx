@@ -27,7 +27,7 @@ export default function ProblemAgitation() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '96px 0', background: '#F5F5F5' }}
+      style={{ padding: '96px 0', background: '#0A0A0A' }}
     >
       <div className="container">
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'start' }}>
@@ -40,10 +40,11 @@ export default function ProblemAgitation() {
               lineHeight: 1.1,
               letterSpacing: '-0.02em',
               marginBottom: '1.25rem',
+              color: 'white',
             }}>
               You&apos;re bleeding revenue and don&apos;t even know it.
             </h2>
-            <p style={{ color: 'var(--color-gray)', lineHeight: '1.8', maxWidth: '420px' }}>
+            <p style={{ color: 'rgba(255,255,255,0.45)', lineHeight: '1.8', maxWidth: '420px' }}>
               The average home service contractor leaves 40–60% of their revenue on the table. Not because they lack talent — because they lack systems.
             </p>
           </div>
@@ -53,11 +54,13 @@ export default function ProblemAgitation() {
               <div
                 key={problem.title}
                 style={{
-                  background: 'white',
+                  background: 'rgba(255,255,255,0.04)',
                   borderRadius: '16px',
                   padding: '1.5rem',
                   borderLeft: '3px solid #FE6462',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderLeftWidth: '3px',
+                  borderLeftColor: '#FE6462',
                   ...slideFromRight(inView, stagger(i, 150, 150)),
                 }}
               >
@@ -74,11 +77,12 @@ export default function ProblemAgitation() {
                     fontFamily: 'DM Sans, sans-serif',
                     fontSize: '1rem',
                     fontWeight: 700,
+                    color: 'white',
                   }}>
                     {problem.title}
                   </h3>
                 </div>
-                <p style={{ color: 'var(--color-gray)', fontSize: '0.875rem', lineHeight: '1.7', paddingLeft: '48px' }}>
+                <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.875rem', lineHeight: '1.7', paddingLeft: '48px' }}>
                   {problem.description}
                 </p>
               </div>

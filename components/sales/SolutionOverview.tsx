@@ -30,14 +30,14 @@ export default function SolutionOverview() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '96px 0', background: '#ffffff' }}
+      style={{ padding: '96px 0', background: '#070b0f' }}
     >
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '4rem', ...fadeUp(inView) }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
-            textTransform: 'uppercase', color: 'var(--color-gray)', marginBottom: '1rem',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', marginBottom: '1rem',
           }}>
             <span style={{ width: '20px', height: '2px', background: '#94D96B', display: 'block' }} />
             The Solution
@@ -47,11 +47,11 @@ export default function SolutionOverview() {
             fontFamily: 'DM Sans, sans-serif',
             fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
             fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em',
-            marginBottom: '1rem',
+            marginBottom: '1rem', color: 'white',
           }}>
             One system. Every revenue lever.
           </h2>
-          <p style={{ color: 'var(--color-gray)', maxWidth: '520px', margin: '0 auto', lineHeight: '1.8' }}>
+          <p style={{ color: 'rgba(255,255,255,0.45)', maxWidth: '520px', margin: '0 auto', lineHeight: '1.8' }}>
             RevCore builds and manages a complete revenue engine — from the ad click to the signed contract. Every piece is connected and optimized.
           </p>
         </div>
@@ -62,10 +62,10 @@ export default function SolutionOverview() {
               key={sol.title}
               className="card-hover-glow"
               style={{
-                background: '#fafafa',
+                background: 'linear-gradient(160deg, #13161e 0%, #1a1e2a 50%, #13161e 100%)',
                 borderRadius: '20px',
                 padding: '2.5rem 2rem',
-                border: '1px solid var(--color-border)',
+                border: '1px solid rgba(255,255,255,0.08)',
                 textAlign: 'center',
                 ...scaleUp(inView, stagger(i, 100, 120)),
               }}
@@ -85,10 +85,11 @@ export default function SolutionOverview() {
                 fontSize: '1.125rem',
                 fontWeight: 700,
                 marginBottom: '0.75rem',
+                color: 'white',
               }}>
                 {sol.title}
               </h3>
-              <p style={{ color: 'var(--color-gray)', fontSize: '0.875rem', lineHeight: '1.7' }}>
+              <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.875rem', lineHeight: '1.7' }}>
                 {sol.description}
               </p>
             </div>

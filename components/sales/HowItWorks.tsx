@@ -33,7 +33,7 @@ export default function HowItWorks() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '96px 0', background: '#F5F5F5' }}
+      style={{ padding: '96px 0', background: '#0A0A0A' }}
     >
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '4rem', ...fadeUp(inView) }}>
@@ -42,6 +42,7 @@ export default function HowItWorks() {
             fontFamily: 'DM Sans, sans-serif',
             fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
             fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em',
+            color: 'white',
           }}>
             From zero to qualified appointments in 3 steps
           </h2>
@@ -62,7 +63,7 @@ export default function HowItWorks() {
           >
             <line
               x1="0" y1="2" x2="100%" y2="2"
-              stroke="#E5E5E5"
+              stroke="rgba(255,255,255,0.12)"
               strokeWidth="2"
               strokeDasharray="8 6"
               style={{
@@ -85,7 +86,7 @@ export default function HowItWorks() {
             >
               <div style={{
                 width: '96px', height: '96px', borderRadius: '50%',
-                background: 'white',
+                background: 'rgba(255,255,255,0.06)',
                 border: `2px solid ${step.accent}30`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 margin: '0 auto 1.5rem',
@@ -111,10 +112,11 @@ export default function HowItWorks() {
                 fontSize: '1.125rem',
                 fontWeight: 700,
                 marginBottom: '0.75rem',
+                color: 'white',
               }}>
                 {step.title}
               </h3>
-              <p style={{ color: 'var(--color-gray)', fontSize: '0.875rem', lineHeight: '1.7' }}>
+              <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.875rem', lineHeight: '1.7' }}>
                 {step.description}
               </p>
             </div>
