@@ -7,35 +7,15 @@ interface Props {
   tilt?: number;
   width?: number | string;
   accentGlow?: string;
+  orientation?: 'landscape' | 'portrait';
 }
 
-/**
- * iPad mockup rendered in landscape orientation.
- * The source image is portrait; we rotate it -90deg and resize the container
- * to match the resulting landscape aspect ratio (~4:3).
- *
- * Screen insets are remapped from portrait → landscape CCW rotation:
- *   landscape top    = portrait left  = 8%
- *   landscape right  = portrait top   = 11%
- *   landscape bottom = portrait right = 8%
- *   landscape left   = portrait bottom= 11%
- */
-const SCREEN_INSET = {
-  top: '6%',
-  right: '3.5%',
-  bottom: '6%',
-  left: '3.5%',
-};
+const LANDSCAPE_INSET = { top: '6%', right: '3.5%', bottom: '6%', left: '3.5%' };
+const PORTRAIT_INSET = { top: '3.5%', right: '6%', bottom: '3.5%', left: '6%' };
 
-// Portrait iPad mockup is ~3:4 (W:H). Landscape is the inverse: 4:3.
-// paddingBottom: 75% on the outer div creates the landscape height.
-const LANDSCAPE_RATIO = '75%';
-
-// The image must be taller than the container so it fills width when rotated.
-// container height = width * 0.75, so img height = width = container height / 0.75 = 133.33%
-const IMG_HEIGHT = '133.33%';
-
-export default function IpadMockup({ children, tilt = 0, width = 320, accentGlow }: Props) {
+export default function IpadMockup({ children, tilt = 0, width = 320, accentGlow, orientation = 'landscape' }: Props) {
+  const isPortrait = orientation === 'portrait';
+  const inset = isPortrait ? PORTRAIT_INSET : LANDSCAPE_INSET;
   const screenRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -89,40 +69,36 @@ export default function IpadMockup({ children, tilt = 0, width = 320, accentGlow
         }} />
       )}
 
-      {/* Landscape container (height comes from paddingBottom) */}
       <div style={{
         position: 'relative',
         zIndex: 1,
         height: 0,
-        paddingBottom: LANDSCAPE_RATIO,
+        paddingBottom: isPortrait ? '133.33%' : '75%',
       }}>
-        {/* Rotated iPad frame image — fills container visually after -90deg */}
         <img
           src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9bb437bdf38763f73b605.png"
           alt=""
           draggable={false}
           style={{
             position: 'absolute',
-            height: IMG_HEIGHT,
-            width: 'auto',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%) rotate(-90deg)',
+            ...(isPortrait
+              ? { width: '100%', height: 'auto', top: 0, left: 0 }
+              : { height: '133.33%', width: 'auto', top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(-90deg)' }
+            ),
             userSelect: 'none',
             pointerEvents: 'none',
           }}
         />
 
-        {/* Screen content — insets calibrated for landscape orientation */}
         <div
           ref={screenRef}
           className="ipad-screen"
           style={{
             position: 'absolute',
-            top: SCREEN_INSET.top,
-            right: SCREEN_INSET.right,
-            bottom: SCREEN_INSET.bottom,
-            left: SCREEN_INSET.left,
+            top: inset.top,
+            right: inset.right,
+            bottom: inset.bottom,
+            left: inset.left,
             borderRadius: '12px',
             overflow: 'hidden',
             background: '#0d1117',

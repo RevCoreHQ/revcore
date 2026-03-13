@@ -15,6 +15,7 @@ import SalesSoftware from '@/components/sales/SalesSoftware';
 import FAQ from '@/components/sales/FAQ';
 import SalesFinalCTA from '@/components/sales/SalesFinalCTA';
 import SectionDivider from '@/components/SectionDivider';
+import IpadDemo from '@/components/sales/IpadDemo';
 import SpaceBackground from '@/components/SpaceBackground';
 import { useScrollReveal, fadeUp } from '@/hooks/useScrollReveal';
 
@@ -237,6 +238,7 @@ function SalesDeck() {
       <SolutionOverview />
       <SectionDivider color="#94D96B" />
       <HowItWorks />
+      <IpadDemo />
       <FunnelSection />
       <ResultsSection />
       <div data-section="packages">
