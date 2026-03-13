@@ -5,7 +5,7 @@ import SystemDiagram from '@/components/sections/SystemDiagram';
 import { useScrollReveal, fadeUp, scaleUp, stagger } from '@/hooks/useScrollReveal';
 import { Check, ChevronDown } from 'lucide-react';
 import {
-  packagesData, resultsData, phoneSteps, fbAds, buildFeatures,
+  packagesData, phoneSteps, fbAds, buildFeatures,
   fullScaleExtras, funnelSteps, outcomeCards,
   qualifyQuestions, ppaSteps,
 } from '@/components/packages/data';
@@ -72,7 +72,6 @@ export default function PackagesPage() {
       <PhoneDemo />
       <OutcomeSection />
       <SystemDiagram />
-      <ResultsSection />
       <ExclusivitySection />
       <PricingSection />
       <ROICalculator />
@@ -1393,52 +1392,6 @@ function OutcomeSection() {
 
 /* EcosystemSection replaced by <SystemDiagram /> component */
 
-/* ═══════════════════════════════════════════════════
-   RESULTS SECTION
-   ═══════════════════════════════════════════════════ */
-function ResultsSection() {
-  const { ref, inView } = useScrollReveal({ threshold: 0.08 });
-  return (
-    <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
-      <div style={S.container}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
-          <div style={S.eyebrow}>Real Results</div>
-          <h2 style={S.h2}>What Contractors Are <HL>Actually Seeing</HL></h2>
-          <p style={S.sub}>These are real numbers from contractors using our system.</p>
-        </div>
-        <div className="results-grid-6" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', ...fadeUp(inView, 200) }}>
-          {resultsData.map((r, i) => (
-            <div key={i} style={{ ...S.cardDark, padding: '28px', boxShadow: '0 4px 24px rgba(0,0,0,0.15)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                <img src={r.logo} alt={r.name} style={{ width: 56, height: 56, borderRadius: '10px', objectFit: 'contain', background: '#fff' }} />
-                <div>
-                  <div style={{ fontWeight: 700, color: '#fff' }}>{r.name}</div>
-                  <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>{r.location}</div>
-                </div>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Before</div>
-                  <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff' }}>{r.before}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>{r.unit}</div>
-                </div>
-                <div style={{ color: S.accent, fontSize: '1.3rem' }}>\u2192</div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>After</div>
-                  <div style={{ fontSize: '1.6rem', fontWeight: 800, color: S.accent }}>{r.after}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>{r.unit}</div>
-                </div>
-              </div>
-              <div style={{ background: 'rgba(254,100,98,0.08)', borderRadius: '8px', padding: '10px', textAlign: 'center' }}>
-                <span style={{ fontWeight: 600, color: S.accent }}>{r.increase} increase</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ═══════════════════════════════════════════════════
    EXCLUSIVITY
