@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import SpaceBackground from '@/components/SpaceBackground';
+import SystemDiagram from '@/components/sections/SystemDiagram';
 import { useScrollReveal, fadeUp, scaleUp, stagger } from '@/hooks/useScrollReveal';
 import { Check, ChevronDown } from 'lucide-react';
 import {
   packagesData, resultsData, phoneSteps, fbAds, buildFeatures,
-  fullScaleExtras, funnelSteps, ecosystemNodes, outcomeCards,
+  fullScaleExtras, funnelSteps, outcomeCards,
   qualifyQuestions, ppaSteps,
 } from '@/components/packages/data';
 
@@ -53,7 +54,7 @@ export default function PackagesPage() {
       <Hero />
       <PhoneDemo />
       <OutcomeSection />
-      <EcosystemSection />
+      <SystemDiagram />
       <ResultsSection />
       <ExclusivitySection />
       <PricingSection />
@@ -73,7 +74,9 @@ export default function PackagesPage() {
           .phone-demo-layout { flex-direction: column !important; }
           .funnel-layout { flex-direction: column !important; }
           .ppa-grid { grid-template-columns: 1fr !important; }
-          .ecosystem-diagram-grid { transform: scale(0.7) !important; }
+          .iphone-device { width: 280px !important; height: 570px !important; }
+          .iphone-device > div:first-child { border-radius: 38px !important; padding: 4px !important; }
+          .iphone-device > div:first-child > :nth-child(4) { border-radius: 35px !important; }
         }
         @media (max-width: 768px) {
           .results-grid-6 { grid-template-columns: 1fr !important; }
@@ -157,38 +160,90 @@ function PhoneDemo() {
             ))}
           </div>
 
-          {/* Phone Frame */}
+          {/* iPhone Mockup */}
           <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-            <div style={{
-              width: 320, borderRadius: '40px', padding: '12px',
-              background: 'linear-gradient(145deg, #2a2a3a 0%, #1a1a2a 50%, #151525 100%)',
-              boxShadow: '0 40px 80px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.08)',
-            }}>
-              <div style={{ borderRadius: '32px', background: '#0A0A0A', overflow: 'hidden', minHeight: 520 }}>
-                {/* Notch */}
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 0 4px' }}>
-                  <div style={{ width: 100, height: 24, borderRadius: '12px', background: '#1a1a1a' }} />
-                </div>
+            <div className="iphone-device" style={{ position: 'relative', width: 340, height: 700 }}>
+              {/* Frame */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: 'linear-gradient(145deg, #2a2a3a 0%, #1a1a2a 50%, #151525 100%)',
+                borderRadius: 48, padding: 5,
+                boxShadow: '0 40px 80px rgba(0,0,0,0.5), 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.08), inset 0 -1px 2px rgba(0,0,0,0.3)',
+              }}>
+                {/* Side button right */}
+                <div style={{
+                  position: 'absolute', right: -3, top: 140, width: 4, height: 70,
+                  background: 'linear-gradient(180deg, #333 0%, #222 100%)',
+                  borderRadius: '0 3px 3px 0',
+                  boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1)',
+                }} />
+                {/* Side buttons left */}
+                <div style={{
+                  position: 'absolute', left: -3, top: 120, width: 4, height: 35,
+                  background: 'linear-gradient(180deg, #333 0%, #222 100%)',
+                  borderRadius: '3px 0 0 3px',
+                  boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1)',
+                }} />
+                <div style={{
+                  position: 'absolute', left: -3, top: 175, width: 4, height: 35,
+                  background: 'linear-gradient(180deg, #333 0%, #222 100%)',
+                  borderRadius: '3px 0 0 3px',
+                  boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1)',
+                }} />
 
-                {/* Slide Header */}
-                <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                  <span style={{
-                    display: 'inline-block', padding: '3px 10px', borderRadius: '20px', fontSize: '0.65rem', fontWeight: 700,
-                    background: 'rgba(254,100,98,0.12)', color: '#FE6462', border: '1px solid rgba(254,100,98,0.2)',
-                  }}>Step {step + 1}</span>
-                  <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.9rem', marginTop: '6px' }}>
-                    {['Target Your Service Area', 'Scroll-Stopping Ads', 'Qualifying Questions', 'Self-Booking Calendar', 'Automatic Reminders'][step]}
+                {/* Screen */}
+                <div style={{
+                  width: '100%', height: '100%',
+                  background: '#0A0A0A', borderRadius: 44, overflow: 'hidden', position: 'relative',
+                }}>
+                  {/* Dynamic Island */}
+                  <div style={{
+                    position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
+                    width: 100, height: 28, background: '#000', borderRadius: 20, zIndex: 10,
+                    boxShadow: '0 0 0 3px rgba(0,0,0,0.8)',
+                  }}>
+                    <div style={{
+                      position: 'absolute', right: 18, top: '50%', transform: 'translateY(-50%)',
+                      width: 8, height: 8, borderRadius: '50%',
+                      background: 'radial-gradient(circle, #1a3a5c 0%, #0d1f30 60%, #000 100%)',
+                      boxShadow: 'inset 0 0 2px rgba(255,255,255,0.3)',
+                    }} />
+                  </div>
+
+                  {/* Content area */}
+                  <div style={{ paddingTop: 52, height: '100%', overflowY: 'auto' }}>
+                    {/* Slide Header */}
+                    <div style={{ padding: '8px 16px 12px', borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
+                      <span style={{
+                        display: 'inline-block', padding: '3px 10px', borderRadius: 20, fontSize: '0.65rem', fontWeight: 700,
+                        background: 'rgba(254,100,98,0.12)', color: '#FE6462', border: '1px solid rgba(254,100,98,0.2)',
+                      }}>Step {step + 1}</span>
+                      <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.9rem', marginTop: 6 }}>
+                        {['Target Your Service Area', 'Scroll-Stopping Ads', 'Qualifying Questions', 'Self-Booking Calendar', 'Automatic Reminders'][step]}
+                      </div>
+                    </div>
+
+                    {/* Slide Content */}
+                    <div style={{ padding: 14 }}>
+                      {step === 0 && <SlideTarget />}
+                      {step === 1 && <SlideAds adIdx={adIdx} setAdIdx={setAdIdx} />}
+                      {step === 2 && <SlideQualify />}
+                      {step === 3 && <SlideCalendar />}
+                      {step === 4 && <SlideReminders />}
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Slide Content */}
-                <div style={{ padding: '16px' }}>
-                  {step === 0 && <SlideTarget />}
-                  {step === 1 && <SlideAds adIdx={adIdx} setAdIdx={setAdIdx} />}
-                  {step === 2 && <SlideQualify />}
-                  {step === 3 && <SlideCalendar />}
-                  {step === 4 && <SlideReminders />}
-                </div>
+              {/* Navigation dots */}
+              <div style={{ position: 'absolute', bottom: -28, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6 }}>
+                {phoneSteps.map((_, i) => (
+                  <button key={i} onClick={() => setStep(i)} style={{
+                    width: 8, height: 8, borderRadius: '50%', border: 'none', cursor: 'pointer',
+                    background: i === step ? '#FE6462' : 'rgba(255,255,255,0.2)',
+                    transition: 'background 0.2s',
+                  }} />
+                ))}
               </div>
             </div>
           </div>
@@ -459,42 +514,7 @@ function OutcomeSection() {
   );
 }
 
-/* ═══════════════════════════════════════════════════
-   ECOSYSTEM DIAGRAM
-   ═══════════════════════════════════════════════════ */
-function EcosystemSection() {
-  const { ref, inView } = useScrollReveal({ threshold: 0.08 });
-  return (
-    <section ref={ref as React.Ref<HTMLElement>} style={S.sectionAlt}>
-      <div style={S.gridOverlay} />
-      <div style={S.container}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
-          <div style={S.eyebrow}>Complete System</div>
-          <h2 style={S.h2}>You Can&apos;t Scale Without <HL>This</HL></h2>
-          <p style={S.sub}>Running ads alone won&apos;t grow your business. SEO alone won&apos;t either. Contractors who scale have every piece working together as one optimized system.</p>
-        </div>
-        <div className="ecosystem-diagram-grid" style={{
-          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px',
-          maxWidth: '800px', margin: '0 auto', ...fadeUp(inView, 200),
-        }}>
-          {ecosystemNodes.map((node, i) => (
-            <div key={i} style={{
-              ...S.card, padding: '20px', textAlign: 'center',
-              gridColumn: i >= 3 ? (i === 3 ? '1 / 2' : '3 / 4') : undefined,
-            }}>
-              <div style={{ fontSize: '0.65rem', fontWeight: 700, color: S.accent, marginBottom: '4px' }}>{node.num}</div>
-              <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem', marginBottom: '2px' }}>{node.title}</div>
-              <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>{node.sub}</div>
-            </div>
-          ))}
-        </div>
-        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.35)', fontSize: '0.9rem', marginTop: '2rem', ...fadeUp(inView, 400) }}>
-          Each system feeds the others — more visibility, more leads, better data, smarter optimization.
-        </p>
-      </div>
-    </section>
-  );
-}
+/* EcosystemSection replaced by <SystemDiagram /> component */
 
 /* ═══════════════════════════════════════════════════
    RESULTS SECTION
