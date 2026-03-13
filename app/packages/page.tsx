@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import SpaceBackground from '@/components/SpaceBackground';
 import SystemDiagram from '@/components/sections/SystemDiagram';
 import { useScrollReveal, fadeUp, scaleUp, stagger } from '@/hooks/useScrollReveal';
 import { Check, ChevronDown } from 'lucide-react';
@@ -14,22 +13,41 @@ import {
 /* ═══════════════════════════════════════════════════
    SHARED STYLES
    ═══════════════════════════════════════════════════ */
+/* Light-first styles matching home page theme */
 const S = {
+  /* Light sections (default) */
   section: { padding: '96px 0', position: 'relative' as const },
-  sectionAlt: { padding: '96px 0', position: 'relative' as const, background: '#070b0f' },
+  /* Dark accent sections */
+  sectionDark: { padding: '96px 0', position: 'relative' as const, background: '#0A0A0A', color: '#fff' },
   container: { maxWidth: '1200px', margin: '0 auto', padding: '0 24px', position: 'relative' as const, zIndex: 1 },
+  /* Light-mode eyebrow */
   eyebrow: {
+    display: 'inline-flex', alignItems: 'center', gap: '8px',
+    fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
+    textTransform: 'uppercase' as const, color: '#6B6B6B', marginBottom: '1rem',
+  },
+  /* Dark-mode eyebrow */
+  eyebrowDark: {
     display: 'inline-flex', alignItems: 'center', gap: '8px',
     fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.14em',
     textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.35)', marginBottom: '1rem',
   },
   h2: {
     fontFamily: 'DM Sans, sans-serif', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
+    fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em', color: '#0A0A0A', marginBottom: '1rem',
+  },
+  h2Dark: {
+    fontFamily: 'DM Sans, sans-serif', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
     fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em', color: 'white', marginBottom: '1rem',
   },
-  sub: { color: 'rgba(255,255,255,0.4)', maxWidth: '700px', margin: '0 auto', lineHeight: 1.8, fontSize: '1rem' },
+  sub: { color: '#6B6B6B', maxWidth: '700px', margin: '0 auto', lineHeight: 1.8, fontSize: '1rem' },
+  subDark: { color: 'rgba(255,255,255,0.4)', maxWidth: '700px', margin: '0 auto', lineHeight: 1.8, fontSize: '1rem' },
   accent: '#FE6462',
   card: {
+    background: '#ffffff',
+    borderRadius: '16px', border: '1px solid #E5E5E5',
+  },
+  cardDark: {
     background: 'linear-gradient(160deg, #13161e 0%, #1a1e2a 50%, #13161e 100%)',
     borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)',
   },
@@ -49,8 +67,7 @@ const HL = ({ children }: { children: React.ReactNode }) => (
    ═══════════════════════════════════════════════════ */
 export default function PackagesPage() {
   return (
-    <main style={{ background: '#0A0A0A', color: '#fff', position: 'relative', overflow: 'hidden' }}>
-      <SpaceBackground opacity={0.6} fixed />
+    <main style={{ background: '#F5F5F5', color: '#0A0A0A', position: 'relative', overflow: 'hidden' }}>
       <FunnelVisualization />
       <PhoneDemo />
       <OutcomeSection />
@@ -835,9 +852,9 @@ function FunnelVisualization() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '100px', paddingBottom: '64px', position: 'relative' }}>
+    <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '120px', paddingBottom: '80px', position: 'relative' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
-        <div style={{ textAlign: 'center', marginBottom: '3.5rem', ...fadeUp(inView) }}>
+        <div style={{ textAlign: 'center', marginBottom: '4rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Your Growth Path</div>
           <h2 style={S.h2}>From Disconnected to <HL>Fully Automated</HL></h2>
           <p style={S.sub}>See where you are today, and where RevCore takes you.</p>
@@ -846,44 +863,41 @@ function FunnelVisualization() {
         {/* Funnel row: funnel → arrow → funnel → arrow → funnel */}
         <div className="fv-row" style={fadeUp(inView, 200)}>
           {funnelPhases.map((phase, i) => {
-            const cx = 100; // center x in 200-wide viewBox
+            const cx = 100;
             const isActive = activePhase === i;
 
             return (
               <div key={i} className="fv-col">
-                {/* Arrow connector (before 2nd and 3rd funnel) */}
+                {/* Arrow connector */}
                 {i > 0 && (
                   <div className="fv-arrow-wrap">
-                    <svg viewBox="0 0 60 40" className="fv-arrow-svg">
+                    <svg viewBox="0 0 80 40" className="fv-arrow-svg">
                       <defs>
                         <linearGradient id={`arrowGrad${i}`} x1="0" y1="0" x2="1" y2="0">
-                          <stop offset="0%" stopColor={funnelPhases[i - 1].color} stopOpacity="0.5" />
-                          <stop offset="100%" stopColor={phase.color} stopOpacity="0.5" />
+                          <stop offset="0%" stopColor={funnelPhases[i - 1].color} stopOpacity="0.7" />
+                          <stop offset="100%" stopColor={phase.color} stopOpacity="0.7" />
                         </linearGradient>
                       </defs>
-                      {/* Dashed line */}
-                      <line x1="4" y1="20" x2="42" y2="20"
+                      <line x1="4" y1="20" x2="58" y2="20"
                         stroke={`url(#arrowGrad${i})`}
-                        strokeWidth="2"
-                        strokeDasharray="5 4"
-                        className="fv-arrow-line"
+                        strokeWidth="2.5"
+                        strokeDasharray="6 4"
                         style={{
-                          strokeDashoffset: inView ? 0 : 60,
-                          transition: `stroke-dashoffset 1s ease ${0.6 + i * 0.3}s`,
+                          strokeDashoffset: inView ? 0 : 80,
+                          transition: `stroke-dashoffset 1.2s ease ${0.6 + i * 0.3}s`,
                         }}
                       />
-                      {/* Arrowhead */}
                       <polygon
-                        points="40,12 56,20 40,28"
+                        points="54,11 72,20 54,29"
                         fill={phase.color}
-                        opacity={inView ? 0.6 : 0}
-                        style={{ transition: `opacity 0.5s ease ${0.8 + i * 0.3}s` }}
+                        opacity={inView ? 0.8 : 0}
+                        style={{ transition: `opacity 0.5s ease ${0.9 + i * 0.3}s` }}
                       />
                     </svg>
                   </div>
                 )}
 
-                {/* Funnel */}
+                {/* Funnel card */}
                 <div
                   className={`fv-funnel${isActive ? ' active' : ''}`}
                   onClick={() => setActivePhase(isActive ? null : i)}
@@ -892,67 +906,64 @@ function FunnelVisualization() {
                   style={{
                     '--fv-color': phase.color,
                     opacity: inView ? 1 : 0,
-                    transform: inView ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.95)',
+                    transform: inView ? 'translateY(0) scale(1)' : 'translateY(24px) scale(0.95)',
                     transition: `all 0.7s cubic-bezier(0.22,1,0.36,1) ${i * 0.2}s`,
                   } as React.CSSProperties}
                 >
-                  {/* Glow behind funnel */}
-                  <div className="fv-glow" style={{ background: phase.color }} />
-
                   {/* SVG Funnel */}
-                  <svg viewBox="0 0 200 160" className="fv-funnel-svg">
+                  <svg viewBox="0 0 200 180" className="fv-funnel-svg">
                     <defs>
                       <linearGradient id={`funnelFill${i}`} x1="0.5" y1="0" x2="0.5" y2="1">
-                        <stop offset="0%" stopColor={phase.color} stopOpacity="0.2" />
-                        <stop offset="100%" stopColor={phase.color} stopOpacity="0.05" />
+                        <stop offset="0%" stopColor={phase.color} stopOpacity="0.18" />
+                        <stop offset="100%" stopColor={phase.color} stopOpacity="0.04" />
                       </linearGradient>
                     </defs>
 
                     {/* Funnel trapezoid */}
                     <path
-                      d={`M${cx - phase.topW / 2} 15 L${cx + phase.topW / 2} 15 L${cx + phase.botW / 2} 145 L${cx - phase.botW / 2} 145 Z`}
+                      d={`M${cx - phase.topW / 2} 10 L${cx + phase.topW / 2} 10 L${cx + phase.botW / 2} 165 L${cx - phase.botW / 2} 165 Z`}
                       fill={`url(#funnelFill${i})`}
                       stroke={phase.color}
-                      strokeWidth="1.5"
-                      strokeOpacity={isActive ? 1 : 0.6}
+                      strokeWidth="2"
+                      strokeOpacity={isActive ? 1 : 0.5}
                       className="fv-trap"
                     />
 
-                    {/* Horizontal level lines inside funnel */}
-                    {[45, 75, 105].map((y, li) => {
-                      const t = (y - 15) / 130;
+                    {/* Horizontal level lines */}
+                    {[50, 90, 130].map((y, li) => {
+                      const t = (y - 10) / 155;
                       const w = phase.topW + (phase.botW - phase.topW) * t;
                       return (
                         <line key={li}
                           x1={cx - w / 2 + 4} y1={y} x2={cx + w / 2 - 4} y2={y}
-                          stroke={phase.color} strokeOpacity="0.12" strokeWidth="1"
-                          strokeDasharray="3 3"
+                          stroke={phase.color} strokeOpacity="0.15" strokeWidth="1"
+                          strokeDasharray="4 3"
                         />
                       );
                     })}
 
                     {/* Animated falling dots */}
-                    {inView && [0, 1, 2, 3].map(d => {
-                      const spread = phase.topW * 0.3;
-                      const offset = (d - 1.5) * (spread / 2);
+                    {inView && [0, 1, 2, 3, 4].map(d => {
+                      const spread = phase.topW * 0.35;
+                      const offset = (d - 2) * (spread / 2.5);
                       return (
-                        <circle key={d} r="3" fill={phase.color}>
+                        <circle key={d} r="3.5" fill={phase.color}>
                           <animate
-                            attributeName="cy" from="20" to="140"
-                            dur={`${2 + d * 0.3}s`} begin={`${d * 0.6}s`}
+                            attributeName="cy" from="16" to="160"
+                            dur={`${2.2 + d * 0.25}s`} begin={`${d * 0.5}s`}
                             repeatCount="indefinite"
                           />
                           <animate
                             attributeName="cx"
                             from={`${cx + offset}`}
                             to={`${cx + offset * (phase.botW / phase.topW)}`}
-                            dur={`${2 + d * 0.3}s`} begin={`${d * 0.6}s`}
+                            dur={`${2.2 + d * 0.25}s`} begin={`${d * 0.5}s`}
                             repeatCount="indefinite"
                           />
                           <animate
                             attributeName="opacity"
-                            values="0;0.7;0.7;0" keyTimes="0;0.1;0.8;1"
-                            dur={`${2 + d * 0.3}s`} begin={`${d * 0.6}s`}
+                            values="0;0.8;0.8;0" keyTimes="0;0.08;0.75;1"
+                            dur={`${2.2 + d * 0.25}s`} begin={`${d * 0.5}s`}
                             repeatCount="indefinite"
                           />
                         </circle>
@@ -960,12 +971,12 @@ function FunnelVisualization() {
                     })}
                   </svg>
 
-                  {/* Phase info below funnel */}
+                  {/* Phase info */}
                   <div className="fv-phase-label" style={{ color: phase.color }}>{phase.label}</div>
                   <h3 className="fv-phase-title">{phase.title}</h3>
                   <p className="fv-phase-sub">{phase.subtitle}</p>
 
-                  {/* Item list — expands on hover/click */}
+                  {/* Expanding details */}
                   <div className={`fv-items${isActive ? ' open' : ''}`}>
                     {phase.items.map((item, j) => (
                       <div key={j} className="fv-item" style={{ transitionDelay: isActive ? `${j * 50}ms` : '0ms' }}>
@@ -999,12 +1010,12 @@ function FunnelVisualization() {
         .fv-arrow-wrap {
           display: flex;
           align-items: center;
-          padding-top: 70px;
+          padding-top: 80px;
           flex-shrink: 0;
         }
 
         .fv-arrow-svg {
-          width: 56px;
+          width: 64px;
           height: 36px;
         }
 
@@ -1013,54 +1024,34 @@ function FunnelVisualization() {
           flex-direction: column;
           align-items: center;
           text-align: center;
-          padding: 20px 16px 24px;
+          padding: 24px 20px 28px;
           border-radius: 20px;
-          background: rgba(255,255,255,0.02);
-          border: 1px solid rgba(255,255,255,0.04);
+          background: #ffffff;
+          border: 1px solid #E5E5E5;
           cursor: pointer;
           position: relative;
           overflow: hidden;
           transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-          width: 300px;
+          width: 320px;
           flex-shrink: 0;
         }
 
         .fv-funnel:hover,
         .fv-funnel.active {
-          background: rgba(255,255,255,0.04);
-          border-color: color-mix(in srgb, var(--fv-color) 25%, transparent);
-          transform: translateY(-4px) scale(1.02);
-          box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-        }
-
-        .fv-glow {
-          position: absolute;
-          top: -20px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 120px;
-          height: 120px;
-          border-radius: 50%;
-          filter: blur(60px);
-          opacity: 0;
-          transition: opacity 0.5s;
-          pointer-events: none;
-        }
-
-        .fv-funnel:hover .fv-glow,
-        .fv-funnel.active .fv-glow {
-          opacity: 0.15;
+          border-color: var(--fv-color);
+          transform: translateY(-6px) scale(1.02);
+          box-shadow: 0 12px 40px rgba(0,0,0,0.08), 0 0 0 1px var(--fv-color);
         }
 
         .fv-funnel-svg {
-          width: 160px;
-          height: 128px;
-          margin-bottom: 12px;
+          width: 180px;
+          height: 150px;
+          margin-bottom: 16px;
           transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
         }
 
         .fv-funnel:hover .fv-funnel-svg {
-          transform: scale(1.05);
+          transform: scale(1.06);
         }
 
         .fv-trap {
@@ -1070,7 +1061,7 @@ function FunnelVisualization() {
         .fv-funnel:hover .fv-trap,
         .fv-funnel.active .fv-trap {
           stroke-opacity: 1;
-          filter: drop-shadow(0 0 8px var(--fv-color));
+          filter: drop-shadow(0 0 12px color-mix(in srgb, var(--fv-color) 40%, transparent));
         }
 
         .fv-phase-label {
@@ -1083,16 +1074,16 @@ function FunnelVisualization() {
 
         .fv-phase-title {
           font-family: 'DM Sans', sans-serif;
-          font-size: 1.15rem;
+          font-size: 1.2rem;
           font-weight: 800;
-          color: white;
+          color: #0A0A0A;
           margin-bottom: 2px;
           line-height: 1.3;
         }
 
         .fv-phase-sub {
-          font-size: 0.78rem;
-          color: rgba(255,255,255,0.35);
+          font-size: 0.8rem;
+          color: #6B6B6B;
           font-weight: 500;
           margin-bottom: 4px;
         }
@@ -1113,15 +1104,15 @@ function FunnelVisualization() {
         .fv-items.open {
           max-height: 300px;
           opacity: 1;
-          margin-top: 12px;
+          margin-top: 14px;
         }
 
         .fv-item {
           display: flex;
           align-items: flex-start;
           gap: 8px;
-          font-size: 0.78rem;
-          color: rgba(255,255,255,0.5);
+          font-size: 0.8rem;
+          color: #6B6B6B;
           line-height: 1.5;
           text-align: left;
           opacity: 0;
@@ -1177,13 +1168,13 @@ function PhoneDemo() {
   };
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={S.sectionAlt}>
+    <section ref={ref as React.Ref<HTMLElement>} style={S.sectionDark}>
       <div style={S.gridOverlay} />
       <div style={S.container}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
-          <div style={S.eyebrow}>See It In Action</div>
-          <h2 style={S.h2}>How We <HL>Fill Your Calendar</HL></h2>
-          <p style={S.sub}>Click through each step to see exactly how it works.</p>
+          <div style={S.eyebrowDark}>See It In Action</div>
+          <h2 style={S.h2Dark}>How We <HL>Fill Your Calendar</HL></h2>
+          <p style={S.subDark}>Click through each step to see exactly how it works.</p>
         </div>
 
         <div className="phone-demo-container" style={fadeUp(inView, 200)}>
@@ -1397,8 +1388,8 @@ function OutcomeSection() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', ...fadeUp(inView, 200) }} className="packages-grid-3">
           {outcomeCards.map((card, i) => (
             <div key={i} style={{
-              ...S.card, padding: '24px', cursor: 'pointer', transition: 'all 0.3s',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
+              ...S.cardDark, padding: '24px', cursor: 'pointer', transition: 'all 0.3s',
+              boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                 <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(254,100,98,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1480,7 +1471,7 @@ function ResultsSection() {
         </div>
         <div className="results-grid-6" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', ...fadeUp(inView, 200) }}>
           {resultsData.map((r, i) => (
-            <div key={i} style={{ ...S.card, padding: '28px', boxShadow: '0 4px 24px rgba(0,0,0,0.4)' }}>
+            <div key={i} style={{ ...S.cardDark, padding: '28px', boxShadow: '0 4px 24px rgba(0,0,0,0.15)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                 <img src={r.logo} alt={r.name} style={{ width: 56, height: 56, borderRadius: '10px', objectFit: 'contain', background: '#fff' }} />
                 <div>
@@ -1518,13 +1509,13 @@ function ResultsSection() {
 function ExclusivitySection() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={S.sectionAlt}>
+    <section ref={ref as React.Ref<HTMLElement>} style={S.sectionDark}>
       <div style={S.gridOverlay} />
       <div style={S.container}>
         <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto', ...fadeUp(inView) }}>
-          <div style={S.eyebrow}>Market Exclusivity</div>
-          <h2 style={S.h2}>While You Build, <HL>They Can&apos;t</HL></h2>
-          <p style={S.sub}>
+          <div style={S.eyebrowDark}>Market Exclusivity</div>
+          <h2 style={S.h2Dark}>While You Build, <HL>They Can&apos;t</HL></h2>
+          <p style={S.subDark}>
             Your competitors can&apos;t access RevCore in your market. While you&apos;re building SEO authority, reactivating your database, and training your team — they&apos;re stuck buying shared leads. That gap only widens.
           </p>
           <div style={{
@@ -1561,7 +1552,7 @@ function PricingSection() {
   };
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} id="pricing" style={{ ...S.sectionAlt, padding: '96px 0' }}>
+    <section ref={ref as React.Ref<HTMLElement>} id="pricing" style={{ ...S.sectionDark, padding: '96px 0' }}>
       <div style={S.gridOverlay} />
       <div style={{
         position: 'absolute', top: '30%', left: '50%', transform: 'translateX(-50%)',
@@ -1571,13 +1562,13 @@ function PricingSection() {
       }} />
       <div style={S.container}>
         <div style={{ textAlign: 'center', marginBottom: '2.5rem', ...fadeUp(inView) }}>
-          <div style={S.eyebrow}>
+          <div style={S.eyebrowDark}>
             <span style={{ width: 20, height: 2, background: '#6B8EFE', display: 'block' }} />
             Choose Your Path
             <span style={{ width: 20, height: 2, background: '#6B8EFE', display: 'block' }} />
           </div>
-          <h2 style={S.h2}>Growth Packages Built for <HL>Contractors</HL></h2>
-          <p style={{ ...S.sub, marginBottom: '2rem' }}>Three proven systems designed to meet you where you are and take you where you want to go.</p>
+          <h2 style={S.h2Dark}>Growth Packages Built for <HL>Contractors</HL></h2>
+          <p style={{ ...S.subDark, marginBottom: '2rem' }}>Three proven systems designed to meet you where you are and take you where you want to go.</p>
 
           {/* Billing Toggle */}
           <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -1765,9 +1756,9 @@ function ROICalculator() {
     <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '96px 0', background: 'linear-gradient(180deg, #1a1a2e 0%, #16162a 100%)' }}>
       <div style={{ ...S.container, maxWidth: 900 }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
-          <div style={{ ...S.eyebrow, color: 'rgba(254,100,98,0.9)' }}>See Your Potential</div>
-          <h2 style={S.h2}>System <HL>ROI</HL> Calculator</h2>
-          <p style={S.sub}>Select your package and appointment volume to see your projected net revenue.</p>
+          <div style={{ ...S.eyebrowDark, color: 'rgba(254,100,98,0.9)' }}>See Your Potential</div>
+          <h2 style={S.h2Dark}>System <HL>ROI</HL> Calculator</h2>
+          <p style={S.subDark}>Select your package and appointment volume to see your projected net revenue.</p>
         </div>
 
         <div style={{
@@ -1883,9 +1874,9 @@ function WhatWeBuildSection() {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
                 <div style={{ width: 40, height: 40, background: f.color, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>{f.emoji}</div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#fff' }}>{f.title}</h4>
+                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#0A0A0A' }}>{f.title}</h4>
               </div>
-              <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.5 }}>{f.desc}</p>
+              <p style={{ fontSize: '0.9rem', color: '#6B6B6B', lineHeight: 1.5 }}>{f.desc}</p>
             </div>
           ))}
         </div>
@@ -1904,11 +1895,11 @@ function WhatWeBuildSection() {
               color: '#fff', fontSize: '0.75rem', fontWeight: 700,
               textTransform: 'uppercase', letterSpacing: '0.1em', borderRadius: 20, marginBottom: 12,
             }}>Full Scale Partner Only</span>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff' }}>Additional Growth Tools</h3>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0A0A0A' }}>Additional Growth Tools</h3>
           </div>
           <div className="extras-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {fullScaleExtras.map((e, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.95rem', color: '#fff' }}>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.95rem', color: '#0A0A0A' }}>
                 <span style={{ color: '#a855f7' }}>✓</span> {e}
               </div>
             ))}
@@ -1930,9 +1921,9 @@ function PPASection() {
     <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '96px 0', background: 'linear-gradient(180deg, #1a1a2e 0%, #16162a 100%)' }}>
       <div style={{ ...S.container, maxWidth: 1000 }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
-          <div style={{ ...S.eyebrow, color: 'rgba(254,100,98,0.9)' }}>Results-First Model</div>
-          <h2 style={S.h2}>Pay Per <HL>Qualified Appointment</HL></h2>
-          <p style={S.sub}>Pay only for booked appointments. No retainers. No ad markup.</p>
+          <div style={{ ...S.eyebrowDark, color: 'rgba(254,100,98,0.9)' }}>Results-First Model</div>
+          <h2 style={S.h2Dark}>Pay Per <HL>Qualified Appointment</HL></h2>
+          <p style={S.subDark}>Pay only for booked appointments. No retainers. No ad markup.</p>
 
           <button onClick={() => setOpen(!open)} style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -2062,13 +2053,13 @@ function FunnelSection() {
               ].map((s, i) => (
                 <div key={i} style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: '2rem', marginBottom: 6 }}>{s.icon}</div>
-                  <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.85rem' }}>{s.label}</div>
-                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>{s.sub}</div>
+                  <div style={{ fontWeight: 700, color: '#0A0A0A', fontSize: '0.85rem' }}>{s.label}</div>
+                  <div style={{ fontSize: '0.7rem', color: '#6B6B6B' }}>{s.sub}</div>
                 </div>
               ))}
             </div>
             {/* Arrows */}
-            <div style={{ textAlign: 'center', fontSize: '1.5rem', color: 'rgba(255,255,255,0.2)', marginBottom: 16 }}>\u2193 \u2193</div>
+            <div style={{ textAlign: 'center', fontSize: '1.5rem', color: 'rgba(0,0,0,0.15)', marginBottom: 16 }}>{'\u2193'} {'\u2193'}</div>
             {/* Stages */}
             {stages.map((s, i) => (
               <div key={i} style={{
@@ -2076,9 +2067,9 @@ function FunnelSection() {
                 background: `linear-gradient(90deg, rgba(254,100,98,${0.06 + i * 0.04}) 0%, rgba(107,142,254,${0.04 + i * 0.03}) 100%)`,
                 borderRadius: 8, textAlign: 'center',
                 width: `${100 - i * 8}%`, margin: '0 auto 4px',
-                border: '1px solid rgba(255,255,255,0.06)',
+                border: '1px solid rgba(0,0,0,0.06)',
               }}>
-                <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.85rem' }}>{s}</div>
+                <div style={{ fontWeight: 700, color: '#0A0A0A', fontSize: '0.85rem' }}>{s}</div>
               </div>
             ))}
             {/* Result */}
@@ -2096,10 +2087,10 @@ function FunnelSection() {
 
           {/* Funnel Info */}
           <div style={{ flex: 1 }}>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', marginBottom: 12 }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0A0A0A', marginBottom: 12 }}>
               We Handle Every Step So You Can Focus on Closing
             </h3>
-            <p style={{ color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, marginBottom: 32 }}>
+            <p style={{ color: '#6B6B6B', lineHeight: 1.7, marginBottom: 32 }}>
               Most contractors only focus on getting leads. We build the entire system — from first impression to appointment confirmation.
             </p>
             {funnelSteps.map((s, i) => (
@@ -2111,8 +2102,8 @@ function FunnelSection() {
                   fontWeight: 700, color: S.accent, fontSize: '0.85rem',
                 }}>{s.num}</div>
                 <div>
-                  <h4 style={{ fontWeight: 700, color: '#fff', marginBottom: 4 }}>{s.title}</h4>
-                  <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>{s.desc}</p>
+                  <h4 style={{ fontWeight: 700, color: '#0A0A0A', marginBottom: 4 }}>{s.title}</h4>
+                  <p style={{ fontSize: '0.9rem', color: '#6B6B6B', lineHeight: 1.6 }}>{s.desc}</p>
                 </div>
               </div>
             ))}
