@@ -1320,15 +1320,21 @@ function PhoneDemo() {
 /* ═══════════════════════════════════════════════════
    WEBSITE DEMO — live site in browser frame
    ═══════════════════════════════════════════════════ */
+const DEMO_SITES = [
+  { url: 'https://www.aquaticpoolaz.com', domain: 'aquaticpoolaz.com' },
+  { url: 'https://timberlinefallsut.com', domain: 'timberlinefallsut.com' },
+  { url: 'https://tomron-construction.vercel.app', domain: 'tomron-construction.vercel.app' },
+];
+
 function WebsiteDemo() {
   const { ref, inView } = useScrollReveal({ threshold: 0.06 });
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.65);
-  const [blocked, setBlocked] = useState(false);
+  const [blocked, setBlocked] = useState<Record<number, boolean>>({});
+  const [activeIdx, setActiveIdx] = useState(0);
   const IFRAME_W = 1440;
   const IFRAME_H = 900;
-  const SITE_URL = 'https://www.aquaticpoolaz.com';
-  const SITE_DOMAIN = 'aquaticpoolaz.com';
+  const site = DEMO_SITES[activeIdx];
 
   useEffect(() => {
     const update = () => {
@@ -1341,16 +1347,49 @@ function WebsiteDemo() {
     return () => window.removeEventListener('resize', update);
   }, []);
 
+  const goPrev = () => setActiveIdx((p) => (p - 1 + DEMO_SITES.length) % DEMO_SITES.length);
+  const goNext = () => setActiveIdx((p) => (p + 1) % DEMO_SITES.length);
+
+  const arrowBtn = (direction: 'left' | 'right', onClick: () => void): React.CSSProperties & Record<string, string> => ({
+    position: 'absolute' as const,
+    top: '50%',
+    [direction === 'left' ? 'left' : 'right']: '-52px',
+    transform: 'translateY(-50%)',
+    width: '36px',
+    height: '36px',
+    borderRadius: '50%',
+    border: '1px solid rgba(0,0,0,0.1)',
+    background: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+    transition: 'all 0.2s',
+    color: '#333',
+    fontSize: '14px',
+  });
+
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
       <div style={S.container}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Website Preview</div>
           <h2 style={S.h2}>Websites That <HL>Convert</HL></h2>
-          <p style={S.sub}>See a real RevCore client website — built to turn visitors into booked appointments.</p>
+          <p style={S.sub}>See real RevCore client websites — built to turn visitors into booked appointments.</p>
         </div>
 
-        <div style={{ ...fadeUp(inView, 200), maxWidth: '1000px', margin: '0 auto' }}>
+        <div style={{ ...fadeUp(inView, 200), maxWidth: '1000px', margin: '0 auto', position: 'relative' }}>
+          {/* Left arrow */}
+          <div onClick={goPrev} style={arrowBtn('left', goPrev) as React.CSSProperties} className="wd-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+          </div>
+
+          {/* Right arrow */}
+          <div onClick={goNext} style={arrowBtn('right', goNext) as React.CSSProperties} className="wd-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 6 15 12 9 18" /></svg>
+          </div>
+
           <div style={{ borderRadius: '14px', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.06)', background: '#1a1d24' }}>
 
             {/* Browser chrome */}
@@ -1362,20 +1401,21 @@ function WebsiteDemo() {
               </div>
               <div style={{ flex: 1, background: '#13161c', borderRadius: '6px', padding: '5px 12px', display: 'flex', alignItems: 'center', gap: '7px', border: '1px solid rgba(255,255,255,0.06)' }}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" fill="rgba(148,217,107,0.55)" /></svg>
-                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>{SITE_DOMAIN}</span>
+                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>{site.domain}</span>
               </div>
-              <a href={SITE_URL} target="_blank" rel="noopener noreferrer" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, padding: '3px 8px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px' }}>
+              <a href={site.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, padding: '3px 8px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px' }}>
                 Open ↗
               </a>
             </div>
 
             {/* iframe or fallback */}
-            {!blocked ? (
+            {!blocked[activeIdx] ? (
               <div ref={containerRef} style={{ position: 'relative', overflow: 'hidden', background: '#fff', height: `${IFRAME_H * scale}px` }}>
                 <iframe
-                  src={SITE_URL}
-                  title={SITE_DOMAIN}
-                  onError={() => setBlocked(true)}
+                  key={activeIdx}
+                  src={site.url}
+                  title={site.domain}
+                  onError={() => setBlocked((b) => ({ ...b, [activeIdx]: true }))}
                   style={{
                     border: 'none',
                     width: `${IFRAME_W}px`,
@@ -1391,23 +1431,49 @@ function WebsiteDemo() {
                 <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.9rem', textAlign: 'center', maxWidth: '320px', lineHeight: 1.6 }}>
                   This site has iframe embedding disabled. Visit it directly to see the full experience.
                 </p>
-                <a href={SITE_URL} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 22px', borderRadius: '100px', background: 'rgba(46,204,138,0.1)', border: '1px solid rgba(46,204,138,0.3)', color: '#2ECC8A', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none' }}>
-                  Visit {SITE_DOMAIN} ↗
+                <a href={site.url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 22px', borderRadius: '100px', background: 'rgba(46,204,138,0.1)', border: '1px solid rgba(46,204,138,0.3)', color: '#2ECC8A', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none' }}>
+                  Visit {site.domain} ↗
                 </a>
               </div>
             )}
 
             {/* Footer bar */}
             <div style={{ background: '#13161c', padding: '8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.2)' }}>Live preview — content loads from {SITE_DOMAIN}</span>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '3px 8px', borderRadius: '100px', background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.18)' }}>
-                <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#FE6462', display: 'inline-block' }} />
-                <span style={{ fontSize: '8px', color: 'rgba(254,100,98,0.75)', fontWeight: 700, letterSpacing: '0.06em' }}>REVCORE CLIENT</span>
+              <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.2)' }}>Live preview — content loads from {site.domain}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {/* Dot indicators */}
+                <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+                  {DEMO_SITES.map((_, i) => (
+                    <div
+                      key={i}
+                      onClick={() => setActiveIdx(i)}
+                      style={{
+                        width: i === activeIdx ? '16px' : '5px',
+                        height: '5px',
+                        borderRadius: '100px',
+                        background: i === activeIdx ? '#FE6462' : 'rgba(255,255,255,0.15)',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s',
+                      }}
+                    />
+                  ))}
+                </div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '3px 8px', borderRadius: '100px', background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.18)' }}>
+                  <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#FE6462', display: 'inline-block' }} />
+                  <span style={{ fontSize: '8px', color: 'rgba(254,100,98,0.75)', fontWeight: 700, letterSpacing: '0.06em' }}>REVCORE CLIENT</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        .wd-arrow:hover { background: #f5f5f5 !important; border-color: rgba(0,0,0,0.15) !important; }
+        @media (max-width: 1100px) {
+          .wd-arrow { display: none !important; }
+        }
+      `}</style>
     </section>
   );
 }
