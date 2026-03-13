@@ -797,59 +797,47 @@ export default function PackagesPage() {
 }
 
 /* ═══════════════════════════════════════════════════
-   FUNNEL VISUALIZATION (replaces Miro embed)
+   FUNNEL VISUALIZATION
+   4 funnels: Overview → Current → Phase 1 → Phase 2
+   Each funnel has 4 layered sections with text inside
    ═══════════════════════════════════════════════════ */
-const funnelPhases = [
+const funnelData = [
   {
-    label: 'Current',
-    title: 'Where You Are Now',
-    subtitle: 'Manual & Disconnected',
+    title: 'Overview',
+    color: '#999999',
+    topW: 180, botW: 60,
+    layers: ['Presence', 'Systems', 'Appointments', 'Jobs'],
+  },
+  {
+    title: 'Current',
     color: '#FE6462',
-    topW: 80,   // top width of trapezoid (px out of 200 viewBox)
-    botW: 30,   // bottom width
-    items: [
-      'Referrals & word of mouth only',
-      'Manually following up (or forgetting)',
-      'No system to track close rates',
-      'Inconsistent monthly revenue',
-    ],
+    topW: 120, botW: 40,
+    layers: ['Referrals', 'Call / Text\nTo Set Appt', 'Appointments', 'Jobs'],
   },
   {
-    label: 'Phase 1',
-    title: 'Foundation',
-    subtitle: 'Ads + Website + CRM',
+    title: 'Phase 1',
     color: '#6B8EFE',
-    topW: 130,
-    botW: 55,
-    items: [
-      'Meta & Google Ads generating leads',
-      'Conversion-optimized website',
-      'CRM with automated follow-up',
-      'Lead qualification & routing',
-      'Dedicated landing pages',
-    ],
+    topW: 160, botW: 55,
+    layers: ['Referrals +\nPaid Ads', 'Auto Booking\nSystem', 'Appt Reminders', 'Jobs'],
   },
   {
-    label: 'Phase 2',
-    title: 'Full Scale',
-    subtitle: 'Automation + Self-Booking',
+    title: 'Phase 2',
     color: '#94D96B',
-    topW: 180,
-    botW: 80,
-    items: [
-      'Self-booking appointment calendar',
-      'Automated SMS & email reminders',
-      'Rehash engine for old leads',
-      'iPad sales presentation',
-      'Revenue dashboard & reporting',
-      'Weekly optimization calls',
-    ],
+    topW: 190, botW: 70,
+    layers: ['Referrals + Paid\nAds + Organic', 'Auto Booking\nSystem', 'Appt Reminders', 'Jobs'],
   },
 ];
 
 function FunnelVisualization() {
-  const [activePhase, setActivePhase] = useState<number | null>(null);
+  const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
+
+  const cx = 110; // center x in viewBox
+  const vbH = 260;
+  const layerCount = 4;
+  const yStart = 20;
+  const yEnd = vbH - 10;
+  const layerH = (yEnd - yStart) / layerCount;
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '120px', paddingBottom: '80px', position: 'relative' }}>
@@ -860,133 +848,128 @@ function FunnelVisualization() {
           <p style={S.sub}>See where you are today, and where RevCore takes you.</p>
         </div>
 
-        {/* Funnel row: funnel → arrow → funnel → arrow → funnel */}
         <div className="fv-row" style={fadeUp(inView, 200)}>
-          {funnelPhases.map((phase, i) => {
-            const cx = 100;
-            const isActive = activePhase === i;
+          {funnelData.map((funnel, fi) => {
+            const isActive = activeIdx === fi;
+
+            // Calculate left/right edges at each y position
+            const getW = (y: number) => {
+              const t = (y - yStart) / (yEnd - yStart);
+              return funnel.topW + (funnel.botW - funnel.topW) * t;
+            };
 
             return (
-              <div key={i} className="fv-col">
-                {/* Arrow connector */}
-                {i > 0 && (
+              <div key={fi} className="fv-col">
+                {/* Arrow between funnels */}
+                {fi > 0 && (
                   <div className="fv-arrow-wrap">
-                    <svg viewBox="0 0 80 40" className="fv-arrow-svg">
-                      <defs>
-                        <linearGradient id={`arrowGrad${i}`} x1="0" y1="0" x2="1" y2="0">
-                          <stop offset="0%" stopColor={funnelPhases[i - 1].color} stopOpacity="0.7" />
-                          <stop offset="100%" stopColor={phase.color} stopOpacity="0.7" />
-                        </linearGradient>
-                      </defs>
-                      <line x1="4" y1="20" x2="58" y2="20"
-                        stroke={`url(#arrowGrad${i})`}
-                        strokeWidth="2.5"
-                        strokeDasharray="6 4"
+                    <svg viewBox="0 0 48 30" className="fv-arrow-svg">
+                      <line x1="4" y1="15" x2="32" y2="15"
+                        stroke={funnel.color} strokeWidth="2" strokeOpacity="0.4"
+                        strokeDasharray="4 3"
                         style={{
-                          strokeDashoffset: inView ? 0 : 80,
-                          transition: `stroke-dashoffset 1.2s ease ${0.6 + i * 0.3}s`,
+                          strokeDashoffset: inView ? 0 : 50,
+                          transition: `stroke-dashoffset 1s ease ${0.5 + fi * 0.25}s`,
                         }}
                       />
-                      <polygon
-                        points="54,11 72,20 54,29"
-                        fill={phase.color}
-                        opacity={inView ? 0.8 : 0}
-                        style={{ transition: `opacity 0.5s ease ${0.9 + i * 0.3}s` }}
+                      <polygon points="30,8 44,15 30,22" fill={funnel.color}
+                        opacity={inView ? 0.7 : 0}
+                        style={{ transition: `opacity 0.4s ease ${0.7 + fi * 0.25}s` }}
                       />
                     </svg>
                   </div>
                 )}
 
-                {/* Funnel card */}
+                {/* Funnel */}
                 <div
                   className={`fv-funnel${isActive ? ' active' : ''}`}
-                  onClick={() => setActivePhase(isActive ? null : i)}
-                  onMouseEnter={() => setActivePhase(i)}
-                  onMouseLeave={() => setActivePhase(null)}
+                  onMouseEnter={() => setActiveIdx(fi)}
+                  onMouseLeave={() => setActiveIdx(null)}
                   style={{
-                    '--fv-color': phase.color,
+                    '--fv-color': funnel.color,
                     opacity: inView ? 1 : 0,
-                    transform: inView ? 'translateY(0) scale(1)' : 'translateY(24px) scale(0.95)',
-                    transition: `all 0.7s cubic-bezier(0.22,1,0.36,1) ${i * 0.2}s`,
+                    transform: inView ? 'translateY(0)' : 'translateY(20px)',
+                    transition: `all 0.6s cubic-bezier(0.22,1,0.36,1) ${fi * 0.15}s`,
                   } as React.CSSProperties}
                 >
-                  {/* SVG Funnel */}
-                  <svg viewBox="0 0 200 180" className="fv-funnel-svg">
+                  {/* Title above funnel */}
+                  <div className="fv-title" style={{ color: funnel.color }}>{funnel.title}</div>
+
+                  {/* SVG funnel with sections */}
+                  <svg viewBox={`0 0 220 ${vbH}`} className="fv-funnel-svg">
                     <defs>
-                      <linearGradient id={`funnelFill${i}`} x1="0.5" y1="0" x2="0.5" y2="1">
-                        <stop offset="0%" stopColor={phase.color} stopOpacity="0.18" />
-                        <stop offset="100%" stopColor={phase.color} stopOpacity="0.04" />
+                      <linearGradient id={`fvFill${fi}`} x1="0.5" y1="0" x2="0.5" y2="1">
+                        <stop offset="0%" stopColor={funnel.color} stopOpacity="0.12" />
+                        <stop offset="100%" stopColor={funnel.color} stopOpacity="0.03" />
                       </linearGradient>
                     </defs>
 
-                    {/* Funnel trapezoid */}
+                    {/* Full funnel outline */}
                     <path
-                      d={`M${cx - phase.topW / 2} 10 L${cx + phase.topW / 2} 10 L${cx + phase.botW / 2} 165 L${cx - phase.botW / 2} 165 Z`}
-                      fill={`url(#funnelFill${i})`}
-                      stroke={phase.color}
+                      d={`M${cx - funnel.topW / 2} ${yStart} L${cx + funnel.topW / 2} ${yStart} L${cx + funnel.botW / 2} ${yEnd} L${cx - funnel.botW / 2} ${yEnd} Z`}
+                      fill={`url(#fvFill${fi})`}
+                      stroke={funnel.color}
                       strokeWidth="2"
                       strokeOpacity={isActive ? 1 : 0.5}
                       className="fv-trap"
                     />
 
-                    {/* Horizontal level lines */}
-                    {[50, 90, 130].map((y, li) => {
-                      const t = (y - 10) / 155;
-                      const w = phase.topW + (phase.botW - phase.topW) * t;
+                    {/* Horizontal section dividers + text labels */}
+                    {funnel.layers.map((label, li) => {
+                      const y1 = yStart + li * layerH;
+                      const y2 = yStart + (li + 1) * layerH;
+                      const midY = (y1 + y2) / 2;
+
+                      // Draw divider line (not on first layer top — that's the outline)
+                      const dividerY = y1;
+                      const divW = getW(dividerY);
+
+                      const lines = label.split('\n');
+
                       return (
-                        <line key={li}
-                          x1={cx - w / 2 + 4} y1={y} x2={cx + w / 2 - 4} y2={y}
-                          stroke={phase.color} strokeOpacity="0.15" strokeWidth="1"
-                          strokeDasharray="4 3"
-                        />
+                        <g key={li}>
+                          {li > 0 && (
+                            <line
+                              x1={cx - divW / 2} y1={dividerY} x2={cx + divW / 2} y2={dividerY}
+                              stroke={funnel.color} strokeWidth="1" strokeOpacity="0.3"
+                            />
+                          )}
+                          {/* Label text centered in section */}
+                          {lines.map((line, lineIdx) => (
+                            <text key={lineIdx}
+                              x={cx} y={midY + (lineIdx - (lines.length - 1) / 2) * 14}
+                              textAnchor="middle" dominantBaseline="central"
+                              fill="#0A0A0A" fontSize="11" fontWeight="600"
+                              fontFamily="DM Sans, sans-serif"
+                              opacity={isActive ? 1 : 0.7}
+                              style={{ transition: 'opacity 0.3s' }}
+                            >
+                              {line}
+                            </text>
+                          ))}
+                        </g>
                       );
                     })}
 
-                    {/* Animated falling dots */}
-                    {inView && [0, 1, 2, 3, 4].map(d => {
-                      const spread = phase.topW * 0.35;
-                      const offset = (d - 2) * (spread / 2.5);
+                    {/* Animated dots falling through funnel */}
+                    {inView && [0, 1, 2].map(d => {
+                      const spread = funnel.topW * 0.25;
+                      const offset = (d - 1) * (spread / 1.5);
                       return (
-                        <circle key={d} r="3.5" fill={phase.color}>
-                          <animate
-                            attributeName="cy" from="16" to="160"
-                            dur={`${2.2 + d * 0.25}s`} begin={`${d * 0.5}s`}
-                            repeatCount="indefinite"
-                          />
-                          <animate
-                            attributeName="cx"
+                        <circle key={d} r="3" fill={funnel.color}>
+                          <animate attributeName="cy" from={yStart + 5} to={yEnd - 5}
+                            dur={`${2.4 + d * 0.3}s`} begin={`${d * 0.7}s`} repeatCount="indefinite" />
+                          <animate attributeName="cx"
                             from={`${cx + offset}`}
-                            to={`${cx + offset * (phase.botW / phase.topW)}`}
-                            dur={`${2.2 + d * 0.25}s`} begin={`${d * 0.5}s`}
-                            repeatCount="indefinite"
-                          />
-                          <animate
-                            attributeName="opacity"
-                            values="0;0.8;0.8;0" keyTimes="0;0.08;0.75;1"
-                            dur={`${2.2 + d * 0.25}s`} begin={`${d * 0.5}s`}
-                            repeatCount="indefinite"
-                          />
+                            to={`${cx + offset * (funnel.botW / funnel.topW)}`}
+                            dur={`${2.4 + d * 0.3}s`} begin={`${d * 0.7}s`} repeatCount="indefinite" />
+                          <animate attributeName="opacity"
+                            values="0;0.7;0.7;0" keyTimes="0;0.08;0.8;1"
+                            dur={`${2.4 + d * 0.3}s`} begin={`${d * 0.7}s`} repeatCount="indefinite" />
                         </circle>
                       );
                     })}
                   </svg>
-
-                  {/* Phase info */}
-                  <div className="fv-phase-label" style={{ color: phase.color }}>{phase.label}</div>
-                  <h3 className="fv-phase-title">{phase.title}</h3>
-                  <p className="fv-phase-sub">{phase.subtitle}</p>
-
-                  {/* Expanding details */}
-                  <div className={`fv-items${isActive ? ' open' : ''}`}>
-                    {phase.items.map((item, j) => (
-                      <div key={j} className="fv-item" style={{ transitionDelay: isActive ? `${j * 50}ms` : '0ms' }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: '1px' }}>
-                          <path d="M20 6L9 17l-5-5" stroke={phase.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             );
@@ -1001,147 +984,67 @@ function FunnelVisualization() {
           justify-content: center;
           gap: 0;
         }
-
         .fv-col {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
         }
-
         .fv-arrow-wrap {
+          flex-shrink: 0;
           display: flex;
           align-items: center;
-          padding-top: 80px;
-          flex-shrink: 0;
+          padding-top: 24px;
         }
-
         .fv-arrow-svg {
-          width: 64px;
-          height: 36px;
+          width: 44px;
+          height: 28px;
         }
-
         .fv-funnel {
           display: flex;
           flex-direction: column;
           align-items: center;
-          text-align: center;
-          padding: 24px 20px 28px;
-          border-radius: 20px;
-          background: #ffffff;
-          border: 1px solid #E5E5E5;
           cursor: pointer;
-          position: relative;
-          overflow: hidden;
           transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-          width: 320px;
           flex-shrink: 0;
         }
-
-        .fv-funnel:hover,
-        .fv-funnel.active {
-          border-color: var(--fv-color);
-          transform: translateY(-6px) scale(1.02);
-          box-shadow: 0 12px 40px rgba(0,0,0,0.08), 0 0 0 1px var(--fv-color);
+        .fv-funnel:hover {
+          transform: translateY(-4px);
         }
-
+        .fv-title {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.85rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          margin-bottom: 8px;
+        }
         .fv-funnel-svg {
-          width: 180px;
-          height: 150px;
-          margin-bottom: 16px;
+          width: 220px;
+          height: 260px;
           transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
         }
-
         .fv-funnel:hover .fv-funnel-svg {
-          transform: scale(1.06);
+          transform: scale(1.04);
         }
-
         .fv-trap {
           transition: stroke-opacity 0.3s, filter 0.3s;
         }
-
         .fv-funnel:hover .fv-trap,
         .fv-funnel.active .fv-trap {
           stroke-opacity: 1;
-          filter: drop-shadow(0 0 12px color-mix(in srgb, var(--fv-color) 40%, transparent));
+          filter: drop-shadow(0 0 10px color-mix(in srgb, var(--fv-color) 35%, transparent));
         }
-
-        .fv-phase-label {
-          font-size: 0.65rem;
-          font-weight: 800;
-          text-transform: uppercase;
-          letter-spacing: 0.12em;
-          margin-bottom: 4px;
-        }
-
-        .fv-phase-title {
-          font-family: 'DM Sans', sans-serif;
-          font-size: 1.2rem;
-          font-weight: 800;
-          color: #0A0A0A;
-          margin-bottom: 2px;
-          line-height: 1.3;
-        }
-
-        .fv-phase-sub {
-          font-size: 0.8rem;
-          color: #6B6B6B;
-          font-weight: 500;
-          margin-bottom: 4px;
-        }
-
-        .fv-items {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-          max-height: 0;
-          overflow: hidden;
-          opacity: 0;
-          margin-top: 0;
-          transition: max-height 0.5s cubic-bezier(0.22,1,0.36,1),
-                      opacity 0.4s ease,
-                      margin-top 0.4s ease;
-        }
-
-        .fv-items.open {
-          max-height: 300px;
-          opacity: 1;
-          margin-top: 14px;
-        }
-
-        .fv-item {
-          display: flex;
-          align-items: flex-start;
-          gap: 8px;
-          font-size: 0.8rem;
-          color: #6B6B6B;
-          line-height: 1.5;
-          text-align: left;
-          opacity: 0;
-          transform: translateY(6px);
-          transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-
-        .fv-items.open .fv-item {
-          opacity: 1;
-          transform: translateY(0);
-        }
-
         @media (max-width: 960px) {
           .fv-row {
             flex-direction: column;
             align-items: center;
-            gap: 0;
           }
           .fv-col {
             flex-direction: column;
-            align-items: center;
           }
           .fv-arrow-wrap {
             padding-top: 0;
             transform: rotate(90deg);
-            margin: -4px 0;
-          }
-          .fv-funnel {
-            width: 320px;
+            margin: -8px 0;
           }
         }
       `}</style>
