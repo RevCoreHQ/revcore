@@ -124,11 +124,10 @@ export const resultsData = [
 
 // ── Phone Demo Steps ───────────────────────────────
 export const phoneSteps = [
-  { num: 1, title: 'Target', desc: 'Specific zip codes in your service area' },
-  { num: 2, title: 'Attract', desc: 'Scroll-stopping ads built for your trade' },
-  { num: 3, title: 'Qualify', desc: 'Only serious homeowners get through' },
-  { num: 4, title: 'Book', desc: 'They pick a time that works for both of you' },
-  { num: 5, title: 'Remind', desc: 'Auto reminders keep show rates high' },
+  { num: 1, title: 'Attract', desc: 'Scroll-stopping ads built for your trade' },
+  { num: 2, title: 'Qualify', desc: 'Only serious homeowners get through' },
+  { num: 3, title: 'Book', desc: 'They pick a time that works for both of you' },
+  { num: 4, title: 'Remind', desc: 'Auto reminders keep show rates high' },
 ];
 
 // ── FB Ad Mockups ──────────────────────────────────

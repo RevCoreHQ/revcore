@@ -263,37 +263,6 @@ export default function PackagesPage() {
           color: rgba(255,255,255,0.5);
         }
 
-        /* Targeting Map */
-        .targeting-map-container {
-          background: #13161e;
-          border-radius: 12px;
-          overflow: hidden;
-          flex: 1;
-          position: relative;
-          border: 1px solid rgba(255,255,255,0.08);
-        }
-        .map-targeting-legend {
-          display: flex;
-          justify-content: center;
-          gap: 16px;
-          padding: 10px;
-          background: rgba(255,255,255,0.03);
-        }
-        .map-targeting-legend-item {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 0.7rem;
-          color: rgba(255,255,255,0.5);
-        }
-        .map-targeting-legend-dot {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-        }
-        .map-targeting-legend-dot.include { background: #22c55e; }
-        .map-targeting-legend-dot.exclude { background: #ef4444; }
-
         /* FB Ad Carousel */
         .fb-ad-carousel {
           flex: 1;
@@ -892,56 +861,10 @@ function PhoneDemo() {
               <div className="phone-screen">
                 <div className="phone-notch" />
                 <div className="phone-screen-content">
-                  {/* Slide 1: Target */}
+                  {/* Slide 1: FB Ads */}
                   <div className={`phone-slide${step === 0 ? ' active' : step > 0 ? ' prev' : ''}`}>
                     <div className="phone-slide-header">
                       <div className="phone-slide-badge">Step 1</div>
-                      <div className="phone-slide-title">Target Your Service Area</div>
-                    </div>
-                    <div className="phone-slide-body">
-                      <div className="targeting-map-container">
-                        <div style={{
-                          width: '100%', height: 520, background: '#13161e',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative',
-                        }}>
-                          <div style={{ position: 'relative', width: '85%', height: '85%' }}>
-                            {[
-                              { x: '20%', y: '30%', size: 60, color: 'rgba(34,197,94,0.3)', border: 'rgba(34,197,94,0.5)' },
-                              { x: '50%', y: '20%', size: 80, color: 'rgba(34,197,94,0.2)', border: 'rgba(34,197,94,0.4)' },
-                              { x: '70%', y: '50%', size: 50, color: 'rgba(34,197,94,0.25)', border: 'rgba(34,197,94,0.45)' },
-                              { x: '35%', y: '60%', size: 70, color: 'rgba(34,197,94,0.35)', border: 'rgba(34,197,94,0.55)' },
-                              { x: '60%', y: '75%', size: 45, color: 'rgba(239,68,68,0.2)', border: 'rgba(239,68,68,0.4)' },
-                            ].map((z, i) => (
-                              <div key={i} style={{
-                                position: 'absolute', left: z.x, top: z.y,
-                                width: z.size, height: z.size, borderRadius: '50%',
-                                background: z.color, border: `1px solid ${z.border}`,
-                                transform: 'translate(-50%, -50%)',
-                              }} />
-                            ))}
-                            <div style={{ position: 'absolute', left: '35%', top: '45%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                              <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>Tampa, FL</div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="map-targeting-legend">
-                          <div className="map-targeting-legend-item">
-                            <div className="map-targeting-legend-dot include" />
-                            <span>Include</span>
-                          </div>
-                          <div className="map-targeting-legend-item">
-                            <div className="map-targeting-legend-dot exclude" />
-                            <span>Exclude</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Slide 2: FB Ads */}
-                  <div className={`phone-slide${step === 1 ? ' active' : step > 1 ? ' prev' : ''}`}>
-                    <div className="phone-slide-header">
-                      <div className="phone-slide-badge">Step 2</div>
                       <div className="phone-slide-title">Scroll-Stopping Ads</div>
                     </div>
                     <div className="phone-slide-body" style={{ gap: 0 }}>
@@ -985,10 +908,10 @@ function PhoneDemo() {
                     </div>
                   </div>
 
-                  {/* Slide 3: Qualify */}
-                  <div className={`phone-slide${step === 2 ? ' active' : step > 2 ? ' prev' : ''}`}>
+                  {/* Slide 2: Qualify */}
+                  <div className={`phone-slide${step === 1 ? ' active' : step > 1 ? ' prev' : ''}`}>
                     <div className="phone-slide-header">
-                      <div className="phone-slide-badge">Step 3</div>
+                      <div className="phone-slide-badge">Step 2</div>
                       <div className="phone-slide-title">Qualifying Questions</div>
                     </div>
                     <div className="phone-slide-body">
@@ -1018,10 +941,10 @@ function PhoneDemo() {
                     </div>
                   </div>
 
-                  {/* Slide 4: Calendar */}
-                  <div className={`phone-slide${step === 3 ? ' active' : step > 3 ? ' prev' : ''}`}>
+                  {/* Slide 3: Calendar */}
+                  <div className={`phone-slide${step === 2 ? ' active' : step > 2 ? ' prev' : ''}`}>
                     <div className="phone-slide-header">
-                      <div className="phone-slide-badge">Step 4</div>
+                      <div className="phone-slide-badge">Step 3</div>
                       <div className="phone-slide-title">Self-Booking Calendar</div>
                     </div>
                     <div className="phone-slide-body">
@@ -1054,10 +977,10 @@ function PhoneDemo() {
                     </div>
                   </div>
 
-                  {/* Slide 5: Reminders */}
-                  <div className={`phone-slide${step === 4 ? ' active' : ''}`}>
+                  {/* Slide 4: Reminders */}
+                  <div className={`phone-slide${step === 3 ? ' active' : ''}`}>
                     <div className="phone-slide-header">
-                      <div className="phone-slide-badge">Step 5</div>
+                      <div className="phone-slide-badge">Step 4</div>
                       <div className="phone-slide-title">Automatic Reminders</div>
                     </div>
                     <div className="phone-slide-body">
