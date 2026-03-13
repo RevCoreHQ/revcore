@@ -39,7 +39,7 @@ export default function Header() {
   const isPortal     = pathname?.startsWith('/portal');
   const isOnboarding = pathname?.startsWith('/onboarding');
   const isVsl        = pathname?.startsWith('/vsl') || pathname === '/confirmed' || pathname === '/booked';
-  const isDark       = pathname?.startsWith('/software') || pathname?.startsWith('/growth');
+  const isDark       = pathname?.startsWith('/software') || pathname?.startsWith('/growth') || pathname?.startsWith('/packages');
 
   if (isTracker || isPortal || isOnboarding || isVsl) return null;
 
