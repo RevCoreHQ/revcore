@@ -806,48 +806,84 @@ const funnelData = [
     title: 'Overview',
     subtitle: 'The funnel explained',
     color: '#999999',
-    topW: 240, botW: 70,
+    topW: 330, botW: 100,
     layers: ['Digital Presence', 'Systems', 'Appointments', 'Jobs'],
+    descriptions: [
+      'How potential customers find you online — your website, ads, search rankings, and social media presence.',
+      'The tools and automations that capture, organize, and follow up with incoming leads.',
+      'How leads get converted into scheduled, confirmed appointments on your calendar.',
+      'The booked jobs that generate revenue — the bottom line of your funnel.',
+    ],
   },
   {
     title: 'Current',
     subtitle: 'Where you are now',
     color: '#FE6462',
-    topW: 200, botW: 55,
+    topW: 280, botW: 80,
     layers: ['Referrals Only', 'Call / Text To Set Appt', 'Appointments', 'Jobs'],
+    descriptions: [
+      'You rely entirely on word-of-mouth. No ads, no SEO, no website traffic — inconsistent lead flow.',
+      'Every lead requires a manual phone call or text. Leads slip through the cracks when you\'re busy on a job.',
+      'Scheduling is manual. No-shows are frequent. No automated reminders or confirmations.',
+      'Fewer jobs because the top of your funnel is narrow and every step leaks potential customers.',
+    ],
   },
   {
     title: 'Phase 1',
     subtitle: 'Foundation',
     color: '#6B8EFE',
-    topW: 260, botW: 75,
+    topW: 360, botW: 105,
     layers: ['Referrals + Paid Ads', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
+    descriptions: [
+      'Paid ads on Google & Facebook target your service area. Referrals keep flowing — now you have two lead sources.',
+      'Leads land on your website and self-book appointments. CRM captures every inquiry automatically.',
+      'Automated SMS & email reminders reduce no-shows. Calendar stays organized without manual effort.',
+      'More appointments mean more jobs. Consistent pipeline replaces the feast-or-famine cycle.',
+    ],
   },
   {
     title: 'Phase 2',
     subtitle: 'Full Scale',
     color: '#94D96B',
-    topW: 320, botW: 95,
+    topW: 440, botW: 130,
     layers: ['Referrals + Paid Ads + Organic', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
+    descriptions: [
+      'SEO, Google Business, and content marketing compound with ads. You dominate your local market across every channel.',
+      'AI-powered follow-ups, review requests, and re-engagement campaigns run on autopilot 24/7.',
+      'Smart scheduling optimizes routes and availability. Confirmation rates exceed 90%.',
+      'Maximum job volume with minimal overhead. Your funnel is wide at the top and efficient all the way down.',
+    ],
   },
 ];
 
-/* Generic layer labels shown on the left side */
 const layerLabels = ['Digital Presence', 'Systems', 'Appointments', 'Jobs'];
 
 function FunnelVisualization() {
   const [activeIdx, setActiveIdx] = useState(0);
+  const [hoveredLayer, setHoveredLayer] = useState<number | null>(null);
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
 
-  const cx = 200;
-  const vbW = 400;
-  const vbH = 300;
+  const cx = 280;
+  const vbW = 560;
+  const vbH = 480;
   const layerCount = 4;
-  const yStart = 20;
-  const yEnd = vbH - 20;
-  const layerH = (yEnd - yStart) / layerCount;
+  const yStart = 24;
+  const yEnd = vbH - 24;
 
   const funnel = funnelData[activeIdx];
+
+  /* Compute layer heights — hovered layer expands, others shrink */
+  const baseH = (yEnd - yStart) / layerCount;
+  const expandedH = baseH * 1.45;
+  const shrunkH = hoveredLayer !== null ? (yEnd - yStart - expandedH) / (layerCount - 1) : baseH;
+
+  const getLayerY = (li: number) => {
+    let y = yStart;
+    for (let i = 0; i < li; i++) {
+      y += (hoveredLayer === i ? expandedH : shrunkH);
+    }
+    return y;
+  };
 
   const getW = (y: number) => {
     const t = (y - yStart) / (yEnd - yStart);
@@ -855,43 +891,48 @@ function FunnelVisualization() {
   };
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '120px', paddingBottom: '80px', position: 'relative' }}>
-      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
+    <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '100px', paddingBottom: '100px', position: 'relative' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Your Growth Path</div>
           <h2 style={S.h2}>From Disconnected to <HL>Fully Automated</HL></h2>
           <p style={S.sub}>See where you are today, and where RevCore takes you.</p>
         </div>
 
-        {/* Tab buttons */}
-        <div className="fv-tabs" style={fadeUp(inView, 150)}>
+        {/* Step cards */}
+        <div className="fv-steps" style={fadeUp(inView, 150)}>
           {funnelData.map((f, i) => (
             <button
               key={i}
-              className={`fv-tab${activeIdx === i ? ' active' : ''}`}
-              onClick={() => setActiveIdx(i)}
-              style={{ '--tab-color': f.color } as React.CSSProperties}
+              className={`fv-step${activeIdx === i ? ' active' : ''}`}
+              onClick={() => { setActiveIdx(i); setHoveredLayer(null); }}
+              style={{ '--step-color': f.color } as React.CSSProperties}
             >
-              <span className="fv-tab-dot" />
-              <span className="fv-tab-label">{f.title}</span>
-              <span className="fv-tab-sub">{f.subtitle}</span>
+              <div className="fv-step-num">{i + 1}</div>
+              <div className="fv-step-text">
+                <div className="fv-step-title">{f.title}</div>
+                <div className="fv-step-sub">{f.subtitle}</div>
+              </div>
             </button>
           ))}
         </div>
 
-        {/* Single funnel display */}
+        {/* Funnel + detail panel */}
         <div className="fv-stage" style={fadeUp(inView, 300)}>
           {/* Left labels */}
           <div className="fv-labels">
-            {layerLabels.map((label, i) => (
-              <div key={i} className="fv-label" style={{
-                height: `${100 / layerCount}%`,
-                opacity: inView ? 1 : 0,
-                transition: `opacity 0.4s ease ${0.3 + i * 0.1}s`,
-              }}>
-                {label}
-              </div>
-            ))}
+            {layerLabels.map((label, i) => {
+              const h = hoveredLayer === i ? expandedH : shrunkH;
+              return (
+                <div key={i} className={`fv-label${hoveredLayer === i ? ' active' : ''}`} style={{
+                  height: `${(h / (yEnd - yStart)) * 100}%`,
+                  opacity: inView ? (hoveredLayer !== null && hoveredLayer !== i ? 0.35 : 1) : 0,
+                  transition: 'all 0.4s cubic-bezier(0.22,1,0.36,1)',
+                }}>
+                  {label}
+                </div>
+              );
+            })}
           </div>
 
           {/* Funnel SVG */}
@@ -899,119 +940,158 @@ function FunnelVisualization() {
             <svg viewBox={`0 0 ${vbW} ${vbH}`} className="fv-funnel-svg">
               <defs>
                 <linearGradient id="fvFillActive" x1="0.5" y1="0" x2="0.5" y2="1">
-                  <stop offset="0%" stopColor={funnel.color} stopOpacity="0.15" />
+                  <stop offset="0%" stopColor={funnel.color} stopOpacity="0.18" />
                   <stop offset="100%" stopColor={funnel.color} stopOpacity="0.04" />
                 </linearGradient>
               </defs>
 
-              {/* Funnel trapezoid */}
+              {/* Full trapezoid outline */}
               <path
                 d={`M${cx - funnel.topW / 2} ${yStart} L${cx + funnel.topW / 2} ${yStart} L${cx + funnel.botW / 2} ${yEnd} L${cx - funnel.botW / 2} ${yEnd} Z`}
                 fill="url(#fvFillActive)"
                 stroke={funnel.color}
                 strokeWidth="2"
+                strokeOpacity="0.3"
                 className="fv-trap-anim"
               />
 
-              {/* Section dividers + text */}
+              {/* Interactive layers */}
               {funnel.layers.map((label, li) => {
-                const y1 = yStart + li * layerH;
-                const y2 = yStart + (li + 1) * layerH;
-                const midY = (y1 + y2) / 2;
-                const divW = getW(y1);
-                const lines = label.split('\n');
+                const y1 = getLayerY(li);
+                const y2 = getLayerY(li + 1 > layerCount - 1 ? layerCount : li + 1);
+                const actualY2 = li === layerCount - 1 ? yEnd : y2;
+                const midY = (y1 + actualY2) / 2;
+                const w1 = getW(y1);
+                const w2 = getW(actualY2);
+                const isHovered = hoveredLayer === li;
+                const isDimmed = hoveredLayer !== null && hoveredLayer !== li;
 
                 return (
-                  <g key={li} className="fv-layer-anim" style={{ animationDelay: `${li * 80}ms` }}>
+                  <g
+                    key={li}
+                    className="fv-layer-anim"
+                    style={{
+                      animationDelay: `${li * 80}ms`,
+                      cursor: 'pointer',
+                      transition: 'opacity 0.3s',
+                      opacity: isDimmed ? 0.35 : 1,
+                    }}
+                    onMouseEnter={() => setHoveredLayer(li)}
+                    onMouseLeave={() => setHoveredLayer(null)}
+                  >
+                    {/* Layer fill */}
+                    <path
+                      d={`M${cx - w1 / 2} ${y1} L${cx + w1 / 2} ${y1} L${cx + w2 / 2} ${actualY2} L${cx - w2 / 2} ${actualY2} Z`}
+                      fill={funnel.color}
+                      fillOpacity={isHovered ? 0.2 : 0.0}
+                      stroke="none"
+                      style={{ transition: 'fill-opacity 0.3s, d 0.4s' }}
+                    />
+
+                    {/* Divider line */}
                     {li > 0 && (
                       <line
-                        x1={cx - divW / 2} y1={y1} x2={cx + divW / 2} y2={y1}
+                        x1={cx - w1 / 2} y1={y1} x2={cx + w1 / 2} y2={y1}
                         stroke={funnel.color} strokeWidth="1" strokeOpacity="0.3"
                       />
                     )}
-                    {lines.map((line, lineIdx) => (
-                      <text key={lineIdx}
-                        x={cx} y={midY + (lineIdx - (lines.length - 1) / 2) * 15}
-                        textAnchor="middle" dominantBaseline="central"
-                        fill="#0A0A0A" fontSize="12" fontWeight="600"
-                        fontFamily="DM Sans, sans-serif"
-                      >
-                        {line}
-                      </text>
-                    ))}
+
+                    {/* Layer text */}
+                    <text
+                      x={cx} y={midY}
+                      textAnchor="middle" dominantBaseline="central"
+                      fill="#0A0A0A" fontSize={isHovered ? '18' : '16'} fontWeight="600"
+                      fontFamily="DM Sans, sans-serif"
+                      style={{ transition: 'font-size 0.3s' }}
+                    >
+                      {label}
+                    </text>
                   </g>
                 );
               })}
-
-              {/* Animated dots */}
-              {[0, 1, 2].map(d => {
-                const spread = funnel.topW * 0.2;
-                const offset = (d - 1) * spread;
-                return (
-                  <circle key={`${activeIdx}-${d}`} r="3.5" fill={funnel.color}>
-                    <animate attributeName="cy" from={yStart + 8} to={yEnd - 8}
-                      dur={`${2.5 + d * 0.3}s`} begin={`${d * 0.6}s`} repeatCount="indefinite" />
-                    <animate attributeName="cx"
-                      from={`${cx + offset}`}
-                      to={`${cx + offset * (funnel.botW / funnel.topW)}`}
-                      dur={`${2.5 + d * 0.3}s`} begin={`${d * 0.6}s`} repeatCount="indefinite" />
-                    <animate attributeName="opacity"
-                      values="0;0.8;0.8;0" keyTimes="0;0.06;0.8;1"
-                      dur={`${2.5 + d * 0.3}s`} begin={`${d * 0.6}s`} repeatCount="indefinite" />
-                  </circle>
-                );
-              })}
             </svg>
+          </div>
+
+          {/* Detail panel */}
+          <div className={`fv-detail${hoveredLayer !== null ? ' visible' : ''}`}>
+            <div className="fv-detail-inner">
+              <div className="fv-detail-badge" style={{ background: funnel.color }}>
+                {hoveredLayer !== null ? layerLabels[hoveredLayer] : ''}
+              </div>
+              <p className="fv-detail-text">
+                {hoveredLayer !== null ? funnel.descriptions[hoveredLayer] : ''}
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
       <style>{`
-        .fv-tabs {
-          display: flex;
-          justify-content: center;
+        .fv-steps {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
           gap: 12px;
           margin-bottom: 3rem;
         }
-        .fv-tab {
+        .fv-step {
           display: flex;
           align-items: center;
-          gap: 10px;
-          padding: 12px 24px;
-          border-radius: 100px;
+          gap: 14px;
+          padding: 16px 20px;
+          border-radius: 14px;
           border: 1px solid #E5E5E5;
           background: #fff;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
           font-family: inherit;
+          text-align: left;
+          border-left: 3px solid transparent;
         }
-        .fv-tab:hover {
-          border-color: var(--tab-color);
-          box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        .fv-step:hover {
+          border-color: #E5E5E5;
+          border-left-color: var(--step-color);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.06);
         }
-        .fv-tab.active {
-          border-color: var(--tab-color);
-          background: color-mix(in srgb, var(--tab-color) 6%, #fff);
-          box-shadow: 0 2px 16px color-mix(in srgb, var(--tab-color) 15%, transparent);
+        .fv-step.active {
+          border-color: color-mix(in srgb, var(--step-color) 30%, #E5E5E5);
+          border-left-color: var(--step-color);
+          background: color-mix(in srgb, var(--step-color) 4%, #fff);
+          box-shadow: 0 4px 20px color-mix(in srgb, var(--step-color) 12%, transparent);
         }
-        .fv-tab-dot {
-          width: 10px;
-          height: 10px;
+        .fv-step-num {
+          width: 32px;
+          height: 32px;
           border-radius: 50%;
-          background: var(--tab-color);
-          opacity: 0.4;
-          transition: opacity 0.3s;
+          background: #F0F0F0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 800;
+          font-size: 0.85rem;
+          color: #999;
+          flex-shrink: 0;
+          transition: all 0.3s;
         }
-        .fv-tab.active .fv-tab-dot {
-          opacity: 1;
+        .fv-step.active .fv-step-num {
+          background: var(--step-color);
+          color: #fff;
         }
-        .fv-tab-label {
+        .fv-step-text {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          min-width: 0;
+        }
+        .fv-step-title {
           font-weight: 700;
-          font-size: 0.9rem;
+          font-size: 1rem;
           color: #0A0A0A;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
-        .fv-tab-sub {
-          font-size: 0.78rem;
+        .fv-step-sub {
+          font-size: 0.8rem;
           color: #6B6B6B;
         }
 
@@ -1019,7 +1099,7 @@ function FunnelVisualization() {
           display: flex;
           align-items: stretch;
           gap: 0;
-          max-width: 700px;
+          max-width: 1000px;
           margin: 0 auto;
         }
 
@@ -1027,20 +1107,25 @@ function FunnelVisualization() {
           display: flex;
           flex-direction: column;
           justify-content: stretch;
-          width: 120px;
+          width: 140px;
           flex-shrink: 0;
-          padding: 20px 0;
+          padding: 24px 0;
         }
         .fv-label {
           display: flex;
           align-items: center;
           justify-content: flex-end;
-          padding-right: 16px;
-          font-size: 0.75rem;
+          padding-right: 20px;
+          font-size: 0.95rem;
           font-weight: 600;
           color: #6B6B6B;
           text-align: right;
           line-height: 1.3;
+          transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
+        }
+        .fv-label.active {
+          color: #0A0A0A;
+          font-size: 1.05rem;
         }
 
         .fv-funnel-container {
@@ -1051,8 +1136,49 @@ function FunnelVisualization() {
         }
         .fv-funnel-svg {
           width: 100%;
-          max-width: 400px;
+          max-width: 600px;
           height: auto;
+        }
+
+        .fv-detail {
+          width: 240px;
+          flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          padding: 24px 0 24px 20px;
+          opacity: 0;
+          transform: translateX(-8px);
+          transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+          pointer-events: none;
+        }
+        .fv-detail.visible {
+          opacity: 1;
+          transform: translateX(0);
+          pointer-events: auto;
+        }
+        .fv-detail-inner {
+          padding: 20px;
+          border-radius: 14px;
+          background: #fff;
+          border: 1px solid #E5E5E5;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        .fv-detail-badge {
+          display: inline-block;
+          padding: 4px 12px;
+          border-radius: 100px;
+          color: #fff;
+          font-size: 0.7rem;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          margin-bottom: 10px;
+        }
+        .fv-detail-text {
+          font-size: 0.88rem;
+          line-height: 1.6;
+          color: #444;
+          margin: 0;
         }
 
         .fv-trap-anim {
@@ -1075,17 +1201,27 @@ function FunnelVisualization() {
           to { opacity: 1; transform: translateY(0); }
         }
 
-        @media (max-width: 640px) {
-          .fv-tabs {
-            flex-direction: column;
-            align-items: stretch;
+        @media (max-width: 900px) {
+          .fv-steps {
+            grid-template-columns: repeat(2, 1fr);
           }
-          .fv-tab {
+          .fv-detail {
+            display: none;
+          }
+        }
+        @media (max-width: 640px) {
+          .fv-steps {
+            grid-template-columns: 1fr;
+          }
+          .fv-step {
             border-radius: 12px;
           }
           .fv-labels {
-            width: 80px;
-            font-size: 0.65rem;
+            width: 90px;
+            font-size: 0.75rem;
+          }
+          .fv-label.active {
+            font-size: 0.8rem;
           }
         }
       `}</style>
