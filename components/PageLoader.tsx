@@ -43,6 +43,7 @@ export default function PageLoader() {
         style={{
           height: '32px',
           width: 'auto',
+          filter: 'brightness(0) invert(1)',
           opacity: phase === 'loading' ? 1 : 0,
           transition: 'opacity 0.6s ease',
         }}
