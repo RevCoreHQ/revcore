@@ -51,7 +51,7 @@ export default function PackagesPage() {
   return (
     <main style={{ background: '#0A0A0A', color: '#fff', position: 'relative', overflow: 'hidden' }}>
       <SpaceBackground opacity={0.6} fixed />
-      <Hero />
+      <MiroEmbed />
       <PhoneDemo />
       <OutcomeSection />
       <SystemDiagram />
@@ -780,26 +780,19 @@ export default function PackagesPage() {
 }
 
 /* ═══════════════════════════════════════════════════
-   HERO
+   MIRO EMBED (replaces Hero)
    ═══════════════════════════════════════════════════ */
-function Hero() {
-  const { ref, inView } = useScrollReveal({ threshold: 0.1 });
+function MiroEmbed() {
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '160px', paddingBottom: '80px', textAlign: 'center', position: 'relative' }}>
-      <div style={S.container}>
-        <div style={fadeUp(inView)}>
-          <div style={S.eyebrow}>
-            <span style={{ width: 20, height: 2, background: S.accent, display: 'block' }} />
-            The Complete Marketing System for Contractors
-            <span style={{ width: 20, height: 2, background: S.accent, display: 'block' }} />
-          </div>
-          <h1 style={{ ...S.h2, fontSize: 'clamp(2.25rem, 5vw, 3.75rem)', marginBottom: '1.5rem' }}>
-            Stop Chasing Leads.<br />
-            <HL>Start Dominating Your Market.</HL>
-          </h1>
-          <p style={{ ...S.sub, maxWidth: '680px', fontSize: '1.1rem' }}>
-            We build complete revenue engines for contractors — the same systems that grow businesses from $1M to $10M, and $10M to $50M annually.
-          </p>
+    <section style={{ paddingTop: '100px', position: 'relative' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
+        <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <iframe
+            src="https://miro.com/app/live-embed/uXjVGV6YSBE=/?embedMode=view_only_without_ui&moveToViewport=-40863,-3939,28291,16323&embedId=649551998326"
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+            allow="fullscreen; clipboard-read; clipboard-write"
+            allowFullScreen
+          />
         </div>
       </div>
     </section>
