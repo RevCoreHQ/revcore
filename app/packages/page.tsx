@@ -70,71 +70,733 @@ export default function PackagesPage() {
         .pkg-highlight { animation: pkg-glow-pulse 3s ease-in-out infinite; }
         .pkg-highlight:hover { transform: scale(1.055) !important; }
 
-        /* iPhone Mockup */
-        .iphone-frame {
-          position: absolute; inset: 0;
-          background: linear-gradient(145deg, #3a3a4a 0%, #2a2a3a 30%, #1e1e2e 60%, #181828 100%);
-          border-radius: 48px; padding: 5px;
+        /* ── Phone Demo Section ── */
+        .phone-demo-container {
+          display: grid;
+          grid-template-columns: 1fr 400px;
+          gap: 80px;
+          align-items: center;
+        }
+        .phone-steps {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .phone-step {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          padding: 16px 20px;
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.06);
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        .phone-step:hover {
+          background: rgba(255,255,255,0.07);
+          border-color: rgba(255,255,255,0.1);
+        }
+        .phone-step.active {
+          background: rgba(254,100,98,0.08);
+          border-color: rgba(254,100,98,0.25);
+        }
+        .phone-step-number {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.08);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1rem;
+          font-weight: 700;
+          color: rgba(255,255,255,0.4);
+          flex-shrink: 0;
+          transition: all 0.3s ease;
+        }
+        .phone-step.active .phone-step-number {
+          background: #FE6462;
+          color: #fff;
+        }
+        .phone-step-title {
+          font-size: 1.15rem;
+          font-weight: 600;
+          color: #ffffff;
+          margin-bottom: 2px;
+        }
+        .phone-step-desc {
+          font-size: 1rem;
+          color: rgba(255,255,255,0.4);
+        }
+
+        /* Phone Device */
+        .phone-device {
+          position: relative;
+          width: 380px;
+          height: 770px;
+          margin: 0 auto;
+        }
+        .phone-frame {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(145deg, #2a2a3a 0%, #1a1a2a 50%, #151525 100%);
+          border-radius: 48px;
+          padding: 5px;
           box-shadow:
-            0 50px 100px rgba(0,0,0,0.6),
-            0 25px 50px rgba(0,0,0,0.5),
-            inset 0 1px 0 rgba(255,255,255,0.12),
-            inset 0 -1px 0 rgba(0,0,0,0.4),
-            0 0 0 1px rgba(255,255,255,0.05);
+            0 40px 80px rgba(0,0,0,0.5),
+            0 20px 40px rgba(0,0,0,0.4),
+            inset 0 1px 2px rgba(255,255,255,0.08);
         }
-        .iphone-frame::before {
+        .phone-frame::before {
           content: '';
-          position: absolute; right: -3px; top: 140px;
-          width: 4px; height: 70px;
-          background: linear-gradient(180deg, #3a3a4a 0%, #222 100%);
+          position: absolute;
+          right: -3px;
+          top: 140px;
+          width: 4px;
+          height: 70px;
+          background: linear-gradient(180deg, #333 0%, #222 100%);
           border-radius: 0 3px 3px 0;
-          box-shadow: inset 0 1px 1px rgba(255,255,255,0.15);
+          box-shadow: inset 0 1px 1px rgba(255,255,255,0.2);
         }
-        .iphone-frame::after {
+        .phone-frame::after {
           content: '';
-          position: absolute; left: -3px; top: 120px;
-          width: 4px; height: 35px;
-          background: linear-gradient(180deg, #3a3a4a 0%, #222 100%);
+          position: absolute;
+          left: -3px;
+          top: 120px;
+          width: 4px;
+          height: 35px;
+          background: linear-gradient(180deg, #333 0%, #222 100%);
           border-radius: 3px 0 0 3px;
           box-shadow:
-            inset 0 1px 1px rgba(255,255,255,0.15),
+            inset 0 1px 1px rgba(255,255,255,0.2),
             0 55px 0 0 #2a2a3a;
         }
-        .iphone-screen {
-          width: 100%; height: 100%;
+        .phone-screen {
+          width: 100%;
+          height: 100%;
           background: #0A0A0A;
           border-radius: 44px;
           overflow: hidden;
           position: relative;
         }
-        .iphone-notch {
-          position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-          width: 100px; height: 28px;
-          background: #000; border-radius: 20px; z-index: 10;
+        .phone-notch {
+          position: absolute;
+          top: 12px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 100px;
+          height: 28px;
+          background: #000;
+          border-radius: 20px;
+          z-index: 10;
           box-shadow: 0 0 0 3px rgba(0,0,0,0.8);
         }
-        .iphone-notch::before {
+        .phone-notch::before {
           content: '';
-          position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
-          width: 8px; height: 8px; border-radius: 50%;
+          position: absolute;
+          right: 18px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 8px;
+          height: 8px;
           background: radial-gradient(circle, #1a3a5c 0%, #0d1f30 60%, #000 100%);
+          border-radius: 50%;
           box-shadow: inset 0 0 2px rgba(255,255,255,0.3);
         }
-        .iphone-glow {
-          position: absolute; inset: 10%;
+        .phone-screen-content {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+        }
+
+        /* Phone Slides */
+        .phone-slide {
+          position: absolute;
+          inset: 0;
+          padding: 50px 16px 20px;
+          opacity: 0;
+          transform: translateX(100%);
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          display: flex;
+          flex-direction: column;
+        }
+        .phone-slide.active {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        .phone-slide.prev {
+          transform: translateX(-100%);
+        }
+        .phone-slide-header {
+          text-align: center;
+          margin-bottom: 16px;
+          background: rgba(255,255,255,0.03);
+          padding: 12px;
+          border-radius: 8px;
+        }
+        .phone-slide-badge {
+          display: inline-block;
+          padding: 6px 12px;
+          background: rgba(254,100,98,0.12);
+          color: #FE6462;
+          font-size: 0.7rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          border-radius: 20px;
+          margin-bottom: 8px;
+          border: 1px solid rgba(254,100,98,0.2);
+        }
+        .phone-slide-title {
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #ffffff;
+        }
+        .phone-slide-body {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          overflow-y: auto;
+          color: rgba(255,255,255,0.5);
+        }
+
+        /* Targeting Map */
+        .targeting-map-container {
+          background: #13161e;
+          border-radius: 12px;
+          overflow: hidden;
+          flex: 1;
+          position: relative;
+          border: 1px solid rgba(255,255,255,0.08);
+        }
+        .map-targeting-legend {
+          display: flex;
+          justify-content: center;
+          gap: 16px;
+          padding: 10px;
+          background: rgba(255,255,255,0.03);
+        }
+        .map-targeting-legend-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.7rem;
+          color: rgba(255,255,255,0.5);
+        }
+        .map-targeting-legend-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+        }
+        .map-targeting-legend-dot.include { background: #22c55e; }
+        .map-targeting-legend-dot.exclude { background: #ef4444; }
+
+        /* FB Ad Carousel */
+        .fb-ad-carousel {
+          flex: 1;
+          position: relative;
+          overflow: hidden;
+        }
+        .fb-ad-slide {
+          display: none;
+          flex-direction: column;
+          height: 100%;
+          animation: fbSlideIn 0.3s ease-out;
+        }
+        .fb-ad-slide.active { display: flex; }
+        @keyframes fbSlideIn {
+          from { opacity: 0; transform: translateX(20px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        .fb-feed-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 6px 12px;
+          background: rgba(255,255,255,0.04);
+          border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .fb-logo-text {
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: rgba(255,255,255,0.3);
+          letter-spacing: -0.5px;
+        }
+        .fb-ad-counter {
+          font-size: 0.7rem;
+          color: rgba(255,255,255,0.4);
+          font-weight: 500;
+        }
+        .fb-post-compact {
+          flex: 1;
+          background: rgba(255,255,255,0.03);
+          display: flex;
+          flex-direction: column;
+          border: 1px solid rgba(255,255,255,0.06);
+        }
+        .fb-post-top {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 12px;
+        }
+        .fb-avatar-sm {
+          width: 32px;
+          height: 32px;
+          background: linear-gradient(135deg, #ff7a1a, #e65c00);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.65rem;
+          font-weight: 700;
+          color: #fff;
+        }
+        .fb-post-meta-sm {
+          display: flex;
+          flex-direction: column;
+          gap: 1px;
+        }
+        .fb-page-name {
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: #ffffff;
+        }
+        .fb-sponsored-tag {
+          font-size: 0.65rem;
+          color: rgba(255,255,255,0.35);
+        }
+        .fb-post-copy {
+          padding: 0 12px 6px;
+          font-size: 0.85rem;
+          color: rgba(255,255,255,0.6);
+          line-height: 1.4;
+        }
+        .fb-ad-media {
+          flex: 1;
+          position: relative;
+          background: #f0f2f5;
+          overflow: hidden;
+          min-height: 220px;
+        }
+        .fb-ad-media img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .ad-type-badge {
+          position: absolute;
+          top: 8px;
+          left: 8px;
+          padding: 4px 10px;
+          border-radius: 4px;
+          font-size: 0.65rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          z-index: 2;
+        }
+        .ad-type-badge.photo {
+          background: rgba(255,255,255,0.95);
+          color: #1877f2;
+        }
+        .ad-type-badge.video {
+          background: rgba(255, 0, 80, 0.9);
+          color: #fff;
+        }
+        .fb-engagement {
+          display: flex;
+          justify-content: space-between;
+          padding: 6px 12px;
+          font-size: 0.75rem;
+          color: rgba(255,255,255,0.3);
+          border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .fb-ad-nav {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 6px;
+        }
+        .fb-nav-arrow {
+          width: 28px;
+          height: 28px;
+          border: none;
+          background: rgba(255,255,255,0.08);
+          border-radius: 50%;
+          color: rgba(255,255,255,0.5);
+          font-size: 1.1rem;
+          cursor: pointer;
+          transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .fb-nav-arrow:hover {
+          background: rgba(255,255,255,0.15);
+          color: #fff;
+        }
+        .fb-ad-dots {
+          display: flex;
+          gap: 6px;
+        }
+        .fb-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.2);
+          cursor: pointer;
+          transition: all 0.2s;
+          border: none;
+          padding: 0;
+        }
+        .fb-dot.active {
+          background: #FE6462;
+          transform: scale(1.1);
+        }
+
+        /* Qualify Form */
+        .qualify-form-container {
+          background: #fff;
+          border-radius: 12px;
+          overflow: hidden;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+        }
+        .qualify-form-header {
+          padding: 12px 16px;
+          background: #fff;
+          text-align: center;
+          border-bottom: 1px solid #e2e8f0;
+        }
+        .qualify-logo {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: #ff7a1a;
+        }
+        .qualify-subtitle {
+          font-size: 0.7rem;
+          color: #718096;
+          margin-top: 2px;
+        }
+        .qualify-questions {
+          flex: 1;
+          padding: 12px;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .qualify-question {
+          background: #fff;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          padding: 10px 12px;
+        }
+        .qualify-question.answered {
+          border-color: rgba(34, 197, 94, 0.3);
+          background: rgba(34, 197, 94, 0.02);
+        }
+        .qualify-question-text {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #1a202c;
+          margin-bottom: 6px;
+        }
+        .qualify-answer {
+          font-size: 0.7rem;
+          color: #16a34a;
+          font-weight: 500;
+        }
+        .qualify-options {
+          display: flex;
+          gap: 6px;
+          flex-wrap: wrap;
+        }
+        .qualify-option {
+          font-size: 0.65rem;
+          padding: 4px 10px;
+          border-radius: 12px;
+          background: #f1f5f9;
+          color: #64748b;
+        }
+        .qualify-option.selected {
+          background: rgba(34, 197, 94, 0.15);
+          color: #16a34a;
+          font-weight: 600;
+        }
+        .qualify-submit-btn {
+          margin: 12px;
+          padding: 12px;
+          background: #ff7a1a;
+          color: #fff;
+          border: none;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        /* Scheduler Calendar */
+        .scheduler-container {
+          background: #ffffff;
+          border-radius: 12px;
+          overflow: hidden;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+        }
+        .scheduler-header {
+          padding: 12px 16px;
+          background: #fff;
+          text-align: center;
+          border-bottom: 1px solid #e2e8f0;
+        }
+        .scheduler-logo {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: #ff7a1a;
+        }
+        .scheduler-headline {
+          font-size: 1rem;
+          font-weight: 700;
+          color: #1a202c;
+          margin: 4px 0;
+        }
+        .scheduler-subhead {
+          font-size: 0.65rem;
+          color: #718096;
+        }
+        .scheduler-calendar-grid {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          gap: 2px;
+          padding: 8px;
+          background: #fff;
+        }
+        .scheduler-day-header {
+          text-align: center;
+          padding: 4px;
+          font-size: 0.6rem;
+          font-weight: 600;
+          color: #718096;
+        }
+        .scheduler-day {
+          aspect-ratio: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.7rem;
+          color: #4a5568;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        .scheduler-day.available {
+          background: rgba(34, 197, 94, 0.1);
+          color: #16a34a;
+          font-weight: 600;
+        }
+        .scheduler-day.selected {
+          background: #ff7a1a;
+          color: #fff;
+        }
+        .scheduler-day.past {
+          color: #cbd5e0;
+        }
+        .scheduler-time-slots {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 6px;
+          padding: 10px;
+          background: #f8fafc;
+        }
+        .scheduler-time-slot {
+          padding: 8px;
+          text-align: center;
+          background: #fff;
+          border: 1px solid #e2e8f0;
+          border-radius: 6px;
+          font-size: 0.7rem;
+          color: #4a5568;
+          cursor: pointer;
+        }
+        .scheduler-time-slot.selected {
+          background: #ff7a1a;
+          border-color: #ff7a1a;
+          color: #fff;
+        }
+        .scheduler-confirm-btn {
+          width: calc(100% - 20px);
+          margin: 10px;
+          padding: 12px;
+          background: #ff7a1a;
+          border: none;
+          border-radius: 8px;
+          color: #fff;
+          font-size: 0.85rem;
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        /* iOS Messages */
+        .reminders-preview {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          background: #fff;
+          height: 100%;
+          border-radius: 12px;
+          overflow: hidden;
+        }
+        .ios-messages-header {
+          background: #f8f8f8;
+          padding: 12px 16px;
+          border-bottom: 1px solid #e5e5e5;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .ios-contact-avatar {
+          width: 36px;
+          height: 36px;
+          background: linear-gradient(135deg, #ff7a1a, #e85d04);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+          font-weight: 700;
+          font-size: 0.85rem;
+        }
+        .ios-contact-name {
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: #000;
+        }
+        .ios-contact-label {
+          font-size: 0.7rem;
+          color: #8e8e93;
+        }
+        .ios-messages-body {
+          flex: 1;
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          background: #fff;
+        }
+        .ios-message-time {
+          text-align: center;
+          font-size: 0.65rem;
+          color: #8e8e93;
+          margin-bottom: 4px;
+        }
+        .ios-message {
+          max-width: 85%;
+          padding: 10px 14px;
+          border-radius: 18px;
+          font-size: 0.8rem;
+          line-height: 1.4;
+        }
+        .ios-message.incoming {
+          background: #34c759;
+          color: #fff;
+          align-self: flex-start;
+          border-bottom-left-radius: 4px;
+        }
+        .ios-message.outgoing {
+          background: #e5e5ea;
+          color: #000;
+          align-self: flex-end;
+          border-bottom-right-radius: 4px;
+        }
+        .ios-delivered {
+          font-size: 0.6rem;
+          color: #8e8e93;
+          text-align: right;
+          margin-top: 2px;
+        }
+        .ios-input-bar {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 12px;
+          background: #f8f8f8;
+          border-top: 1px solid #e5e5e5;
+        }
+        .ios-input-field {
+          flex: 1;
+          background: #fff;
+          border: 1px solid #e5e5e5;
+          border-radius: 18px;
+          padding: 8px 14px;
+          font-size: 0.8rem;
+          color: #8e8e93;
+        }
+        .ios-send-btn {
+          width: 28px;
+          height: 28px;
+          background: #007aff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .ios-send-btn svg {
+          width: 14px;
+          height: 14px;
+          fill: #fff;
+        }
+
+        /* Phone Nav Dots */
+        .phone-nav {
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+          margin-top: 20px;
+        }
+        .phone-nav-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.15);
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border: none;
+          padding: 0;
+        }
+        .phone-nav-dot.active {
+          background: #FE6462;
+          width: 24px;
+          border-radius: 4px;
+        }
+
+        /* Phone Glow */
+        .phone-glow {
+          position: absolute;
+          inset: 10%;
           background: radial-gradient(ellipse, rgba(254,100,98,0.12) 0%, transparent 70%);
-          filter: blur(40px); pointer-events: none; z-index: 0;
+          filter: blur(40px);
+          pointer-events: none;
+          z-index: 0;
         }
 
         @media (max-width: 900px) {
           .packages-grid-3 { grid-template-columns: 1fr !important; }
-          .phone-demo-layout { flex-direction: column !important; align-items: center !important; }
-          .phone-demo-steps { flex: initial !important; width: 100% !important; flex-direction: row !important; overflow-x: auto !important; }
+          .phone-demo-container { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .phone-demo-content { order: 2; }
+          .phone-steps { flex-direction: row !important; overflow-x: auto !important; }
+          .phone-step { min-width: 200px; }
+          .phone-device { width: 300px !important; height: 620px !important; }
+          .phone-frame { border-radius: 40px !important; padding: 4px !important; }
+          .phone-screen { border-radius: 37px !important; }
           .funnel-layout { flex-direction: column !important; }
           .ppa-grid { grid-template-columns: 1fr !important; }
-          .iphone-device { width: 300px !important; height: 620px !important; }
-          .iphone-frame { border-radius: 40px !important; padding: 4px !important; }
-          .iphone-screen { border-radius: 37px !important; }
         }
         @media (max-width: 768px) {
           .results-grid-6 { grid-template-columns: 1fr !important; }
@@ -180,8 +842,18 @@ function Hero() {
    ═══════════════════════════════════════════════════ */
 function PhoneDemo() {
   const [step, setStep] = useState(0);
+  const [prevStep, setPrevStep] = useState(-1);
   const [adIdx, setAdIdx] = useState(0);
   const { ref, inView } = useScrollReveal({ threshold: 0.06 });
+
+  const goToStep = (i: number) => {
+    setPrevStep(step);
+    setStep(i);
+  };
+
+  const changeAd = (dir: number) => {
+    setAdIdx((prev) => (prev + dir + fbAds.length) % fbAds.length);
+  };
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.sectionAlt}>
@@ -193,262 +865,245 @@ function PhoneDemo() {
           <p style={S.sub}>Click through each step to see exactly how it works.</p>
         </div>
 
-        <div className="phone-demo-layout" style={{ display: 'flex', gap: '48px', alignItems: 'center', ...fadeUp(inView, 200) }}>
-          {/* Steps */}
-          <div style={{ flex: '0 0 280px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {phoneSteps.map((s, i) => (
-              <button key={i} onClick={() => setStep(i)} style={{
-                display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px',
-                borderRadius: '12px', border: 'none', cursor: 'pointer', textAlign: 'left',
-                background: step === i ? 'rgba(254,100,98,0.08)' : 'rgba(255,255,255,0.04)',
-                borderLeft: step === i ? '3px solid #FE6462' : '3px solid transparent',
-                transition: 'all 0.2s',
-              }}>
-                <div style={{
-                  width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '0.8rem', fontWeight: 700,
-                  background: step === i ? '#FE6462' : 'rgba(255,255,255,0.08)',
-                  color: step === i ? '#fff' : 'rgba(255,255,255,0.4)',
-                }}>{s.num}</div>
-                <div>
-                  <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem' }}>{s.title}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem' }}>{s.desc}</div>
+        <div className="phone-demo-container" style={fadeUp(inView, 200)}>
+          {/* Left: Steps */}
+          <div className="phone-demo-content">
+            <div className="phone-steps">
+              {phoneSteps.map((s, i) => (
+                <div
+                  key={i}
+                  className={`phone-step${step === i ? ' active' : ''}`}
+                  onClick={() => goToStep(i)}
+                >
+                  <div className="phone-step-number">{s.num}</div>
+                  <div className="phone-step-text">
+                    <div className="phone-step-title">{s.title}</div>
+                    <div className="phone-step-desc">{s.desc}</div>
+                  </div>
                 </div>
-              </button>
-            ))}
+              ))}
+            </div>
           </div>
 
-          {/* iPhone Mockup */}
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-            <div className="iphone-device" style={{ position: 'relative', width: 380, height: 770 }}>
-              {/* Glow behind device */}
-              <div className="iphone-glow" />
-
-              {/* Frame (uses CSS class for ::before/::after side buttons) */}
-              <div className="iphone-frame">
-                {/* Screen */}
-                <div className="iphone-screen">
-                  {/* Dynamic Island */}
-                  <div className="iphone-notch" />
-
-                  {/* Content area */}
-                  <div style={{
-                    position: 'absolute', top: 48, left: 0, right: 0, bottom: 0,
-                    display: 'flex', flexDirection: 'column', overflow: 'hidden',
-                  }}>
-                    {/* Slide Header */}
-                    <div style={{
-                      padding: '12px 20px 14px', flexShrink: 0,
-                      borderBottom: '1px solid rgba(255,255,255,0.06)',
-                      background: 'rgba(255,255,255,0.02)',
-                    }}>
-                      <span style={{
-                        display: 'inline-block', padding: '4px 12px', borderRadius: 20,
-                        fontSize: '0.65rem', fontWeight: 700,
-                        background: 'rgba(254,100,98,0.12)', color: '#FE6462',
-                        border: '1px solid rgba(254,100,98,0.2)',
-                      }}>Step {step + 1}</span>
-                      <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.95rem', marginTop: 8 }}>
-                        {['Target Your Service Area', 'Scroll-Stopping Ads', 'Qualifying Questions', 'Self-Booking Calendar', 'Automatic Reminders'][step]}
+          {/* Right: Phone */}
+          <div className="phone-device">
+            <div className="phone-glow" />
+            <div className="phone-frame">
+              <div className="phone-screen">
+                <div className="phone-notch" />
+                <div className="phone-screen-content">
+                  {/* Slide 1: Target */}
+                  <div className={`phone-slide${step === 0 ? ' active' : step > 0 ? ' prev' : ''}`}>
+                    <div className="phone-slide-header">
+                      <div className="phone-slide-badge">Step 1</div>
+                      <div className="phone-slide-title">Target Your Service Area</div>
+                    </div>
+                    <div className="phone-slide-body">
+                      <div className="targeting-map-container">
+                        <div style={{
+                          width: '100%', height: 520, background: '#13161e',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative',
+                        }}>
+                          <div style={{ position: 'relative', width: '85%', height: '85%' }}>
+                            {[
+                              { x: '20%', y: '30%', size: 60, color: 'rgba(34,197,94,0.3)', border: 'rgba(34,197,94,0.5)' },
+                              { x: '50%', y: '20%', size: 80, color: 'rgba(34,197,94,0.2)', border: 'rgba(34,197,94,0.4)' },
+                              { x: '70%', y: '50%', size: 50, color: 'rgba(34,197,94,0.25)', border: 'rgba(34,197,94,0.45)' },
+                              { x: '35%', y: '60%', size: 70, color: 'rgba(34,197,94,0.35)', border: 'rgba(34,197,94,0.55)' },
+                              { x: '60%', y: '75%', size: 45, color: 'rgba(239,68,68,0.2)', border: 'rgba(239,68,68,0.4)' },
+                            ].map((z, i) => (
+                              <div key={i} style={{
+                                position: 'absolute', left: z.x, top: z.y,
+                                width: z.size, height: z.size, borderRadius: '50%',
+                                background: z.color, border: `1px solid ${z.border}`,
+                                transform: 'translate(-50%, -50%)',
+                              }} />
+                            ))}
+                            <div style={{ position: 'absolute', left: '35%', top: '45%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+                              <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>Tampa, FL</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="map-targeting-legend">
+                          <div className="map-targeting-legend-item">
+                            <div className="map-targeting-legend-dot include" />
+                            <span>Include</span>
+                          </div>
+                          <div className="map-targeting-legend-item">
+                            <div className="map-targeting-legend-dot exclude" />
+                            <span>Exclude</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
+                  </div>
 
-                    {/* Slide Content — scrollable */}
-                    <div style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
-                      {step === 0 && <SlideTarget />}
-                      {step === 1 && <SlideAds adIdx={adIdx} setAdIdx={setAdIdx} />}
-                      {step === 2 && <SlideQualify />}
-                      {step === 3 && <SlideCalendar />}
-                      {step === 4 && <SlideReminders />}
+                  {/* Slide 2: FB Ads */}
+                  <div className={`phone-slide${step === 1 ? ' active' : step > 1 ? ' prev' : ''}`}>
+                    <div className="phone-slide-header">
+                      <div className="phone-slide-badge">Step 2</div>
+                      <div className="phone-slide-title">Scroll-Stopping Ads</div>
+                    </div>
+                    <div className="phone-slide-body" style={{ gap: 0 }}>
+                      <div className="fb-ad-carousel">
+                        {fbAds.map((ad, i) => (
+                          <div key={i} className={`fb-ad-slide${adIdx === i ? ' active' : ''}`}>
+                            <div className="fb-feed-header">
+                              <span className="fb-logo-text">facebook</span>
+                              <div className="fb-ad-counter">{i + 1}/{fbAds.length}</div>
+                            </div>
+                            <div className="fb-post-compact">
+                              <div className="fb-post-top">
+                                <div className="fb-avatar-sm">{ad.initials}</div>
+                                <div className="fb-post-meta-sm">
+                                  <span className="fb-page-name">{ad.page}</span>
+                                  <span className="fb-sponsored-tag">Sponsored</span>
+                                </div>
+                              </div>
+                              <div className="fb-post-copy">{ad.copy}</div>
+                              <div className="fb-ad-media">
+                                <div className={`ad-type-badge ${ad.type.toLowerCase().includes('photo') ? 'photo' : 'video'}`}>{ad.type}</div>
+                                <img src={ad.img} alt={ad.page} />
+                              </div>
+                              <div className="fb-engagement">
+                                <span className="fb-reactions-mini">{ad.reactions}</span>
+                                <span className="fb-comments-mini">{ad.comments}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="fb-ad-nav">
+                        <button className="fb-nav-arrow" onClick={() => changeAd(-1)}>&lsaquo;</button>
+                        <div className="fb-ad-dots">
+                          {fbAds.map((_, i) => (
+                            <button key={i} className={`fb-dot${adIdx === i ? ' active' : ''}`} onClick={() => setAdIdx(i)} />
+                          ))}
+                        </div>
+                        <button className="fb-nav-arrow" onClick={() => changeAd(1)}>&rsaquo;</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Slide 3: Qualify */}
+                  <div className={`phone-slide${step === 2 ? ' active' : step > 2 ? ' prev' : ''}`}>
+                    <div className="phone-slide-header">
+                      <div className="phone-slide-badge">Step 3</div>
+                      <div className="phone-slide-title">Qualifying Questions</div>
+                    </div>
+                    <div className="phone-slide-body">
+                      <div className="qualify-form-container">
+                        <div className="qualify-form-header">
+                          <div className="qualify-logo">RevCore</div>
+                          <p className="qualify-subtitle">A few quick questions</p>
+                        </div>
+                        <div className="qualify-questions">
+                          {qualifyQuestions.map((q, i) => (
+                            <div key={i} className="qualify-question answered">
+                              <div className="qualify-question-text">{q.q}</div>
+                              {q.options ? (
+                                <div className="qualify-options">
+                                  {q.options.map(o => (
+                                    <span key={o} className={`qualify-option${o === q.selected ? ' selected' : ''}`}>{o}</span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="qualify-answer selected">{q.a}</div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <button className="qualify-submit-btn">Continue to Book</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Slide 4: Calendar */}
+                  <div className={`phone-slide${step === 3 ? ' active' : step > 3 ? ' prev' : ''}`}>
+                    <div className="phone-slide-header">
+                      <div className="phone-slide-badge">Step 4</div>
+                      <div className="phone-slide-title">Self-Booking Calendar</div>
+                    </div>
+                    <div className="phone-slide-body">
+                      <div className="scheduler-container">
+                        <div className="scheduler-header">
+                          <div className="scheduler-logo">RevCore</div>
+                          <h3 className="scheduler-headline">Book Your Appointment</h3>
+                          <p className="scheduler-subhead">Select a day and time that works for you</p>
+                        </div>
+                        <div className="scheduler-calendar-grid">
+                          {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => (
+                            <div key={d} className="scheduler-day-header">{d}</div>
+                          ))}
+                          {[
+                            { d: 15, cls: 'past' }, { d: 16, cls: 'past' }, { d: 17, cls: 'past' },
+                            { d: 18, cls: 'available' }, { d: 19, cls: 'available selected' }, { d: 20, cls: 'available' }, { d: 21, cls: '' },
+                            { d: 22, cls: '' }, { d: 23, cls: 'available' }, { d: 24, cls: 'available' },
+                            { d: 25, cls: 'available' }, { d: 26, cls: 'available' }, { d: 27, cls: 'available' }, { d: 28, cls: '' },
+                          ].map((day, i) => (
+                            <div key={i} className={`scheduler-day ${day.cls}`}>{day.d}</div>
+                          ))}
+                        </div>
+                        <div className="scheduler-time-slots">
+                          {['9:00 AM','10:00 AM','11:00 AM','1:00 PM','2:00 PM','3:00 PM'].map((t, i) => (
+                            <div key={t} className={`scheduler-time-slot${i === 1 ? ' selected' : ''}`}>{t}</div>
+                          ))}
+                        </div>
+                        <button className="scheduler-confirm-btn">Confirm Appointment</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Slide 5: Reminders */}
+                  <div className={`phone-slide${step === 4 ? ' active' : ''}`}>
+                    <div className="phone-slide-header">
+                      <div className="phone-slide-badge">Step 5</div>
+                      <div className="phone-slide-title">Automatic Reminders</div>
+                    </div>
+                    <div className="phone-slide-body">
+                      <div className="reminders-preview">
+                        <div className="ios-messages-header">
+                          <div className="ios-contact-avatar">PR</div>
+                          <div className="ios-contact-info">
+                            <div className="ios-contact-name">Premium Roofing</div>
+                            <div className="ios-contact-label">Automated Message</div>
+                          </div>
+                        </div>
+                        <div className="ios-messages-body">
+                          <div className="ios-message-time">Yesterday 10:00 AM</div>
+                          <div className="ios-message incoming">
+                            Hi John! Just a friendly reminder about your roof inspection appointment tomorrow at 10:00 AM. Our estimator Mike will be arriving at your home.
+                          </div>
+                          <div className="ios-message outgoing">
+                            Sounds good, see you then!
+                          </div>
+                          <div className="ios-delivered">Delivered</div>
+                          <div className="ios-message-time">Today 9:00 AM</div>
+                          <div className="ios-message incoming">
+                            Our estimator is on the way, see you in 1 hour!
+                          </div>
+                        </div>
+                        <div className="ios-input-bar">
+                          <div className="ios-input-field">iMessage</div>
+                          <div className="ios-send-btn">
+                            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+            <div className="phone-nav">
+              {phoneSteps.map((_, i) => (
+                <button key={i} className={`phone-nav-dot${step === i ? ' active' : ''}`} onClick={() => goToStep(i)} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function SlideTarget() {
-  return (
-    <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '12px', overflow: 'hidden' }}>
-      <div style={{
-        height: 260, background: 'linear-gradient(135deg, #0d1117, #161b22)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative',
-      }}>
-        {/* Stylized map visualization */}
-        <div style={{ position: 'relative', width: '80%', height: '80%' }}>
-          {[
-            { x: '20%', y: '30%', size: 60, color: 'rgba(254,100,98,0.3)' },
-            { x: '50%', y: '20%', size: 80, color: 'rgba(254,100,98,0.2)' },
-            { x: '70%', y: '50%', size: 50, color: 'rgba(254,100,98,0.25)' },
-            { x: '35%', y: '60%', size: 70, color: 'rgba(254,100,98,0.35)' },
-            { x: '60%', y: '75%', size: 45, color: 'rgba(107,142,254,0.2)' },
-          ].map((z, i) => (
-            <div key={i} style={{
-              position: 'absolute', left: z.x, top: z.y,
-              width: z.size, height: z.size, borderRadius: '50%',
-              background: z.color, border: `1px solid ${z.color.replace(/[\d.]+\)/, '0.5)')}`,
-              transform: 'translate(-50%, -50%)',
-            }} />
-          ))}
-          <div style={{ position: 'absolute', left: '35%', top: '45%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>Tampa, FL</div>
-          </div>
-        </div>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', padding: '10px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'rgba(254,100,98,0.5)' }} /> Include
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'rgba(107,142,254,0.5)' }} /> Exclude
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SlideAds({ adIdx, setAdIdx }: { adIdx: number; setAdIdx: (n: number) => void }) {
-  const ad = fbAds[adIdx];
-  return (
-    <div>
-      <div style={{ padding: '8px 12px', background: 'rgba(255,255,255,0.04)', borderRadius: '8px 8px 0 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.75rem', fontWeight: 700 }}>facebook</span>
-        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>{adIdx + 1}/4</span>
-      </div>
-      <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '0 0 8px 8px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-          <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(254,100,98,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#FE6462' }}>{ad.initials}</div>
-          <div>
-            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#fff' }}>{ad.page}</div>
-            <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)' }}>Sponsored</div>
-          </div>
-        </div>
-        <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginBottom: '8px', lineHeight: 1.4 }}>{ad.copy}</p>
-        <div style={{ borderRadius: '8px', overflow: 'hidden', position: 'relative', marginBottom: '8px' }}>
-          <span style={{ position: 'absolute', top: 6, left: 6, padding: '2px 8px', borderRadius: '4px', fontSize: '0.55rem', fontWeight: 700, background: 'rgba(0,0,0,0.6)', color: '#fff' }}>{ad.type}</span>
-          <img src={ad.img} alt={ad.page} style={{ width: '100%', height: 140, objectFit: 'cover' }} />
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)' }}>
-          <span>{ad.reactions}</span><span>{ad.comments}</span>
-        </div>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '10px' }}>
-        {fbAds.map((_, i) => (
-          <button key={i} onClick={() => setAdIdx(i)} style={{
-            width: 8, height: 8, borderRadius: '50%', border: 'none', cursor: 'pointer',
-            background: i === adIdx ? '#FE6462' : 'rgba(255,255,255,0.2)',
-          }} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function SlideQualify() {
-  return (
-    <div>
-      <div style={{ textAlign: 'center', marginBottom: '12px' }}>
-        <div style={{ fontWeight: 700, color: '#FE6462', fontSize: '0.85rem' }}>RevCore</div>
-        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>A few quick questions</div>
-      </div>
-      {qualifyQuestions.map((q, i) => (
-        <div key={i} style={{ marginBottom: '10px', padding: '10px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', borderLeft: '2px solid rgba(254,100,98,0.3)' }}>
-          <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>{q.q}</div>
-          {q.options ? (
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-              {q.options.map(o => (
-                <span key={o} style={{
-                  padding: '3px 10px', borderRadius: '20px', fontSize: '0.65rem', fontWeight: 600,
-                  background: o === q.selected ? 'rgba(254,100,98,0.15)' : 'rgba(255,255,255,0.05)',
-                  color: o === q.selected ? '#FE6462' : 'rgba(255,255,255,0.4)',
-                  border: `1px solid ${o === q.selected ? 'rgba(254,100,98,0.3)' : 'rgba(255,255,255,0.08)'}`,
-                }}>{o}</span>
-              ))}
-            </div>
-          ) : (
-            <div style={{ fontSize: '0.72rem', fontWeight: 600, color: '#FE6462' }}>{q.a}</div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function SlideCalendar() {
-  const days = [
-    { d: 15, past: true }, { d: 16, past: true }, { d: 17, past: true },
-    { d: 18, avail: true }, { d: 19, avail: true, selected: true }, { d: 20, avail: true }, { d: 21 },
-    { d: 22 }, { d: 23, avail: true }, { d: 24, avail: true },
-    { d: 25, avail: true }, { d: 26, avail: true }, { d: 27, avail: true }, { d: 28 },
-  ];
-  const times = ['9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM', '2:00 PM', '3:00 PM'];
-  return (
-    <div>
-      <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-        <div style={{ fontWeight: 700, color: '#FE6462', fontSize: '0.8rem' }}>RevCore</div>
-        <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.85rem' }}>Book Your Appointment</div>
-        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>Select a day and time</div>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', marginBottom: '12px' }}>
-        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
-          <div key={d} style={{ textAlign: 'center', fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', padding: '4px 0' }}>{d}</div>
-        ))}
-        {days.map((d, i) => (
-          <div key={i} style={{
-            textAlign: 'center', padding: '6px 0', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 600,
-            color: d.past ? 'rgba(255,255,255,0.15)' : d.selected ? '#fff' : d.avail ? '#FE6462' : 'rgba(255,255,255,0.3)',
-            background: d.selected ? '#FE6462' : d.avail ? 'rgba(254,100,98,0.08)' : 'transparent',
-          }}>{d.d}</div>
-        ))}
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '12px' }}>
-        {times.map((t, i) => (
-          <div key={t} style={{
-            textAlign: 'center', padding: '8px 0', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer',
-            background: i === 1 ? '#FE6462' : 'rgba(255,255,255,0.05)',
-            color: i === 1 ? '#fff' : 'rgba(255,255,255,0.5)',
-            border: `1px solid ${i === 1 ? '#FE6462' : 'rgba(255,255,255,0.08)'}`,
-          }}>{t}</div>
-        ))}
-      </div>
-      <button style={{
-        width: '100%', padding: '10px', borderRadius: '8px', border: 'none',
-        background: '#FE6462', color: '#fff', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer',
-      }}>Confirm Appointment</button>
-    </div>
-  );
-}
-
-function SlideReminders() {
-  return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(254,100,98,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: 700, color: '#FE6462' }}>PR</div>
-        <div>
-          <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.8rem' }}>Premium Roofing</div>
-          <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Automated Message</div>
-        </div>
-      </div>
-      <div style={{ padding: '12px' }}>
-        <div style={{ textAlign: 'center', fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginBottom: '8px' }}>Yesterday 10:00 AM</div>
-        <div style={{ background: 'rgba(255,255,255,0.06)', padding: '10px 12px', borderRadius: '14px 14px 14px 4px', fontSize: '0.72rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5, marginBottom: '8px', maxWidth: '85%' }}>
-          Hi John! Just a friendly reminder about your roof inspection appointment tomorrow at 10:00 AM. Our estimator Mike will be arriving at your home.
-        </div>
-        <div style={{ background: '#FE6462', padding: '10px 12px', borderRadius: '14px 14px 4px 14px', fontSize: '0.72rem', color: '#fff', lineHeight: 1.5, marginBottom: '4px', maxWidth: '75%', marginLeft: 'auto' }}>
-          Sounds good, see you then!
-        </div>
-        <div style={{ textAlign: 'right', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', marginBottom: '12px' }}>Delivered</div>
-        <div style={{ textAlign: 'center', fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginBottom: '8px' }}>Today 9:00 AM</div>
-        <div style={{ background: 'rgba(255,255,255,0.06)', padding: '10px 12px', borderRadius: '14px 14px 14px 4px', fontSize: '0.72rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5, maxWidth: '85%' }}>
-          Our estimator is on the way, see you in 1 hour!
-        </div>
-      </div>
-    </div>
   );
 }
 
