@@ -69,14 +69,72 @@ export default function PackagesPage() {
         }
         .pkg-highlight { animation: pkg-glow-pulse 3s ease-in-out infinite; }
         .pkg-highlight:hover { transform: scale(1.055) !important; }
+
+        /* iPhone Mockup */
+        .iphone-frame {
+          position: absolute; inset: 0;
+          background: linear-gradient(145deg, #3a3a4a 0%, #2a2a3a 30%, #1e1e2e 60%, #181828 100%);
+          border-radius: 48px; padding: 5px;
+          box-shadow:
+            0 50px 100px rgba(0,0,0,0.6),
+            0 25px 50px rgba(0,0,0,0.5),
+            inset 0 1px 0 rgba(255,255,255,0.12),
+            inset 0 -1px 0 rgba(0,0,0,0.4),
+            0 0 0 1px rgba(255,255,255,0.05);
+        }
+        .iphone-frame::before {
+          content: '';
+          position: absolute; right: -3px; top: 140px;
+          width: 4px; height: 70px;
+          background: linear-gradient(180deg, #3a3a4a 0%, #222 100%);
+          border-radius: 0 3px 3px 0;
+          box-shadow: inset 0 1px 1px rgba(255,255,255,0.15);
+        }
+        .iphone-frame::after {
+          content: '';
+          position: absolute; left: -3px; top: 120px;
+          width: 4px; height: 35px;
+          background: linear-gradient(180deg, #3a3a4a 0%, #222 100%);
+          border-radius: 3px 0 0 3px;
+          box-shadow:
+            inset 0 1px 1px rgba(255,255,255,0.15),
+            0 55px 0 0 #2a2a3a;
+        }
+        .iphone-screen {
+          width: 100%; height: 100%;
+          background: #0A0A0A;
+          border-radius: 44px;
+          overflow: hidden;
+          position: relative;
+        }
+        .iphone-notch {
+          position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+          width: 100px; height: 28px;
+          background: #000; border-radius: 20px; z-index: 10;
+          box-shadow: 0 0 0 3px rgba(0,0,0,0.8);
+        }
+        .iphone-notch::before {
+          content: '';
+          position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+          width: 8px; height: 8px; border-radius: 50%;
+          background: radial-gradient(circle, #1a3a5c 0%, #0d1f30 60%, #000 100%);
+          box-shadow: inset 0 0 2px rgba(255,255,255,0.3);
+        }
+        .iphone-glow {
+          position: absolute; inset: 10%;
+          background: radial-gradient(ellipse, rgba(254,100,98,0.12) 0%, transparent 70%);
+          filter: blur(40px); pointer-events: none; z-index: 0;
+        }
+
         @media (max-width: 900px) {
           .packages-grid-3 { grid-template-columns: 1fr !important; }
-          .phone-demo-layout { flex-direction: column !important; }
+          .phone-demo-layout { flex-direction: column !important; align-items: center !important; }
+          .phone-demo-steps { flex: initial !important; width: 100% !important; flex-direction: row !important; overflow-x: auto !important; }
           .funnel-layout { flex-direction: column !important; }
           .ppa-grid { grid-template-columns: 1fr !important; }
-          .iphone-device { width: 280px !important; height: 570px !important; }
-          .iphone-device > div:first-child { border-radius: 38px !important; padding: 4px !important; }
-          .iphone-device > div:first-child > :nth-child(4) { border-radius: 35px !important; }
+          .iphone-device { width: 300px !important; height: 620px !important; }
+          .iphone-frame { border-radius: 40px !important; padding: 4px !important; }
+          .iphone-screen { border-radius: 37px !important; }
         }
         @media (max-width: 768px) {
           .results-grid-6 { grid-template-columns: 1fr !important; }
@@ -162,69 +220,41 @@ function PhoneDemo() {
 
           {/* iPhone Mockup */}
           <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-            <div className="iphone-device" style={{ position: 'relative', width: 340, height: 700 }}>
-              {/* Frame */}
-              <div style={{
-                position: 'absolute', inset: 0,
-                background: 'linear-gradient(145deg, #2a2a3a 0%, #1a1a2a 50%, #151525 100%)',
-                borderRadius: 48, padding: 5,
-                boxShadow: '0 40px 80px rgba(0,0,0,0.5), 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.08), inset 0 -1px 2px rgba(0,0,0,0.3)',
-              }}>
-                {/* Side button right */}
-                <div style={{
-                  position: 'absolute', right: -3, top: 140, width: 4, height: 70,
-                  background: 'linear-gradient(180deg, #333 0%, #222 100%)',
-                  borderRadius: '0 3px 3px 0',
-                  boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1)',
-                }} />
-                {/* Side buttons left */}
-                <div style={{
-                  position: 'absolute', left: -3, top: 120, width: 4, height: 35,
-                  background: 'linear-gradient(180deg, #333 0%, #222 100%)',
-                  borderRadius: '3px 0 0 3px',
-                  boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1)',
-                }} />
-                <div style={{
-                  position: 'absolute', left: -3, top: 175, width: 4, height: 35,
-                  background: 'linear-gradient(180deg, #333 0%, #222 100%)',
-                  borderRadius: '3px 0 0 3px',
-                  boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1)',
-                }} />
+            <div className="iphone-device" style={{ position: 'relative', width: 380, height: 770 }}>
+              {/* Glow behind device */}
+              <div className="iphone-glow" />
 
+              {/* Frame (uses CSS class for ::before/::after side buttons) */}
+              <div className="iphone-frame">
                 {/* Screen */}
-                <div style={{
-                  width: '100%', height: '100%',
-                  background: '#0A0A0A', borderRadius: 44, overflow: 'hidden', position: 'relative',
-                }}>
+                <div className="iphone-screen">
                   {/* Dynamic Island */}
-                  <div style={{
-                    position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
-                    width: 100, height: 28, background: '#000', borderRadius: 20, zIndex: 10,
-                    boxShadow: '0 0 0 3px rgba(0,0,0,0.8)',
-                  }}>
-                    <div style={{
-                      position: 'absolute', right: 18, top: '50%', transform: 'translateY(-50%)',
-                      width: 8, height: 8, borderRadius: '50%',
-                      background: 'radial-gradient(circle, #1a3a5c 0%, #0d1f30 60%, #000 100%)',
-                      boxShadow: 'inset 0 0 2px rgba(255,255,255,0.3)',
-                    }} />
-                  </div>
+                  <div className="iphone-notch" />
 
                   {/* Content area */}
-                  <div style={{ paddingTop: 52, height: '100%', overflowY: 'auto' }}>
+                  <div style={{
+                    position: 'absolute', top: 48, left: 0, right: 0, bottom: 0,
+                    display: 'flex', flexDirection: 'column', overflow: 'hidden',
+                  }}>
                     {/* Slide Header */}
-                    <div style={{ padding: '8px 16px 12px', borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
+                    <div style={{
+                      padding: '12px 20px 14px', flexShrink: 0,
+                      borderBottom: '1px solid rgba(255,255,255,0.06)',
+                      background: 'rgba(255,255,255,0.02)',
+                    }}>
                       <span style={{
-                        display: 'inline-block', padding: '3px 10px', borderRadius: 20, fontSize: '0.65rem', fontWeight: 700,
-                        background: 'rgba(254,100,98,0.12)', color: '#FE6462', border: '1px solid rgba(254,100,98,0.2)',
+                        display: 'inline-block', padding: '4px 12px', borderRadius: 20,
+                        fontSize: '0.65rem', fontWeight: 700,
+                        background: 'rgba(254,100,98,0.12)', color: '#FE6462',
+                        border: '1px solid rgba(254,100,98,0.2)',
                       }}>Step {step + 1}</span>
-                      <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.9rem', marginTop: 6 }}>
+                      <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.95rem', marginTop: 8 }}>
                         {['Target Your Service Area', 'Scroll-Stopping Ads', 'Qualifying Questions', 'Self-Booking Calendar', 'Automatic Reminders'][step]}
                       </div>
                     </div>
 
-                    {/* Slide Content */}
-                    <div style={{ padding: 14 }}>
+                    {/* Slide Content — scrollable */}
+                    <div style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
                       {step === 0 && <SlideTarget />}
                       {step === 1 && <SlideAds adIdx={adIdx} setAdIdx={setAdIdx} />}
                       {step === 2 && <SlideQualify />}
@@ -233,17 +263,6 @@ function PhoneDemo() {
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Navigation dots */}
-              <div style={{ position: 'absolute', bottom: -28, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6 }}>
-                {phoneSteps.map((_, i) => (
-                  <button key={i} onClick={() => setStep(i)} style={{
-                    width: 8, height: 8, borderRadius: '50%', border: 'none', cursor: 'pointer',
-                    background: i === step ? '#FE6462' : 'rgba(255,255,255,0.2)',
-                    transition: 'background 0.2s',
-                  }} />
-                ))}
               </div>
             </div>
           </div>
