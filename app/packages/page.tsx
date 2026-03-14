@@ -1917,9 +1917,8 @@ function PricingSection() {
         {/* Package Cards */}
         <div className="packages-grid-3" style={{
           display: 'grid',
-          gridTemplateColumns: focusedPkg ? packagesData.map(p => p.id === focusedPkg ? '1.15fr' : '0.925fr').join(' ') : 'repeat(3, 1fr)',
+          gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '24px', alignItems: 'stretch',
-          transition: 'grid-template-columns 0.5s cubic-bezier(0.22,1,0.36,1)',
         }}>
           {packagesData.map((pkg, i) => {
             const isFocused = focusedPkg === pkg.id;
@@ -1935,19 +1934,17 @@ function PricingSection() {
                 style={{
                   borderRadius: 20,
                   background: 'linear-gradient(160deg, #13161e 0%, #1a1e2a 50%, #13161e 100%)',
-                  border: `1px solid ${isFocused ? pkg.accent + '60' : pkg.accent + '30'}`,
+                  border: `1px solid ${isFocused ? pkg.accent + '60' : 'rgba(255,255,255,0.08)'}`,
                   overflow: 'hidden', position: 'relative',
                   display: 'flex', flexDirection: 'column' as const,
-                  transform: isFocused ? 'scale(1.04)' : isDimmed ? 'scale(0.95)' : 'scale(1)',
-                  zIndex: isFocused ? 10 : pkg.highlight ? 2 : 1,
-                  opacity: isDimmed ? 0.25 : isOtherFocused ? 0.5 : 1,
+                  transform: isFocused ? 'scale(1.06)' : isDimmed ? 'scale(0.96)' : 'scale(1)',
+                  zIndex: isFocused ? 10 : 1,
+                  opacity: isDimmed ? 0.25 : isOtherFocused ? 0.45 : 1,
                   filter: isDimmed ? 'grayscale(1)' : 'none',
                   boxShadow: isFocused
-                    ? `0 0 0 1px ${pkg.accent}40, 0 0 80px ${pkg.accent}30, 0 20px 60px rgba(0,0,0,0.6)`
-                    : pkg.highlight && !hasAnyFocus
-                      ? `0 0 0 1px ${pkg.accent}20, 0 -8px 160px 0px ${pkg.accent}28, 0 20px 60px rgba(0,0,0,0.6)`
-                      : '0 4px 24px rgba(0,0,0,0.5)',
-                  transition: 'all 0.5s cubic-bezier(0.22,1,0.36,1)',
+                    ? `0 0 0 1px ${pkg.accent}50, 0 0 60px ${pkg.accent}25, 0 24px 48px rgba(0,0,0,0.5)`
+                    : '0 2px 16px rgba(0,0,0,0.4)',
+                  transition: 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.45s ease, border-color 0.35s ease, filter 0.35s ease',
                   cursor: isDimmed ? 'default' : 'pointer',
                   ...scaleUp(inView, stagger(i, 200, 150)),
                 }}
@@ -1956,31 +1953,20 @@ function PricingSection() {
                 <div style={{
                   height: 3,
                   background: `linear-gradient(90deg, transparent 0%, ${pkg.accent} 40%, ${pkg.accent} 60%, transparent 100%)`,
-                  opacity: isFocused ? 1 : pkg.highlight ? 1 : 0.5,
+                  opacity: isFocused ? 1 : 0.4,
+                  transition: 'opacity 0.35s ease',
                 }} />
 
                 {/* Badge */}
-                {pkg.highlight && !hasAnyFocus && (
-                  <div style={{
-                    position: 'absolute', top: 19, right: 16,
-                    background: `linear-gradient(135deg, ${pkg.accent}ee, ${pkg.accent}99)`,
-                    color: 'white', fontSize: '0.62rem', fontWeight: 800,
-                    padding: '4px 12px', borderRadius: 100,
-                    letterSpacing: '0.1em', textTransform: 'uppercase',
-                    boxShadow: `0 2px 12px ${pkg.accent}50`,
-                  }}>{pkg.badge}</div>
-                )}
-                {(!pkg.highlight || hasAnyFocus) && (
-                  <div style={{
-                    position: 'absolute', top: 19, right: 16,
-                    border: `1px solid ${pkg.accent}40`, color: pkg.accent,
-                    fontSize: '0.62rem', fontWeight: 800,
-                    padding: '4px 12px', borderRadius: 100,
-                    letterSpacing: '0.1em', textTransform: 'uppercase',
-                    transition: 'all 0.3s',
-                    ...(isFocused ? { background: `${pkg.accent}20` } : {}),
-                  }}>{pkg.badge}</div>
-                )}
+                <div style={{
+                  position: 'absolute', top: 19, right: 16,
+                  border: `1px solid ${pkg.accent}40`, color: pkg.accent,
+                  fontSize: '0.62rem', fontWeight: 800,
+                  padding: '4px 12px', borderRadius: 100,
+                  letterSpacing: '0.1em', textTransform: 'uppercase',
+                  transition: 'all 0.3s',
+                  ...(isFocused ? { background: `${pkg.accent}20`, borderColor: `${pkg.accent}60` } : {}),
+                }}>{pkg.badge}</div>
 
                 {/* Content */}
                 <div style={{ padding: '2rem 2rem 1.5rem' }}>
@@ -1998,7 +1984,9 @@ function PricingSection() {
                     <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '2.8rem', fontWeight: 800, letterSpacing: '-0.03em', color: 'white' }}>
                       {fmtPrice(pkg.priceMonthly)}
                     </span>
-                    <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.28)' }}>/mo</span>
+                    {pkg.id !== 'launchpad' && (
+                      <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.28)' }}>/mo</span>
+                    )}
                   </div>
 
                   {isQuarterly ? (
@@ -2011,7 +1999,7 @@ function PricingSection() {
                       }}>save {pkg.quarterlySave}</span>
                     </div>
                   ) : (
-                    <span style={{ fontSize: '0.75rem', color: pkg.accent, fontWeight: 600 }}>{pkg.noteMonthly}</span>
+                    <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>{pkg.noteMonthly}</span>
                   )}
                 </div>
 
@@ -2022,11 +2010,9 @@ function PricingSection() {
                   </p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
                     {pkg.heroFeatures.map((f, fi) => (
-                      <div key={fi} style={{
-                        background: `${pkg.accent}0e`, border: `1px solid ${pkg.accent}20`,
-                        borderLeft: `3px solid ${pkg.accent}`, borderRadius: 8, padding: '10px 14px',
-                      }}>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'rgba(255,255,255,0.88)' }}>{f}</div>
+                      <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
+                        <Check size={14} style={{ color: pkg.accent, flexShrink: 0 }} />
+                        <span style={{ fontSize: '0.88rem', fontWeight: 600, color: 'rgba(255,255,255,0.85)' }}>{f}</span>
                       </div>
                     ))}
                   </div>
@@ -2058,9 +2044,9 @@ function PricingSection() {
                   <button onClick={(e) => e.stopPropagation()} style={{
                     width: '100%', padding: 14, borderRadius: 100, fontSize: '0.9rem', fontWeight: 700,
                     cursor: 'pointer', border: 'none',
-                    background: isFocused || (pkg.highlight && !hasAnyFocus) ? `linear-gradient(135deg, ${pkg.accent}dd 0%, ${pkg.accent}99 100%)` : `${pkg.accent}18`,
-                    color: 'white', transition: 'all 0.3s',
-                    boxShadow: isFocused ? `0 4px 24px ${pkg.accent}45` : pkg.highlight && !hasAnyFocus ? `0 4px 24px ${pkg.accent}45` : 'none',
+                    background: isFocused ? `linear-gradient(135deg, ${pkg.accent}dd 0%, ${pkg.accent}99 100%)` : `${pkg.accent}15`,
+                    color: 'white', transition: 'all 0.35s ease',
+                    boxShadow: isFocused ? `0 4px 24px ${pkg.accent}40` : 'none',
                   }}>Claim Your Market</button>
                 </div>
               </div>
