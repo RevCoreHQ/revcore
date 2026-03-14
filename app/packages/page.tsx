@@ -951,12 +951,12 @@ function FunnelVisualization() {
                 <title>{funnel.peopleLabel}</title>
                 {Array.from({ length: Math.max(...funnelData.map(f => f.people)) }).map((_, pi) => {
                   const visible = pi < funnel.people;
-                  const cols = Math.min(funnel.people || 1, 10);
+                  const cols = Math.min(funnel.people || 1, 15);
                   const rows = Math.ceil((funnel.people || 1) / cols);
                   const row = Math.floor(pi / cols);
                   const col = pi % cols;
                   const colsInRow = row < rows - 1 ? cols : (funnel.people || 1) - row * cols;
-                  const spacing = 22;
+                  const spacing = 30;
                   const startX = cx - ((colsInRow - 1) * spacing) / 2;
                   const px = visible ? startX + col * spacing : cx;
                   const py = visible ? 18 + row * 28 : 18;
