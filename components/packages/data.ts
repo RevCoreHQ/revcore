@@ -249,7 +249,7 @@ export const ecosystemNodes = [
   { num: '02', title: 'SEO / GMB', sub: 'Local Dominance' },
   { num: '03', title: 'AEO', sub: 'GPT, Gemini, Alexa' },
   { num: '04', title: 'Backend Systems', sub: 'Automations' },
-  { num: '05', title: 'Paid Advertising', sub: 'Meta Ads' },
+  { num: '05', title: 'Paid Advertising', sub: 'Paid Ads' },
 ];
 
 // ── Outcome Cards ──────────────────────────────────

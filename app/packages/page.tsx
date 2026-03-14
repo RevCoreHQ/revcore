@@ -817,7 +817,7 @@ export default function PackagesPage() {
 /* ═══════════════════════════════════════════════════
    FUNNEL VISUALIZATION
    Single funnel shown at a time with tab navigation
-   Overview → Current → Phase 1 → Phase 2 (widest)
+   Overview → Current → Paid Ads → Paid Ads + Organic (widest)
    ═══════════════════════════════════════════════════ */
 const funnelData = [
   {
@@ -853,23 +853,23 @@ const funnelData = [
     ],
   },
   {
-    title: 'Phase 1',
-    subtitle: 'Foundation',
+    title: 'Paid Ads',
+    subtitle: 'Immediate Lead Flow',
     color: '#6B8EFE',
     topW: 420, botW: 120,
     people: 12,
-    peopleLabel: 'Paid ads widen the top of your funnel immediately. But without the auto booking system and appointment reminders built first, more leads would just mean more chaos. The foundation has to be in place before you turn on the faucet.',
+    peopleLabel: 'Paid ads widen the top of your funnel immediately. Combined with auto booking and appointment reminders, every lead is captured and confirmed automatically.',
     revenue: 'Revenue $$',
-    layers: ['Referrals + Meta Ads', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
+    layers: ['Referrals + Paid Ads', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
-      'Meta Ads put you in front of homeowners actively scrolling in your service area. Combined with referrals, you now have a predictable second lead source you control.',
-      'This is why we build this BEFORE scaling ads. Without auto booking, more leads just means more missed calls and lost opportunities. The system catches every lead 24/7 so nothing falls through the cracks.',
+      'Paid ads put you in front of homeowners actively scrolling in your service area. Combined with referrals, you now have a predictable second lead source you control.',
+      'Without auto booking, more leads just means more missed calls and lost opportunities. The system catches every lead 24/7 so nothing falls through the cracks.',
       'Automated SMS and email reminders are critical infrastructure. Without them, no shows eat 20-30% of your appointments. This has to be in place before you scale.',
       'Consistent pipeline replaces the feast or famine cycle. You are no longer waiting for the phone to ring.',
     ],
   },
   {
-    title: 'Phase 2',
+    title: 'Paid Ads + Organic',
     subtitle: 'Full Scale',
     color: '#94D96B',
     topW: 500, botW: 150,
@@ -879,8 +879,8 @@ const funnelData = [
     layers: ['Referrals + Paid Ads + Optimized Website + SEO', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
       'Every channel compounds. SEO rankings build month over month, paid ads drive immediate traffic, your website converts visitors around the clock, and referrals never stop. This is how you dominate a market.',
-      'The system you built in Phase 1 now handles the full volume effortlessly. AI powered follow ups, review requests, and re-engagement campaigns run on autopilot 24/7.',
-      'Confirmation rates exceed 90%. The infrastructure you invested in early now pays for itself many times over at this volume.',
+      'The full system handles volume effortlessly. AI powered follow ups, review requests, and re-engagement campaigns run on autopilot 24/7.',
+      'Confirmation rates exceed 90%. The infrastructure pays for itself many times over at this volume.',
       'Maximum job volume with minimal overhead. Your funnel is wide at the top and efficient all the way down. This is what a real growth engine looks like.',
     ],
   },
@@ -992,7 +992,7 @@ function FunnelVisualization() {
                 style={{ transition: 'd 0.6s ease, stroke 0.6s ease' }}
               />
 
-              {/* Expanding arrows on Phase 1 & Phase 2 */}
+              {/* Expanding arrows on Paid Ads & Paid Ads + Organic */}
               <g style={{ transition: 'opacity 0.4s ease', opacity: activeIdx >= 2 ? 1 : 0 }}>
                 <g className="fv-arrow-left">
                   <polyline
@@ -1789,7 +1789,7 @@ const calendarPhases: CalPhase[] = [
     },
   },
   {
-    name: 'Phase 1', color: '#6B8EFE', subtitle: 'Ads + Auto Booking',
+    name: 'Paid Ads', color: '#6B8EFE', subtitle: 'Ads + Auto Booking',
     description: 'Paid ads and auto booking fill your weeks consistently. No more feast or famine.',
     appts: {
       2:  [{ time: '8:30 AM',  name: 'David Martinez',   phone: '(602) 555-0412', email: 'dmartinez@gmail.com',      address: '3847 W Thunderbird Rd, Phoenix AZ 85053', service: 'Kitchen Remodel' }],
@@ -1808,7 +1808,7 @@ const calendarPhases: CalPhase[] = [
     },
   },
   {
-    name: 'Phase 2', color: '#94D96B', subtitle: 'Full Scale',
+    name: 'Paid Ads + Organic', color: '#94D96B', subtitle: 'Full Scale',
     description: 'Every growth channel compounding. Your month is booked out weeks in advance.',
     appts: {
       2:  [
