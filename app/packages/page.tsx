@@ -1903,9 +1903,8 @@ function CalendarMockup() {
   const selectedAppts = selectedDay !== null ? (p.appts[selectedDay] || []) : [];
   const selectedDayOfWeek = selectedDay !== null ? DAY_LABELS[(selectedDay - 1 + startDay) % 7] : '';
 
-  // Google Calendar event colors
-  const eventColors = ['#039be5', '#7986cb', '#33b679', '#8e24aa', '#e67c73', '#f6bf26', '#f4511e', '#616161'];
-  const getEventColor = (name: string) => eventColors[name.charCodeAt(0) % eventColors.length];
+  // Event color matches the phase color
+  const eventColor = p.color;
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.sectionDark}>
@@ -1941,7 +1940,7 @@ function CalendarMockup() {
           ))}
         </div>
 
-        <div style={{ maxWidth: '800px', margin: '0 auto', ...fadeUp(inView, 300) }}>
+        <div style={{ maxWidth: '960px', margin: '0 auto', ...fadeUp(inView, 300) }}>
           {/* Google Calendar Card */}
           <div style={{
             background: '#ffffff', borderRadius: '12px', overflow: 'hidden',
@@ -2013,7 +2012,7 @@ function CalendarMockup() {
                     key={i}
                     onClick={() => handleDayClick(day)}
                     style={{
-                      minHeight: '80px', padding: '2px 4px',
+                      minHeight: '96px', padding: '2px 4px',
                       borderRight: (i + 1) % 7 !== 0 ? '1px solid #dadce0' : 'none',
                       borderBottom: !isLastRow ? '1px solid #dadce0' : 'none',
                       background: isSelected ? '#e8f0fe' : '#fff',
@@ -2033,7 +2032,7 @@ function CalendarMockup() {
                         }}>{day}</div>
                         {dayAppts.map((appt, ai) => (
                           <div key={ai} style={{
-                            background: getEventColor(appt.name),
+                            background: eventColor,
                             color: '#fff', fontSize: '0.6rem', fontWeight: 500,
                             padding: '2px 4px', borderRadius: '3px', marginBottom: '1px',
                             overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
@@ -2074,15 +2073,13 @@ function CalendarMockup() {
               </div>
 
               <div style={{ padding: '12px 20px' }}>
-                {selectedAppts.map((appt, ai) => {
-                  const evColor = getEventColor(appt.name);
-                  return (
+                {selectedAppts.map((appt, ai) => (
                     <div key={ai} style={{
                       display: 'flex', gap: '14px', padding: '14px 0',
                       borderBottom: ai < selectedAppts.length - 1 ? '1px solid #e8eaed' : 'none',
                     }}>
                       {/* Color bar */}
-                      <div style={{ width: 4, borderRadius: 2, background: evColor, flexShrink: 0 }} />
+                      <div style={{ width: 4, borderRadius: 2, background: eventColor, flexShrink: 0 }} />
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
                           <div>
@@ -2092,7 +2089,7 @@ function CalendarMockup() {
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: 6 }}>
                           <div style={{
-                            width: 28, height: 28, borderRadius: '50%', background: evColor,
+                            width: 28, height: 28, borderRadius: '50%', background: eventColor,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             fontSize: '0.6rem', fontWeight: 600, color: '#fff', flexShrink: 0,
                           }}>
@@ -2116,8 +2113,7 @@ function CalendarMockup() {
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                ))}
               </div>
             </div>
           )}
