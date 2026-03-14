@@ -810,6 +810,7 @@ const funnelData = [
     topW: 330, botW: 100,
     people: 6,
     peopleLabel: 'Potential customers entering your funnel',
+    revenue: 'Revenue',
     layers: ['Digital Presence', 'Systems', 'Appointments', 'Jobs'],
     descriptions: [
       'How potential customers find you online, your website, ads, search rankings, and social media presence.',
@@ -825,6 +826,7 @@ const funnelData = [
     topW: 280, botW: 80,
     people: 3,
     peopleLabel: '3 leads/mo from referrals only',
+    revenue: 'Revenue $',
     layers: ['Referrals Only', 'Call / Text To Set Appt', 'Appointments', 'Jobs'],
     descriptions: [
       'You rely entirely on word of mouth. No ads, no SEO, no website traffic, inconsistent lead flow.',
@@ -840,6 +842,7 @@ const funnelData = [
     topW: 420, botW: 120,
     people: 12,
     peopleLabel: '12 leads/mo from referrals + Meta Ads',
+    revenue: 'Revenue $$',
     layers: ['Referrals + Meta Ads', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
       'Meta ads target your service area. Referrals keep flowing, now you have two lead sources.',
@@ -855,6 +858,7 @@ const funnelData = [
     topW: 500, botW: 150,
     people: 20,
     peopleLabel: '20+ leads/mo from referrals, Meta Ads, and SEO',
+    revenue: 'Revenue $$$',
     layers: ['Referrals + Meta Ads + SEO', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
       'SEO, Google Business, and content marketing compound with Meta ads. You dominate your local market across every channel.',
@@ -873,7 +877,7 @@ function FunnelVisualization() {
 
   const cx = 300;
   const vbW = 600;
-  const vbH = 530;
+  const vbH = 550;
   const layerCount = 4;
   const yStart = 74;
   const yEnd = vbH - 24;
@@ -1022,6 +1026,18 @@ function FunnelVisualization() {
                   </g>
                 );
               })}
+
+              {/* Revenue label below funnel */}
+              <text
+                x={cx} y={yEnd + 20}
+                textAnchor="middle" dominantBaseline="central"
+                fill="#0A0A0A" fontSize="16" fontWeight="700"
+                fontFamily="DM Sans, sans-serif"
+                className="fv-layer-anim"
+                style={{ animationDelay: '320ms' }}
+              >
+                {funnel.revenue}
+              </text>
             </svg>
           </div>
 
