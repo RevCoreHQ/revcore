@@ -80,12 +80,13 @@ export default function PackagesPage() {
       <PPASection />
       <FunnelSection />
       <style>{`
-        @keyframes pkg-glow-pulse {
-          0%, 100% { box-shadow: 0 0 0 1px rgba(107,142,254,0.2), 0 -8px 160px 0px rgba(107,142,254,0.28), 0 20px 60px rgba(0,0,0,0.6); }
-          50%       { box-shadow: 0 0 0 1px rgba(107,142,254,0.35), 0 -8px 200px 0px rgba(107,142,254,0.42), 0 20px 60px rgba(0,0,0,0.6); }
+        @keyframes pkg-focus-glow {
+          0%, 100% { box-shadow: 0 0 0 1px var(--pkg-accent, rgba(107,142,254,0.4)), 0 0 60px var(--pkg-accent, rgba(107,142,254,0.2)), 0 20px 60px rgba(0,0,0,0.6); }
+          50%       { box-shadow: 0 0 0 1px var(--pkg-accent, rgba(107,142,254,0.5)), 0 0 100px var(--pkg-accent, rgba(107,142,254,0.35)), 0 20px 60px rgba(0,0,0,0.6); }
         }
-        .pkg-highlight { animation: pkg-glow-pulse 3s ease-in-out infinite; }
-        .pkg-highlight:hover { transform: scale(1.055) !important; }
+        .pkg-focused { animation: pkg-focus-glow 2.5s ease-in-out infinite; }
+        .pkg-dimmed { pointer-events: none; }
+        .pkg-card { user-select: none; }
 
         /* ── Phone Demo Section ── */
         .phone-demo-container {
@@ -1700,22 +1701,48 @@ function OutcomeSection() {
 
 
 /* ═══════════════════════════════════════════════════
-   EXCLUSIVITY
+   EXCLUSIVITY — standalone section
    ═══════════════════════════════════════════════════ */
 function ExclusivitySection() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={S.sectionDark}>
+    <section ref={ref as React.Ref<HTMLElement>} style={{ ...S.sectionDark, padding: '100px 0' }}>
       <div style={S.gridOverlay} />
+      <div style={{
+        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+        width: 700, height: 700,
+        background: 'radial-gradient(circle, rgba(254,100,98,0.08) 0%, transparent 60%)',
+        pointerEvents: 'none',
+      }} />
       <div style={S.container}>
         <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto', ...fadeUp(inView) }}>
           <div style={S.eyebrowDark}>Market Exclusivity</div>
-          <h2 style={S.h2Dark}>While You Build, <HL>They Can&apos;t</HL></h2>
-          <p style={S.subDark}>
+          <h2 style={{ ...S.h2Dark, fontSize: '2.8rem' }}>While You Build, <HL>They Can&apos;t</HL></h2>
+          <p style={{ ...S.subDark, fontSize: '1.1rem', lineHeight: 1.7 }}>
             Your competitors can&apos;t access RevCore in your market. While you&apos;re building SEO authority, reactivating your database, and training your team — they&apos;re stuck buying shared leads. That gap only widens.
           </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', maxWidth: '900px', margin: '3rem auto 0', ...fadeUp(inView, 200) }} className="packages-grid-3">
+          {[
+            { icon: '🔒', title: 'One Partner Per Market', desc: 'We only work with one contractor per trade per zip code. First to claim it owns it.' },
+            { icon: '📈', title: 'Compounding Advantage', desc: 'Every month you build SEO, reviews, and brand equity that competitors can never catch.' },
+            { icon: '🚫', title: 'Competitor Lockout', desc: 'While you scale with RevCore, your competitors are stuck with shared leads and outdated methods.' },
+          ].map((item, i) => (
+            <div key={i} style={{
+              ...S.cardDark, padding: '28px', textAlign: 'center',
+              ...scaleUp(inView, stagger(i, 200, 150)),
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '12px' }}>{item.icon}</div>
+              <h3 style={{ color: '#fff', fontWeight: 700, fontSize: '1.05rem', marginBottom: '8px' }}>{item.title}</h3>
+              <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', lineHeight: 1.6 }}>{item.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ textAlign: 'center', marginTop: '2.5rem', ...fadeUp(inView, 400) }}>
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '24px', marginTop: '2rem',
+            display: 'inline-flex', alignItems: 'center', gap: '24px',
             padding: '14px 28px', borderRadius: '12px',
             background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
           }}>
@@ -1735,16 +1762,29 @@ function ExclusivitySection() {
 }
 
 /* ═══════════════════════════════════════════════════
-   PRICING
+   PRICING — click to enlarge, double-click title to dim
    ═══════════════════════════════════════════════════ */
 function PricingSection() {
   const [isQuarterly, setIsQuarterly] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [focusedPkg, setFocusedPkg] = useState<string | null>(null);
+  const [dimmedPkgs, setDimmedPkgs] = useState<Record<string, boolean>>({});
   const { ref, inView } = useScrollReveal({ threshold: 0.06 });
 
   const fmtPrice = (monthly: number) => {
     const p = isQuarterly ? Math.round(monthly * 0.9) : monthly;
     return '$' + p.toLocaleString();
+  };
+
+  const handleCardClick = (pkgId: string) => {
+    if (dimmedPkgs[pkgId]) return;
+    setFocusedPkg(prev => prev === pkgId ? null : pkgId);
+  };
+
+  const handleTitleDoubleClick = (e: React.MouseEvent, pkgId: string) => {
+    e.stopPropagation();
+    setDimmedPkgs(prev => ({ ...prev, [pkgId]: !prev[pkgId] }));
+    if (focusedPkg === pkgId) setFocusedPkg(null);
   };
 
   return (
@@ -1796,125 +1836,156 @@ function PricingSection() {
         </div>
 
         {/* Package Cards */}
-        <div className="packages-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', alignItems: 'center' }}>
-          {packagesData.map((pkg, i) => (
-            <div key={pkg.id} className={pkg.highlight ? 'pkg-highlight' : ''} style={{
-              borderRadius: 20,
-              background: 'linear-gradient(160deg, #13161e 0%, #1a1e2a 50%, #13161e 100%)',
-              border: `1px solid ${pkg.accent}30`,
-              overflow: 'hidden', position: 'relative',
-              transform: pkg.highlight ? 'scale(1.045)' : 'scale(1)',
-              zIndex: pkg.highlight ? 2 : 1,
-              boxShadow: pkg.highlight
-                ? `0 0 0 1px ${pkg.accent}20, 0 -8px 160px 0px ${pkg.accent}28, 0 20px 60px rgba(0,0,0,0.6)`
-                : '0 4px 24px rgba(0,0,0,0.5)',
-              transition: 'transform 0.3s ease',
-              ...scaleUp(inView, stagger(i, 200, 150)),
-            }}>
-              {/* Accent Bar */}
-              <div style={{
-                height: 3,
-                background: `linear-gradient(90deg, transparent 0%, ${pkg.accent} 40%, ${pkg.accent} 60%, transparent 100%)`,
-                opacity: pkg.highlight ? 1 : 0.5,
-              }} />
+        <div className="packages-grid-3" style={{
+          display: 'grid',
+          gridTemplateColumns: focusedPkg ? packagesData.map(p => p.id === focusedPkg ? '1.15fr' : '0.925fr').join(' ') : 'repeat(3, 1fr)',
+          gap: '24px', alignItems: 'center',
+          transition: 'grid-template-columns 0.5s cubic-bezier(0.22,1,0.36,1)',
+        }}>
+          {packagesData.map((pkg, i) => {
+            const isFocused = focusedPkg === pkg.id;
+            const isDimmed = dimmedPkgs[pkg.id];
+            const hasAnyFocus = focusedPkg !== null;
+            const isOtherFocused = hasAnyFocus && !isFocused;
 
-              {/* Badge */}
-              {pkg.highlight && (
+            return (
+              <div
+                key={pkg.id}
+                onClick={() => handleCardClick(pkg.id)}
+                className={`pkg-card${isFocused ? ' pkg-focused' : ''}${isDimmed ? ' pkg-dimmed' : ''}`}
+                style={{
+                  borderRadius: 20,
+                  background: 'linear-gradient(160deg, #13161e 0%, #1a1e2a 50%, #13161e 100%)',
+                  border: `1px solid ${isFocused ? pkg.accent + '60' : pkg.accent + '30'}`,
+                  overflow: 'hidden', position: 'relative',
+                  transform: isFocused ? 'scale(1.04)' : isDimmed ? 'scale(0.95)' : pkg.highlight && !hasAnyFocus ? 'scale(1.03)' : 'scale(1)',
+                  zIndex: isFocused ? 10 : pkg.highlight ? 2 : 1,
+                  opacity: isDimmed ? 0.25 : isOtherFocused ? 0.5 : 1,
+                  filter: isDimmed ? 'grayscale(1)' : 'none',
+                  boxShadow: isFocused
+                    ? `0 0 0 1px ${pkg.accent}40, 0 0 80px ${pkg.accent}30, 0 20px 60px rgba(0,0,0,0.6)`
+                    : pkg.highlight && !hasAnyFocus
+                      ? `0 0 0 1px ${pkg.accent}20, 0 -8px 160px 0px ${pkg.accent}28, 0 20px 60px rgba(0,0,0,0.6)`
+                      : '0 4px 24px rgba(0,0,0,0.5)',
+                  transition: 'all 0.5s cubic-bezier(0.22,1,0.36,1)',
+                  cursor: isDimmed ? 'default' : 'pointer',
+                  ...scaleUp(inView, stagger(i, 200, 150)),
+                }}
+              >
+                {/* Accent Bar */}
                 <div style={{
-                  position: 'absolute', top: 19, right: 16,
-                  background: `linear-gradient(135deg, ${pkg.accent}ee, ${pkg.accent}99)`,
-                  color: 'white', fontSize: '0.62rem', fontWeight: 800,
-                  padding: '4px 12px', borderRadius: 100,
-                  letterSpacing: '0.1em', textTransform: 'uppercase',
-                  boxShadow: `0 2px 12px ${pkg.accent}50`,
-                }}>{pkg.badge}</div>
-              )}
-              {!pkg.highlight && (
-                <div style={{
-                  position: 'absolute', top: 19, right: 16,
-                  border: `1px solid ${pkg.accent}40`, color: pkg.accent,
-                  fontSize: '0.62rem', fontWeight: 800,
-                  padding: '4px 12px', borderRadius: 100,
-                  letterSpacing: '0.1em', textTransform: 'uppercase',
-                }}>{pkg.badge}</div>
-              )}
+                  height: 3,
+                  background: `linear-gradient(90deg, transparent 0%, ${pkg.accent} 40%, ${pkg.accent} 60%, transparent 100%)`,
+                  opacity: isFocused ? 1 : pkg.highlight ? 1 : 0.5,
+                }} />
 
-              {/* Content */}
-              <div style={{ padding: '1.75rem 1.75rem 1.25rem' }}>
-                <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '1.2rem', fontWeight: 800, color: 'white', marginBottom: '0.3rem' }}>{pkg.name}</h3>
-                <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.82rem', lineHeight: 1.5, marginBottom: '1.25rem' }}>{pkg.tagline}</p>
-
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, marginBottom: 2 }}>
-                  <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.03em', color: 'white' }}>
-                    {fmtPrice(pkg.priceMonthly)}
-                  </span>
-                  <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.28)' }}>/mo</span>
-                </div>
-
-                {isQuarterly ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>billed {pkg.quarterlyTotal}</span>
-                    <span style={{
-                      fontSize: '0.68rem', fontWeight: 700, color: '#94D96B',
-                      background: 'rgba(148,217,107,0.12)', border: '1px solid rgba(148,217,107,0.2)',
-                      padding: '2px 8px', borderRadius: 100,
-                    }}>save {pkg.quarterlySave}</span>
-                  </div>
-                ) : (
-                  <span style={{ fontSize: '0.75rem', color: pkg.accent, fontWeight: 600 }}>{pkg.noteMonthly}</span>
+                {/* Badge */}
+                {pkg.highlight && !hasAnyFocus && (
+                  <div style={{
+                    position: 'absolute', top: 19, right: 16,
+                    background: `linear-gradient(135deg, ${pkg.accent}ee, ${pkg.accent}99)`,
+                    color: 'white', fontSize: '0.62rem', fontWeight: 800,
+                    padding: '4px 12px', borderRadius: 100,
+                    letterSpacing: '0.1em', textTransform: 'uppercase',
+                    boxShadow: `0 2px 12px ${pkg.accent}50`,
+                  }}>{pkg.badge}</div>
                 )}
-              </div>
+                {(!pkg.highlight || hasAnyFocus) && (
+                  <div style={{
+                    position: 'absolute', top: 19, right: 16,
+                    border: `1px solid ${pkg.accent}40`, color: pkg.accent,
+                    fontSize: '0.62rem', fontWeight: 800,
+                    padding: '4px 12px', borderRadius: 100,
+                    letterSpacing: '0.1em', textTransform: 'uppercase',
+                    transition: 'all 0.3s',
+                    ...(isFocused ? { background: `${pkg.accent}20` } : {}),
+                  }}>{pkg.badge}</div>
+                )}
 
-              {/* Features */}
-              <div style={{ padding: '0 1.75rem 1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                <p style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', margin: '1rem 0 0.75rem' }}>
-                  {pkg.featuresTitle || "What's included"}
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {pkg.heroFeatures.map((f, fi) => (
-                    <div key={fi} style={{
-                      background: `${pkg.accent}0e`, border: `1px solid ${pkg.accent}20`,
-                      borderLeft: `3px solid ${pkg.accent}`, borderRadius: 8, padding: '9px 12px',
-                    }}>
-                      <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'rgba(255,255,255,0.88)' }}>{f}</div>
+                {/* Content */}
+                <div style={{ padding: '2rem 2rem 1.5rem' }}>
+                  <h3
+                    onDoubleClick={(e) => handleTitleDoubleClick(e, pkg.id)}
+                    style={{
+                      fontFamily: 'DM Sans, sans-serif', fontSize: '1.3rem', fontWeight: 800,
+                      color: 'white', marginBottom: '0.3rem', userSelect: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >{pkg.name}</h3>
+                  <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem', lineHeight: 1.5, marginBottom: '1.25rem' }}>{pkg.tagline}</p>
+
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, marginBottom: 2 }}>
+                    <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '2.8rem', fontWeight: 800, letterSpacing: '-0.03em', color: 'white' }}>
+                      {fmtPrice(pkg.priceMonthly)}
+                    </span>
+                    <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.28)' }}>/mo</span>
+                  </div>
+
+                  {isQuarterly ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>billed {pkg.quarterlyTotal}</span>
+                      <span style={{
+                        fontSize: '0.68rem', fontWeight: 700, color: '#94D96B',
+                        background: 'rgba(148,217,107,0.12)', border: '1px solid rgba(148,217,107,0.2)',
+                        padding: '2px 8px', borderRadius: 100,
+                      }}>save {pkg.quarterlySave}</span>
                     </div>
-                  ))}
+                  ) : (
+                    <span style={{ fontSize: '0.75rem', color: pkg.accent, fontWeight: 600 }}>{pkg.noteMonthly}</span>
+                  )}
                 </div>
 
-                <button onClick={() => setExpanded(p => ({ ...p, [pkg.id]: !p[pkg.id] }))} style={{
-                  display: 'flex', alignItems: 'center', gap: 5,
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  color: 'rgba(255,255,255,0.35)', fontSize: '0.78rem', fontWeight: 600,
-                  marginTop: 10, padding: 0, fontFamily: 'DM Sans, sans-serif',
-                }}>
-                  <ChevronDown size={13} style={{ transform: expanded[pkg.id] ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
-                  {expanded[pkg.id] ? 'Show less' : `See all ${pkg.heroFeatures.length + pkg.moreFeatures.length} features`}
-                </button>
-
-                {expanded[pkg.id] && (
-                  <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    {pkg.moreFeatures.map((f, fi) => (
-                      <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <Check size={12} style={{ color: pkg.accent, flexShrink: 0 }} />
-                        <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)' }}>{f}</span>
+                {/* Features */}
+                <div style={{ padding: '0 2rem 1.25rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                  <p style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', margin: '1rem 0 0.75rem' }}>
+                    {pkg.featuresTitle || "What's included"}
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+                    {pkg.heroFeatures.map((f, fi) => (
+                      <div key={fi} style={{
+                        background: `${pkg.accent}0e`, border: `1px solid ${pkg.accent}20`,
+                        borderLeft: `3px solid ${pkg.accent}`, borderRadius: 8, padding: '10px 14px',
+                      }}>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'rgba(255,255,255,0.88)' }}>{f}</div>
                       </div>
                     ))}
                   </div>
-                )}
-              </div>
 
-              {/* CTA */}
-              <div style={{ padding: '1rem 1.75rem 1.75rem' }}>
-                <button style={{
-                  width: '100%', padding: 13, borderRadius: 100, fontSize: '0.875rem', fontWeight: 700,
-                  cursor: 'pointer', border: 'none',
-                  background: pkg.highlight ? `linear-gradient(135deg, ${pkg.accent}dd 0%, ${pkg.accent}99 100%)` : `${pkg.accent}18`,
-                  color: 'white', transition: 'opacity 0.2s, transform 0.2s',
-                  boxShadow: pkg.highlight ? `0 4px 24px ${pkg.accent}45` : 'none',
-                }}>Get Started</button>
+                  <button onClick={(e) => { e.stopPropagation(); setExpanded(p => ({ ...p, [pkg.id]: !p[pkg.id] })); }} style={{
+                    display: 'flex', alignItems: 'center', gap: 5,
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'rgba(255,255,255,0.35)', fontSize: '0.78rem', fontWeight: 600,
+                    marginTop: 10, padding: 0, fontFamily: 'DM Sans, sans-serif',
+                  }}>
+                    <ChevronDown size={13} style={{ transform: expanded[pkg.id] ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
+                    {expanded[pkg.id] ? 'Show less' : `See all ${pkg.heroFeatures.length + pkg.moreFeatures.length} features`}
+                  </button>
+
+                  {expanded[pkg.id] && (
+                    <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {pkg.moreFeatures.map((f, fi) => (
+                        <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <Check size={12} style={{ color: pkg.accent, flexShrink: 0 }} />
+                          <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)' }}>{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* CTA */}
+                <div style={{ padding: '1rem 2rem 2rem' }}>
+                  <button onClick={(e) => e.stopPropagation()} style={{
+                    width: '100%', padding: 14, borderRadius: 100, fontSize: '0.9rem', fontWeight: 700,
+                    cursor: 'pointer', border: 'none',
+                    background: isFocused || (pkg.highlight && !hasAnyFocus) ? `linear-gradient(135deg, ${pkg.accent}dd 0%, ${pkg.accent}99 100%)` : `${pkg.accent}18`,
+                    color: 'white', transition: 'all 0.3s',
+                    boxShadow: isFocused ? `0 4px 24px ${pkg.accent}45` : pkg.highlight && !hasAnyFocus ? `0 4px 24px ${pkg.accent}45` : 'none',
+                  }}>Get Started</button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* 30-Day Guarantee */}
