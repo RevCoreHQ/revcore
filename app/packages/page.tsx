@@ -929,7 +929,7 @@ function FunnelVisualization() {
           ))}
         </div>
 
-        {/* Funnel + detail panel */}
+        {/* Funnel + right detail panel */}
         <div className="fv-stage" style={fadeUp(inView, 300)}>
           {/* Funnel SVG */}
           <div className="fv-funnel-container" key={activeIdx}>
@@ -1041,17 +1041,25 @@ function FunnelVisualization() {
             </svg>
           </div>
 
-        </div>
-
-        {/* Detail card below funnel */}
-        <div className={`fv-detail-card${selectedLayer !== null ? ' visible' : ''}`}>
-          <div className="fv-detail-card-inner" style={{ borderLeftColor: funnel.color }}>
-            <div className="fv-detail-card-badge" style={{ background: funnel.color }}>
-              {selectedLayer !== null ? funnel.layers[selectedLayer] : ''}
+          {/* Right detail panel */}
+          <div className="fv-right-panel">
+            <div className="fv-right-title" style={{ color: funnel.color }}>{funnel.title}</div>
+            <div className="fv-right-subtitle">{funnel.subtitle}</div>
+            <div className="fv-right-layers">
+              {funnel.layers.map((label, li) => (
+                <div
+                  key={li}
+                  className={`fv-right-layer${selectedLayer === li ? ' active' : ''}${selectedLayer !== null && selectedLayer !== li ? ' dimmed' : ''}`}
+                  onClick={() => setSelectedLayer(prev => prev === li ? null : li)}
+                  style={{ '--layer-color': funnel.color } as React.CSSProperties}
+                >
+                  <div className="fv-right-layer-name">{label}</div>
+                  <div className={`fv-right-layer-desc${selectedLayer === li ? ' show' : ''}`}>
+                    {funnel.descriptions[li]}
+                  </div>
+                </div>
+              ))}
             </div>
-            <p className="fv-detail-card-text">
-              {selectedLayer !== null ? funnel.descriptions[selectedLayer] : ''}
-            </p>
           </div>
         </div>
       </div>
@@ -1129,7 +1137,7 @@ function FunnelVisualization() {
           display: flex;
           align-items: stretch;
           gap: 0;
-          max-width: 1000px;
+          max-width: 1100px;
           margin: 0 auto;
         }
 
@@ -1145,49 +1153,68 @@ function FunnelVisualization() {
           height: auto;
         }
 
-        .fv-detail-card {
-          max-width: 750px;
-          margin: 0 auto;
-          overflow: hidden;
-          max-height: 0;
-          opacity: 0;
-          transform: translateY(-12px);
-          transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
-        }
-        .fv-detail-card.visible {
-          max-height: 200px;
-          opacity: 1;
-          transform: translateY(0);
-          margin-top: 1.5rem;
-        }
-        .fv-detail-card-inner {
-          padding: 24px 32px;
-          border-radius: 14px;
-          background: #fff;
-          border: 1px solid #E5E5E5;
-          border-left: 4px solid;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-          display: flex;
-          align-items: center;
-          gap: 20px;
-        }
-        .fv-detail-card-badge {
-          display: inline-block;
-          padding: 6px 16px;
-          border-radius: 100px;
-          color: #fff;
-          font-size: 0.75rem;
-          font-weight: 700;
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-          white-space: nowrap;
+        .fv-right-panel {
+          width: 340px;
           flex-shrink: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 20px 0 20px 32px;
         }
-        .fv-detail-card-text {
-          font-size: 1.1rem;
-          line-height: 1.6;
-          color: #333;
-          margin: 0;
+        .fv-right-title {
+          font-size: 1.6rem;
+          font-weight: 800;
+          margin-bottom: 4px;
+          transition: color 0.3s;
+        }
+        .fv-right-subtitle {
+          font-size: 0.9rem;
+          color: #6B6B6B;
+          margin-bottom: 20px;
+        }
+        .fv-right-layers {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .fv-right-layer {
+          padding: 12px 16px;
+          border-radius: 10px;
+          border: 1px solid #E5E5E5;
+          background: #fff;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
+        }
+        .fv-right-layer:hover {
+          border-color: var(--layer-color);
+          box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+        .fv-right-layer.active {
+          border-color: var(--layer-color);
+          background: color-mix(in srgb, var(--layer-color) 5%, #fff);
+          border-left: 3px solid var(--layer-color);
+        }
+        .fv-right-layer.dimmed {
+          opacity: 0.4;
+        }
+        .fv-right-layer-name {
+          font-size: 0.95rem;
+          font-weight: 700;
+          color: #0A0A0A;
+        }
+        .fv-right-layer-desc {
+          max-height: 0;
+          overflow: hidden;
+          opacity: 0;
+          transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+          font-size: 0.92rem;
+          line-height: 1.55;
+          color: #555;
+        }
+        .fv-right-layer-desc.show {
+          max-height: 120px;
+          opacity: 1;
+          margin-top: 8px;
         }
 
         .fv-trap-anim {
@@ -1220,6 +1247,9 @@ function FunnelVisualization() {
         @media (max-width: 900px) {
           .fv-steps {
             grid-template-columns: repeat(2, 1fr);
+          }
+          .fv-right-panel {
+            display: none;
           }
         }
         @media (max-width: 640px) {
