@@ -1169,22 +1169,22 @@ function FunnelVisualization() {
         }
 
         .fv-funnel-container {
-          flex: 0 0 auto;
+          flex: 1;
           display: flex;
           justify-content: center;
         }
         .fv-funnel-svg {
           width: 100%;
-          max-width: 520px;
+          max-width: 750px;
           height: auto;
         }
 
         .fv-right-panel {
-          flex: 1;
-          min-width: 0;
+          width: 420px;
+          flex-shrink: 0;
           display: flex;
           align-items: center;
-          padding: 20px 0 20px 48px;
+          padding: 20px 0 20px 40px;
         }
         .fv-right-content {
           animation: fvFadeIn 0.35s cubic-bezier(0.22,1,0.36,1);
