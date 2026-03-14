@@ -809,7 +809,7 @@ const funnelData = [
     color: '#999999',
     topW: 330, botW: 100,
     people: 6,
-    peopleLabel: 'Potential customers entering your funnel',
+    peopleLabel: 'These represent the potential customers entering your funnel. The wider the top, the more people discover your business.',
     revenue: 'Revenue',
     layers: ['Digital Presence', 'Systems', 'Appointments', 'Jobs'],
     descriptions: [
@@ -825,7 +825,7 @@ const funnelData = [
     color: '#FE6462',
     topW: 280, botW: 80,
     people: 3,
-    peopleLabel: '3 leads/mo from referrals only',
+    peopleLabel: 'Only 3 people per month are finding your business, all through word of mouth. No online presence means most potential customers never know you exist.',
     revenue: 'Revenue $',
     layers: ['Referrals Only', 'Call / Text To Set Appt', 'Appointments', 'Jobs'],
     descriptions: [
@@ -841,7 +841,7 @@ const funnelData = [
     color: '#6B8EFE',
     topW: 420, botW: 120,
     people: 12,
-    peopleLabel: '12 leads/mo from referrals + Meta Ads',
+    peopleLabel: '12 people per month now find your business through referrals and targeted Meta Ads. That\'s 3x more visibility than before.',
     revenue: 'Revenue $$',
     layers: ['Referrals + Meta Ads', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
@@ -857,7 +857,7 @@ const funnelData = [
     color: '#94D96B',
     topW: 500, botW: 150,
     people: 20,
-    peopleLabel: '20+ leads/mo from referrals, Meta Ads, and SEO',
+    peopleLabel: '20+ people per month discover your business through referrals, Meta Ads, and organic SEO. You\'re now visible across every channel in your market.',
     revenue: 'Revenue $$$',
     layers: ['Referrals + Meta Ads + SEO', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
@@ -877,7 +877,7 @@ function FunnelVisualization() {
 
   const cx = 300;
   const vbW = 600;
-  const vbH = 570;
+  const vbH = 590;
   const layerCount = 4;
   const yStart = 74;
   const yEnd = vbH - 24;
@@ -942,7 +942,7 @@ function FunnelVisualization() {
               </defs>
 
               {/* People icons above funnel */}
-              <g style={{ cursor: 'pointer' }}>
+              <g style={{ cursor: 'pointer' }} onClick={() => setSelectedLayer(prev => prev === -1 ? null : -1)}>
                 <title>{funnel.peopleLabel}</title>
                 {Array.from({ length: funnel.people }).map((_, pi) => {
                   const cols = Math.min(funnel.people, 10);
@@ -1063,8 +1063,12 @@ function FunnelVisualization() {
           <div className="fv-right-panel">
             {selectedLayer !== null ? (
               <div className="fv-right-content" key={`${activeIdx}-${selectedLayer}`}>
-                <div className="fv-right-label" style={{ color: funnel.color }}>{funnel.layers[selectedLayer]}</div>
-                <p className="fv-right-desc">{funnel.descriptions[selectedLayer]}</p>
+                <div className="fv-right-label" style={{ color: funnel.color }}>
+                  {selectedLayer === -1 ? 'Impressions' : funnel.layers[selectedLayer]}
+                </div>
+                <p className="fv-right-desc">
+                  {selectedLayer === -1 ? funnel.peopleLabel : funnel.descriptions[selectedLayer]}
+                </p>
               </div>
             ) : (
               <div className="fv-right-hint">
