@@ -2495,7 +2495,7 @@ function PricingSection() {
         {/* Package Cards */}
         <div className="packages-grid-3" style={{
           display: 'grid',
-          gridTemplateColumns: '0.92fr 1.08fr 1.08fr',
+          gridTemplateColumns: '0.95fr 1.06fr 1.06fr',
           gap: '20px', alignItems: 'stretch',
         }}>
           {packagesData.map((pkg, i) => {
@@ -2642,6 +2642,7 @@ function PricingSection() {
                     </div>
                   )}
 
+                  {pkg.moreFeatures.length > 0 && (
                   <button onClick={(e) => { e.stopPropagation(); setExpanded(p => ({ ...p, [pkg.id]: !p[pkg.id] })); }} style={{
                     display: 'flex', alignItems: 'center', gap: 6,
                     background: 'none', border: 'none', cursor: 'pointer',
@@ -2651,6 +2652,7 @@ function PricingSection() {
                     <ChevronDown size={14} style={{ transform: expanded[pkg.id] ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
                     {expanded[pkg.id] ? 'Show less' : `See all ${pkg.heroFeatures.length + pkg.moreFeatures.length} features`}
                   </button>
+                  )}
 
                   {expanded[pkg.id] && (
                     <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>

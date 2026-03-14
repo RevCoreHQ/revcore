@@ -16,13 +16,7 @@ export const packagesData = [
       '15 Appointments / mo',
       'Appointment Reminders',
     ],
-    moreFeatures: [
-      'Meta Ads management',
-      'SMS & email follow-up sequences',
-      'Real-time lead notifications',
-      'Dedicated landing page',
-      'Weekly performance reports',
-    ],
+    moreFeatures: [] as string[],
   },
   {
     id: 'growth',
@@ -40,6 +34,8 @@ export const packagesData = [
       '20+ Appointments / mo',
       'High Conversion Website',
       'SEO Optimization',
+      'Automated Follow-Up',
+      'Review Request Automation',
     ],
     moreFeatures: [
       'Top-of-funnel paid ads management',
