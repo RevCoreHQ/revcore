@@ -837,9 +837,9 @@ const funnelData = [
     color: '#6B8EFE',
     topW: 420, botW: 120,
     people: 12,
-    layers: ['Referrals + Paid Ads', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
+    layers: ['Referrals + Meta Ads', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
-      'Paid ads on Google & Facebook target your service area. Referrals keep flowing, now you have two lead sources.',
+      'Meta ads target your service area. Referrals keep flowing, now you have two lead sources.',
       'Leads land on your website and self book appointments. CRM captures every inquiry automatically.',
       'Automated SMS & email reminders reduce no shows. Calendar stays organized without manual effort.',
       'More appointments mean more jobs. Consistent pipeline replaces the feast or famine cycle.',
@@ -851,9 +851,9 @@ const funnelData = [
     color: '#94D96B',
     topW: 500, botW: 150,
     people: 20,
-    layers: ['Referrals + Paid Ads + SEO', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
+    layers: ['Referrals + Meta Ads + SEO', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
-      'SEO, Google Business, and content marketing compound with ads. You dominate your local market across every channel.',
+      'SEO, Google Business, and content marketing compound with Meta ads. You dominate your local market across every channel.',
       'AI powered follow ups, review requests, and re-engagement campaigns run on autopilot 24/7.',
       'Smart scheduling optimizes routes and availability. Confirmation rates exceed 90%.',
       'Maximum job volume with minimal overhead. Your funnel is wide at the top and efficient all the way down.',
@@ -861,7 +861,6 @@ const funnelData = [
   },
 ];
 
-const layerLabels = ['Digital Presence', 'Systems', 'Appointments', 'Jobs'];
 
 function FunnelVisualization() {
   const [activeIdx, setActiveIdx] = useState(0);
@@ -924,22 +923,6 @@ function FunnelVisualization() {
 
         {/* Funnel + detail panel */}
         <div className="fv-stage" style={fadeUp(inView, 300)}>
-          {/* Left labels */}
-          <div className="fv-labels">
-            {layerLabels.map((label, i) => {
-              const h = hoveredLayer === i ? expandedH : shrunkH;
-              return (
-                <div key={i} className={`fv-label${hoveredLayer === i ? ' active' : ''}`} style={{
-                  height: `${(h / (yEnd - yStart)) * 100}%`,
-                  opacity: inView ? (hoveredLayer !== null && hoveredLayer !== i ? 0.35 : 1) : 0,
-                  transition: 'all 0.4s cubic-bezier(0.22,1,0.36,1)',
-                }}>
-                  {label}
-                </div>
-              );
-            })}
-          </div>
-
           {/* Funnel SVG */}
           <div className="fv-funnel-container" key={activeIdx}>
             <svg viewBox={`0 0 ${vbW} ${vbH}`} className="fv-funnel-svg">
@@ -1040,7 +1023,7 @@ function FunnelVisualization() {
           <div className={`fv-detail${hoveredLayer !== null ? ' visible' : ''}`}>
             <div className="fv-detail-inner">
               <div className="fv-detail-badge" style={{ background: funnel.color }}>
-                {hoveredLayer !== null ? layerLabels[hoveredLayer] : ''}
+                {hoveredLayer !== null ? funnel.layers[hoveredLayer] : ''}
               </div>
               <p className="fv-detail-text">
                 {hoveredLayer !== null ? funnel.descriptions[hoveredLayer] : ''}
@@ -1127,31 +1110,6 @@ function FunnelVisualization() {
           margin: 0 auto;
         }
 
-        .fv-labels {
-          display: flex;
-          flex-direction: column;
-          justify-content: stretch;
-          width: 140px;
-          flex-shrink: 0;
-          padding: 24px 0;
-        }
-        .fv-label {
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          padding-right: 20px;
-          font-size: 0.95rem;
-          font-weight: 600;
-          color: #6B6B6B;
-          text-align: right;
-          line-height: 1.3;
-          transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
-        }
-        .fv-label.active {
-          color: #0A0A0A;
-          font-size: 1.05rem;
-        }
-
         .fv-funnel-container {
           flex: 1;
           display: flex;
@@ -1160,7 +1118,7 @@ function FunnelVisualization() {
         }
         .fv-funnel-svg {
           width: 100%;
-          max-width: 650px;
+          max-width: 750px;
           height: auto;
         }
 
@@ -1246,13 +1204,6 @@ function FunnelVisualization() {
           }
           .fv-step {
             border-radius: 12px;
-          }
-          .fv-labels {
-            width: 90px;
-            font-size: 0.75rem;
-          }
-          .fv-label.active {
-            font-size: 0.8rem;
           }
         }
       `}</style>
