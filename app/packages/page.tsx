@@ -7,8 +7,7 @@ import SpaceBackground from '@/components/SpaceBackground';
 import { useScrollReveal, fadeUp, scaleUp, stagger } from '@/hooks/useScrollReveal';
 import { Check, ChevronDown } from 'lucide-react';
 import {
-  packagesData, phoneSteps, fbAds, buildFeatures,
-  fullScaleExtras,
+  packagesData, phoneSteps, fbAds,
   qualifyQuestions, stateMarkets,
 } from '@/components/packages/data';
 
@@ -81,7 +80,6 @@ export default function PackagesPage() {
       <PricingSection />
       <ROICalculator />
       <SocialProofStrip />
-      <WhatWeBuildSection />
       <style>{`
         @keyframes pkg-focus-glow {
           0%, 100% { box-shadow: 0 0 0 1px var(--pkg-accent, rgba(107,142,254,0.5)), 0 0 80px var(--pkg-accent, rgba(107,142,254,0.2)), 0 0 120px var(--pkg-accent, rgba(107,142,254,0.08)), 0 24px 60px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.06); }
@@ -2795,29 +2793,30 @@ function ROICalculator() {
   const net = gross - pkgCost - adSpend;
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '96px 0', background: 'linear-gradient(180deg, #1a1a2e 0%, #16162a 100%)', position: 'relative' as const, overflow: 'hidden' as const }}>
-      <SpaceBackground opacity={0.2} />
+    <section ref={ref as React.Ref<HTMLElement>} style={{ ...S.section, padding: '96px 0' }}>
+      <div style={S.lightPattern} />
       <div style={{ ...S.container, maxWidth: 900 }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
-          <div style={{ ...S.eyebrowDark, color: 'rgba(254,100,98,0.9)' }}>See Your Potential</div>
-          <h2 style={S.h2Dark}>System <HL>ROI</HL> Calculator</h2>
-          <p style={S.subDark}>Select your package and appointment volume to see your projected net revenue.</p>
+          <div style={{ ...S.eyebrow, color: 'rgba(254,100,98,0.9)' }}>See Your Potential</div>
+          <h2 style={S.h2}>System <HL>ROI</HL> Calculator</h2>
+          <p style={S.sub}>Select your package and appointment volume to see your projected net revenue.</p>
         </div>
 
         <div style={{
-          background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+          background: '#ffffff', border: '1px solid #E5E5E5',
           borderRadius: 20, padding: 40, ...fadeUp(inView, 200),
+          boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
         }}>
           {/* Package Selection */}
           <div style={{ marginBottom: 32 }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginBottom: 12 }}>Select Package</label>
+            <label style={{ display: 'block', fontSize: '0.85rem', color: '#6B6B6B', marginBottom: 12, fontWeight: 600 }}>Select Package</label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
               {(['core', 'full'] as const).map(p => (
                 <button key={p} onClick={() => setPkg(p)} style={{
                   padding: '16px 12px', borderRadius: 10, fontWeight: 600, fontSize: '0.9rem',
-                  cursor: 'pointer', transition: 'all 0.2s', color: '#fff', border: 'none',
-                  background: pkg === p ? 'rgba(254,100,98,0.2)' : 'rgba(255,255,255,0.1)',
-                  outline: pkg === p ? '2px solid #FE6462' : '2px solid rgba(255,255,255,0.2)',
+                  cursor: 'pointer', transition: 'all 0.2s', color: '#0A0A0A', border: 'none',
+                  background: pkg === p ? 'rgba(254,100,98,0.08)' : '#F5F5F5',
+                  outline: pkg === p ? '2px solid #FE6462' : '2px solid #E5E5E5',
                 }}>{p === 'core' ? 'Growth Engine' : 'Full Scale Partner'}</button>
               ))}
             </div>
@@ -2825,17 +2824,17 @@ function ROICalculator() {
 
           {/* Appointments */}
           <div style={{ marginBottom: 32 }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginBottom: 12 }}>Appointments Per Month</label>
+            <label style={{ display: 'block', fontSize: '0.85rem', color: '#6B6B6B', marginBottom: 12, fontWeight: 600 }}>Appointments Per Month</label>
             <div className="roi-appts-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
               {[{ a: 20, ad: '$1,500' }, { a: 40, ad: '$3,000' }, { a: 60, ad: '$4,500' }, { a: 80, ad: '$6,000' }].map(o => (
                 <button key={o.a} onClick={() => setAppts(o.a)} style={{
                   padding: '16px 12px', borderRadius: 10, cursor: 'pointer', transition: 'all 0.2s',
-                  textAlign: 'center', color: '#fff', border: 'none',
-                  background: appts === o.a ? 'rgba(254,100,98,0.2)' : 'rgba(255,255,255,0.1)',
-                  outline: appts === o.a ? '2px solid #FE6462' : '2px solid rgba(255,255,255,0.2)',
+                  textAlign: 'center', color: '#0A0A0A', border: 'none',
+                  background: appts === o.a ? 'rgba(254,100,98,0.08)' : '#F5F5F5',
+                  outline: appts === o.a ? '2px solid #FE6462' : '2px solid #E5E5E5',
                 }}>
                   <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>{o.a} Appts</div>
-                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>~{o.ad}/mo ads</div>
+                  <div style={{ fontSize: '0.8rem', color: '#6B6B6B', marginTop: 4 }}>~{o.ad}/mo ads</div>
                 </button>
               ))}
             </div>
@@ -2844,50 +2843,50 @@ function ROICalculator() {
           {/* Inputs */}
           <div className="roi-inputs-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 40 }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginBottom: 8 }}>Average Job Value</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: '#6B6B6B', marginBottom: 8, fontWeight: 600 }}>Average Job Value</label>
               <div style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)' }}>$</span>
+                <span style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#6B6B6B' }}>$</span>
                 <input type="number" value={jobValue} onChange={e => setJobValue(+e.target.value)} style={{
                   width: '100%', padding: '16px 16px 16px 32px',
-                  background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: 10, color: '#fff', fontSize: '1.1rem', fontWeight: 600,
+                  background: '#F5F5F5', border: '1px solid #E5E5E5',
+                  borderRadius: 10, color: '#0A0A0A', fontSize: '1.1rem', fontWeight: 600,
                 }} />
               </div>
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginBottom: 8 }}>Your Close Rate</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: '#6B6B6B', marginBottom: 8, fontWeight: 600 }}>Your Close Rate</label>
               <div style={{ position: 'relative' }}>
                 <input type="number" value={closeRate} min={1} max={100} onChange={e => setCloseRate(+e.target.value)} style={{
                   width: '100%', padding: '16px', paddingRight: 40,
-                  background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: 10, color: '#fff', fontSize: '1.1rem', fontWeight: 600,
+                  background: '#F5F5F5', border: '1px solid #E5E5E5',
+                  borderRadius: 10, color: '#0A0A0A', fontSize: '1.1rem', fontWeight: 600,
                 }} />
-                <span style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)' }}>%</span>
+                <span style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', color: '#6B6B6B' }}>%</span>
               </div>
             </div>
           </div>
 
           {/* Result */}
           <div style={{
-            background: 'linear-gradient(135deg, rgba(254,100,98,0.15) 0%, rgba(254,100,98,0.05) 100%)',
-            border: '1px solid rgba(254,100,98,0.3)', borderRadius: 16, padding: 32, textAlign: 'center',
+            background: 'linear-gradient(135deg, rgba(254,100,98,0.06) 0%, rgba(254,100,98,0.02) 100%)',
+            border: '1px solid rgba(254,100,98,0.15)', borderRadius: 16, padding: 32, textAlign: 'center',
           }}>
-            <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
+            <div style={{ fontSize: '0.85rem', color: '#6B6B6B', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
               Net Monthly Revenue After Investment
             </div>
-            <div style={{ fontSize: '3.5rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>
+            <div style={{ fontSize: '3.5rem', fontWeight: 800, color: '#0A0A0A', lineHeight: 1 }}>
               ${net.toLocaleString()}
             </div>
-            <div style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.6)', marginTop: 12 }}>
+            <div style={{ fontSize: '1rem', color: '#6B6B6B', marginTop: 12 }}>
               {appts} appointments × {closeRate}% close rate × ${jobValue.toLocaleString()} = ${gross.toLocaleString()} gross
             </div>
-            <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-              <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
+            <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+              <div style={{ fontSize: '0.9rem', color: '#6B6B6B' }}>
                 Investment: ${pkgCost.toLocaleString()}/mo + ${adSpend.toLocaleString()}/mo ad spend
               </div>
             </div>
           </div>
-          <p style={{ textAlign: 'center', fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', marginTop: 24 }}>
+          <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#6B6B6B', marginTop: 24 }}>
             Results vary based on market, competition, and execution.
           </p>
         </div>
@@ -2928,61 +2927,4 @@ function SocialProofStrip() {
   );
 }
 
-/* ═══════════════════════════════════════════════════
-   WHAT WE BUILD
-   ═══════════════════════════════════════════════════ */
-function WhatWeBuildSection() {
-  const { ref, inView } = useScrollReveal({ threshold: 0.08 });
-  return (
-    <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
-      <div style={S.lightPattern} />
-      <div style={S.container}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
-          <div style={S.eyebrow}>Everything You Need</div>
-          <h2 style={S.h2}>Your Complete <HL>Revenue Engine</HL></h2>
-          <p style={S.sub}>Every piece of the system working together to generate leads, book appointments, and grow your business.</p>
-        </div>
-
-        <div className="features-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, ...fadeUp(inView, 200) }}>
-          {buildFeatures.map((f, i) => (
-            <div key={i} style={{
-              ...S.card, padding: 24, cursor: 'pointer', transition: 'all 0.3s',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                <div style={{ width: 40, height: 40, background: f.color, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>{f.emoji}</div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#0A0A0A' }}>{f.title}</h4>
-              </div>
-              <p style={{ fontSize: '0.9rem', color: '#6B6B6B', lineHeight: 1.5 }}>{f.desc}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Full Scale Partner Extras */}
-        <div style={{
-          marginTop: '4rem', padding: 32,
-          background: 'linear-gradient(135deg, rgba(168,85,247,0.05) 0%, rgba(107,142,254,0.05) 100%)',
-          borderRadius: 16, border: '1px solid rgba(168,85,247,0.2)',
-          ...fadeUp(inView, 400),
-        }}>
-          <div style={{ textAlign: 'center', marginBottom: 24 }}>
-            <span style={{
-              display: 'inline-block', padding: '6px 16px',
-              background: 'linear-gradient(135deg, #a855f7, #4f8fff)',
-              color: '#fff', fontSize: '0.75rem', fontWeight: 700,
-              textTransform: 'uppercase', letterSpacing: '0.1em', borderRadius: 20, marginBottom: 12,
-            }}>Full Scale Partner Only</span>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0A0A0A' }}>Additional Growth Tools</h3>
-          </div>
-          <div className="extras-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            {fullScaleExtras.map((e, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.95rem', color: '#0A0A0A' }}>
-                <span style={{ color: '#a855f7' }}>✓</span> {e}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
