@@ -1920,24 +1920,26 @@ function PricingSection() {
     if (focusedPkg === pkgId) setFocusedPkg(null);
   };
 
+  const isLaunchpad = (id: string) => id === 'launchpad';
+
   return (
-    <section ref={ref as React.Ref<HTMLElement>} id="pricing" style={{ ...S.sectionDark, padding: '96px 0' }}>
+    <section ref={ref as React.Ref<HTMLElement>} id="pricing" style={{ ...S.sectionDark, padding: '120px 0' }}>
       <div style={S.gridOverlay} />
       <div style={{
-        position: 'absolute', top: '30%', left: '50%', transform: 'translateX(-50%)',
-        width: 900, height: 500,
+        position: 'absolute', top: '25%', left: '55%', transform: 'translateX(-50%)',
+        width: 1000, height: 600,
         background: 'radial-gradient(ellipse at center, rgba(107,142,254,0.1) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
-      <div style={S.container}>
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem', ...fadeUp(inView) }}>
+      <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
+        <div style={{ textAlign: 'center', marginBottom: '3.5rem', ...fadeUp(inView) }}>
           <div style={S.eyebrowDark}>
             <span style={{ width: 20, height: 2, background: '#6B8EFE', display: 'block' }} />
             Choose Your Path
             <span style={{ width: 20, height: 2, background: '#6B8EFE', display: 'block' }} />
           </div>
-          <h2 style={S.h2Dark}>Growth Packages Built for <HL>Contractors</HL></h2>
-          <p style={{ ...S.subDark, marginBottom: '2rem' }}>Three proven systems designed to meet you where you are and take you where you want to go.</p>
+          <h2 style={{ ...S.h2Dark, fontSize: 'clamp(2rem, 4vw, 3rem)' }}>Growth Packages Built for <HL>Contractors</HL></h2>
+          <p style={{ ...S.subDark, fontSize: '1.1rem', marginBottom: '2rem' }}>Three proven systems designed to meet you where you are and take you where you want to go.</p>
 
           {/* Billing Toggle */}
           <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -1946,22 +1948,22 @@ function PricingSection() {
               border: '1px solid rgba(255,255,255,0.1)', borderRadius: 100, padding: 4, gap: 2,
             }}>
               <button onClick={() => setIsQuarterly(false)} style={{
-                padding: '8px 22px', borderRadius: 100, border: 'none', cursor: 'pointer',
-                fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.875rem',
+                padding: '10px 26px', borderRadius: 100, border: 'none', cursor: 'pointer',
+                fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.95rem',
                 background: !isQuarterly ? 'white' : 'transparent',
                 color: !isQuarterly ? '#0A0A0A' : 'rgba(255,255,255,0.45)', transition: 'all 0.2s',
               }}>Monthly</button>
               <button onClick={() => setIsQuarterly(true)} style={{
-                padding: '8px 22px', borderRadius: 100, border: 'none', cursor: 'pointer',
-                fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.875rem',
+                padding: '10px 26px', borderRadius: 100, border: 'none', cursor: 'pointer',
+                fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.95rem',
                 background: isQuarterly ? 'white' : 'transparent',
                 color: isQuarterly ? '#0A0A0A' : 'rgba(255,255,255,0.45)', transition: 'all 0.2s',
                 display: 'flex', alignItems: 'center', gap: 8,
               }}>
                 Quarterly
                 <span style={{
-                  background: '#94D96B', color: '#0a0a0a', fontSize: '0.6rem', fontWeight: 800,
-                  padding: '2px 7px', borderRadius: 100, letterSpacing: '0.05em',
+                  background: '#94D96B', color: '#0a0a0a', fontSize: '0.65rem', fontWeight: 800,
+                  padding: '3px 9px', borderRadius: 100, letterSpacing: '0.05em',
                 }}>SAVE 10%</span>
               </button>
             </div>
@@ -1971,14 +1973,16 @@ function PricingSection() {
         {/* Package Cards */}
         <div className="packages-grid-3" style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '24px', alignItems: 'stretch',
+          gridTemplateColumns: '0.85fr 1.1fr 1.1fr',
+          gap: '20px', alignItems: 'stretch',
         }}>
           {packagesData.map((pkg, i) => {
             const isFocused = focusedPkg === pkg.id;
             const isDimmed = dimmedPkgs[pkg.id];
             const hasAnyFocus = focusedPkg !== null;
             const isOtherFocused = hasAnyFocus && !isFocused;
+            const muted = isLaunchpad(pkg.id) && !isFocused;
+            const promoted = !isLaunchpad(pkg.id);
 
             return (
               <div
@@ -1986,18 +1990,22 @@ function PricingSection() {
                 onClick={() => handleCardClick(pkg.id)}
                 className={`pkg-card${isFocused ? ' pkg-focused' : ''}${isDimmed ? ' pkg-dimmed' : ''}`}
                 style={{
-                  borderRadius: 20,
-                  background: 'linear-gradient(160deg, #13161e 0%, #1a1e2a 50%, #13161e 100%)',
-                  border: `1px solid ${isFocused ? pkg.accent + '60' : 'rgba(255,255,255,0.08)'}`,
+                  borderRadius: 24,
+                  background: muted
+                    ? 'linear-gradient(160deg, #10121a 0%, #14171f 50%, #10121a 100%)'
+                    : 'linear-gradient(160deg, #13161e 0%, #1a1e2a 50%, #13161e 100%)',
+                  border: `1px solid ${isFocused ? pkg.accent + '60' : muted ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.1)'}`,
                   overflow: 'hidden', position: 'relative',
                   display: 'flex', flexDirection: 'column' as const,
                   transform: isFocused ? 'scale(1.06)' : isDimmed ? 'scale(0.96)' : 'scale(1)',
                   zIndex: isFocused ? 10 : 1,
-                  opacity: isDimmed ? 0.25 : isOtherFocused ? 0.45 : 1,
+                  opacity: isDimmed ? 0.25 : isOtherFocused ? 0.4 : muted ? 0.7 : 1,
                   filter: isDimmed ? 'grayscale(1)' : 'none',
                   boxShadow: isFocused
                     ? `0 0 0 1px ${pkg.accent}50, 0 0 60px ${pkg.accent}25, 0 24px 48px rgba(0,0,0,0.5)`
-                    : '0 2px 16px rgba(0,0,0,0.4)',
+                    : promoted && !hasAnyFocus
+                      ? `0 0 0 1px ${pkg.accent}15, 0 8px 40px rgba(0,0,0,0.5)`
+                      : '0 2px 16px rgba(0,0,0,0.3)',
                   transition: 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.45s ease, border-color 0.35s ease, filter 0.35s ease',
                   cursor: isDimmed ? 'default' : 'pointer',
                   ...scaleUp(inView, stagger(i, 200, 150)),
@@ -2005,88 +2013,129 @@ function PricingSection() {
               >
                 {/* Accent Bar */}
                 <div style={{
-                  height: 3,
+                  height: promoted ? 4 : 2,
                   background: `linear-gradient(90deg, transparent 0%, ${pkg.accent} 40%, ${pkg.accent} 60%, transparent 100%)`,
-                  opacity: isFocused ? 1 : 0.4,
+                  opacity: isFocused ? 1 : promoted ? 0.7 : 0.25,
                   transition: 'opacity 0.35s ease',
                 }} />
 
                 {/* Badge */}
-                <div style={{
-                  position: 'absolute', top: 19, right: 16,
-                  border: `1px solid ${pkg.accent}40`, color: pkg.accent,
-                  fontSize: '0.62rem', fontWeight: 800,
-                  padding: '4px 12px', borderRadius: 100,
-                  letterSpacing: '0.1em', textTransform: 'uppercase',
-                  transition: 'all 0.3s',
-                  ...(isFocused ? { background: `${pkg.accent}20`, borderColor: `${pkg.accent}60` } : {}),
-                }}>{pkg.badge}</div>
+                {promoted ? (
+                  <div style={{
+                    position: 'absolute', top: 22, right: 20,
+                    background: `linear-gradient(135deg, ${pkg.accent}ee, ${pkg.accent}99)`,
+                    color: 'white', fontSize: '0.7rem', fontWeight: 800,
+                    padding: '5px 14px', borderRadius: 100,
+                    letterSpacing: '0.1em', textTransform: 'uppercase',
+                    boxShadow: `0 2px 12px ${pkg.accent}40`,
+                    transition: 'all 0.3s',
+                  }}>{pkg.id === 'growth' ? 'Recommended' : pkg.badge}</div>
+                ) : (
+                  <div style={{
+                    position: 'absolute', top: 22, right: 20,
+                    border: `1px solid rgba(255,255,255,0.15)`, color: 'rgba(255,255,255,0.35)',
+                    fontSize: '0.65rem', fontWeight: 700,
+                    padding: '4px 12px', borderRadius: 100,
+                    letterSpacing: '0.1em', textTransform: 'uppercase',
+                  }}>{pkg.badge}</div>
+                )}
 
                 {/* Content */}
-                <div style={{ padding: '2rem 2rem 1.5rem' }}>
+                <div style={{ padding: promoted ? '2.5rem 2.5rem 1.5rem' : '2rem 2rem 1.5rem' }}>
                   <h3
                     onDoubleClick={(e) => handleTitleDoubleClick(e, pkg.id)}
                     style={{
-                      fontFamily: 'DM Sans, sans-serif', fontSize: '1.3rem', fontWeight: 800,
-                      color: 'white', marginBottom: '0.3rem', userSelect: 'none',
+                      fontFamily: 'DM Sans, sans-serif',
+                      fontSize: promoted ? '1.6rem' : '1.25rem',
+                      fontWeight: 800,
+                      color: muted ? 'rgba(255,255,255,0.7)' : 'white',
+                      marginBottom: '0.4rem', userSelect: 'none',
                       cursor: 'pointer',
                     }}
                   >{pkg.name}</h3>
-                  <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem', lineHeight: 1.5, marginBottom: '1.25rem' }}>{pkg.tagline}</p>
+                  <p style={{
+                    color: muted ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.4)',
+                    fontSize: promoted ? '0.95rem' : '0.85rem',
+                    lineHeight: 1.5, marginBottom: '1.5rem',
+                  }}>{pkg.tagline}</p>
 
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, marginBottom: 2 }}>
-                    <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '2.8rem', fontWeight: 800, letterSpacing: '-0.03em', color: 'white' }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 4 }}>
+                    <span style={{
+                      fontFamily: 'DM Sans, sans-serif',
+                      fontSize: promoted ? '3.2rem' : '2.4rem',
+                      fontWeight: 800, letterSpacing: '-0.03em',
+                      color: muted ? 'rgba(255,255,255,0.6)' : 'white',
+                    }}>
                       {fmtPrice(pkg.priceMonthly)}
                     </span>
                     {pkg.id !== 'launchpad' && (
-                      <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.28)' }}>/mo</span>
+                      <span style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.28)' }}>/mo</span>
                     )}
                   </div>
 
                   {isQuarterly ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>billed {pkg.quarterlyTotal}</span>
+                      <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.35)' }}>billed {pkg.quarterlyTotal}</span>
                       <span style={{
-                        fontSize: '0.68rem', fontWeight: 700, color: '#94D96B',
+                        fontSize: '0.72rem', fontWeight: 700, color: '#94D96B',
                         background: 'rgba(148,217,107,0.12)', border: '1px solid rgba(148,217,107,0.2)',
-                        padding: '2px 8px', borderRadius: 100,
+                        padding: '3px 10px', borderRadius: 100,
                       }}>save {pkg.quarterlySave}</span>
                     </div>
                   ) : (
-                    <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>{pkg.noteMonthly}</span>
+                    <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>{pkg.noteMonthly}</span>
                   )}
                 </div>
 
                 {/* Features */}
-                <div style={{ padding: '0 2rem 1.25rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                  <p style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', margin: '1rem 0 0.75rem' }}>
+                <div style={{ padding: promoted ? '0 2.5rem 1.5rem' : '0 2rem 1.25rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                  <p style={{
+                    fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.22)', margin: '1.25rem 0 1rem',
+                  }}>
                     {pkg.featuresTitle || "What's included"}
                   </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {pkg.heroFeatures.map((f, fi) => (
-                      <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
-                        <Check size={14} style={{ color: pkg.accent, flexShrink: 0 }} />
-                        <span style={{ fontSize: '0.88rem', fontWeight: 600, color: 'rgba(255,255,255,0.85)' }}>{f}</span>
+                      <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '6px 0' }}>
+                        <Check size={promoted ? 18 : 15} style={{ color: pkg.accent, flexShrink: 0 }} />
+                        <span style={{
+                          fontSize: promoted ? '1.05rem' : '0.9rem',
+                          fontWeight: 600,
+                          color: muted ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.88)',
+                        }}>{f}</span>
                       </div>
                     ))}
                   </div>
 
+                  {/* Loss framing for Launchpad */}
+                  {isLaunchpad(pkg.id) && (
+                    <div style={{
+                      marginTop: 14, padding: '10px 14px', borderRadius: 10,
+                      background: 'rgba(254,100,98,0.06)', border: '1px solid rgba(254,100,98,0.12)',
+                    }}>
+                      <span style={{ fontSize: '0.8rem', color: 'rgba(254,100,98,0.7)', fontWeight: 500 }}>
+                        Does not include website, SEO, or sales tools
+                      </span>
+                    </div>
+                  )}
+
                   <button onClick={(e) => { e.stopPropagation(); setExpanded(p => ({ ...p, [pkg.id]: !p[pkg.id] })); }} style={{
-                    display: 'flex', alignItems: 'center', gap: 5,
+                    display: 'flex', alignItems: 'center', gap: 6,
                     background: 'none', border: 'none', cursor: 'pointer',
-                    color: 'rgba(255,255,255,0.35)', fontSize: '0.78rem', fontWeight: 600,
-                    marginTop: 10, padding: 0, fontFamily: 'DM Sans, sans-serif',
+                    color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem', fontWeight: 600,
+                    marginTop: 14, padding: 0, fontFamily: 'DM Sans, sans-serif',
                   }}>
-                    <ChevronDown size={13} style={{ transform: expanded[pkg.id] ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
+                    <ChevronDown size={14} style={{ transform: expanded[pkg.id] ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
                     {expanded[pkg.id] ? 'Show less' : `See all ${pkg.heroFeatures.length + pkg.moreFeatures.length} features`}
                   </button>
 
                   {expanded[pkg.id] && (
-                    <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {pkg.moreFeatures.map((f, fi) => (
-                        <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <Check size={12} style={{ color: pkg.accent, flexShrink: 0 }} />
-                          <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)' }}>{f}</span>
+                        <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <Check size={14} style={{ color: pkg.accent, flexShrink: 0 }} />
+                          <span style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.5)' }}>{f}</span>
                         </div>
                       ))}
                     </div>
@@ -2094,13 +2143,23 @@ function PricingSection() {
                 </div>
 
                 {/* CTA */}
-                <div style={{ padding: '1rem 2rem 2rem', marginTop: 'auto' }}>
+                <div style={{ padding: promoted ? '1.25rem 2.5rem 2.5rem' : '1rem 2rem 2rem', marginTop: 'auto' }}>
                   <button onClick={(e) => e.stopPropagation()} style={{
-                    width: '100%', padding: 14, borderRadius: 100, fontSize: '0.9rem', fontWeight: 700,
-                    cursor: 'pointer', border: 'none',
-                    background: isFocused ? `linear-gradient(135deg, ${pkg.accent}dd 0%, ${pkg.accent}99 100%)` : `${pkg.accent}15`,
-                    color: 'white', transition: 'all 0.35s ease',
-                    boxShadow: isFocused ? `0 4px 24px ${pkg.accent}40` : 'none',
+                    width: '100%',
+                    padding: promoted ? 18 : 14,
+                    borderRadius: 100,
+                    fontSize: promoted ? '1.05rem' : '0.9rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    border: promoted ? 'none' : `1px solid ${pkg.accent}30`,
+                    background: promoted
+                      ? `linear-gradient(135deg, ${pkg.accent}dd 0%, ${pkg.accent}99 100%)`
+                      : isFocused
+                        ? `linear-gradient(135deg, ${pkg.accent}dd 0%, ${pkg.accent}99 100%)`
+                        : 'transparent',
+                    color: 'white',
+                    transition: 'all 0.35s ease',
+                    boxShadow: promoted ? `0 4px 24px ${pkg.accent}35` : isFocused ? `0 4px 24px ${pkg.accent}40` : 'none',
                   }}>Claim Your Market</button>
                 </div>
               </div>
