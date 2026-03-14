@@ -7,7 +7,7 @@ import { useScrollReveal, fadeUp, scaleUp, stagger } from '@/hooks/useScrollReve
 import { Check, ChevronDown } from 'lucide-react';
 import {
   packagesData, phoneSteps, fbAds, buildFeatures,
-  fullScaleExtras, outcomeCards,
+  fullScaleExtras,
   qualifyQuestions, stateMarkets,
 } from '@/components/packages/data';
 
@@ -75,7 +75,6 @@ export default function PackagesPage() {
       <CalendarMockup />
       <SEODemo />
       <SystemDiagram />
-      <OutcomeSection />
       <ExclusivitySection />
       <SelectiveSection />
       <PricingSection />
@@ -1665,97 +1664,6 @@ function WebsiteDemo() {
 /* ═══════════════════════════════════════════════════
    OUTCOME SECTION
    ═══════════════════════════════════════════════════ */
-function OutcomeSection() {
-  const [activeCard, setActiveCard] = useState<number | null>(null);
-  const { ref, inView } = useScrollReveal({ threshold: 0.08 });
-  return (
-    <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
-      <div style={S.container}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
-          <h2 style={S.h2}>This Is What Happens When Your Funnel <HL>Actually Works</HL></h2>
-          <p style={S.sub}>This is what your business looks like with RevCore.</p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', ...fadeUp(inView, 200) }} className="packages-grid-3">
-          {outcomeCards.map((card, i) => {
-            const isActive = activeCard === i;
-            const hasActive = activeCard !== null;
-            const accentColor = card.icon === 'calendar' ? '#FE6462' : card.icon === 'chat' ? '#6B8EFE' : '#94D96B';
-            return (
-            <div key={i} onClick={() => setActiveCard(prev => prev === i ? null : i)} style={{
-              ...S.cardDark, padding: '24px', cursor: 'pointer',
-              transform: isActive ? 'scale(1.05)' : 'scale(1)',
-              opacity: hasActive && !isActive ? 0.45 : 1,
-              boxShadow: isActive
-                ? `0 0 0 1px ${accentColor}50, 0 0 60px ${accentColor}20, 0 16px 48px rgba(0,0,0,0.4)`
-                : '0 4px 24px rgba(0,0,0,0.15)',
-              zIndex: isActive ? 10 : 1,
-              position: 'relative' as const,
-              transition: 'all 0.45s cubic-bezier(0.22,1,0.36,1)',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(254,100,98,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {card.icon === 'calendar' && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FE6462" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>}
-                  {card.icon === 'chat' && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B8EFE" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>}
-                  {card.icon === 'refresh' && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94D96B" strokeWidth="2"><polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" /></svg>}
-                </div>
-                <div style={{ fontWeight: 700, color: '#fff', fontSize: '1rem' }}>{card.title}</div>
-              </div>
-              {/* Card preview content */}
-              {card.appointments && (
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', marginBottom: '8px' }}>
-                    <span>January 2026</span>
-                  </div>
-                  {card.appointments.map((a, j) => (
-                    <div key={j} style={{ display: 'flex', gap: '10px', padding: '8px', borderRadius: '6px', background: 'rgba(255,255,255,0.03)', marginBottom: '4px' }}>
-                      <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', width: '60px' }}>{a.time}</span>
-                      <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.7)' }}>{a.name}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {card.conversations && (
-                <div>
-                  {card.conversations.slice(0, isActive ? card.conversations.length : 4).map((c, j) => (
-                    <div key={j} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px', borderRadius: '6px', background: c.unread ? 'rgba(255,255,255,0.03)' : 'transparent', marginBottom: '2px' }}>
-                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(107,142,254,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#6B8EFE', flexShrink: 0 }}>{c.initials}</div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: '0.72rem', fontWeight: 600, color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          {c.name}
-                          {c.badge && <span style={{ fontSize: '0.5rem', padding: '1px 6px', borderRadius: '10px', background: 'rgba(148,217,107,0.15)', color: '#94D96B' }}>{c.badge}</span>}
-                        </div>
-                        <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.preview}</div>
-                      </div>
-                      <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', flexShrink: 0 }}>{c.time}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {card.rehash && (
-                <div>
-                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '8px' }}>
-                    <span style={{ color: 'rgba(255,255,255,0.3)' }}>{card.rehash.label}</span><br />
-                    <span style={{ fontSize: '0.65rem', color: 'rgba(148,217,107,0.8)' }}>{card.rehash.context}</span>
-                  </div>
-                  {card.rehash.messages.map((m, j) => (
-                    <div key={j} style={{
-                      padding: '8px 12px', borderRadius: m.dir === 'out' ? '10px 10px 10px 4px' : '10px 10px 4px 10px',
-                      background: m.dir === 'out' ? 'rgba(254,100,98,0.1)' : 'rgba(148,217,107,0.1)',
-                      fontSize: '0.72rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.4, marginBottom: '6px',
-                      maxWidth: '90%', marginLeft: m.dir === 'in' ? 'auto' : '0',
-                    }}>{m.text}</div>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-          })}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* EcosystemSection replaced by <SystemDiagram /> component */
 
 
