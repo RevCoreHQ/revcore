@@ -77,6 +77,7 @@ export default function PackagesPage() {
       <ExclusivitySection />
       <SelectiveSection />
       <PricingSection />
+      <ROICalculator />
       <SocialProofStrip />
       <WhatWeBuildSection />
       <style>{`
@@ -2172,6 +2173,122 @@ function PricingSection() {
   );
 }
 
+
+/* ═══════════════════════════════════════════════════
+   ROI CALCULATOR
+   ═══════════════════════════════════════════════════ */
+function ROICalculator() {
+  const [pkg, setPkg] = useState<'core' | 'full'>('core');
+  const [appts, setAppts] = useState(20);
+  const [jobValue, setJobValue] = useState(18000);
+  const [closeRate, setCloseRate] = useState(35);
+  const { ref, inView } = useScrollReveal({ threshold: 0.08 });
+
+  const adSpend = appts <= 20 ? 1500 : appts <= 40 ? 3000 : appts <= 60 ? 4500 : 6000;
+  const pkgCost = pkg === 'core' ? 3497 : 4997;
+  const gross = Math.round(appts * (closeRate / 100) * jobValue);
+  const net = gross - pkgCost - adSpend;
+
+  return (
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '96px 0', background: 'linear-gradient(180deg, #1a1a2e 0%, #16162a 100%)' }}>
+      <div style={{ ...S.container, maxWidth: 900 }}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
+          <div style={{ ...S.eyebrowDark, color: 'rgba(254,100,98,0.9)' }}>See Your Potential</div>
+          <h2 style={S.h2Dark}>System <HL>ROI</HL> Calculator</h2>
+          <p style={S.subDark}>Select your package and appointment volume to see your projected net revenue.</p>
+        </div>
+
+        <div style={{
+          background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: 20, padding: 40, ...fadeUp(inView, 200),
+        }}>
+          {/* Package Selection */}
+          <div style={{ marginBottom: 32 }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginBottom: 12 }}>Select Package</label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+              {(['core', 'full'] as const).map(p => (
+                <button key={p} onClick={() => setPkg(p)} style={{
+                  padding: '16px 12px', borderRadius: 10, fontWeight: 600, fontSize: '0.9rem',
+                  cursor: 'pointer', transition: 'all 0.2s', color: '#fff', border: 'none',
+                  background: pkg === p ? 'rgba(254,100,98,0.2)' : 'rgba(255,255,255,0.1)',
+                  outline: pkg === p ? '2px solid #FE6462' : '2px solid rgba(255,255,255,0.2)',
+                }}>{p === 'core' ? 'Growth Engine' : 'Full Scale Partner'}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Appointments */}
+          <div style={{ marginBottom: 32 }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginBottom: 12 }}>Appointments Per Month</label>
+            <div className="roi-appts-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+              {[{ a: 20, ad: '$1,500' }, { a: 40, ad: '$3,000' }, { a: 60, ad: '$4,500' }, { a: 80, ad: '$6,000' }].map(o => (
+                <button key={o.a} onClick={() => setAppts(o.a)} style={{
+                  padding: '16px 12px', borderRadius: 10, cursor: 'pointer', transition: 'all 0.2s',
+                  textAlign: 'center', color: '#fff', border: 'none',
+                  background: appts === o.a ? 'rgba(254,100,98,0.2)' : 'rgba(255,255,255,0.1)',
+                  outline: appts === o.a ? '2px solid #FE6462' : '2px solid rgba(255,255,255,0.2)',
+                }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>{o.a} Appts</div>
+                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>~{o.ad}/mo ads</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Inputs */}
+          <div className="roi-inputs-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 40 }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginBottom: 8 }}>Average Job Value</label>
+              <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)' }}>$</span>
+                <input type="number" value={jobValue} onChange={e => setJobValue(+e.target.value)} style={{
+                  width: '100%', padding: '16px 16px 16px 32px',
+                  background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+                  borderRadius: 10, color: '#fff', fontSize: '1.1rem', fontWeight: 600,
+                }} />
+              </div>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginBottom: 8 }}>Your Close Rate</label>
+              <div style={{ position: 'relative' }}>
+                <input type="number" value={closeRate} min={1} max={100} onChange={e => setCloseRate(+e.target.value)} style={{
+                  width: '100%', padding: '16px', paddingRight: 40,
+                  background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+                  borderRadius: 10, color: '#fff', fontSize: '1.1rem', fontWeight: 600,
+                }} />
+                <span style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)' }}>%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Result */}
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(254,100,98,0.15) 0%, rgba(254,100,98,0.05) 100%)',
+            border: '1px solid rgba(254,100,98,0.3)', borderRadius: 16, padding: 32, textAlign: 'center',
+          }}>
+            <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
+              Net Monthly Revenue After Investment
+            </div>
+            <div style={{ fontSize: '3.5rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>
+              ${net.toLocaleString()}
+            </div>
+            <div style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.6)', marginTop: 12 }}>
+              {appts} appointments × {closeRate}% close rate × ${jobValue.toLocaleString()} = ${gross.toLocaleString()} gross
+            </div>
+            <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
+                Investment: ${pkgCost.toLocaleString()}/mo + ${adSpend.toLocaleString()}/mo ad spend
+              </div>
+            </div>
+          </div>
+          <p style={{ textAlign: 'center', fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', marginTop: 24 }}>
+            Results vary based on market, competition, and execution.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 /* ═══════════════════════════════════════════════════
    SOCIAL PROOF STRIP
