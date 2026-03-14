@@ -72,8 +72,10 @@ export default function PackagesPage() {
       <FunnelVisualization />
       <PhoneDemo />
       <WebsiteDemo />
-      <OutcomeSection />
+      <CalendarMockup />
+      <SEODemo />
       <SystemDiagram />
+      <OutcomeSection />
       <ExclusivitySection />
       <SelectiveSection />
       <PricingSection />
@@ -792,6 +794,8 @@ export default function PackagesPage() {
           .extras-grid-3 { grid-template-columns: 1fr !important; }
           .roi-inputs-2 { grid-template-columns: 1fr !important; }
           .roi-appts-4 { grid-template-columns: repeat(2, 1fr) !important; }
+          .seo-grid-2 { grid-template-columns: 1fr !important; }
+          .cal-phase-tabs { flex-direction: column !important; align-items: stretch !important; }
         }
       `}</style>
     </main>
@@ -1841,6 +1845,327 @@ function ExclusivitySection() {
     </section>
   );
 }
+
+/* ═══════════════════════════════════════════════════
+   CALENDAR MOCKUP — appointment density per phase
+   ═══════════════════════════════════════════════════ */
+const calendarPhases = [
+  {
+    name: 'Current',
+    color: '#FE6462',
+    subtitle: 'Referrals only',
+    appointments: [3, 8, 14, 22],
+    description: 'A handful of referrals trickle in. Unpredictable gaps leave your crew sitting idle.',
+  },
+  {
+    name: 'Phase 1',
+    color: '#6B8EFE',
+    subtitle: 'Ads + Auto Booking',
+    appointments: [1, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 21, 22, 24, 26],
+    description: 'Paid ads and auto booking fill your weeks consistently. No more feast or famine.',
+  },
+  {
+    name: 'Phase 2',
+    color: '#94D96B',
+    subtitle: 'Full Scale',
+    appointments: [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30],
+    description: 'Every growth channel compounding. Your month is booked out weeks in advance.',
+  },
+];
+
+function CalendarMockup() {
+  const [phase, setPhase] = useState(0);
+  const { ref, inView } = useScrollReveal({ threshold: 0.08 });
+  const p = calendarPhases[phase];
+
+  const daysInMonth = 31;
+  const startDay = 0; // Sunday
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const calendarDays: (number | null)[] = [];
+  for (let i = 0; i < startDay; i++) calendarDays.push(null);
+  for (let d = 1; d <= daysInMonth; d++) calendarDays.push(d);
+  while (calendarDays.length % 7 !== 0) calendarDays.push(null);
+
+  return (
+    <section ref={ref as React.Ref<HTMLElement>} style={S.sectionDark}>
+      <div style={S.gridOverlay} />
+      <div style={S.container}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
+          <div style={S.eyebrowDark}>Appointment Volume</div>
+          <h2 style={S.h2Dark}>Watch Your Calendar <HL>Fill Up</HL></h2>
+          <p style={S.subDark}>Click each phase to see how your monthly appointments grow.</p>
+        </div>
+
+        {/* Phase tabs */}
+        <div className="cal-phase-tabs" style={{
+          display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '2.5rem',
+          ...fadeUp(inView, 150),
+        }}>
+          {calendarPhases.map((cp, i) => (
+            <button
+              key={i}
+              onClick={() => setPhase(i)}
+              style={{
+                padding: '12px 24px', borderRadius: '12px', border: 'none',
+                cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+                fontWeight: 700, fontSize: '0.9rem',
+                background: phase === i ? `${cp.color}20` : 'rgba(255,255,255,0.05)',
+                color: phase === i ? cp.color : 'rgba(255,255,255,0.4)',
+                outline: phase === i ? `2px solid ${cp.color}60` : '1px solid rgba(255,255,255,0.08)',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              {cp.name}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ maxWidth: '700px', margin: '0 auto', ...fadeUp(inView, 300) }}>
+          {/* Calendar Card */}
+          <div style={{
+            ...S.cardDark, padding: '32px', overflow: 'hidden',
+            border: `1px solid ${p.color}25`,
+            transition: 'border-color 0.4s ease',
+          }}>
+            <div style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              marginBottom: '24px',
+            }}>
+              <div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff' }}>March 2026</div>
+                <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>{p.subtitle}</div>
+              </div>
+              <div style={{
+                padding: '6px 14px', borderRadius: '8px',
+                background: `${p.color}15`, border: `1px solid ${p.color}30`,
+                fontSize: '0.85rem', fontWeight: 700, color: p.color,
+                transition: 'all 0.4s ease',
+              }}>
+                {p.appointments.length} Appointments
+              </div>
+            </div>
+
+            {/* Day headers */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', marginBottom: '8px' }}>
+              {dayNames.map(d => (
+                <div key={d} style={{
+                  textAlign: 'center', padding: '8px 0',
+                  fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.3)',
+                  textTransform: 'uppercase' as const, letterSpacing: '0.08em',
+                }}>{d}</div>
+              ))}
+            </div>
+
+            {/* Calendar grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
+              {calendarDays.map((day, i) => {
+                const hasAppt = day !== null && p.appointments.includes(day);
+                const isWeekend = i % 7 === 0 || i % 7 === 6;
+                return (
+                  <div key={i} style={{
+                    aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    borderRadius: '10px', position: 'relative' as const,
+                    background: hasAppt ? `${p.color}18` : 'rgba(255,255,255,0.02)',
+                    border: hasAppt ? `1px solid ${p.color}30` : '1px solid rgba(255,255,255,0.04)',
+                    transition: 'all 0.4s ease',
+                  }}>
+                    {day !== null && (
+                      <>
+                        <span style={{
+                          fontSize: '0.85rem', fontWeight: hasAppt ? 700 : 500,
+                          color: hasAppt ? p.color : isWeekend ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.5)',
+                          transition: 'color 0.4s ease',
+                        }}>{day}</span>
+                        {hasAppt && (
+                          <div style={{
+                            position: 'absolute' as const, bottom: '4px', left: '50%', transform: 'translateX(-50%)',
+                            width: '5px', height: '5px', borderRadius: '50%',
+                            background: p.color, transition: 'background 0.4s ease',
+                          }} />
+                        )}
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Description */}
+          <div style={{
+            textAlign: 'center', marginTop: '1.5rem',
+            fontSize: '1rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6,
+            transition: 'all 0.4s ease',
+          }}>
+            {p.description}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+/* ═══════════════════════════════════════════════════
+   SEO DEMO — before/after Google search mockups
+   ═══════════════════════════════════════════════════ */
+function SEODemo() {
+  const { ref, inView } = useScrollReveal({ threshold: 0.08 });
+
+  return (
+    <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
+      <div style={S.container}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
+          <div style={S.eyebrow}>Search Visibility</div>
+          <h2 style={S.h2}>From Invisible to <HL>Unavoidable</HL></h2>
+          <p style={S.sub}>When homeowners search for your service, your business needs to be the first thing they see.</p>
+        </div>
+
+        <div className="seo-grid-2" style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px',
+          maxWidth: '1000px', margin: '0 auto',
+          ...fadeUp(inView, 200),
+        }}>
+          {/* Before */}
+          <div style={{ ...S.card, overflow: 'hidden' }}>
+            <div style={{
+              padding: '12px 16px', background: '#fafafa',
+              borderBottom: '1px solid #E5E5E5',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#d93025' }}>Before RevCore</span>
+              <span style={{ fontSize: '0.65rem', color: '#999', fontWeight: 600 }}>Page 3+</span>
+            </div>
+
+            <div style={{ padding: '16px', background: '#fff' }}>
+              {/* Google search bar */}
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '12px',
+                padding: '10px 16px', borderRadius: '24px',
+                border: '1px solid #dfe1e5', background: '#fff',
+                boxShadow: '0 1px 6px rgba(32,33,36,0.08)',
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#9aa0a6"/></svg>
+                <span style={{ fontSize: '0.85rem', color: '#202124' }}>roofing contractor near me</span>
+              </div>
+
+              <div style={{ marginTop: '16px' }}>
+                {[
+                  { url: 'www.competitor-roofers.com', title: 'Competitor Roofing Co - Free Estimates', desc: 'Professional roofing services for your area...' },
+                  { url: 'www.another-roofer.com', title: 'Another Roofing - Licensed & Insured', desc: 'Trusted roofing contractors since 2010...' },
+                  { url: 'www.bigbox-roofing.com', title: 'BigBox Roofing Solutions', desc: 'Affordable roof repair and replacement...' },
+                ].map((r, i) => (
+                  <div key={i} style={{ padding: '12px 0', borderBottom: '1px solid #dfe1e5' }}>
+                    <div style={{ fontSize: '0.65rem', color: '#70757a' }}>{r.url}</div>
+                    <div style={{ fontSize: '0.95rem', color: '#1a0dab', marginBottom: '2px' }}>{r.title}</div>
+                    <div style={{ fontSize: '0.78rem', color: '#4d5156', lineHeight: 1.3 }}>{r.desc}</div>
+                  </div>
+                ))}
+
+                {/* Your listing buried */}
+                <div style={{ padding: '16px 12px', marginTop: '8px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#999', fontStyle: 'italic' }}>
+                    Your business... somewhere on page 3
+                  </span>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '4px', marginTop: '8px' }}>
+                    {[1, 2, 3].map(n => (
+                      <span key={n} style={{
+                        width: '24px', height: '24px', borderRadius: '50%',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '0.7rem', fontWeight: 600,
+                        background: n === 3 ? '#FE646220' : '#f1f3f4',
+                        color: n === 3 ? '#FE6462' : '#70757a',
+                        border: n === 3 ? '1px solid #FE646240' : 'none',
+                      }}>{n}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* After */}
+          <div style={{
+            ...S.card, overflow: 'hidden',
+            border: '1px solid rgba(148,217,107,0.25)',
+            boxShadow: '0 8px 40px rgba(148,217,107,0.08)',
+          }}>
+            <div style={{
+              padding: '12px 16px', background: 'rgba(148,217,107,0.06)',
+              borderBottom: '1px solid rgba(148,217,107,0.15)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#16a34a' }}>After RevCore</span>
+              <span style={{ fontSize: '0.65rem', color: '#16a34a', fontWeight: 600 }}>#1 Result</span>
+            </div>
+
+            <div style={{ padding: '16px', background: '#fff' }}>
+              {/* Google search bar */}
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '12px',
+                padding: '10px 16px', borderRadius: '24px',
+                border: '1px solid #dfe1e5', background: '#fff',
+                boxShadow: '0 1px 6px rgba(32,33,36,0.08)',
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#9aa0a6"/></svg>
+                <span style={{ fontSize: '0.85rem', color: '#202124' }}>roofing contractor near me</span>
+              </div>
+
+              <div style={{ marginTop: '16px' }}>
+                {/* Google Maps pack */}
+                <div style={{
+                  padding: '14px', borderRadius: '10px', marginBottom: '12px',
+                  background: 'rgba(148,217,107,0.05)',
+                  border: '1px solid rgba(148,217,107,0.2)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#34a853"/><circle cx="12" cy="9" r="2.5" fill="#fff"/></svg>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#202124' }}>Maps</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                    <div style={{
+                      width: '36px', height: '36px', borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '0.6rem', fontWeight: 700, color: '#fff', flexShrink: 0,
+                    }}>PR</div>
+                    <div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1a0dab' }}>Premium Roofing Co</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                        <div style={{ display: 'flex', gap: '1px' }}>
+                          {[1,2,3,4,5].map(s => (
+                            <svg key={s} width="10" height="10" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>
+                          ))}
+                        </div>
+                        <span style={{ fontSize: '0.65rem', color: '#70757a' }}>4.9 (127)</span>
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: '#70757a', marginTop: '2px' }}>Roofing contractor · Open now</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Organic #1 */}
+                <div style={{ padding: '12px 0', borderBottom: '1px solid #dfe1e5' }}>
+                  <div style={{ fontSize: '0.65rem', color: '#70757a' }}>www.premium-roofing.com</div>
+                  <div style={{ fontSize: '0.95rem', color: '#1a0dab', marginBottom: '2px', fontWeight: 600 }}>Premium Roofing Co - #1 Rated Contractor</div>
+                  <div style={{ fontSize: '0.78rem', color: '#4d5156', lineHeight: 1.3 }}>5-star rated roofing contractor serving your area. Free inspections, fast estimates. Book online 24/7.</div>
+                </div>
+
+                <div style={{ padding: '12px 0', borderBottom: '1px solid #dfe1e5', opacity: 0.5 }}>
+                  <div style={{ fontSize: '0.65rem', color: '#70757a' }}>www.competitor-roofers.com</div>
+                  <div style={{ fontSize: '0.95rem', color: '#1a0dab', marginBottom: '2px' }}>Competitor Roofing Co - Free Estimates</div>
+                  <div style={{ fontSize: '0.78rem', color: '#4d5156', lineHeight: 1.3 }}>Professional roofing services...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 
 /* ═══════════════════════════════════════════════════
    SELECTIVE — "Who This Isn't For" takeaway
