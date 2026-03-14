@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type L from 'leaflet';
 import SystemDiagram from '@/components/sections/SystemDiagram';
+import SpaceBackground from '@/components/SpaceBackground';
 import { useScrollReveal, fadeUp, scaleUp, stagger } from '@/hooks/useScrollReveal';
 import { Check, ChevronDown } from 'lucide-react';
 import {
@@ -19,7 +20,7 @@ const S = {
   /* Light sections (default) */
   section: { padding: '96px 0', position: 'relative' as const },
   /* Dark accent sections */
-  sectionDark: { padding: '96px 0', position: 'relative' as const, background: '#0A0A0A', color: '#fff' },
+  sectionDark: { padding: '96px 0', position: 'relative' as const, background: '#0A0A0A', color: '#fff', overflow: 'hidden' as const },
   container: { maxWidth: '1200px', margin: '0 auto', padding: '0 24px', position: 'relative' as const, zIndex: 1 },
   /* Light-mode eyebrow */
   eyebrow: {
@@ -57,6 +58,11 @@ const S = {
     backgroundImage: 'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
     backgroundSize: '64px 64px', pointerEvents: 'none' as const,
   },
+  lightPattern: {
+    position: 'absolute' as const, inset: 0,
+    backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.045) 1px, transparent 1px)',
+    backgroundSize: '24px 24px', pointerEvents: 'none' as const, zIndex: 0,
+  },
 };
 
 const HL = ({ children }: { children: React.ReactNode }) => (
@@ -83,12 +89,17 @@ export default function PackagesPage() {
       <WhatWeBuildSection />
       <style>{`
         @keyframes pkg-focus-glow {
-          0%, 100% { box-shadow: 0 0 0 1px var(--pkg-accent, rgba(107,142,254,0.4)), 0 0 60px var(--pkg-accent, rgba(107,142,254,0.2)), 0 20px 60px rgba(0,0,0,0.6); }
-          50%       { box-shadow: 0 0 0 1px var(--pkg-accent, rgba(107,142,254,0.5)), 0 0 100px var(--pkg-accent, rgba(107,142,254,0.35)), 0 20px 60px rgba(0,0,0,0.6); }
+          0%, 100% { box-shadow: 0 0 0 1px var(--pkg-accent, rgba(107,142,254,0.5)), 0 0 80px var(--pkg-accent, rgba(107,142,254,0.2)), 0 0 120px var(--pkg-accent, rgba(107,142,254,0.08)), 0 24px 60px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.06); }
+          50%       { box-shadow: 0 0 0 1px var(--pkg-accent, rgba(107,142,254,0.6)), 0 0 100px var(--pkg-accent, rgba(107,142,254,0.35)), 0 0 160px var(--pkg-accent, rgba(107,142,254,0.12)), 0 24px 60px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.08); }
         }
         .pkg-focused { animation: pkg-focus-glow 2.5s ease-in-out infinite; }
         .pkg-dimmed { pointer-events: none; }
         .pkg-card { user-select: none; }
+        .pkg-card:not(.pkg-dimmed):not(.pkg-focused):hover {
+          transform: scale(1.02) translateY(-4px) !important;
+          border-color: rgba(255,255,255,0.18) !important;
+          box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 16px 48px rgba(0,0,0,0.55), inset 0 1px 1px rgba(255,255,255,0.06) !important;
+        }
 
         /* ── Phone Demo Section ── */
         .phone-demo-container {
@@ -917,6 +928,7 @@ function FunnelVisualization() {
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '100px', paddingBottom: '100px', position: 'relative' }}>
+      <div style={S.lightPattern} />
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Your Growth Path</div>
@@ -1288,6 +1300,7 @@ function PhoneDemo() {
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.sectionDark}>
+      <SpaceBackground opacity={0.25} />
       <div style={S.gridOverlay} />
       <div style={S.container}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
@@ -1555,6 +1568,7 @@ function WebsiteDemo() {
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
+      <div style={S.lightPattern} />
       <div style={S.container}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Website Preview</div>
@@ -1716,6 +1730,7 @@ function ExclusivitySection() {
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ ...S.sectionDark, padding: '100px 0' }}>
+      <SpaceBackground opacity={0.25} />
       <div style={S.gridOverlay} />
       <div style={S.container}>
         <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto', ...fadeUp(inView) }}>
@@ -1902,6 +1917,7 @@ function CalendarMockup() {
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.sectionDark}>
+      <SpaceBackground opacity={0.25} />
       <div style={S.gridOverlay} />
       <div style={S.container}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
@@ -2161,6 +2177,7 @@ function SEODemo() {
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
+      <div style={S.lightPattern} />
       <div style={S.container}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Search Visibility</div>
@@ -2401,6 +2418,7 @@ function SelectiveSection() {
   ];
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
+      <div style={S.lightPattern} />
       <div style={S.container}>
         <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>
@@ -2472,6 +2490,7 @@ function PricingSection() {
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} id="pricing" style={{ ...S.sectionDark, padding: '120px 0' }}>
+      <SpaceBackground opacity={0.3} />
       <div style={S.gridOverlay} />
       <div style={{
         position: 'absolute', top: '25%', left: '55%', transform: 'translateX(-50%)',
@@ -2540,9 +2559,9 @@ function PricingSection() {
                 style={{
                   borderRadius: 24,
                   background: muted
-                    ? 'linear-gradient(160deg, #10121a 0%, #14171f 50%, #10121a 100%)'
-                    : 'linear-gradient(160deg, #13161e 0%, #1a1e2a 50%, #13161e 100%)',
-                  border: `1px solid ${isFocused ? pkg.accent + '60' : muted ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.1)'}`,
+                    ? 'linear-gradient(160deg, #0d0f16 0%, #12151d 30%, #151820 60%, #0d0f16 100%)'
+                    : 'linear-gradient(160deg, #13161e 0%, #1c2035 35%, #1a1e2a 65%, #13161e 100%)',
+                  border: `1px solid ${isFocused ? pkg.accent + '70' : muted ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.12)'}`,
                   overflow: 'hidden', position: 'relative',
                   display: 'flex', flexDirection: 'column' as const,
                   transform: isFocused ? 'scale(1.06)' : isDimmed ? 'scale(0.96)' : 'scale(1)',
@@ -2550,10 +2569,10 @@ function PricingSection() {
                   opacity: isDimmed ? 0.25 : isOtherFocused ? 0.4 : muted ? 0.85 : 1,
                   filter: isDimmed ? 'grayscale(1)' : 'none',
                   boxShadow: isFocused
-                    ? `0 0 0 1px ${pkg.accent}50, 0 0 60px ${pkg.accent}25, 0 24px 48px rgba(0,0,0,0.5)`
+                    ? `0 0 0 1px ${pkg.accent}60, 0 0 80px ${pkg.accent}30, 0 0 120px ${pkg.accent}15, 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.06)`
                     : promoted && !hasAnyFocus
-                      ? `0 0 0 1px ${pkg.accent}15, 0 8px 40px rgba(0,0,0,0.5)`
-                      : '0 2px 16px rgba(0,0,0,0.3)',
+                      ? `0 0 0 1px ${pkg.accent}18, 0 4px 20px ${pkg.accent}08, 0 12px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04)`
+                      : '0 4px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03)',
                   transition: 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.45s ease, border-color 0.35s ease, filter 0.35s ease',
                   cursor: isDimmed ? 'default' : 'pointer',
                   ...scaleUp(inView, stagger(i, 200, 150)),
@@ -2562,9 +2581,18 @@ function PricingSection() {
                 {/* Accent Bar */}
                 <div style={{
                   height: promoted ? 4 : 2,
-                  background: `linear-gradient(90deg, transparent 0%, ${pkg.accent} 40%, ${pkg.accent} 60%, transparent 100%)`,
-                  opacity: isFocused ? 1 : promoted ? 0.7 : 0.25,
+                  background: `linear-gradient(90deg, transparent 0%, ${pkg.accent} 30%, ${pkg.accent} 70%, transparent 100%)`,
+                  opacity: isFocused ? 1 : promoted ? 0.8 : 0.3,
                   transition: 'opacity 0.35s ease',
+                  boxShadow: isFocused || promoted ? `0 2px 12px ${pkg.accent}40, 0 4px 24px ${pkg.accent}20` : 'none',
+                }} />
+
+                {/* Glass sheen overlay */}
+                <div style={{
+                  position: 'absolute', top: 0, left: 0, right: 0,
+                  height: promoted ? 180 : 140,
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 40%, transparent 100%)',
+                  pointerEvents: 'none', zIndex: 0,
                 }} />
 
                 {/* Badge */}
@@ -2575,8 +2603,9 @@ function PricingSection() {
                     color: 'white', fontSize: '0.7rem', fontWeight: 800,
                     padding: '5px 14px', borderRadius: 100,
                     letterSpacing: '0.1em', textTransform: 'uppercase',
-                    boxShadow: `0 2px 12px ${pkg.accent}40`,
-                    transition: 'all 0.3s',
+                    boxShadow: `0 2px 16px ${pkg.accent}50, 0 0 0 1px ${pkg.accent}30`,
+                    border: `1px solid ${pkg.accent}40`,
+                    transition: 'all 0.3s', zIndex: 1,
                   }}>{pkg.id === 'growth' ? 'Recommended' : pkg.badge}</div>
                 ) : (
                   <div style={{
@@ -2703,13 +2732,18 @@ function PricingSection() {
                     cursor: 'pointer',
                     border: promoted ? 'none' : `1px solid ${pkg.accent}30`,
                     background: promoted
-                      ? `linear-gradient(135deg, ${pkg.accent}dd 0%, ${pkg.accent}99 100%)`
+                      ? `linear-gradient(135deg, ${pkg.accent}ee 0%, ${pkg.accent}aa 100%)`
                       : isFocused
-                        ? `linear-gradient(135deg, ${pkg.accent}dd 0%, ${pkg.accent}99 100%)`
+                        ? `linear-gradient(135deg, ${pkg.accent}ee 0%, ${pkg.accent}aa 100%)`
                         : 'transparent',
                     color: 'white',
                     transition: 'all 0.35s ease',
-                    boxShadow: promoted ? `0 4px 24px ${pkg.accent}35` : isFocused ? `0 4px 24px ${pkg.accent}40` : 'none',
+                    boxShadow: promoted
+                      ? `0 4px 24px ${pkg.accent}40, inset 0 1px 0 rgba(255,255,255,0.15)`
+                      : isFocused
+                        ? `0 4px 24px ${pkg.accent}45, inset 0 1px 0 rgba(255,255,255,0.15)`
+                        : 'none',
+                    letterSpacing: '0.02em',
                   }}>Claim Your Market</button>
                 </div>
               </div>
@@ -2739,7 +2773,8 @@ function ROICalculator() {
   const net = gross - pkgCost - adSpend;
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '96px 0', background: 'linear-gradient(180deg, #1a1a2e 0%, #16162a 100%)' }}>
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '96px 0', background: 'linear-gradient(180deg, #1a1a2e 0%, #16162a 100%)', position: 'relative' as const, overflow: 'hidden' as const }}>
+      <SpaceBackground opacity={0.2} />
       <div style={{ ...S.container, maxWidth: 900 }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={{ ...S.eyebrowDark, color: 'rgba(254,100,98,0.9)' }}>See Your Potential</div>
@@ -2850,7 +2885,8 @@ function SocialProofStrip() {
     { value: '97%', label: 'Client Retention' },
   ];
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '48px 0', background: '#F5F5F5' }}>
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '48px 0', background: '#F5F5F5', position: 'relative' as const }}>
+      <div style={S.lightPattern} />
       <div style={{ ...S.container, ...fadeUp(inView) }}>
         <div style={{
           display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '48px', flexWrap: 'wrap',
@@ -2877,6 +2913,7 @@ function WhatWeBuildSection() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
+      <div style={S.lightPattern} />
       <div style={S.container}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Everything You Need</div>
