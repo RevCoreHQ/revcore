@@ -876,10 +876,10 @@ function FunnelVisualization() {
 
   const cx = 300;
   const vbW = 600;
-  const vbH = 590;
+  const vbH = 640;
   const layerCount = 4;
   const yStart = 74;
-  const yEnd = vbH - 24;
+  const yEnd = vbH - 54;
 
   const funnel = funnelData[activeIdx];
 
