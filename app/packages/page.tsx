@@ -858,7 +858,7 @@ const funnelData = [
     people: 20,
     peopleLabel: '20+ people per month discover your business through referrals, Meta Ads, and organic SEO. You\'re now visible across every channel in your market.',
     revenue: 'Revenue $$$',
-    layers: ['Referrals + Meta Ads + SEO', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
+    layers: ['Referrals + Paid Ads + Optimized Website + SEO', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
       'SEO, Google Business, and content marketing compound with Meta ads. You dominate your local market across every channel.',
       'AI powered follow ups, review requests, and re-engagement campaigns run on autopilot 24/7.',
@@ -931,32 +931,33 @@ function FunnelVisualization() {
         {/* Funnel + right detail panel */}
         <div className="fv-stage" style={fadeUp(inView, 300)}>
           {/* Funnel SVG */}
-          <div className="fv-funnel-container" key={activeIdx}>
+          <div className="fv-funnel-container">
             <svg viewBox={`0 0 ${vbW} ${vbH}`} className="fv-funnel-svg">
               <defs>
                 <linearGradient id="fvFillActive" x1="0.5" y1="0" x2="0.5" y2="1">
-                  <stop offset="0%" stopColor={funnel.color} stopOpacity="0.18" />
-                  <stop offset="100%" stopColor={funnel.color} stopOpacity="0.04" />
+                  <stop offset="0%" stopColor={funnel.color} stopOpacity="0.18" style={{ transition: 'stop-color 0.6s ease' }} />
+                  <stop offset="100%" stopColor={funnel.color} stopOpacity="0.04" style={{ transition: 'stop-color 0.6s ease' }} />
                 </linearGradient>
               </defs>
 
               {/* People icons above funnel */}
               <g style={{ cursor: 'pointer' }} onClick={() => setSelectedLayer(prev => prev === -1 ? null : -1)}>
                 <title>{funnel.peopleLabel}</title>
-                {Array.from({ length: funnel.people }).map((_, pi) => {
-                  const cols = Math.min(funnel.people, 10);
-                  const rows = Math.ceil(funnel.people / cols);
+                {Array.from({ length: Math.max(...funnelData.map(f => f.people)) }).map((_, pi) => {
+                  const visible = pi < funnel.people;
+                  const cols = Math.min(funnel.people || 1, 10);
+                  const rows = Math.ceil((funnel.people || 1) / cols);
                   const row = Math.floor(pi / cols);
                   const col = pi % cols;
-                  const colsInRow = row < rows - 1 ? cols : funnel.people - row * cols;
+                  const colsInRow = row < rows - 1 ? cols : (funnel.people || 1) - row * cols;
                   const spacing = 22;
                   const startX = cx - ((colsInRow - 1) * spacing) / 2;
-                  const px = startX + col * spacing;
-                  const py = 18 + row * 28;
+                  const px = visible ? startX + col * spacing : cx;
+                  const py = visible ? 18 + row * 28 : 18;
                   return (
-                    <g key={`p-${pi}`} className="fv-person-anim" style={{ animationDelay: `${pi * 50}ms` }}>
-                      <circle cx={px} cy={py} r="5" fill={funnel.color} fillOpacity="0.7" />
-                      <circle cx={px} cy={py - 8} r="3.2" fill={funnel.color} fillOpacity="0.7" />
+                    <g key={`p-${pi}`} style={{ transition: 'opacity 0.5s ease, transform 0.5s ease', opacity: visible ? 1 : 0 }}>
+                      <circle cx={px} cy={py} r="5" fill={funnel.color} fillOpacity="0.7" style={{ transition: 'cx 0.6s ease, cy 0.6s ease, fill 0.6s ease' }} />
+                      <circle cx={px} cy={py - 8} r="3.2" fill={funnel.color} fillOpacity="0.7" style={{ transition: 'cx 0.6s ease, cy 0.6s ease, fill 0.6s ease' }} />
                     </g>
                   );
                 })}
@@ -969,29 +970,30 @@ function FunnelVisualization() {
                 stroke={funnel.color}
                 strokeWidth="2"
                 strokeOpacity="0.3"
-                className="fv-trap-anim"
+                style={{ transition: 'd 0.6s ease, stroke 0.6s ease' }}
               />
 
               {/* Expanding arrows on Phase 1 & Phase 2 */}
-              {activeIdx >= 2 && (
-                <>
-                  <g className="fv-arrow-left">
-                    <polyline
-                      points={`${cx - funnel.topW / 2 - 6},${yStart + 18} ${cx - funnel.topW / 2 - 18},${yStart + 10} ${cx - funnel.topW / 2 - 6},${yStart + 2}`}
-                      fill="none" stroke={funnel.color} strokeWidth="2.5" strokeOpacity="0.45" strokeLinecap="round" strokeLinejoin="round"
-                    />
-                  </g>
-                  <g className="fv-arrow-right">
-                    <polyline
-                      points={`${cx + funnel.topW / 2 + 6},${yStart + 18} ${cx + funnel.topW / 2 + 18},${yStart + 10} ${cx + funnel.topW / 2 + 6},${yStart + 2}`}
-                      fill="none" stroke={funnel.color} strokeWidth="2.5" strokeOpacity="0.45" strokeLinecap="round" strokeLinejoin="round"
-                    />
-                  </g>
-                </>
-              )}
+              <g style={{ transition: 'opacity 0.4s ease', opacity: activeIdx >= 2 ? 1 : 0 }}>
+                <g className="fv-arrow-left">
+                  <polyline
+                    points={`${cx - funnel.topW / 2 - 6},${yStart + 18} ${cx - funnel.topW / 2 - 18},${yStart + 10} ${cx - funnel.topW / 2 - 6},${yStart + 2}`}
+                    fill="none" stroke={funnel.color} strokeWidth="2.5" strokeOpacity="0.45" strokeLinecap="round" strokeLinejoin="round"
+                    style={{ transition: 'all 0.6s ease' }}
+                  />
+                </g>
+                <g className="fv-arrow-right">
+                  <polyline
+                    points={`${cx + funnel.topW / 2 + 6},${yStart + 18} ${cx + funnel.topW / 2 + 18},${yStart + 10} ${cx + funnel.topW / 2 + 6},${yStart + 2}`}
+                    fill="none" stroke={funnel.color} strokeWidth="2.5" strokeOpacity="0.45" strokeLinecap="round" strokeLinejoin="round"
+                    style={{ transition: 'all 0.6s ease' }}
+                  />
+                </g>
+              </g>
 
               {/* Interactive layers */}
-              {funnel.layers.map((label, li) => {
+              {funnelData[0].layers.map((_, li) => {
+                const label = funnel.layers[li];
                 const y1 = getLayerY(li);
                 const y2 = getLayerY(li + 1 > layerCount - 1 ? layerCount : li + 1);
                 const actualY2 = li === layerCount - 1 ? yEnd : y2;
@@ -1004,11 +1006,9 @@ function FunnelVisualization() {
                 return (
                   <g
                     key={li}
-                    className="fv-layer-anim"
                     style={{
-                      animationDelay: `${li * 80}ms`,
                       cursor: 'pointer',
-                      transition: 'opacity 0.3s',
+                      transition: 'opacity 0.3s ease',
                       opacity: isDimmed ? 0.35 : 1,
                     }}
                     onClick={() => setSelectedLayer(prev => prev === li ? null : li)}
@@ -1019,7 +1019,7 @@ function FunnelVisualization() {
                       fill={funnel.color}
                       fillOpacity={isHovered ? 0.2 : 0.0}
                       stroke="none"
-                      style={{ transition: 'fill-opacity 0.3s, d 0.4s' }}
+                      style={{ transition: 'd 0.6s ease, fill 0.6s ease, fill-opacity 0.3s ease' }}
                     />
 
                     {/* Divider line */}
@@ -1027,6 +1027,7 @@ function FunnelVisualization() {
                       <line
                         x1={cx - w1 / 2} y1={y1} x2={cx + w1 / 2} y2={y1}
                         stroke={funnel.color} strokeWidth="1" strokeOpacity="0.3"
+                        style={{ transition: 'x1 0.6s ease, x2 0.6s ease, y1 0.6s ease, y2 0.6s ease, stroke 0.6s ease' }}
                       />
                     )}
 
@@ -1036,7 +1037,7 @@ function FunnelVisualization() {
                       textAnchor="middle" dominantBaseline="central"
                       fill="#0A0A0A" fontSize={isHovered ? '18' : '16'} fontWeight="600"
                       fontFamily="DM Sans, sans-serif"
-                      style={{ transition: 'font-size 0.3s' }}
+                      style={{ transition: 'y 0.6s ease, font-size 0.3s ease' }}
                     >
                       {label}
                     </text>
@@ -1050,8 +1051,6 @@ function FunnelVisualization() {
                 textAnchor="middle" dominantBaseline="central"
                 fill="#0A0A0A" fontSize="16" fontWeight="700"
                 fontFamily="DM Sans, sans-serif"
-                className="fv-layer-anim"
-                style={{ animationDelay: '320ms' }}
               >
                 {funnel.revenue}
               </text>
@@ -1159,7 +1158,6 @@ function FunnelVisualization() {
           flex: 1;
           display: flex;
           justify-content: center;
-          animation: fvFadeIn 0.5s cubic-bezier(0.22,1,0.36,1);
         }
         .fv-funnel-svg {
           width: 100%;
