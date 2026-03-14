@@ -1849,43 +1849,147 @@ function ExclusivitySection() {
 /* ═══════════════════════════════════════════════════
    CALENDAR MOCKUP — appointment density per phase
    ═══════════════════════════════════════════════════ */
-const calendarPhases = [
+/* March 2026: 1=Sun, 2=Mon, 3=Tue … 7=Sat, 8=Sun … */
+const DAY_LABELS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+interface CalAppt { time: string; name: string; phone: string; email: string; address: string; service: string }
+interface CalPhase { name: string; color: string; subtitle: string; appts: Record<number, CalAppt[]>; description: string }
+
+const calendarPhases: CalPhase[] = [
   {
-    name: 'Current',
-    color: '#FE6462',
-    subtitle: 'Referrals only',
-    appointments: [3, 8, 14, 22],
+    name: 'Current', color: '#FE6462', subtitle: 'Referrals only',
     description: 'A handful of referrals trickle in. Unpredictable gaps leave your crew sitting idle.',
+    appts: {
+      5:  [{ time: '9:00 AM',  name: 'Mike Johnson',   phone: '(602) 555-0147', email: 'mjohnson84@gmail.com',    address: '4521 W Olive Ave, Glendale AZ 85302',    service: 'Roof Inspection' }],
+      11: [{ time: '10:30 AM', name: 'Sarah Williams', phone: '(480) 555-0293', email: 'swilliams@yahoo.com',     address: '1832 E Camelback Rd, Phoenix AZ 85016',   service: 'Leak Repair' }],
+      19: [{ time: '2:00 PM',  name: 'Tom Anderson',   phone: '(623) 555-0185', email: 'tanderson@hotmail.com',    address: '7744 N 12th St, Phoenix AZ 85020',        service: 'Full Replacement Estimate' }],
+      26: [{ time: '11:00 AM', name: 'Lisa Chen',      phone: '(602) 555-0321', email: 'lisachen99@gmail.com',     address: '2910 S Mill Ave, Tempe AZ 85282',         service: 'Storm Damage Assessment' }],
+    },
   },
   {
-    name: 'Phase 1',
-    color: '#6B8EFE',
-    subtitle: 'Ads + Auto Booking',
-    appointments: [1, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 21, 22, 24, 26],
+    name: 'Phase 1', color: '#6B8EFE', subtitle: 'Ads + Auto Booking',
     description: 'Paid ads and auto booking fill your weeks consistently. No more feast or famine.',
+    appts: {
+      2:  [{ time: '8:30 AM',  name: 'David Martinez',   phone: '(602) 555-0412', email: 'dmartinez@gmail.com',      address: '3847 W Thunderbird Rd, Phoenix AZ 85053', service: 'Roof Inspection' }],
+      4:  [{ time: '10:00 AM', name: 'Jennifer Thompson', phone: '(480) 555-0538', email: 'jthompson22@outlook.com', address: '9201 E Indian Bend Rd, Scottsdale AZ 85250', service: 'Full Replacement Estimate' }],
+      6:  [{ time: '1:00 PM',  name: 'Marcus Garcia',    phone: '(623) 555-0619', email: 'mgarcia@yahoo.com',        address: '5520 W Peoria Ave, Glendale AZ 85302',   service: 'Shingle Repair' }],
+      7:  [{ time: '9:00 AM',  name: 'Rachel Robinson',  phone: '(602) 555-0724', email: 'rrobinson@gmail.com',      address: '2215 N 44th St, Phoenix AZ 85008',        service: 'Gutter Installation' }],
+      10: [{ time: '11:30 AM', name: 'Chris Mitchell',   phone: '(480) 555-0837', email: 'cmitchell@hotmail.com',    address: '6630 E Baseline Rd, Mesa AZ 85206',       service: 'Storm Damage Assessment' }],
+      12: [{ time: '9:30 AM',  name: 'Amanda Davis',     phone: '(623) 555-0941', email: 'adavis17@gmail.com',       address: '14220 N 59th Ave, Glendale AZ 85306',     service: 'Leak Repair' }],
+      13: [{ time: '2:30 PM',  name: 'Brian Wilson',     phone: '(602) 555-1053', email: 'bwilson@outlook.com',      address: '3301 E Camelback Rd, Phoenix AZ 85018',   service: 'Tile Roof Repair' }],
+      16: [{ time: '8:00 AM',  name: 'Nicole Moore',     phone: '(480) 555-1168', email: 'nmoore@yahoo.com',         address: '1450 S Dobson Rd, Mesa AZ 85202',         service: 'Full Replacement Estimate' }],
+      18: [{ time: '3:00 PM',  name: 'Kevin Taylor',     phone: '(623) 555-1274', email: 'ktaylor55@gmail.com',      address: '8821 W Maryland Ave, Glendale AZ 85305',  service: 'Insurance Claim Inspection' }],
+      20: [{ time: '10:00 AM', name: 'Ashley Jackson',   phone: '(602) 555-1389', email: 'ajackson@gmail.com',       address: '4102 N 24th St, Phoenix AZ 85016',        service: 'Roof Inspection' }],
+      21: [{ time: '9:00 AM',  name: 'James White',      phone: '(480) 555-1495', email: 'jwhite@hotmail.com',       address: '7250 E Southern Ave, Mesa AZ 85209',      service: 'Flat Roof Estimate' }],
+      24: [{ time: '1:30 PM',  name: 'Megan Harris',     phone: '(623) 555-1507', email: 'mharris@outlook.com',      address: '10432 W Camelback Rd, Phoenix AZ 85037',  service: 'Chimney Flashing Repair' }],
+      25: [{ time: '11:00 AM', name: 'Ryan Martin',      phone: '(602) 555-1618', email: 'rmartin@gmail.com',        address: '2750 W Guadalupe Rd, Chandler AZ 85224',  service: 'Storm Damage Assessment' }],
+      27: [{ time: '2:00 PM',  name: 'Stephanie Lee',    phone: '(480) 555-1723', email: 'slee@yahoo.com',           address: '5580 E Broadway Rd, Mesa AZ 85206',       service: 'Full Replacement Estimate' }],
+      30: [{ time: '10:30 AM', name: 'Jake Walker',      phone: '(623) 555-1834', email: 'jwalker@gmail.com',        address: '6890 W Bethany Home Rd, Glendale AZ 85303', service: 'Roof Maintenance' }],
+    },
   },
   {
-    name: 'Phase 2',
-    color: '#94D96B',
-    subtitle: 'Full Scale',
-    appointments: [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30],
+    name: 'Phase 2', color: '#94D96B', subtitle: 'Full Scale',
     description: 'Every growth channel compounding. Your month is booked out weeks in advance.',
+    appts: {
+      2:  [
+        { time: '8:00 AM',  name: 'Maria Young',       phone: '(602) 555-2001', email: 'myoung@gmail.com',        address: '3920 W Indian School Rd, Phoenix AZ 85019', service: 'Full Replacement Estimate' },
+        { time: '1:30 PM',  name: 'Carlos King',        phone: '(480) 555-2002', email: 'cking@outlook.com',       address: '8450 E McDowell Rd, Scottsdale AZ 85257',   service: 'Roof Inspection' },
+      ],
+      3:  [
+        { time: '9:00 AM',  name: 'Derek Wright',       phone: '(623) 555-2003', email: 'dwright@yahoo.com',       address: '11240 N 43rd Ave, Glendale AZ 85304',       service: 'Storm Damage Assessment' },
+        { time: '3:00 PM',  name: 'Tyler Lopez',        phone: '(602) 555-2004', email: 'tlopez@gmail.com',        address: '2515 E Thomas Rd, Phoenix AZ 85016',        service: 'Shingle Repair' },
+      ],
+      4:  [{ time: '10:00 AM', name: 'Emily Hill',       phone: '(480) 555-2005', email: 'ehill@gmail.com',        address: '4710 S Rural Rd, Tempe AZ 85282',           service: 'Gutter Installation' }],
+      5:  [
+        { time: '8:30 AM',  name: 'Nathan Scott',       phone: '(623) 555-2006', email: 'nscott@hotmail.com',      address: '7330 W Glendale Ave, Glendale AZ 85303',    service: 'Insurance Claim Inspection' },
+        { time: '2:00 PM',  name: 'Angela Green',       phone: '(602) 555-2007', email: 'agreen@gmail.com',        address: '5060 N 19th Ave, Phoenix AZ 85015',         service: 'Leak Repair' },
+      ],
+      6:  [
+        { time: '9:30 AM',  name: 'Roberto Adams',      phone: '(480) 555-2008', email: 'radams@outlook.com',      address: '1825 E Guadalupe Rd, Gilbert AZ 85234',     service: 'Tile Roof Repair' },
+        { time: '1:00 PM',  name: 'Jessica Baker',      phone: '(623) 555-2009', email: 'jbaker@gmail.com',        address: '9540 W Northern Ave, Glendale AZ 85305',    service: 'Full Replacement Estimate' },
+      ],
+      7:  [{ time: '9:00 AM',  name: 'Patrick Nelson',   phone: '(602) 555-2010', email: 'pnelson@yahoo.com',      address: '3305 N 7th St, Phoenix AZ 85014',           service: 'Roof Maintenance' }],
+      9:  [
+        { time: '8:00 AM',  name: 'Samantha Carter',    phone: '(480) 555-2011', email: 'scarter@gmail.com',       address: '6215 E Southern Ave, Mesa AZ 85206',        service: 'Storm Damage Assessment' },
+        { time: '2:30 PM',  name: 'Daniel Perez',       phone: '(623) 555-2012', email: 'dperez@hotmail.com',      address: '13450 W Camelback Rd, Litchfield Park AZ 85340', service: 'Roof Inspection' },
+      ],
+      10: [
+        { time: '10:00 AM', name: 'Heather Campbell',   phone: '(602) 555-2013', email: 'hcampbell@gmail.com',     address: '4890 E McDowell Rd, Phoenix AZ 85008',      service: 'Skylight Repair' },
+        { time: '3:30 PM',  name: 'Justin Rivera',      phone: '(480) 555-2014', email: 'jrivera@outlook.com',     address: '2340 S Alma School Rd, Mesa AZ 85210',      service: 'Chimney Flashing Repair' },
+      ],
+      11: [{ time: '11:00 AM', name: 'Laura Ramirez',    phone: '(623) 555-2015', email: 'lramirez@yahoo.com',     address: '8760 W Olive Ave, Peoria AZ 85345',         service: 'Gutter Installation' }],
+      12: [
+        { time: '9:00 AM',  name: 'Anthony Torres',     phone: '(602) 555-2016', email: 'atorres@gmail.com',       address: '1590 N Central Ave, Phoenix AZ 85004',      service: 'Full Replacement Estimate' },
+        { time: '1:00 PM',  name: 'Crystal Brooks',     phone: '(480) 555-2017', email: 'cbrooks@hotmail.com',     address: '7720 E Baseline Rd, Mesa AZ 85209',         service: 'Leak Repair' },
+      ],
+      13: [{ time: '10:30 AM', name: 'Brandon Cox',      phone: '(623) 555-2018', email: 'bcox@gmail.com',         address: '5230 W Thunderbird Rd, Glendale AZ 85306',  service: 'Insurance Claim Inspection' }],
+      14: [{ time: '8:30 AM',  name: 'Tiffany Ward',     phone: '(602) 555-2019', email: 'tward@outlook.com',      address: '3670 E Camelback Rd, Phoenix AZ 85018',     service: 'Roof Inspection' }],
+      16: [
+        { time: '8:00 AM',  name: 'Eric Sanders',       phone: '(480) 555-2020', email: 'esanders@gmail.com',      address: '9120 E Indian Bend Rd, Scottsdale AZ 85250', service: 'Flat Roof Estimate' },
+        { time: '2:00 PM',  name: 'Michelle Peterson',  phone: '(623) 555-2021', email: 'mpeterson@yahoo.com',     address: '10820 N 43rd Ave, Glendale AZ 85304',       service: 'Storm Damage Assessment' },
+      ],
+      17: [{ time: '9:30 AM',  name: 'Trevor Hughes',    phone: '(602) 555-2022', email: 'thughes@gmail.com',      address: '2460 W Bethany Home Rd, Phoenix AZ 85015',  service: 'Shingle Repair' }],
+      18: [
+        { time: '10:00 AM', name: 'Vanessa Collins',    phone: '(480) 555-2023', email: 'vcollins@hotmail.com',    address: '5840 S Kyrene Rd, Tempe AZ 85283',          service: 'Full Replacement Estimate' },
+        { time: '3:00 PM',  name: 'Randy Stewart',      phone: '(623) 555-2024', email: 'rstewart@gmail.com',      address: '7190 W Peoria Ave, Peoria AZ 85345',        service: 'Tile Roof Repair' },
+      ],
+      19: [{ time: '11:30 AM', name: 'Kimberly Reed',    phone: '(602) 555-2025', email: 'kreed@outlook.com',      address: '4330 N 7th Ave, Phoenix AZ 85013',          service: 'Leak Repair' }],
+      20: [
+        { time: '8:00 AM',  name: 'Sean Murphy',        phone: '(480) 555-2026', email: 'smurphy@gmail.com',       address: '1870 E University Dr, Mesa AZ 85203',       service: 'Insurance Claim Inspection' },
+        { time: '1:30 PM',  name: 'Diana Foster',       phone: '(623) 555-2027', email: 'dfoster@yahoo.com',       address: '12340 W Indian School Rd, Avondale AZ 85392', service: 'Roof Inspection' },
+      ],
+      21: [{ time: '9:00 AM',  name: 'Phillip Gonzalez', phone: '(602) 555-2028', email: 'pgonzalez@gmail.com',    address: '6050 S 48th St, Phoenix AZ 85042',          service: 'Gutter Installation' }],
+      23: [{ time: '10:00 AM', name: 'Lauren Bailey',    phone: '(480) 555-2029', email: 'lbailey@hotmail.com',     address: '8300 E McDowell Rd, Scottsdale AZ 85257',   service: 'Roof Maintenance' }],
+      24: [
+        { time: '8:30 AM',  name: 'Victor Morales',     phone: '(623) 555-2030', email: 'vmorales@gmail.com',      address: '4210 W Greenway Rd, Glendale AZ 85306',     service: 'Full Replacement Estimate' },
+        { time: '2:30 PM',  name: 'Amy Richardson',     phone: '(602) 555-2031', email: 'arichardson@outlook.com', address: '1720 N 32nd St, Phoenix AZ 85008',          service: 'Storm Damage Assessment' },
+      ],
+      25: [
+        { time: '9:00 AM',  name: 'Greg Howard',        phone: '(480) 555-2032', email: 'ghoward@yahoo.com',       address: '5560 E Broadway Rd, Mesa AZ 85206',         service: 'Chimney Flashing Repair' },
+        { time: '1:00 PM',  name: 'Monica Simmons',     phone: '(623) 555-2033', email: 'msimmons@gmail.com',      address: '9870 W Northern Ave, Peoria AZ 85345',      service: 'Skylight Repair' },
+      ],
+      26: [{ time: '11:00 AM', name: 'Keith Patterson',  phone: '(602) 555-2034', email: 'kpatterson@gmail.com',   address: '3140 E Thomas Rd, Phoenix AZ 85016',        service: 'Roof Inspection' }],
+      27: [
+        { time: '8:00 AM',  name: 'Shannon Price',      phone: '(480) 555-2035', email: 'sprice@hotmail.com',      address: '6440 S Rural Rd, Tempe AZ 85283',           service: 'Full Replacement Estimate' },
+        { time: '3:00 PM',  name: 'Derrick Russell',    phone: '(623) 555-2036', email: 'drussell@gmail.com',      address: '11550 W Glendale Ave, Glendale AZ 85307',   service: 'Leak Repair' },
+      ],
+      28: [{ time: '10:30 AM', name: 'Brittany Powell',  phone: '(602) 555-2037', email: 'bpowell@outlook.com',    address: '2880 N 44th St, Phoenix AZ 85008',          service: 'Insurance Claim Inspection' }],
+      30: [
+        { time: '9:00 AM',  name: 'Marcus Griffin',     phone: '(480) 555-2038', email: 'mgriffin@gmail.com',      address: '7610 E Baseline Rd, Mesa AZ 85209',         service: 'Storm Damage Assessment' },
+        { time: '2:00 PM',  name: 'Alicia Diaz',        phone: '(623) 555-2039', email: 'adiaz@yahoo.com',         address: '4520 W Camelback Rd, Phoenix AZ 85031',     service: 'Tile Roof Repair' },
+      ],
+      31: [{ time: '8:30 AM',  name: 'Wayne Henderson',  phone: '(602) 555-2040', email: 'whenderson@gmail.com',   address: '1350 N Central Ave, Phoenix AZ 85004',      service: 'Roof Maintenance' }],
+    },
   },
 ];
 
 function CalendarMockup() {
   const [phase, setPhase] = useState(0);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
   const p = calendarPhases[phase];
 
+  const totalAppts = Object.values(p.appts).reduce((sum, arr) => sum + arr.length, 0);
+
   const daysInMonth = 31;
-  const startDay = 0; // Sunday
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   const calendarDays: (number | null)[] = [];
-  for (let i = 0; i < startDay; i++) calendarDays.push(null);
   for (let d = 1; d <= daysInMonth; d++) calendarDays.push(d);
   while (calendarDays.length % 7 !== 0) calendarDays.push(null);
+
+  const handlePhaseChange = (i: number) => {
+    setPhase(i);
+    setSelectedDay(null);
+  };
+
+  const handleDayClick = (day: number | null) => {
+    if (day === null || !p.appts[day]) return;
+    setSelectedDay(prev => prev === day ? null : day);
+  };
+
+  const selectedAppts = selectedDay !== null ? (p.appts[selectedDay] || []) : [];
+  const selectedDayOfWeek = selectedDay !== null ? DAY_LABELS[(selectedDay - 1) % 7] : '';
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.sectionDark}>
@@ -1894,7 +1998,7 @@ function CalendarMockup() {
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={S.eyebrowDark}>Appointment Volume</div>
           <h2 style={S.h2Dark}>Watch Your Calendar <HL>Fill Up</HL></h2>
-          <p style={S.subDark}>Click each phase to see how your monthly appointments grow.</p>
+          <p style={S.subDark}>Click each phase to see how your monthly appointments grow. Tap a day to view details.</p>
         </div>
 
         {/* Phase tabs */}
@@ -1905,7 +2009,7 @@ function CalendarMockup() {
           {calendarPhases.map((cp, i) => (
             <button
               key={i}
-              onClick={() => setPhase(i)}
+              onClick={() => handlePhaseChange(i)}
               style={{
                 padding: '12px 24px', borderRadius: '12px', border: 'none',
                 cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
@@ -1942,7 +2046,7 @@ function CalendarMockup() {
                 fontSize: '0.85rem', fontWeight: 700, color: p.color,
                 transition: 'all 0.4s ease',
               }}>
-                {p.appointments.length} Appointments
+                {totalAppts} Appointments
               </div>
             </div>
 
@@ -1960,29 +2064,44 @@ function CalendarMockup() {
             {/* Calendar grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
               {calendarDays.map((day, i) => {
-                const hasAppt = day !== null && p.appointments.includes(day);
-                const isWeekend = i % 7 === 0 || i % 7 === 6;
+                const dayAppts = day !== null ? (p.appts[day] || []) : [];
+                const hasAppt = dayAppts.length > 0;
+                const isSunday = i % 7 === 0;
+                const isSaturday = i % 7 === 6;
+                const isSelected = day !== null && selectedDay === day;
+                const dotCount = Math.min(dayAppts.length, 3);
                 return (
-                  <div key={i} style={{
-                    aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    borderRadius: '10px', position: 'relative' as const,
-                    background: hasAppt ? `${p.color}18` : 'rgba(255,255,255,0.02)',
-                    border: hasAppt ? `1px solid ${p.color}30` : '1px solid rgba(255,255,255,0.04)',
-                    transition: 'all 0.4s ease',
-                  }}>
+                  <div
+                    key={i}
+                    onClick={() => handleDayClick(day)}
+                    style={{
+                      aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      borderRadius: '10px', position: 'relative' as const,
+                      background: isSelected ? `${p.color}30` : hasAppt ? `${p.color}18` : 'rgba(255,255,255,0.02)',
+                      border: isSelected ? `2px solid ${p.color}` : hasAppt ? `1px solid ${p.color}30` : '1px solid rgba(255,255,255,0.04)',
+                      transition: 'all 0.3s ease',
+                      cursor: hasAppt ? 'pointer' : 'default',
+                    }}
+                  >
                     {day !== null && (
                       <>
                         <span style={{
                           fontSize: '0.85rem', fontWeight: hasAppt ? 700 : 500,
-                          color: hasAppt ? p.color : isWeekend ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.5)',
-                          transition: 'color 0.4s ease',
+                          color: isSelected ? '#fff' : hasAppt ? p.color : isSunday || isSaturday ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.5)',
+                          transition: 'color 0.3s ease',
                         }}>{day}</span>
                         {hasAppt && (
                           <div style={{
-                            position: 'absolute' as const, bottom: '4px', left: '50%', transform: 'translateX(-50%)',
-                            width: '5px', height: '5px', borderRadius: '50%',
-                            background: p.color, transition: 'background 0.4s ease',
-                          }} />
+                            position: 'absolute' as const, bottom: '3px', left: '50%', transform: 'translateX(-50%)',
+                            display: 'flex', gap: '2px',
+                          }}>
+                            {Array.from({ length: dotCount }).map((_, di) => (
+                              <div key={di} style={{
+                                width: '4px', height: '4px', borderRadius: '50%',
+                                background: isSelected ? '#fff' : p.color, transition: 'background 0.3s ease',
+                              }} />
+                            ))}
+                          </div>
                         )}
                       </>
                     )}
@@ -1990,18 +2109,95 @@ function CalendarMockup() {
                 );
               })}
             </div>
+
+            {/* Appointment detail panel */}
+            {selectedDay !== null && selectedAppts.length > 0 && (
+              <div style={{
+                marginTop: '20px', paddingTop: '20px',
+                borderTop: `1px solid ${p.color}20`,
+                animation: 'calDetailIn 0.3s ease-out',
+              }}>
+                <div style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  marginBottom: '14px',
+                }}>
+                  <div style={{ fontSize: '1rem', fontWeight: 700, color: '#fff' }}>
+                    {selectedDayOfWeek}, March {selectedDay}
+                  </div>
+                  <div style={{
+                    fontSize: '0.75rem', fontWeight: 600, color: p.color,
+                    padding: '3px 10px', borderRadius: '6px', background: `${p.color}15`,
+                  }}>
+                    {selectedAppts.length} appt{selectedAppts.length > 1 ? 's' : ''}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {selectedAppts.map((appt, ai) => (
+                    <div key={ai} style={{
+                      padding: '16px', borderRadius: '12px',
+                      background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <div style={{
+                            width: '34px', height: '34px', borderRadius: '50%',
+                            background: `${p.color}20`, border: `1px solid ${p.color}30`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '0.7rem', fontWeight: 700, color: p.color, flexShrink: 0,
+                          }}>
+                            {appt.name.split(' ').map(n => n[0]).join('')}
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff' }}>{appt.name}</div>
+                            <div style={{ fontSize: '0.75rem', color: p.color, fontWeight: 600 }}>{appt.service}</div>
+                          </div>
+                        </div>
+                        <div style={{
+                          fontSize: '0.8rem', fontWeight: 600, color: 'rgba(255,255,255,0.6)',
+                          padding: '4px 10px', borderRadius: '6px', background: 'rgba(255,255,255,0.06)',
+                        }}>
+                          {appt.time}
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
+                          <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)' }}>{appt.phone}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+                          <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)' }}>{appt.email}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', gridColumn: '1 / -1' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                          <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)' }}>{appt.address}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Description */}
           <div style={{
             textAlign: 'center', marginTop: '1.5rem',
             fontSize: '1rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6,
-            transition: 'all 0.4s ease',
           }}>
             {p.description}
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes calDetailIn {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </section>
   );
 }
