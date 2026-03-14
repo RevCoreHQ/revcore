@@ -1973,7 +1973,7 @@ function PricingSection() {
         {/* Package Cards */}
         <div className="packages-grid-3" style={{
           display: 'grid',
-          gridTemplateColumns: '0.85fr 1.1fr 1.1fr',
+          gridTemplateColumns: '0.92fr 1.08fr 1.08fr',
           gap: '20px', alignItems: 'stretch',
         }}>
           {packagesData.map((pkg, i) => {
@@ -1999,7 +1999,7 @@ function PricingSection() {
                   display: 'flex', flexDirection: 'column' as const,
                   transform: isFocused ? 'scale(1.06)' : isDimmed ? 'scale(0.96)' : 'scale(1)',
                   zIndex: isFocused ? 10 : 1,
-                  opacity: isDimmed ? 0.25 : isOtherFocused ? 0.4 : muted ? 0.7 : 1,
+                  opacity: isDimmed ? 0.25 : isOtherFocused ? 0.4 : muted ? 0.85 : 1,
                   filter: isDimmed ? 'grayscale(1)' : 'none',
                   boxShadow: isFocused
                     ? `0 0 0 1px ${pkg.accent}50, 0 0 60px ${pkg.accent}25, 0 24px 48px rgba(0,0,0,0.5)`
@@ -2046,15 +2046,15 @@ function PricingSection() {
                     onDoubleClick={(e) => handleTitleDoubleClick(e, pkg.id)}
                     style={{
                       fontFamily: 'DM Sans, sans-serif',
-                      fontSize: promoted ? '1.6rem' : '1.25rem',
+                      fontSize: promoted ? '1.6rem' : '1.4rem',
                       fontWeight: 800,
-                      color: muted ? 'rgba(255,255,255,0.7)' : 'white',
+                      color: muted ? 'rgba(255,255,255,0.85)' : 'white',
                       marginBottom: '0.4rem', userSelect: 'none',
                       cursor: 'pointer',
                     }}
                   >{pkg.name}</h3>
                   <p style={{
-                    color: muted ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.4)',
+                    color: muted ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.4)',
                     fontSize: promoted ? '0.95rem' : '0.85rem',
                     lineHeight: 1.5, marginBottom: '1.5rem',
                   }}>{pkg.tagline}</p>
@@ -2062,9 +2062,9 @@ function PricingSection() {
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 4 }}>
                     <span style={{
                       fontFamily: 'DM Sans, sans-serif',
-                      fontSize: promoted ? '3.2rem' : '2.4rem',
+                      fontSize: promoted ? '3.2rem' : '2.8rem',
                       fontWeight: 800, letterSpacing: '-0.03em',
-                      color: muted ? 'rgba(255,255,255,0.6)' : 'white',
+                      color: muted ? 'rgba(255,255,255,0.75)' : 'white',
                     }}>
                       {fmtPrice(pkg.priceMonthly)}
                     </span>
@@ -2102,7 +2102,7 @@ function PricingSection() {
                         <span style={{
                           fontSize: promoted ? '1.05rem' : '0.9rem',
                           fontWeight: 600,
-                          color: muted ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.88)',
+                          color: muted ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.88)',
                         }}>{f}</span>
                       </div>
                     ))}
