@@ -977,12 +977,16 @@ function FunnelVisualization() {
               {activeIdx >= 2 && (
                 <>
                   <g className="fv-arrow-left">
-                    <line x1={cx - funnel.topW / 2 - 8} y1={yStart + 4} x2={cx - funnel.topW / 2 - 22} y2={yStart - 6} stroke={funnel.color} strokeWidth="2" strokeOpacity="0.5" strokeLinecap="round" />
-                    <polyline points={`${cx - funnel.topW / 2 - 18},${yStart - 12} ${cx - funnel.topW / 2 - 22},${yStart - 6} ${cx - funnel.topW / 2 - 14},${yStart - 4}`} fill="none" stroke={funnel.color} strokeWidth="2" strokeOpacity="0.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <polyline
+                      points={`${cx - funnel.topW / 2 - 6},${yStart + 18} ${cx - funnel.topW / 2 - 18},${yStart + 10} ${cx - funnel.topW / 2 - 6},${yStart + 2}`}
+                      fill="none" stroke={funnel.color} strokeWidth="2.5" strokeOpacity="0.45" strokeLinecap="round" strokeLinejoin="round"
+                    />
                   </g>
                   <g className="fv-arrow-right">
-                    <line x1={cx + funnel.topW / 2 + 8} y1={yStart + 4} x2={cx + funnel.topW / 2 + 22} y2={yStart - 6} stroke={funnel.color} strokeWidth="2" strokeOpacity="0.5" strokeLinecap="round" />
-                    <polyline points={`${cx + funnel.topW / 2 + 14},${yStart - 4} ${cx + funnel.topW / 2 + 22},${yStart - 6} ${cx + funnel.topW / 2 + 18},${yStart - 12}`} fill="none" stroke={funnel.color} strokeWidth="2" strokeOpacity="0.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <polyline
+                      points={`${cx + funnel.topW / 2 + 6},${yStart + 18} ${cx + funnel.topW / 2 + 18},${yStart + 10} ${cx + funnel.topW / 2 + 6},${yStart + 2}`}
+                      fill="none" stroke={funnel.color} strokeWidth="2.5" strokeOpacity="0.45" strokeLinecap="round" strokeLinejoin="round"
+                    />
                   </g>
                 </>
               )}
@@ -1055,25 +1059,18 @@ function FunnelVisualization() {
             </svg>
           </div>
 
-          {/* Right detail panel */}
+          {/* Right detail panel — only shows on click */}
           <div className="fv-right-panel">
-            <div className="fv-right-title" style={{ color: funnel.color }}>{funnel.title}</div>
-            <div className="fv-right-subtitle">{funnel.subtitle}</div>
-            <div className="fv-right-layers">
-              {funnel.layers.map((label, li) => (
-                <div
-                  key={li}
-                  className={`fv-right-layer${selectedLayer === li ? ' active' : ''}${selectedLayer !== null && selectedLayer !== li ? ' dimmed' : ''}`}
-                  onClick={() => setSelectedLayer(prev => prev === li ? null : li)}
-                  style={{ '--layer-color': funnel.color } as React.CSSProperties}
-                >
-                  <div className="fv-right-layer-name">{label}</div>
-                  <div className={`fv-right-layer-desc${selectedLayer === li ? ' show' : ''}`}>
-                    {funnel.descriptions[li]}
-                  </div>
-                </div>
-              ))}
-            </div>
+            {selectedLayer !== null ? (
+              <div className="fv-right-content" key={`${activeIdx}-${selectedLayer}`}>
+                <div className="fv-right-label" style={{ color: funnel.color }}>{funnel.layers[selectedLayer]}</div>
+                <p className="fv-right-desc">{funnel.descriptions[selectedLayer]}</p>
+              </div>
+            ) : (
+              <div className="fv-right-hint">
+                Click a section of the funnel to learn more
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -1168,67 +1165,30 @@ function FunnelVisualization() {
         }
 
         .fv-right-panel {
-          width: 340px;
+          width: 320px;
           flex-shrink: 0;
           display: flex;
-          flex-direction: column;
-          justify-content: center;
-          padding: 20px 0 20px 32px;
+          align-items: center;
+          padding: 20px 0 20px 40px;
         }
-        .fv-right-title {
-          font-size: 1.6rem;
+        .fv-right-content {
+          animation: fvFadeIn 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        .fv-right-label {
+          font-size: 1.15rem;
           font-weight: 800;
-          margin-bottom: 4px;
-          transition: color 0.3s;
+          margin-bottom: 10px;
         }
-        .fv-right-subtitle {
+        .fv-right-desc {
+          font-size: 1.05rem;
+          line-height: 1.65;
+          color: #444;
+          margin: 0;
+        }
+        .fv-right-hint {
           font-size: 0.9rem;
-          color: #6B6B6B;
-          margin-bottom: 20px;
-        }
-        .fv-right-layers {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-        .fv-right-layer {
-          padding: 12px 16px;
-          border-radius: 10px;
-          border: 1px solid #E5E5E5;
-          background: #fff;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
-        }
-        .fv-right-layer:hover {
-          border-color: var(--layer-color);
-          box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-        }
-        .fv-right-layer.active {
-          border-color: var(--layer-color);
-          background: color-mix(in srgb, var(--layer-color) 5%, #fff);
-          border-left: 3px solid var(--layer-color);
-        }
-        .fv-right-layer.dimmed {
-          opacity: 0.4;
-        }
-        .fv-right-layer-name {
-          font-size: 0.95rem;
-          font-weight: 700;
-          color: #0A0A0A;
-        }
-        .fv-right-layer-desc {
-          max-height: 0;
-          overflow: hidden;
-          opacity: 0;
-          transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
-          font-size: 0.92rem;
-          line-height: 1.55;
-          color: #555;
-        }
-        .fv-right-layer-desc.show {
-          max-height: 120px;
-          opacity: 1;
-          margin-top: 8px;
+          color: #aaa;
+          font-style: italic;
         }
 
         .fv-trap-anim {
