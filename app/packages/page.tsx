@@ -1918,7 +1918,7 @@ function PricingSection() {
         <div className="packages-grid-3" style={{
           display: 'grid',
           gridTemplateColumns: focusedPkg ? packagesData.map(p => p.id === focusedPkg ? '1.15fr' : '0.925fr').join(' ') : 'repeat(3, 1fr)',
-          gap: '24px', alignItems: 'center',
+          gap: '24px', alignItems: 'stretch',
           transition: 'grid-template-columns 0.5s cubic-bezier(0.22,1,0.36,1)',
         }}>
           {packagesData.map((pkg, i) => {
@@ -1937,7 +1937,8 @@ function PricingSection() {
                   background: 'linear-gradient(160deg, #13161e 0%, #1a1e2a 50%, #13161e 100%)',
                   border: `1px solid ${isFocused ? pkg.accent + '60' : pkg.accent + '30'}`,
                   overflow: 'hidden', position: 'relative',
-                  transform: isFocused ? 'scale(1.04)' : isDimmed ? 'scale(0.95)' : pkg.highlight && !hasAnyFocus ? 'scale(1.03)' : 'scale(1)',
+                  display: 'flex', flexDirection: 'column' as const,
+                  transform: isFocused ? 'scale(1.04)' : isDimmed ? 'scale(0.95)' : 'scale(1)',
                   zIndex: isFocused ? 10 : pkg.highlight ? 2 : 1,
                   opacity: isDimmed ? 0.25 : isOtherFocused ? 0.5 : 1,
                   filter: isDimmed ? 'grayscale(1)' : 'none',
@@ -2053,7 +2054,7 @@ function PricingSection() {
                 </div>
 
                 {/* CTA */}
-                <div style={{ padding: '1rem 2rem 2rem' }}>
+                <div style={{ padding: '1rem 2rem 2rem', marginTop: 'auto' }}>
                   <button onClick={(e) => e.stopPropagation()} style={{
                     width: '100%', padding: 14, borderRadius: 100, fontSize: '0.9rem', fontWeight: 700,
                     cursor: 'pointer', border: 'none',
@@ -2067,17 +2068,6 @@ function PricingSection() {
           })}
         </div>
 
-        {/* 30-Day Guarantee */}
-        <div style={{ textAlign: 'center', marginTop: '3rem', ...fadeUp(inView, 600) }}>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.15)',
-            borderRadius: 100, padding: '8px 20px',
-          }}>
-            <span style={{ fontSize: '1rem' }}>🛡️</span>
-            <span style={{ color: '#94D96B', fontSize: '0.8rem', fontWeight: 700 }}>30-Day Performance Guarantee</span>
-          </div>
-        </div>
       </div>
     </section>
   );
