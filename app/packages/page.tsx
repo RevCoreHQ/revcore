@@ -877,7 +877,7 @@ function FunnelVisualization() {
 
   const cx = 300;
   const vbW = 600;
-  const vbH = 550;
+  const vbH = 570;
   const layerCount = 4;
   const yStart = 74;
   const yEnd = vbH - 24;
