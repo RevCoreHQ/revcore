@@ -1644,6 +1644,7 @@ function WebsiteDemo() {
    OUTCOME SECTION
    ═══════════════════════════════════════════════════ */
 function OutcomeSection() {
+  const [activeCard, setActiveCard] = useState<number | null>(null);
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
@@ -1653,10 +1654,21 @@ function OutcomeSection() {
           <p style={S.sub}>This is what your business looks like with RevCore.</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', ...fadeUp(inView, 200) }} className="packages-grid-3">
-          {outcomeCards.map((card, i) => (
-            <div key={i} style={{
-              ...S.cardDark, padding: '24px', cursor: 'pointer', transition: 'all 0.3s',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+          {outcomeCards.map((card, i) => {
+            const isActive = activeCard === i;
+            const hasActive = activeCard !== null;
+            const accentColor = card.icon === 'calendar' ? '#FE6462' : card.icon === 'chat' ? '#6B8EFE' : '#94D96B';
+            return (
+            <div key={i} onClick={() => setActiveCard(prev => prev === i ? null : i)} style={{
+              ...S.cardDark, padding: '24px', cursor: 'pointer',
+              transform: isActive ? 'scale(1.05)' : 'scale(1)',
+              opacity: hasActive && !isActive ? 0.45 : 1,
+              boxShadow: isActive
+                ? `0 0 0 1px ${accentColor}50, 0 0 60px ${accentColor}20, 0 16px 48px rgba(0,0,0,0.4)`
+                : '0 4px 24px rgba(0,0,0,0.15)',
+              zIndex: isActive ? 10 : 1,
+              position: 'relative' as const,
+              transition: 'all 0.45s cubic-bezier(0.22,1,0.36,1)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                 <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(254,100,98,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1682,7 +1694,7 @@ function OutcomeSection() {
               )}
               {card.conversations && (
                 <div>
-                  {card.conversations.slice(0, 4).map((c, j) => (
+                  {card.conversations.slice(0, isActive ? card.conversations.length : 4).map((c, j) => (
                     <div key={j} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px', borderRadius: '6px', background: c.unread ? 'rgba(255,255,255,0.03)' : 'transparent', marginBottom: '2px' }}>
                       <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(107,142,254,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#6B8EFE', flexShrink: 0 }}>{c.initials}</div>
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -1714,7 +1726,8 @@ function OutcomeSection() {
                 </div>
               )}
             </div>
-          ))}
+          );
+          })}
         </div>
       </div>
     </section>
