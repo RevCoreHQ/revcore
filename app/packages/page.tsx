@@ -81,17 +81,12 @@ export default function PackagesPage() {
       <ROICalculator />
       <SocialProofStrip />
       <style>{`
-        @keyframes pkg-focus-glow {
-          0%, 100% { box-shadow: 0 0 0 1px var(--pkg-accent, rgba(107,142,254,0.5)), 0 0 80px var(--pkg-accent, rgba(107,142,254,0.2)), 0 0 120px var(--pkg-accent, rgba(107,142,254,0.08)), 0 24px 60px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.06); }
-          50%       { box-shadow: 0 0 0 1px var(--pkg-accent, rgba(107,142,254,0.6)), 0 0 100px var(--pkg-accent, rgba(107,142,254,0.35)), 0 0 160px var(--pkg-accent, rgba(107,142,254,0.12)), 0 24px 60px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.08); }
-        }
-        .pkg-focused { animation: pkg-focus-glow 2.5s ease-in-out infinite; }
         .pkg-dimmed { pointer-events: none; }
         .pkg-card { user-select: none; }
-        .pkg-card:not(.pkg-dimmed):not(.pkg-focused):hover {
-          transform: scale(1.02) translateY(-4px) !important;
-          border-color: rgba(255,255,255,0.18) !important;
-          box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 16px 48px rgba(0,0,0,0.55), inset 0 1px 1px rgba(255,255,255,0.06) !important;
+        .pkg-card:not(.pkg-dimmed):hover {
+          transform: translateY(-4px) !important;
+          border-color: rgba(255,255,255,0.12) !important;
+          box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06) !important;
         }
 
         /* ── Phone Demo Section ── */
@@ -2637,16 +2632,15 @@ function PricingSection() {
         {/* Package Cards */}
         <div className="packages-grid-3" style={{
           display: 'grid',
-          gridTemplateColumns: '0.95fr 1.06fr 1.06fr',
-          gap: '20px', alignItems: 'stretch',
+          gridTemplateColumns: '1fr 1fr 1fr',
+          gap: '16px', alignItems: 'stretch',
         }}>
           {packagesData.map((pkg, i) => {
             const isFocused = focusedPkg === pkg.id;
             const isDimmed = dimmedPkgs[pkg.id];
             const hasAnyFocus = focusedPkg !== null;
             const isOtherFocused = hasAnyFocus && !isFocused;
-            const muted = isLaunchpad(pkg.id) && !isFocused;
-            const promoted = !isLaunchpad(pkg.id);
+            const isRecommended = pkg.id === 'growth';
 
             return (
               <div
@@ -2654,104 +2648,87 @@ function PricingSection() {
                 onClick={() => handleCardClick(pkg.id)}
                 className={`pkg-card${isFocused ? ' pkg-focused' : ''}${isDimmed ? ' pkg-dimmed' : ''}`}
                 style={{
-                  borderRadius: 28,
-                  background: muted
-                    ? '#0c0e14'
-                    : `linear-gradient(170deg, #141824 0%, #1a1f32 50%, #141824 100%)`,
-                  border: `1px solid ${isFocused ? pkg.accent + '80' : muted ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.1)'}`,
+                  borderRadius: 24,
+                  background: 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${isFocused ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.06)'}`,
                   overflow: 'hidden', position: 'relative',
                   display: 'flex', flexDirection: 'column' as const,
-                  transform: isFocused ? 'scale(1.06)' : isDimmed ? 'scale(0.96)' : 'scale(1)',
+                  transform: isDimmed ? 'scale(0.96)' : 'scale(1)',
                   zIndex: isFocused ? 10 : 1,
-                  opacity: isDimmed ? 0.25 : isOtherFocused ? 0.4 : muted ? 0.8 : 1,
+                  opacity: isDimmed ? 0.25 : isOtherFocused ? 0.5 : 1,
                   filter: isDimmed ? 'grayscale(1)' : 'none',
                   boxShadow: isFocused
-                    ? `0 0 0 2px ${pkg.accent}50, 0 0 100px ${pkg.accent}25, 0 40px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08)`
-                    : promoted && !hasAnyFocus
-                      ? `0 0 0 1px ${pkg.accent}12, 0 20px 60px rgba(0,0,0,0.6), 0 0 40px ${pkg.accent}08, inset 0 1px 0 rgba(255,255,255,0.06)`
-                      : '0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)',
+                    ? `0 0 0 1px rgba(255,255,255,0.1), 0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)`
+                    : '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04)',
                   transition: 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.45s ease, border-color 0.35s ease, filter 0.35s ease',
                   cursor: isDimmed ? 'default' : 'pointer',
+                  backdropFilter: 'blur(40px)',
+                  WebkitBackdropFilter: 'blur(40px)',
                   ...scaleUp(inView, stagger(i, 200, 150)),
                   ['--pkg-accent' as string]: pkg.accent,
                 }}
               >
-                {/* Top accent glow bar */}
+                {/* Thin top accent line */}
                 <div style={{
-                  height: promoted ? 3 : 1,
-                  background: `linear-gradient(90deg, transparent 0%, ${pkg.accent} 25%, ${pkg.accent} 75%, transparent 100%)`,
-                  opacity: isFocused ? 1 : promoted ? 0.9 : 0.2,
+                  height: 1,
+                  background: `linear-gradient(90deg, transparent 0%, ${pkg.accent}60 50%, transparent 100%)`,
+                  opacity: isFocused ? 1 : 0.4,
                   transition: 'opacity 0.35s ease',
                 }} />
 
-                {/* Ambient glow from top */}
-                <div style={{
-                  position: 'absolute', top: -40, left: '50%', transform: 'translateX(-50%)',
-                  width: '80%', height: 120,
-                  background: `radial-gradient(ellipse at center, ${pkg.accent}${isFocused ? '18' : promoted ? '0a' : '04'} 0%, transparent 70%)`,
-                  pointerEvents: 'none', zIndex: 0,
-                  transition: 'background 0.4s ease',
-                }} />
-
-                {/* Glass sheen — diagonal sweep */}
+                {/* Subtle glass sheen */}
                 <div style={{
                   position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                  background: promoted
-                    ? 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 25%, transparent 50%, rgba(255,255,255,0.01) 75%, rgba(255,255,255,0.03) 100%)'
-                    : 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 30%, transparent 70%, rgba(255,255,255,0.02) 100%)',
-                  pointerEvents: 'none', zIndex: 0, borderRadius: 28,
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 40%)',
+                  pointerEvents: 'none', zIndex: 0, borderRadius: 24,
                 }} />
 
                 {/* Badge */}
-                {promoted ? (
+                {isRecommended ? (
                   <div style={{
                     position: 'absolute', top: 24, right: 24,
-                    background: `linear-gradient(135deg, ${pkg.accent}, ${pkg.accent}cc)`,
-                    color: 'white', fontSize: '0.65rem', fontWeight: 800,
-                    padding: '6px 16px', borderRadius: 100,
-                    letterSpacing: '0.12em', textTransform: 'uppercase',
-                    boxShadow: `0 4px 20px ${pkg.accent}50`,
-                    transition: 'all 0.3s', zIndex: 2,
-                  }}>{pkg.id === 'growth' ? 'Recommended' : pkg.badge}</div>
+                    background: pkg.accent,
+                    color: 'white', fontSize: '0.6rem', fontWeight: 700,
+                    padding: '5px 14px', borderRadius: 100,
+                    letterSpacing: '0.1em', textTransform: 'uppercase',
+                    zIndex: 2,
+                  }}>Recommended</div>
                 ) : (
                   <div style={{
                     position: 'absolute', top: 24, right: 24,
-                    border: `1px solid rgba(255,255,255,0.1)`, color: 'rgba(255,255,255,0.3)',
-                    fontSize: '0.6rem', fontWeight: 700,
+                    border: `1px solid rgba(255,255,255,0.08)`, color: 'rgba(255,255,255,0.3)',
+                    fontSize: '0.6rem', fontWeight: 600,
                     padding: '5px 14px', borderRadius: 100,
-                    letterSpacing: '0.12em', textTransform: 'uppercase',
+                    letterSpacing: '0.1em', textTransform: 'uppercase',
                     zIndex: 2,
                   }}>{pkg.badge}</div>
                 )}
 
                 {/* Content */}
-                <div style={{ padding: promoted ? '2.5rem 2.5rem 1.5rem' : '2rem 2rem 1.5rem', position: 'relative', zIndex: 1 }}>
+                <div style={{ padding: '2.25rem 2.25rem 1.5rem', position: 'relative', zIndex: 1 }}>
                   <h3
                     onDoubleClick={(e) => handleTitleDoubleClick(e, pkg.id)}
                     style={{
                       fontFamily: 'DM Sans, sans-serif',
-                      fontSize: promoted ? '1.6rem' : '1.35rem',
+                      fontSize: '1.5rem',
                       fontWeight: 800,
-                      color: muted ? 'rgba(255,255,255,0.7)' : 'white',
+                      color: 'white',
                       marginBottom: '0.5rem', userSelect: 'none',
                       cursor: 'pointer',
                     }}
                   >{pkg.name}</h3>
                   <p style={{
-                    color: muted ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.45)',
-                    fontSize: promoted ? '0.95rem' : '0.85rem',
+                    color: 'rgba(255,255,255,0.4)',
+                    fontSize: '0.9rem',
                     lineHeight: 1.5, marginBottom: '1.75rem',
                   }}>{pkg.tagline}</p>
 
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 4 }}>
                     <span style={{
                       fontFamily: 'DM Sans, sans-serif',
-                      fontSize: promoted ? '3.4rem' : '2.8rem',
+                      fontSize: '3rem',
                       fontWeight: 800, letterSpacing: '-0.03em',
-                      color: muted ? 'rgba(255,255,255,0.6)' : 'white',
-                      background: promoted ? `linear-gradient(180deg, #ffffff 30%, ${pkg.accent}80 150%)` : 'none',
-                      WebkitBackgroundClip: promoted ? 'text' : undefined,
-                      WebkitTextFillColor: promoted ? 'transparent' : undefined,
+                      color: 'white',
                     }}>
                       {fmtPrice(pkg.priceMonthly)}
                     </span>
@@ -2765,20 +2742,20 @@ function PricingSection() {
                       <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.3)' }}>billed {pkg.quarterlyTotal}</span>
                       <span style={{
                         fontSize: '0.72rem', fontWeight: 700, color: '#94D96B',
-                        background: 'rgba(148,217,107,0.1)', border: '1px solid rgba(148,217,107,0.15)',
+                        background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.12)',
                         padding: '3px 10px', borderRadius: 100,
                       }}>save {pkg.quarterlySave}</span>
                     </div>
                   ) : (
-                    <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>{pkg.noteMonthly}</span>
+                    <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.3)', fontWeight: 500 }}>{pkg.noteMonthly}</span>
                   )}
                 </div>
 
                 {/* Divider */}
-                <div style={{ margin: '0 2rem', height: 1, background: `linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%)` }} />
+                <div style={{ margin: '0 2.25rem', height: 1, background: 'rgba(255,255,255,0.06)' }} />
 
                 {/* Features */}
-                <div style={{ padding: promoted ? '0 2.5rem 1.5rem' : '0 2rem 1.25rem', position: 'relative', zIndex: 1 }}>
+                <div style={{ padding: '0 2.25rem 1.5rem', position: 'relative', zIndex: 1 }}>
                   <p style={{
                     fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
                     color: 'rgba(255,255,255,0.2)', margin: '1.25rem 0 1rem',
@@ -2788,16 +2765,11 @@ function PricingSection() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {pkg.heroFeatures.map((f, fi) => (
                       <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '6px 0' }}>
-                        <div style={{
-                          width: promoted ? 22 : 18, height: promoted ? 22 : 18, borderRadius: 6,
-                          background: `${pkg.accent}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                        }}>
-                          <Check size={promoted ? 14 : 12} style={{ color: pkg.accent }} />
-                        </div>
+                        <Check size={14} style={{ color: pkg.accent, flexShrink: 0 }} />
                         <span style={{
-                          fontSize: promoted ? '1.02rem' : '0.9rem',
+                          fontSize: '0.95rem',
                           fontWeight: 600,
-                          color: muted ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.85)',
+                          color: 'rgba(255,255,255,0.8)',
                         }}>{f}</span>
                       </div>
                     ))}
@@ -2807,9 +2779,9 @@ function PricingSection() {
                   {isLaunchpad(pkg.id) && (
                     <div style={{
                       marginTop: 14, padding: '10px 14px', borderRadius: 10,
-                      background: 'rgba(254,100,98,0.04)', border: '1px solid rgba(254,100,98,0.1)',
+                      background: 'rgba(254,100,98,0.04)', border: '1px solid rgba(254,100,98,0.08)',
                     }}>
-                      <span style={{ fontSize: '0.8rem', color: 'rgba(254,100,98,0.6)', fontWeight: 500 }}>
+                      <span style={{ fontSize: '0.8rem', color: 'rgba(254,100,98,0.5)', fontWeight: 500 }}>
                         Does not include website, SEO, or sales tools
                       </span>
                     </div>
@@ -2840,40 +2812,23 @@ function PricingSection() {
                 </div>
 
                 {/* CTA */}
-                <div style={{ padding: promoted ? '1.25rem 2.5rem 2.5rem' : '1rem 2rem 2rem', marginTop: 'auto', position: 'relative', zIndex: 1 }}>
+                <div style={{ padding: '1.25rem 2.25rem 2.25rem', marginTop: 'auto', position: 'relative', zIndex: 1 }}>
                   <button onClick={(e) => e.stopPropagation()} style={{
                     width: '100%',
-                    padding: promoted ? 18 : 14,
-                    borderRadius: 14,
-                    fontSize: promoted ? '1.05rem' : '0.9rem',
+                    padding: 16,
+                    borderRadius: 12,
+                    fontSize: '0.95rem',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    border: promoted ? 'none' : `1px solid ${pkg.accent}25`,
-                    background: promoted
-                      ? `linear-gradient(135deg, ${pkg.accent} 0%, ${pkg.accent}cc 100%)`
-                      : isFocused
-                        ? `linear-gradient(135deg, ${pkg.accent} 0%, ${pkg.accent}cc 100%)`
-                        : `rgba(255,255,255,0.04)`,
-                    color: promoted || isFocused ? 'white' : 'rgba(255,255,255,0.6)',
-                    transition: 'all 0.35s ease',
-                    boxShadow: promoted
-                      ? `0 8px 32px ${pkg.accent}35, inset 0 1px 0 rgba(255,255,255,0.2)`
-                      : isFocused
-                        ? `0 8px 32px ${pkg.accent}40, inset 0 1px 0 rgba(255,255,255,0.2)`
-                        : 'none',
+                    border: isRecommended ? 'none' : `1px solid rgba(255,255,255,0.08)`,
+                    background: isRecommended
+                      ? pkg.accent
+                      : 'rgba(255,255,255,0.04)',
+                    color: isRecommended ? 'white' : 'rgba(255,255,255,0.6)',
+                    transition: 'all 0.3s ease',
                     letterSpacing: '0.02em',
                   }}>Claim Your Market</button>
                 </div>
-
-                {/* Bottom ambient glow */}
-                {promoted && !hasAnyFocus && (
-                  <div style={{
-                    position: 'absolute', bottom: -20, left: '50%', transform: 'translateX(-50%)',
-                    width: '60%', height: 60,
-                    background: `radial-gradient(ellipse at center, ${pkg.accent}0c 0%, transparent 70%)`,
-                    pointerEvents: 'none', zIndex: 0,
-                  }} />
-                )}
               </div>
             );
           })}
