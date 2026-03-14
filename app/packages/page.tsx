@@ -868,7 +868,7 @@ const funnelData = [
 
 function FunnelVisualization() {
   const [activeIdx, setActiveIdx] = useState(0);
-  const [hoveredLayer, setHoveredLayer] = useState<number | null>(null);
+  const [selectedLayer, setSelectedLayer] = useState<number | null>(null);
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
 
   const cx = 300;
@@ -883,12 +883,12 @@ function FunnelVisualization() {
   /* Compute layer heights — hovered layer expands, others shrink */
   const baseH = (yEnd - yStart) / layerCount;
   const expandedH = baseH * 1.45;
-  const shrunkH = hoveredLayer !== null ? (yEnd - yStart - expandedH) / (layerCount - 1) : baseH;
+  const shrunkH = selectedLayer !== null ? (yEnd - yStart - expandedH) / (layerCount - 1) : baseH;
 
   const getLayerY = (li: number) => {
     let y = yStart;
     for (let i = 0; i < li; i++) {
-      y += (hoveredLayer === i ? expandedH : shrunkH);
+      y += (selectedLayer === i ? expandedH : shrunkH);
     }
     return y;
   };
@@ -913,7 +913,7 @@ function FunnelVisualization() {
             <button
               key={i}
               className={`fv-step${activeIdx === i ? ' active' : ''}`}
-              onClick={() => { setActiveIdx(i); setHoveredLayer(null); }}
+              onClick={() => { setActiveIdx(i); setSelectedLayer(null); }}
               style={{ '--step-color': f.color } as React.CSSProperties}
             >
               <div className="fv-step-num">{i + 1}</div>
@@ -977,8 +977,8 @@ function FunnelVisualization() {
                 const midY = (y1 + actualY2) / 2;
                 const w1 = getW(y1);
                 const w2 = getW(actualY2);
-                const isHovered = hoveredLayer === li;
-                const isDimmed = hoveredLayer !== null && hoveredLayer !== li;
+                const isHovered = selectedLayer === li;
+                const isDimmed = selectedLayer !== null && selectedLayer !== li;
 
                 return (
                   <g
@@ -990,8 +990,7 @@ function FunnelVisualization() {
                       transition: 'opacity 0.3s',
                       opacity: isDimmed ? 0.35 : 1,
                     }}
-                    onMouseEnter={() => setHoveredLayer(li)}
-                    onMouseLeave={() => setHoveredLayer(null)}
+                    onClick={() => setSelectedLayer(prev => prev === li ? null : li)}
                   >
                     {/* Layer fill */}
                     <path
@@ -1026,16 +1025,17 @@ function FunnelVisualization() {
             </svg>
           </div>
 
-          {/* Detail panel */}
-          <div className={`fv-detail${hoveredLayer !== null ? ' visible' : ''}`}>
-            <div className="fv-detail-inner">
-              <div className="fv-detail-badge" style={{ background: funnel.color }}>
-                {hoveredLayer !== null ? funnel.layers[hoveredLayer] : ''}
-              </div>
-              <p className="fv-detail-text">
-                {hoveredLayer !== null ? funnel.descriptions[hoveredLayer] : ''}
-              </p>
+        </div>
+
+        {/* Detail card below funnel */}
+        <div className={`fv-detail-card${selectedLayer !== null ? ' visible' : ''}`}>
+          <div className="fv-detail-card-inner" style={{ borderLeftColor: funnel.color }}>
+            <div className="fv-detail-card-badge" style={{ background: funnel.color }}>
+              {selectedLayer !== null ? funnel.layers[selectedLayer] : ''}
             </div>
+            <p className="fv-detail-card-text">
+              {selectedLayer !== null ? funnel.descriptions[selectedLayer] : ''}
+            </p>
           </div>
         </div>
       </div>
@@ -1129,43 +1129,47 @@ function FunnelVisualization() {
           height: auto;
         }
 
-        .fv-detail {
-          width: 280px;
-          flex-shrink: 0;
-          display: flex;
-          align-items: center;
-          padding: 24px 0 24px 24px;
+        .fv-detail-card {
+          max-width: 750px;
+          margin: 0 auto;
+          overflow: hidden;
+          max-height: 0;
           opacity: 0;
-          transform: translateX(-8px);
-          transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
-          pointer-events: none;
+          transform: translateY(-12px);
+          transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
         }
-        .fv-detail.visible {
+        .fv-detail-card.visible {
+          max-height: 200px;
           opacity: 1;
-          transform: translateX(0);
-          pointer-events: auto;
+          transform: translateY(0);
+          margin-top: 1.5rem;
         }
-        .fv-detail-inner {
-          padding: 24px;
+        .fv-detail-card-inner {
+          padding: 24px 32px;
           border-radius: 14px;
           background: #fff;
           border: 1px solid #E5E5E5;
+          border-left: 4px solid;
           box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+          display: flex;
+          align-items: center;
+          gap: 20px;
         }
-        .fv-detail-badge {
+        .fv-detail-card-badge {
           display: inline-block;
-          padding: 4px 12px;
+          padding: 6px 16px;
           border-radius: 100px;
           color: #fff;
-          font-size: 0.7rem;
+          font-size: 0.75rem;
           font-weight: 700;
           letter-spacing: 0.04em;
           text-transform: uppercase;
-          margin-bottom: 10px;
+          white-space: nowrap;
+          flex-shrink: 0;
         }
-        .fv-detail-text {
-          font-size: 1rem;
-          line-height: 1.65;
+        .fv-detail-card-text {
+          font-size: 1.1rem;
+          line-height: 1.6;
           color: #333;
           margin: 0;
         }
@@ -1200,9 +1204,6 @@ function FunnelVisualization() {
         @media (max-width: 900px) {
           .fv-steps {
             grid-template-columns: repeat(2, 1fr);
-          }
-          .fv-detail {
-            display: none;
           }
         }
         @media (max-width: 640px) {
