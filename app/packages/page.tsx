@@ -907,7 +907,7 @@ function FunnelVisualization() {
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Your Growth Path</div>
-          <h2 style={S.h2}>From Disconnected to <HL>Fully Automated</HL></h2>
+          <h2 style={S.h2}>The Game Changed. <HL>Most Contractors Haven&apos;t.</HL></h2>
           <p style={S.sub}>See where you are today, and where RevCore takes you.</p>
         </div>
 
