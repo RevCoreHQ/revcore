@@ -2176,8 +2176,9 @@ function SEODemo() {
         </div>
 
         <div className="seo-grid-2" style={{
-          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px',
+          display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '0',
           maxWidth: '1100px', margin: '0 auto',
+          alignItems: 'center',
           ...fadeUp(inView, 200),
         }}>
           {/* ─── BEFORE ─── */}
@@ -2266,6 +2267,21 @@ function SEODemo() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* ─── ARROW ─── */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 16px' }}>
+            <div style={{
+              width: 48, height: 48, borderRadius: '50%',
+              background: 'linear-gradient(135deg, #FE6462, #94D96B)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 4px 16px rgba(254,100,98,0.25)',
+            }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
             </div>
           </div>
 
@@ -2386,6 +2402,55 @@ function SEODemo() {
                   desc="Professional roofing services for your area. Licensed and insured contractor."
                   dimmed
                 />
+              </div>
+
+              {/* Google Business Profile Panel */}
+              <div style={{
+                margin: '0 20px 16px', padding: '16px', borderRadius: '12px',
+                border: '1px solid rgba(148,217,107,0.2)', background: 'rgba(148,217,107,0.03)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22 9.74l-2 1.02-1-1.74 2-1.02-2-1.02 1-1.74 2 1.02L22 4h2v2.26l2 1.02-1 1.74-2-1.02 2 1.02-1 1.74-2-1.02V12h-2V9.74z" fill="#4285f4"/><path d="M5.27 8L3 9.04 2 7.3l2.27-1.04L2 5.22 3 3.48l2.27 1.04V2h2v2.52L9.54 3.48l1 1.74-2.27 1.04 2.27 1.04-1 1.74L7.27 8V10h-2V8z" fill="#ea4335"/><path d="M12 11v2H2v9h20v-9h-2v7H4v-5h16v-2h-6v-2h-2z" fill="#34a853"/><path d="M20 13v7H4v-5h16v-2z" fill="#34a853" opacity="0.4"/></svg>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#202124' }}>Google Business Profile</span>
+                </div>
+                <div style={{ display: 'flex', gap: '14px' }}>
+                  <div style={{
+                    width: 72, height: 72, borderRadius: 10,
+                    background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '1.4rem', fontWeight: 800, color: '#fff', flexShrink: 0,
+                  }}>PR</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#202124', marginBottom: 2 }}>Premium Roofing Co</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: 4 }}>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#202124' }}>4.9</span>
+                      <div style={{ display: 'flex' }}>
+                        {[1,2,3,4,5].map(s => (
+                          <svg key={s} width="14" height="14" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>
+                        ))}
+                      </div>
+                      <span style={{ fontSize: '0.75rem', color: '#70757a' }}>127 reviews</span>
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: '#70757a', marginBottom: 2 }}>Roofing contractor · Phoenix, AZ</div>
+                    <div style={{ fontSize: '0.78rem', color: '#188038', fontWeight: 500 }}>Open · Closes 6 PM</div>
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 12 }}>
+                  {['Call', 'Directions', 'Website'].map(action => (
+                    <div key={action} style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                      padding: '8px', borderRadius: 8,
+                      background: action === 'Call' ? '#1a73e8' : '#f1f3f4',
+                      color: action === 'Call' ? '#fff' : '#1a73e8',
+                      fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer',
+                    }}>
+                      {action === 'Call' && <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>}
+                      {action === 'Directions' && <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M21.71 11.29l-9-9a.996.996 0 0 0-1.41 0l-9 9a.996.996 0 0 0 0 1.41l9 9c.39.39 1.02.39 1.41 0l9-9a.996.996 0 0 0 0-1.41zM14 14.5V12h-4v3H8v-4c0-.55.45-1 1-1h5V7.5l3.5 3.5-3.5 3.5z"/></svg>}
+                      {action === 'Website' && <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95a15.65 15.65 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.92 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.987 7.987 0 0 1 5.08 16z"/></svg>}
+                      {action}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
