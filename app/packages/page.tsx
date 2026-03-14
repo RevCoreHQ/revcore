@@ -1462,14 +1462,14 @@ function PhoneDemo() {
                         <div className="ios-messages-header">
                           <div className="ios-contact-avatar">PR</div>
                           <div className="ios-contact-info">
-                            <div className="ios-contact-name">Premium Roofing</div>
+                            <div className="ios-contact-name">Premier Remodeling</div>
                             <div className="ios-contact-label">Automated Message</div>
                           </div>
                         </div>
                         <div className="ios-messages-body">
                           <div className="ios-message-time">Yesterday 10:00 AM</div>
                           <div className="ios-message incoming">
-                            Hi John! Just a friendly reminder about your roof inspection appointment tomorrow at 10:00 AM. Our estimator Mike will be arriving at your home.
+                            Hi John! Just a friendly reminder about your kitchen consultation appointment tomorrow at 10:00 AM. Our estimator Mike will be arriving at your home.
                           </div>
                           <div className="ios-message outgoing">
                             Sounds good, see you then!
@@ -1782,29 +1782,29 @@ const calendarPhases: CalPhase[] = [
     name: 'Current', color: '#FE6462', subtitle: 'Referrals only',
     description: 'A handful of referrals trickle in. Unpredictable gaps leave your crew sitting idle.',
     appts: {
-      5:  [{ time: '9:00 AM',  name: 'Mike Johnson',   phone: '(602) 555-0147', email: 'mjohnson84@gmail.com',    address: '4521 W Olive Ave, Glendale AZ 85302',    service: 'Roof Inspection' }],
-      11: [{ time: '10:30 AM', name: 'Sarah Williams', phone: '(480) 555-0293', email: 'swilliams@yahoo.com',     address: '1832 E Camelback Rd, Phoenix AZ 85016',   service: 'Leak Repair' }],
-      19: [{ time: '2:00 PM',  name: 'Tom Anderson',   phone: '(623) 555-0185', email: 'tanderson@hotmail.com',    address: '7744 N 12th St, Phoenix AZ 85020',        service: 'Full Replacement Estimate' }],
-      26: [{ time: '11:00 AM', name: 'Lisa Chen',      phone: '(602) 555-0321', email: 'lisachen99@gmail.com',     address: '2910 S Mill Ave, Tempe AZ 85282',         service: 'Storm Damage Assessment' }],
+      5:  [{ time: '9:00 AM',  name: 'Mike Johnson',   phone: '(602) 555-0147', email: 'mjohnson84@gmail.com',    address: '4521 W Olive Ave, Glendale AZ 85302',    service: 'Kitchen Consultation' }],
+      11: [{ time: '10:30 AM', name: 'Sarah Williams', phone: '(480) 555-0293', email: 'swilliams@yahoo.com',     address: '1832 E Camelback Rd, Phoenix AZ 85016',   service: 'Bathroom Estimate' }],
+      19: [{ time: '2:00 PM',  name: 'Tom Anderson',   phone: '(623) 555-0185', email: 'tanderson@hotmail.com',    address: '7744 N 12th St, Phoenix AZ 85020',        service: 'Full Remodel Estimate' }],
+      26: [{ time: '11:00 AM', name: 'Lisa Chen',      phone: '(602) 555-0321', email: 'lisachen99@gmail.com',     address: '2910 S Mill Ave, Tempe AZ 85282',         service: 'Design Consultation' }],
     },
   },
   {
     name: 'Phase 1', color: '#6B8EFE', subtitle: 'Ads + Auto Booking',
     description: 'Paid ads and auto booking fill your weeks consistently. No more feast or famine.',
     appts: {
-      2:  [{ time: '8:30 AM',  name: 'David Martinez',   phone: '(602) 555-0412', email: 'dmartinez@gmail.com',      address: '3847 W Thunderbird Rd, Phoenix AZ 85053', service: 'Roof Inspection' }],
-      4:  [{ time: '10:00 AM', name: 'Jennifer Thompson', phone: '(480) 555-0538', email: 'jthompson22@outlook.com', address: '9201 E Indian Bend Rd, Scottsdale AZ 85250', service: 'Full Replacement Estimate' }],
-      6:  [{ time: '1:00 PM',  name: 'Marcus Garcia',    phone: '(623) 555-0619', email: 'mgarcia@yahoo.com',        address: '5520 W Peoria Ave, Glendale AZ 85302',   service: 'Shingle Repair' }],
-      7:  [{ time: '9:00 AM',  name: 'Rachel Robinson',  phone: '(602) 555-0724', email: 'rrobinson@gmail.com',      address: '2215 N 44th St, Phoenix AZ 85008',        service: 'Gutter Installation' }],
-      10: [{ time: '11:30 AM', name: 'Chris Mitchell',   phone: '(480) 555-0837', email: 'cmitchell@hotmail.com',    address: '6630 E Baseline Rd, Mesa AZ 85206',       service: 'Storm Damage Assessment' }],
-      12: [{ time: '9:30 AM',  name: 'Amanda Davis',     phone: '(623) 555-0941', email: 'adavis17@gmail.com',       address: '14220 N 59th Ave, Glendale AZ 85306',     service: 'Leak Repair' }],
-      16: [{ time: '8:00 AM',  name: 'Nicole Moore',     phone: '(480) 555-1168', email: 'nmoore@yahoo.com',         address: '1450 S Dobson Rd, Mesa AZ 85202',         service: 'Full Replacement Estimate' }],
-      18: [{ time: '3:00 PM',  name: 'Kevin Taylor',     phone: '(623) 555-1274', email: 'ktaylor55@gmail.com',      address: '8821 W Maryland Ave, Glendale AZ 85305',  service: 'Insurance Claim Inspection' }],
-      20: [{ time: '10:00 AM', name: 'Ashley Jackson',   phone: '(602) 555-1389', email: 'ajackson@gmail.com',       address: '4102 N 24th St, Phoenix AZ 85016',        service: 'Roof Inspection' }],
-      24: [{ time: '1:30 PM',  name: 'Megan Harris',     phone: '(623) 555-1507', email: 'mharris@outlook.com',      address: '10432 W Camelback Rd, Phoenix AZ 85037',  service: 'Chimney Flashing Repair' }],
-      25: [{ time: '11:00 AM', name: 'Ryan Martin',      phone: '(602) 555-1618', email: 'rmartin@gmail.com',        address: '2750 W Guadalupe Rd, Chandler AZ 85224',  service: 'Storm Damage Assessment' }],
-      27: [{ time: '2:00 PM',  name: 'Stephanie Lee',    phone: '(480) 555-1723', email: 'slee@yahoo.com',           address: '5580 E Broadway Rd, Mesa AZ 85206',       service: 'Full Replacement Estimate' }],
-      30: [{ time: '10:30 AM', name: 'Jake Walker',      phone: '(623) 555-1834', email: 'jwalker@gmail.com',        address: '6890 W Bethany Home Rd, Glendale AZ 85303', service: 'Roof Maintenance' }],
+      2:  [{ time: '8:30 AM',  name: 'David Martinez',   phone: '(602) 555-0412', email: 'dmartinez@gmail.com',      address: '3847 W Thunderbird Rd, Phoenix AZ 85053', service: 'Kitchen Remodel' }],
+      4:  [{ time: '10:00 AM', name: 'Jennifer Thompson', phone: '(480) 555-0538', email: 'jthompson22@outlook.com', address: '9201 E Indian Bend Rd, Scottsdale AZ 85250', service: 'Full Home Renovation' }],
+      6:  [{ time: '1:00 PM',  name: 'Marcus Garcia',    phone: '(623) 555-0619', email: 'mgarcia@yahoo.com',        address: '5520 W Peoria Ave, Glendale AZ 85302',   service: 'Flooring Installation' }],
+      7:  [{ time: '9:00 AM',  name: 'Rachel Robinson',  phone: '(602) 555-0724', email: 'rrobinson@gmail.com',      address: '2215 N 44th St, Phoenix AZ 85008',        service: 'Bathroom Renovation' }],
+      10: [{ time: '11:30 AM', name: 'Chris Mitchell',   phone: '(480) 555-0837', email: 'cmitchell@hotmail.com',    address: '6630 E Baseline Rd, Mesa AZ 85206',       service: 'Design Consultation' }],
+      12: [{ time: '9:30 AM',  name: 'Amanda Davis',     phone: '(623) 555-0941', email: 'adavis17@gmail.com',       address: '14220 N 59th Ave, Glendale AZ 85306',     service: 'Countertop Replacement' }],
+      16: [{ time: '8:00 AM',  name: 'Nicole Moore',     phone: '(480) 555-1168', email: 'nmoore@yahoo.com',         address: '1450 S Dobson Rd, Mesa AZ 85202',         service: 'Full Home Renovation' }],
+      18: [{ time: '3:00 PM',  name: 'Kevin Taylor',     phone: '(623) 555-1274', email: 'ktaylor55@gmail.com',      address: '8821 W Maryland Ave, Glendale AZ 85305',  service: 'Cabinet Refacing' }],
+      20: [{ time: '10:00 AM', name: 'Ashley Jackson',   phone: '(602) 555-1389', email: 'ajackson@gmail.com',       address: '4102 N 24th St, Phoenix AZ 85016',        service: 'Kitchen Consultation' }],
+      24: [{ time: '1:30 PM',  name: 'Megan Harris',     phone: '(623) 555-1507', email: 'mharris@outlook.com',      address: '10432 W Camelback Rd, Phoenix AZ 85037',  service: 'Tile Installation' }],
+      25: [{ time: '11:00 AM', name: 'Ryan Martin',      phone: '(602) 555-1618', email: 'rmartin@gmail.com',        address: '2750 W Guadalupe Rd, Chandler AZ 85224',  service: 'Bathroom Estimate' }],
+      27: [{ time: '2:00 PM',  name: 'Stephanie Lee',    phone: '(480) 555-1723', email: 'slee@yahoo.com',           address: '5580 E Broadway Rd, Mesa AZ 85206',       service: 'Full Home Renovation' }],
+      30: [{ time: '10:30 AM', name: 'Jake Walker',      phone: '(623) 555-1834', email: 'jwalker@gmail.com',        address: '6890 W Bethany Home Rd, Glendale AZ 85303', service: 'Interior Painting' }],
     },
   },
   {
@@ -1812,70 +1812,70 @@ const calendarPhases: CalPhase[] = [
     description: 'Every growth channel compounding. Your month is booked out weeks in advance.',
     appts: {
       2:  [
-        { time: '8:00 AM',  name: 'Maria Young',       phone: '(602) 555-2001', email: 'myoung@gmail.com',        address: '3920 W Indian School Rd, Phoenix AZ 85019', service: 'Full Replacement Estimate' },
-        { time: '1:30 PM',  name: 'Carlos King',        phone: '(480) 555-2002', email: 'cking@outlook.com',       address: '8450 E McDowell Rd, Scottsdale AZ 85257',   service: 'Roof Inspection' },
+        { time: '8:00 AM',  name: 'Maria Young',       phone: '(602) 555-2001', email: 'myoung@gmail.com',        address: '3920 W Indian School Rd, Phoenix AZ 85019', service: 'Full Home Renovation' },
+        { time: '1:30 PM',  name: 'Carlos King',        phone: '(480) 555-2002', email: 'cking@outlook.com',       address: '8450 E McDowell Rd, Scottsdale AZ 85257',   service: 'Kitchen Consultation' },
       ],
       3:  [
-        { time: '9:00 AM',  name: 'Derek Wright',       phone: '(623) 555-2003', email: 'dwright@yahoo.com',       address: '11240 N 43rd Ave, Glendale AZ 85304',       service: 'Storm Damage Assessment' },
-        { time: '3:00 PM',  name: 'Tyler Lopez',        phone: '(602) 555-2004', email: 'tlopez@gmail.com',        address: '2515 E Thomas Rd, Phoenix AZ 85016',        service: 'Shingle Repair' },
+        { time: '9:00 AM',  name: 'Derek Wright',       phone: '(623) 555-2003', email: 'dwright@yahoo.com',       address: '11240 N 43rd Ave, Glendale AZ 85304',       service: 'Design Consultation' },
+        { time: '3:00 PM',  name: 'Tyler Lopez',        phone: '(602) 555-2004', email: 'tlopez@gmail.com',        address: '2515 E Thomas Rd, Phoenix AZ 85016',        service: 'Flooring Installation' },
       ],
-      4:  [{ time: '10:00 AM', name: 'Emily Hill',       phone: '(480) 555-2005', email: 'ehill@gmail.com',        address: '4710 S Rural Rd, Tempe AZ 85282',           service: 'Gutter Installation' }],
+      4:  [{ time: '10:00 AM', name: 'Emily Hill',       phone: '(480) 555-2005', email: 'ehill@gmail.com',        address: '4710 S Rural Rd, Tempe AZ 85282',           service: 'Bathroom Renovation' }],
       5:  [
-        { time: '8:30 AM',  name: 'Nathan Scott',       phone: '(623) 555-2006', email: 'nscott@hotmail.com',      address: '7330 W Glendale Ave, Glendale AZ 85303',    service: 'Insurance Claim Inspection' },
-        { time: '2:00 PM',  name: 'Angela Green',       phone: '(602) 555-2007', email: 'agreen@gmail.com',        address: '5060 N 19th Ave, Phoenix AZ 85015',         service: 'Leak Repair' },
+        { time: '8:30 AM',  name: 'Nathan Scott',       phone: '(623) 555-2006', email: 'nscott@hotmail.com',      address: '7330 W Glendale Ave, Glendale AZ 85303',    service: 'Cabinet Refacing' },
+        { time: '2:00 PM',  name: 'Angela Green',       phone: '(602) 555-2007', email: 'agreen@gmail.com',        address: '5060 N 19th Ave, Phoenix AZ 85015',         service: 'Countertop Replacement' },
       ],
       6:  [
-        { time: '9:30 AM',  name: 'Roberto Adams',      phone: '(480) 555-2008', email: 'radams@outlook.com',      address: '1825 E Guadalupe Rd, Gilbert AZ 85234',     service: 'Tile Roof Repair' },
-        { time: '1:00 PM',  name: 'Jessica Baker',      phone: '(623) 555-2009', email: 'jbaker@gmail.com',        address: '9540 W Northern Ave, Glendale AZ 85305',    service: 'Full Replacement Estimate' },
+        { time: '9:30 AM',  name: 'Roberto Adams',      phone: '(480) 555-2008', email: 'radams@outlook.com',      address: '1825 E Guadalupe Rd, Gilbert AZ 85234',     service: 'Tile Installation' },
+        { time: '1:00 PM',  name: 'Jessica Baker',      phone: '(623) 555-2009', email: 'jbaker@gmail.com',        address: '9540 W Northern Ave, Glendale AZ 85305',    service: 'Full Home Renovation' },
       ],
       9:  [
-        { time: '8:00 AM',  name: 'Samantha Carter',    phone: '(480) 555-2011', email: 'scarter@gmail.com',       address: '6215 E Southern Ave, Mesa AZ 85206',        service: 'Storm Damage Assessment' },
-        { time: '2:30 PM',  name: 'Daniel Perez',       phone: '(623) 555-2012', email: 'dperez@hotmail.com',      address: '13450 W Camelback Rd, Litchfield Park AZ 85340', service: 'Roof Inspection' },
+        { time: '8:00 AM',  name: 'Samantha Carter',    phone: '(480) 555-2011', email: 'scarter@gmail.com',       address: '6215 E Southern Ave, Mesa AZ 85206',        service: 'Design Consultation' },
+        { time: '2:30 PM',  name: 'Daniel Perez',       phone: '(623) 555-2012', email: 'dperez@hotmail.com',      address: '13450 W Camelback Rd, Litchfield Park AZ 85340', service: 'Kitchen Remodel' },
       ],
       10: [
-        { time: '10:00 AM', name: 'Heather Campbell',   phone: '(602) 555-2013', email: 'hcampbell@gmail.com',     address: '4890 E McDowell Rd, Phoenix AZ 85008',      service: 'Skylight Repair' },
-        { time: '3:30 PM',  name: 'Justin Rivera',      phone: '(480) 555-2014', email: 'jrivera@outlook.com',     address: '2340 S Alma School Rd, Mesa AZ 85210',      service: 'Chimney Flashing Repair' },
+        { time: '10:00 AM', name: 'Heather Campbell',   phone: '(602) 555-2013', email: 'hcampbell@gmail.com',     address: '4890 E McDowell Rd, Phoenix AZ 85008',      service: 'Outdoor Living Space' },
+        { time: '3:30 PM',  name: 'Justin Rivera',      phone: '(480) 555-2014', email: 'jrivera@outlook.com',     address: '2340 S Alma School Rd, Mesa AZ 85210',      service: 'Interior Painting' },
       ],
-      11: [{ time: '11:00 AM', name: 'Laura Ramirez',    phone: '(623) 555-2015', email: 'lramirez@yahoo.com',     address: '8760 W Olive Ave, Peoria AZ 85345',         service: 'Gutter Installation' }],
+      11: [{ time: '11:00 AM', name: 'Laura Ramirez',    phone: '(623) 555-2015', email: 'lramirez@yahoo.com',     address: '8760 W Olive Ave, Peoria AZ 85345',         service: 'Bathroom Renovation' }],
       12: [
-        { time: '9:00 AM',  name: 'Anthony Torres',     phone: '(602) 555-2016', email: 'atorres@gmail.com',       address: '1590 N Central Ave, Phoenix AZ 85004',      service: 'Full Replacement Estimate' },
-        { time: '1:00 PM',  name: 'Crystal Brooks',     phone: '(480) 555-2017', email: 'cbrooks@hotmail.com',     address: '7720 E Baseline Rd, Mesa AZ 85209',         service: 'Leak Repair' },
+        { time: '9:00 AM',  name: 'Anthony Torres',     phone: '(602) 555-2016', email: 'atorres@gmail.com',       address: '1590 N Central Ave, Phoenix AZ 85004',      service: 'Full Home Renovation' },
+        { time: '1:00 PM',  name: 'Crystal Brooks',     phone: '(480) 555-2017', email: 'cbrooks@hotmail.com',     address: '7720 E Baseline Rd, Mesa AZ 85209',         service: 'Countertop Replacement' },
       ],
-      13: [{ time: '10:30 AM', name: 'Brandon Cox',      phone: '(623) 555-2018', email: 'bcox@gmail.com',         address: '5230 W Thunderbird Rd, Glendale AZ 85306',  service: 'Insurance Claim Inspection' }],
-      14: [{ time: '8:30 AM',  name: 'Tiffany Ward',     phone: '(602) 555-2019', email: 'tward@outlook.com',      address: '3670 E Camelback Rd, Phoenix AZ 85018',     service: 'Roof Inspection' }],
+      13: [{ time: '10:30 AM', name: 'Brandon Cox',      phone: '(623) 555-2018', email: 'bcox@gmail.com',         address: '5230 W Thunderbird Rd, Glendale AZ 85306',  service: 'Cabinet Refacing' }],
+      14: [{ time: '8:30 AM',  name: 'Tiffany Ward',     phone: '(602) 555-2019', email: 'tward@outlook.com',      address: '3670 E Camelback Rd, Phoenix AZ 85018',     service: 'Kitchen Consultation' }],
       16: [
-        { time: '8:00 AM',  name: 'Eric Sanders',       phone: '(480) 555-2020', email: 'esanders@gmail.com',      address: '9120 E Indian Bend Rd, Scottsdale AZ 85250', service: 'Flat Roof Estimate' },
-        { time: '2:00 PM',  name: 'Michelle Peterson',  phone: '(623) 555-2021', email: 'mpeterson@yahoo.com',     address: '10820 N 43rd Ave, Glendale AZ 85304',       service: 'Storm Damage Assessment' },
+        { time: '8:00 AM',  name: 'Eric Sanders',       phone: '(480) 555-2020', email: 'esanders@gmail.com',      address: '9120 E Indian Bend Rd, Scottsdale AZ 85250', service: 'Flooring Installation' },
+        { time: '2:00 PM',  name: 'Michelle Peterson',  phone: '(623) 555-2021', email: 'mpeterson@yahoo.com',     address: '10820 N 43rd Ave, Glendale AZ 85304',       service: 'Design Consultation' },
       ],
       18: [
-        { time: '10:00 AM', name: 'Vanessa Collins',    phone: '(480) 555-2023', email: 'vcollins@hotmail.com',    address: '5840 S Kyrene Rd, Tempe AZ 85283',          service: 'Full Replacement Estimate' },
-        { time: '3:00 PM',  name: 'Randy Stewart',      phone: '(623) 555-2024', email: 'rstewart@gmail.com',      address: '7190 W Peoria Ave, Peoria AZ 85345',        service: 'Tile Roof Repair' },
+        { time: '10:00 AM', name: 'Vanessa Collins',    phone: '(480) 555-2023', email: 'vcollins@hotmail.com',    address: '5840 S Kyrene Rd, Tempe AZ 85283',          service: 'Full Home Renovation' },
+        { time: '3:00 PM',  name: 'Randy Stewart',      phone: '(623) 555-2024', email: 'rstewart@gmail.com',      address: '7190 W Peoria Ave, Peoria AZ 85345',        service: 'Tile Installation' },
       ],
-      19: [{ time: '11:30 AM', name: 'Kimberly Reed',    phone: '(602) 555-2025', email: 'kreed@outlook.com',      address: '4330 N 7th Ave, Phoenix AZ 85013',          service: 'Leak Repair' }],
+      19: [{ time: '11:30 AM', name: 'Kimberly Reed',    phone: '(602) 555-2025', email: 'kreed@outlook.com',      address: '4330 N 7th Ave, Phoenix AZ 85013',          service: 'Countertop Replacement' }],
       20: [
-        { time: '8:00 AM',  name: 'Sean Murphy',        phone: '(480) 555-2026', email: 'smurphy@gmail.com',       address: '1870 E University Dr, Mesa AZ 85203',       service: 'Insurance Claim Inspection' },
-        { time: '1:30 PM',  name: 'Diana Foster',       phone: '(623) 555-2027', email: 'dfoster@yahoo.com',       address: '12340 W Indian School Rd, Avondale AZ 85392', service: 'Roof Inspection' },
+        { time: '8:00 AM',  name: 'Sean Murphy',        phone: '(480) 555-2026', email: 'smurphy@gmail.com',       address: '1870 E University Dr, Mesa AZ 85203',       service: 'Kitchen Remodel' },
+        { time: '1:30 PM',  name: 'Diana Foster',       phone: '(623) 555-2027', email: 'dfoster@yahoo.com',       address: '12340 W Indian School Rd, Avondale AZ 85392', service: 'Bathroom Estimate' },
       ],
-      21: [{ time: '9:00 AM',  name: 'Phillip Gonzalez', phone: '(602) 555-2028', email: 'pgonzalez@gmail.com',    address: '6050 S 48th St, Phoenix AZ 85042',          service: 'Gutter Installation' }],
+      21: [{ time: '9:00 AM',  name: 'Phillip Gonzalez', phone: '(602) 555-2028', email: 'pgonzalez@gmail.com',    address: '6050 S 48th St, Phoenix AZ 85042',          service: 'Interior Painting' }],
       24: [
-        { time: '8:30 AM',  name: 'Victor Morales',     phone: '(623) 555-2030', email: 'vmorales@gmail.com',      address: '4210 W Greenway Rd, Glendale AZ 85306',     service: 'Full Replacement Estimate' },
-        { time: '2:30 PM',  name: 'Amy Richardson',     phone: '(602) 555-2031', email: 'arichardson@outlook.com', address: '1720 N 32nd St, Phoenix AZ 85008',          service: 'Storm Damage Assessment' },
+        { time: '8:30 AM',  name: 'Victor Morales',     phone: '(623) 555-2030', email: 'vmorales@gmail.com',      address: '4210 W Greenway Rd, Glendale AZ 85306',     service: 'Full Home Renovation' },
+        { time: '2:30 PM',  name: 'Amy Richardson',     phone: '(602) 555-2031', email: 'arichardson@outlook.com', address: '1720 N 32nd St, Phoenix AZ 85008',          service: 'Outdoor Living Space' },
       ],
       25: [
-        { time: '9:00 AM',  name: 'Greg Howard',        phone: '(480) 555-2032', email: 'ghoward@yahoo.com',       address: '5560 E Broadway Rd, Mesa AZ 85206',         service: 'Chimney Flashing Repair' },
-        { time: '1:00 PM',  name: 'Monica Simmons',     phone: '(623) 555-2033', email: 'msimmons@gmail.com',      address: '9870 W Northern Ave, Peoria AZ 85345',      service: 'Skylight Repair' },
+        { time: '9:00 AM',  name: 'Greg Howard',        phone: '(480) 555-2032', email: 'ghoward@yahoo.com',       address: '5560 E Broadway Rd, Mesa AZ 85206',         service: 'Bathroom Renovation' },
+        { time: '1:00 PM',  name: 'Monica Simmons',     phone: '(623) 555-2033', email: 'msimmons@gmail.com',      address: '9870 W Northern Ave, Peoria AZ 85345',      service: 'Design Consultation' },
       ],
-      26: [{ time: '11:00 AM', name: 'Keith Patterson',  phone: '(602) 555-2034', email: 'kpatterson@gmail.com',   address: '3140 E Thomas Rd, Phoenix AZ 85016',        service: 'Roof Inspection' }],
+      26: [{ time: '11:00 AM', name: 'Keith Patterson',  phone: '(602) 555-2034', email: 'kpatterson@gmail.com',   address: '3140 E Thomas Rd, Phoenix AZ 85016',        service: 'Kitchen Consultation' }],
       27: [
-        { time: '8:00 AM',  name: 'Shannon Price',      phone: '(480) 555-2035', email: 'sprice@hotmail.com',      address: '6440 S Rural Rd, Tempe AZ 85283',           service: 'Full Replacement Estimate' },
-        { time: '3:00 PM',  name: 'Derrick Russell',    phone: '(623) 555-2036', email: 'drussell@gmail.com',      address: '11550 W Glendale Ave, Glendale AZ 85307',   service: 'Leak Repair' },
+        { time: '8:00 AM',  name: 'Shannon Price',      phone: '(480) 555-2035', email: 'sprice@hotmail.com',      address: '6440 S Rural Rd, Tempe AZ 85283',           service: 'Full Home Renovation' },
+        { time: '3:00 PM',  name: 'Derrick Russell',    phone: '(623) 555-2036', email: 'drussell@gmail.com',      address: '11550 W Glendale Ave, Glendale AZ 85307',   service: 'Flooring Installation' },
       ],
-      28: [{ time: '10:30 AM', name: 'Brittany Powell',  phone: '(602) 555-2037', email: 'bpowell@outlook.com',    address: '2880 N 44th St, Phoenix AZ 85008',          service: 'Insurance Claim Inspection' }],
+      28: [{ time: '10:30 AM', name: 'Brittany Powell',  phone: '(602) 555-2037', email: 'bpowell@outlook.com',    address: '2880 N 44th St, Phoenix AZ 85008',          service: 'Cabinet Refacing' }],
       30: [
-        { time: '9:00 AM',  name: 'Marcus Griffin',     phone: '(480) 555-2038', email: 'mgriffin@gmail.com',      address: '7610 E Baseline Rd, Mesa AZ 85209',         service: 'Storm Damage Assessment' },
-        { time: '2:00 PM',  name: 'Alicia Diaz',        phone: '(623) 555-2039', email: 'adiaz@yahoo.com',         address: '4520 W Camelback Rd, Phoenix AZ 85031',     service: 'Tile Roof Repair' },
+        { time: '9:00 AM',  name: 'Marcus Griffin',     phone: '(480) 555-2038', email: 'mgriffin@gmail.com',      address: '7610 E Baseline Rd, Mesa AZ 85209',         service: 'Countertop Replacement' },
+        { time: '2:00 PM',  name: 'Alicia Diaz',        phone: '(623) 555-2039', email: 'adiaz@yahoo.com',         address: '4520 W Camelback Rd, Phoenix AZ 85031',     service: 'Tile Installation' },
       ],
-      31: [{ time: '8:30 AM',  name: 'Wayne Henderson',  phone: '(602) 555-2040', email: 'whenderson@gmail.com',   address: '1350 N Central Ave, Phoenix AZ 85004',      service: 'Roof Maintenance' }],
+      31: [{ time: '8:30 AM',  name: 'Wayne Henderson',  phone: '(602) 555-2040', email: 'whenderson@gmail.com',   address: '1350 N Central Ave, Phoenix AZ 85004',      service: 'Interior Painting' }],
     },
   },
 ];
@@ -1887,9 +1887,11 @@ function CalendarMockup() {
   const p = calendarPhases[phase];
 
   const daysInMonth = 31;
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const startDay = 0; // March 2026 starts on Sunday
+  const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
   const calendarDays: (number | null)[] = [];
+  for (let i = 0; i < startDay; i++) calendarDays.push(null);
   for (let d = 1; d <= daysInMonth; d++) calendarDays.push(d);
   while (calendarDays.length % 7 !== 0) calendarDays.push(null);
 
@@ -1904,7 +1906,11 @@ function CalendarMockup() {
   };
 
   const selectedAppts = selectedDay !== null ? (p.appts[selectedDay] || []) : [];
-  const selectedDayOfWeek = selectedDay !== null ? DAY_LABELS[(selectedDay - 1) % 7] : '';
+  const selectedDayOfWeek = selectedDay !== null ? DAY_LABELS[(selectedDay - 1 + startDay) % 7] : '';
+
+  // Google Calendar event colors
+  const eventColors = ['#039be5', '#7986cb', '#33b679', '#8e24aa', '#e67c73', '#f6bf26', '#f4511e', '#616161'];
+  const getEventColor = (name: string) => eventColors[name.charCodeAt(0) % eventColors.length];
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.sectionDark}>
@@ -1940,149 +1946,186 @@ function CalendarMockup() {
           ))}
         </div>
 
-        <div style={{ maxWidth: '700px', margin: '0 auto', ...fadeUp(inView, 300) }}>
-          {/* Calendar Card */}
+        <div style={{ maxWidth: '800px', margin: '0 auto', ...fadeUp(inView, 300) }}>
+          {/* Google Calendar Card */}
           <div style={{
-            ...S.cardDark, padding: '32px', overflow: 'hidden',
-            border: `1px solid ${p.color}25`,
-            transition: 'border-color 0.4s ease',
+            background: '#ffffff', borderRadius: '12px', overflow: 'hidden',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)',
+            border: '1px solid #dadce0',
           }}>
-            <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff' }}>March 2026</div>
-              <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>{p.subtitle}</div>
+            {/* Google Calendar Header */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '12px 16px', borderBottom: '1px solid #dadce0',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {/* Hamburger menu */}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#5f6368"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+                {/* Google Calendar logo */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="2" fill="#fff" stroke="#4285f4" strokeWidth="1.5"/>
+                    <rect x="3" y="3" width="18" height="6" rx="2" fill="#4285f4"/>
+                    <text x="12" y="18" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#4285f4">31</text>
+                  </svg>
+                  <span style={{ fontSize: '1.1rem', fontWeight: 400, color: '#3c4043' }}>Calendar</span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {/* Nav arrows */}
+                <div style={{ display: 'flex', gap: '2px' }}>
+                  <div style={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#5f6368"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                  </div>
+                  <div style={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#5f6368"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                  </div>
+                </div>
+                <span style={{ fontSize: '1.15rem', fontWeight: 400, color: '#3c4043' }}>March 2026</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{
+                  padding: '6px 14px', borderRadius: '4px', border: '1px solid #dadce0',
+                  fontSize: '0.8rem', fontWeight: 500, color: '#3c4043', cursor: 'pointer',
+                }}>Month</div>
+                {/* Settings gear */}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#5f6368"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+              </div>
             </div>
 
             {/* Day headers */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', marginBottom: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid #dadce0' }}>
               {dayNames.map(d => (
                 <div key={d} style={{
                   textAlign: 'center', padding: '8px 0',
-                  fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.3)',
-                  textTransform: 'uppercase' as const, letterSpacing: '0.08em',
+                  fontSize: '0.68rem', fontWeight: 500, color: '#70757a',
+                  letterSpacing: '0.02em',
                 }}>{d}</div>
               ))}
             </div>
 
             {/* Calendar grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
               {calendarDays.map((day, i) => {
                 const dayAppts = day !== null ? (p.appts[day] || []) : [];
                 const hasAppt = dayAppts.length > 0;
-                const isSunday = i % 7 === 0;
-                const isSaturday = i % 7 === 6;
                 const isSelected = day !== null && selectedDay === day;
-                const dotCount = Math.min(dayAppts.length, 3);
+                const isToday = day === 15;
+                const row = Math.floor(i / 7);
+                const isLastRow = row === Math.floor((calendarDays.length - 1) / 7);
                 return (
                   <div
                     key={i}
                     onClick={() => handleDayClick(day)}
                     style={{
-                      aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      borderRadius: '10px', position: 'relative' as const,
-                      background: isSelected ? `${p.color}30` : hasAppt ? `${p.color}18` : 'rgba(255,255,255,0.02)',
-                      border: isSelected ? `2px solid ${p.color}` : hasAppt ? `1px solid ${p.color}30` : '1px solid rgba(255,255,255,0.04)',
-                      transition: 'all 0.3s ease',
+                      minHeight: '80px', padding: '2px 4px',
+                      borderRight: (i + 1) % 7 !== 0 ? '1px solid #dadce0' : 'none',
+                      borderBottom: !isLastRow ? '1px solid #dadce0' : 'none',
+                      background: isSelected ? '#e8f0fe' : '#fff',
                       cursor: hasAppt ? 'pointer' : 'default',
+                      transition: 'background 0.15s ease',
                     }}
                   >
                     {day !== null && (
                       <>
-                        <span style={{
-                          fontSize: '0.85rem', fontWeight: hasAppt ? 700 : 500,
-                          color: isSelected ? '#fff' : hasAppt ? p.color : isSunday || isSaturday ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.5)',
-                          transition: 'color 0.3s ease',
-                        }}>{day}</span>
-                        {hasAppt && (
-                          <div style={{
-                            position: 'absolute' as const, bottom: '3px', left: '50%', transform: 'translateX(-50%)',
-                            display: 'flex', gap: '2px',
+                        <div style={{
+                          width: 24, height: 24, borderRadius: '50%',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          margin: '2px auto 2px',
+                          background: isToday ? '#1a73e8' : 'transparent',
+                          color: isToday ? '#fff' : '#3c4043',
+                          fontSize: '0.75rem', fontWeight: isToday ? 600 : 400,
+                        }}>{day}</div>
+                        {dayAppts.map((appt, ai) => (
+                          <div key={ai} style={{
+                            background: getEventColor(appt.name),
+                            color: '#fff', fontSize: '0.6rem', fontWeight: 500,
+                            padding: '2px 4px', borderRadius: '3px', marginBottom: '1px',
+                            overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+                            lineHeight: 1.4,
                           }}>
-                            {Array.from({ length: dotCount }).map((_, di) => (
-                              <div key={di} style={{
-                                width: '4px', height: '4px', borderRadius: '50%',
-                                background: isSelected ? '#fff' : p.color, transition: 'background 0.3s ease',
-                              }} />
-                            ))}
+                            {appt.time.replace(':00', '').replace(' AM', 'a').replace(' PM', 'p')} {appt.name.split(' ')[0]}
                           </div>
-                        )}
+                        ))}
                       </>
                     )}
                   </div>
                 );
               })}
             </div>
+          </div>
 
-            {/* Appointment detail panel */}
-            {selectedDay !== null && selectedAppts.length > 0 && (
+          {/* Appointment detail panel */}
+          {selectedDay !== null && selectedAppts.length > 0 && (
+            <div style={{
+              marginTop: '16px', background: '#ffffff', borderRadius: '12px',
+              border: '1px solid #dadce0', overflow: 'hidden',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)',
+              animation: 'calDetailIn 0.3s ease-out',
+            }}>
               <div style={{
-                marginTop: '20px', paddingTop: '20px',
-                borderTop: `1px solid ${p.color}20`,
-                animation: 'calDetailIn 0.3s ease-out',
+                padding: '16px 20px', borderBottom: '1px solid #dadce0',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               }}>
-                <div style={{
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  marginBottom: '14px',
-                }}>
-                  <div style={{ fontSize: '1rem', fontWeight: 700, color: '#fff' }}>
-                    {selectedDayOfWeek}, March {selectedDay}
-                  </div>
-                  <div style={{
-                    fontSize: '0.75rem', fontWeight: 600, color: p.color,
-                    padding: '3px 10px', borderRadius: '6px', background: `${p.color}15`,
-                  }}>
-                    {selectedAppts.length} appt{selectedAppts.length > 1 ? 's' : ''}
-                  </div>
+                <div style={{ fontSize: '1rem', fontWeight: 500, color: '#3c4043' }}>
+                  {selectedDayOfWeek}, March {selectedDay}, 2026
                 </div>
+                <div style={{
+                  fontSize: '0.75rem', fontWeight: 500, color: '#1a73e8',
+                  padding: '4px 12px', borderRadius: '4px', background: '#e8f0fe',
+                }}>
+                  {selectedAppts.length} event{selectedAppts.length > 1 ? 's' : ''}
+                </div>
+              </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {selectedAppts.map((appt, ai) => (
+              <div style={{ padding: '12px 20px' }}>
+                {selectedAppts.map((appt, ai) => {
+                  const evColor = getEventColor(appt.name);
+                  return (
                     <div key={ai} style={{
-                      padding: '16px', borderRadius: '12px',
-                      background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
+                      display: 'flex', gap: '14px', padding: '14px 0',
+                      borderBottom: ai < selectedAppts.length - 1 ? '1px solid #e8eaed' : 'none',
                     }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      {/* Color bar */}
+                      <div style={{ width: 4, borderRadius: 2, background: evColor, flexShrink: 0 }} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                          <div>
+                            <div style={{ fontSize: '0.95rem', fontWeight: 500, color: '#3c4043' }}>{appt.service}</div>
+                            <div style={{ fontSize: '0.8rem', color: '#70757a', marginTop: 2 }}>{appt.time}</div>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: 6 }}>
                           <div style={{
-                            width: '34px', height: '34px', borderRadius: '50%',
-                            background: `${p.color}20`, border: `1px solid ${p.color}30`,
+                            width: 28, height: 28, borderRadius: '50%', background: evColor,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '0.7rem', fontWeight: 700, color: p.color, flexShrink: 0,
+                            fontSize: '0.6rem', fontWeight: 600, color: '#fff', flexShrink: 0,
                           }}>
                             {appt.name.split(' ').map(n => n[0]).join('')}
                           </div>
-                          <div>
-                            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff' }}>{appt.name}</div>
-                            <div style={{ fontSize: '0.75rem', color: p.color, fontWeight: 600 }}>{appt.service}</div>
+                          <span style={{ fontSize: '0.85rem', color: '#3c4043' }}>{appt.name}</span>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 8 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#5f6368"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                            <span style={{ fontSize: '0.78rem', color: '#5f6368' }}>{appt.phone}</span>
                           </div>
-                        </div>
-                        <div style={{
-                          fontSize: '0.8rem', fontWeight: 600, color: 'rgba(255,255,255,0.6)',
-                          padding: '4px 10px', borderRadius: '6px', background: 'rgba(255,255,255,0.06)',
-                        }}>
-                          {appt.time}
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
-                          <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)' }}>{appt.phone}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                          <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)' }}>{appt.email}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', gridColumn: '1 / -1' }}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
-                          <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)' }}>{appt.address}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#5f6368"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                            <span style={{ fontSize: '0.78rem', color: '#5f6368' }}>{appt.email}</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#5f6368" style={{ flexShrink: 0, marginTop: 1 }}><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+                            <span style={{ fontSize: '0.78rem', color: '#5f6368' }}>{appt.address}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Description */}
           <div style={{
@@ -2118,7 +2161,7 @@ function GoogleSearchBar() {
       margin: '0 20px',
     }}>
       <svg width="20" height="20" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#4285f4"/></svg>
-      <span style={{ flex: 1, fontSize: '0.9rem', color: '#202124' }}>roofing contractor near me</span>
+      <span style={{ flex: 1, fontSize: '0.9rem', color: '#202124' }}>remodeling contractor near me</span>
       <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 15c1.66 0 2.99-1.34 2.99-3L15 6c0-1.66-1.34-3-3-3S9 4.34 9 6v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 15 6.7 12H5c0 3.41 2.72 6.23 6 6.72V22h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" fill="#4285f4"/></svg>
     </div>
   );
@@ -2219,31 +2262,31 @@ function SEODemo() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                     <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#e8f0fe', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#1a73e8' }}>AR</div>
-                    <div style={{ fontSize: '0.72rem', color: '#202124' }}>www.acme-roofing-ads.com</div>
+                    <div style={{ fontSize: '0.72rem', color: '#202124' }}>www.acme-remodeling-ads.com</div>
                   </div>
-                  <div style={{ fontSize: '1rem', color: '#1a0dab', marginBottom: '3px', cursor: 'pointer' }}>Acme Roofing - Get A Free Quote Today</div>
-                  <div style={{ fontSize: '0.8rem', color: '#4d5156', lineHeight: 1.45 }}>Top rated roofing company. Call now for a free estimate. Licensed &amp; insured. Serving the greater metro area.</div>
+                  <div style={{ fontSize: '1rem', color: '#1a0dab', marginBottom: '3px', cursor: 'pointer' }}>Acme Remodeling - Get A Free Quote Today</div>
+                  <div style={{ fontSize: '0.8rem', color: '#4d5156', lineHeight: 1.45 }}>Top rated remodeling company. Call now for a free estimate. Licensed &amp; insured. Serving the greater metro area.</div>
                 </div>
 
                 <GoogleResult
-                  url="www.competitor-roofers.com › services"
+                  url="www.competitor-remodeling.com › services"
                   favicon="CR"
-                  title="Competitor Roofing Co - Professional Roof Repair & Replacement"
-                  desc="Trusted roofing contractor with 15+ years of experience. We offer free inspections, emergency repairs, and full roof replacements. Call today for your estimate."
+                  title="Competitor Remodeling Co - Professional Kitchen & Bath Renovation"
+                  desc="Trusted remodeling contractor with 15+ years of experience. We offer free consultations, custom designs, and full home renovations. Call today for your estimate."
                 />
                 <div style={{ borderBottom: '1px solid #ebebeb' }} />
                 <GoogleResult
-                  url="www.another-roofer.com › about"
+                  url="www.another-remodeler.com › about"
                   favicon="AR"
-                  title="Another Roofing LLC - Licensed & Insured Contractors"
-                  desc="Family-owned roofing company serving residential and commercial clients. BBB accredited. Financing available on all projects."
+                  title="Another Remodeling LLC - Licensed & Insured Contractors"
+                  desc="Family-owned remodeling company serving residential clients. BBB accredited. Financing available on all projects."
                 />
                 <div style={{ borderBottom: '1px solid #ebebeb' }} />
                 <GoogleResult
-                  url="www.bigbox-roofing.com › local"
+                  url="www.bigbox-remodeling.com › local"
                   favicon="BB"
-                  title="BigBox Roofing Solutions - Affordable Roof Repair"
-                  desc="Affordable roof repair and replacement services. Free estimates within 24 hours. Satisfaction guaranteed on all work."
+                  title="BigBox Remodeling Solutions - Affordable Home Renovation"
+                  desc="Affordable home renovation and remodeling services. Free estimates within 24 hours. Satisfaction guaranteed on all work."
                   dimmed
                 />
 
@@ -2343,7 +2386,7 @@ function SEODemo() {
                       fontSize: '0.55rem', fontWeight: 700, color: '#fff', flexShrink: 0,
                     }}>PR</div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#1a0dab' }}>Premium Roofing Co</div>
+                      <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#1a0dab' }}>Premier Remodeling Co</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
                         <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#202124' }}>4.9</span>
                         <div style={{ display: 'flex', gap: '0px' }}>
@@ -2353,7 +2396,7 @@ function SEODemo() {
                         </div>
                         <span style={{ fontSize: '0.7rem', color: '#70757a' }}>(127)</span>
                       </div>
-                      <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Roofing contractor · Phoenix, AZ</div>
+                      <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Remodeling contractor · Phoenix, AZ</div>
                       <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Open · Closes 6 PM</div>
                     </div>
                   </div>
@@ -2362,13 +2405,13 @@ function SEODemo() {
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '8px 10px', opacity: 0.6 }}>
                     <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e8eaed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#5f6368', flexShrink: 0 }}>CR</div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a0dab' }}>Competitor Roofing Co</div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a0dab' }}>Competitor Remodeling Co</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
                         <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#202124' }}>4.2</span>
                         <div style={{ display: 'flex' }}>{[1,2,3,4].map(s => <svg key={s} width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>)}<svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#dadce0"/></svg></div>
                         <span style={{ fontSize: '0.68rem', color: '#70757a' }}>(43)</span>
                       </div>
-                      <div style={{ fontSize: '0.7rem', color: '#70757a' }}>Roofing contractor · Phoenix, AZ</div>
+                      <div style={{ fontSize: '0.7rem', color: '#70757a' }}>Remodeling contractor · Phoenix, AZ</div>
                     </div>
                   </div>
 
@@ -2376,30 +2419,30 @@ function SEODemo() {
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '8px 10px', opacity: 0.5 }}>
                     <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e8eaed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#5f6368', flexShrink: 0 }}>AR</div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a0dab' }}>Another Roofing LLC</div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a0dab' }}>Another Remodeling LLC</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
                         <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#202124' }}>3.8</span>
                         <div style={{ display: 'flex' }}>{[1,2,3,4].map(s => <svg key={s} width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill={s <= 3 ? '#fbbc04' : '#dadce0'}/></svg>)}<svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#dadce0"/></svg></div>
                         <span style={{ fontSize: '0.68rem', color: '#70757a' }}>(19)</span>
                       </div>
-                      <div style={{ fontSize: '0.7rem', color: '#70757a' }}>Roofing contractor · Glendale, AZ</div>
+                      <div style={{ fontSize: '0.7rem', color: '#70757a' }}>Remodeling contractor · Glendale, AZ</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Organic #1 — Your site */}
                 <GoogleResult
-                  url="www.premium-roofing.com › services › phoenix"
+                  url="www.premier-remodeling.com › services › phoenix"
                   favicon="PR"
-                  title="Premium Roofing Co - #1 Rated Roofing Contractor in Phoenix"
-                  desc="5-star rated roofing contractor serving Phoenix, Scottsdale, and the East Valley. Free inspections, same-day estimates, and financing available. Book online 24/7."
+                  title="Premier Remodeling Co - #1 Rated Remodeling Contractor in Phoenix"
+                  desc="5-star rated remodeling contractor serving Phoenix, Scottsdale, and the East Valley. Free consultations, detailed estimates, and financing available. Book online 24/7."
                 />
                 <div style={{ borderBottom: '1px solid #ebebeb' }} />
                 <GoogleResult
-                  url="www.competitor-roofers.com › services"
+                  url="www.competitor-remodeling.com › services"
                   favicon="CR"
-                  title="Competitor Roofing Co - Free Estimates"
-                  desc="Professional roofing services for your area. Licensed and insured contractor."
+                  title="Competitor Remodeling Co - Free Estimates"
+                  desc="Professional remodeling services for your area. Licensed and insured contractor."
                   dimmed
                 />
               </div>
@@ -2421,7 +2464,7 @@ function SEODemo() {
                     fontSize: '1.4rem', fontWeight: 800, color: '#fff', flexShrink: 0,
                   }}>PR</div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#202124', marginBottom: 2 }}>Premium Roofing Co</div>
+                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#202124', marginBottom: 2 }}>Premier Remodeling Co</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: 4 }}>
                       <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#202124' }}>4.9</span>
                       <div style={{ display: 'flex' }}>
@@ -2431,7 +2474,7 @@ function SEODemo() {
                       </div>
                       <span style={{ fontSize: '0.75rem', color: '#70757a' }}>127 reviews</span>
                     </div>
-                    <div style={{ fontSize: '0.78rem', color: '#70757a', marginBottom: 2 }}>Roofing contractor · Phoenix, AZ</div>
+                    <div style={{ fontSize: '0.78rem', color: '#70757a', marginBottom: 2 }}>Remodeling contractor · Phoenix, AZ</div>
                     <div style={{ fontSize: '0.78rem', color: '#188038', fontWeight: 500 }}>Open · Closes 6 PM</div>
                   </div>
                 </div>
