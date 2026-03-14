@@ -917,7 +917,7 @@ function FunnelVisualization() {
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ paddingTop: '100px', paddingBottom: '100px', position: 'relative' }}>
       <div style={S.lightPattern} />
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Your Growth Path</div>
           <h2 style={S.h2}>The Game Changed. <HL>Most Contractors Haven&apos;t.</HL></h2>
@@ -1164,39 +1164,39 @@ function FunnelVisualization() {
           display: flex;
           align-items: stretch;
           gap: 0;
-          max-width: 1100px;
+          max-width: 1200px;
           margin: 0 auto;
         }
 
         .fv-funnel-container {
-          flex: 1;
+          flex: 0 0 auto;
           display: flex;
           justify-content: center;
         }
         .fv-funnel-svg {
           width: 100%;
-          max-width: 750px;
+          max-width: 520px;
           height: auto;
         }
 
         .fv-right-panel {
-          width: 320px;
-          flex-shrink: 0;
+          flex: 1;
+          min-width: 0;
           display: flex;
           align-items: center;
-          padding: 20px 0 20px 40px;
+          padding: 20px 0 20px 48px;
         }
         .fv-right-content {
           animation: fvFadeIn 0.35s cubic-bezier(0.22,1,0.36,1);
         }
         .fv-right-label {
-          font-size: 1.15rem;
+          font-size: 1.2rem;
           font-weight: 800;
-          margin-bottom: 10px;
+          margin-bottom: 12px;
         }
         .fv-right-desc {
-          font-size: 1.05rem;
-          line-height: 1.65;
+          font-size: 1.1rem;
+          line-height: 1.7;
           color: #444;
           margin: 0;
         }
