@@ -1876,11 +1876,9 @@ const calendarPhases: CalPhase[] = [
       7:  [{ time: '9:00 AM',  name: 'Rachel Robinson',  phone: '(602) 555-0724', email: 'rrobinson@gmail.com',      address: '2215 N 44th St, Phoenix AZ 85008',        service: 'Gutter Installation' }],
       10: [{ time: '11:30 AM', name: 'Chris Mitchell',   phone: '(480) 555-0837', email: 'cmitchell@hotmail.com',    address: '6630 E Baseline Rd, Mesa AZ 85206',       service: 'Storm Damage Assessment' }],
       12: [{ time: '9:30 AM',  name: 'Amanda Davis',     phone: '(623) 555-0941', email: 'adavis17@gmail.com',       address: '14220 N 59th Ave, Glendale AZ 85306',     service: 'Leak Repair' }],
-      13: [{ time: '2:30 PM',  name: 'Brian Wilson',     phone: '(602) 555-1053', email: 'bwilson@outlook.com',      address: '3301 E Camelback Rd, Phoenix AZ 85018',   service: 'Tile Roof Repair' }],
       16: [{ time: '8:00 AM',  name: 'Nicole Moore',     phone: '(480) 555-1168', email: 'nmoore@yahoo.com',         address: '1450 S Dobson Rd, Mesa AZ 85202',         service: 'Full Replacement Estimate' }],
       18: [{ time: '3:00 PM',  name: 'Kevin Taylor',     phone: '(623) 555-1274', email: 'ktaylor55@gmail.com',      address: '8821 W Maryland Ave, Glendale AZ 85305',  service: 'Insurance Claim Inspection' }],
       20: [{ time: '10:00 AM', name: 'Ashley Jackson',   phone: '(602) 555-1389', email: 'ajackson@gmail.com',       address: '4102 N 24th St, Phoenix AZ 85016',        service: 'Roof Inspection' }],
-      21: [{ time: '9:00 AM',  name: 'James White',      phone: '(480) 555-1495', email: 'jwhite@hotmail.com',       address: '7250 E Southern Ave, Mesa AZ 85209',      service: 'Flat Roof Estimate' }],
       24: [{ time: '1:30 PM',  name: 'Megan Harris',     phone: '(623) 555-1507', email: 'mharris@outlook.com',      address: '10432 W Camelback Rd, Phoenix AZ 85037',  service: 'Chimney Flashing Repair' }],
       25: [{ time: '11:00 AM', name: 'Ryan Martin',      phone: '(602) 555-1618', email: 'rmartin@gmail.com',        address: '2750 W Guadalupe Rd, Chandler AZ 85224',  service: 'Storm Damage Assessment' }],
       27: [{ time: '2:00 PM',  name: 'Stephanie Lee',    phone: '(480) 555-1723', email: 'slee@yahoo.com',           address: '5580 E Broadway Rd, Mesa AZ 85206',       service: 'Full Replacement Estimate' }],
@@ -1908,7 +1906,6 @@ const calendarPhases: CalPhase[] = [
         { time: '9:30 AM',  name: 'Roberto Adams',      phone: '(480) 555-2008', email: 'radams@outlook.com',      address: '1825 E Guadalupe Rd, Gilbert AZ 85234',     service: 'Tile Roof Repair' },
         { time: '1:00 PM',  name: 'Jessica Baker',      phone: '(623) 555-2009', email: 'jbaker@gmail.com',        address: '9540 W Northern Ave, Glendale AZ 85305',    service: 'Full Replacement Estimate' },
       ],
-      7:  [{ time: '9:00 AM',  name: 'Patrick Nelson',   phone: '(602) 555-2010', email: 'pnelson@yahoo.com',      address: '3305 N 7th St, Phoenix AZ 85014',           service: 'Roof Maintenance' }],
       9:  [
         { time: '8:00 AM',  name: 'Samantha Carter',    phone: '(480) 555-2011', email: 'scarter@gmail.com',       address: '6215 E Southern Ave, Mesa AZ 85206',        service: 'Storm Damage Assessment' },
         { time: '2:30 PM',  name: 'Daniel Perez',       phone: '(623) 555-2012', email: 'dperez@hotmail.com',      address: '13450 W Camelback Rd, Litchfield Park AZ 85340', service: 'Roof Inspection' },
@@ -1928,7 +1925,6 @@ const calendarPhases: CalPhase[] = [
         { time: '8:00 AM',  name: 'Eric Sanders',       phone: '(480) 555-2020', email: 'esanders@gmail.com',      address: '9120 E Indian Bend Rd, Scottsdale AZ 85250', service: 'Flat Roof Estimate' },
         { time: '2:00 PM',  name: 'Michelle Peterson',  phone: '(623) 555-2021', email: 'mpeterson@yahoo.com',     address: '10820 N 43rd Ave, Glendale AZ 85304',       service: 'Storm Damage Assessment' },
       ],
-      17: [{ time: '9:30 AM',  name: 'Trevor Hughes',    phone: '(602) 555-2022', email: 'thughes@gmail.com',      address: '2460 W Bethany Home Rd, Phoenix AZ 85015',  service: 'Shingle Repair' }],
       18: [
         { time: '10:00 AM', name: 'Vanessa Collins',    phone: '(480) 555-2023', email: 'vcollins@hotmail.com',    address: '5840 S Kyrene Rd, Tempe AZ 85283',          service: 'Full Replacement Estimate' },
         { time: '3:00 PM',  name: 'Randy Stewart',      phone: '(623) 555-2024', email: 'rstewart@gmail.com',      address: '7190 W Peoria Ave, Peoria AZ 85345',        service: 'Tile Roof Repair' },
@@ -1939,7 +1935,6 @@ const calendarPhases: CalPhase[] = [
         { time: '1:30 PM',  name: 'Diana Foster',       phone: '(623) 555-2027', email: 'dfoster@yahoo.com',       address: '12340 W Indian School Rd, Avondale AZ 85392', service: 'Roof Inspection' },
       ],
       21: [{ time: '9:00 AM',  name: 'Phillip Gonzalez', phone: '(602) 555-2028', email: 'pgonzalez@gmail.com',    address: '6050 S 48th St, Phoenix AZ 85042',          service: 'Gutter Installation' }],
-      23: [{ time: '10:00 AM', name: 'Lauren Bailey',    phone: '(480) 555-2029', email: 'lbailey@hotmail.com',     address: '8300 E McDowell Rd, Scottsdale AZ 85257',   service: 'Roof Maintenance' }],
       24: [
         { time: '8:30 AM',  name: 'Victor Morales',     phone: '(623) 555-2030', email: 'vmorales@gmail.com',      address: '4210 W Greenway Rd, Glendale AZ 85306',     service: 'Full Replacement Estimate' },
         { time: '2:30 PM',  name: 'Amy Richardson',     phone: '(602) 555-2031', email: 'arichardson@outlook.com', address: '1720 N 32nd St, Phoenix AZ 85008',          service: 'Storm Damage Assessment' },
@@ -1968,8 +1963,6 @@ function CalendarMockup() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
   const p = calendarPhases[phase];
-
-  const totalAppts = Object.values(p.appts).reduce((sum, arr) => sum + arr.length, 0);
 
   const daysInMonth = 31;
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -2032,22 +2025,9 @@ function CalendarMockup() {
             border: `1px solid ${p.color}25`,
             transition: 'border-color 0.4s ease',
           }}>
-            <div style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              marginBottom: '24px',
-            }}>
-              <div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff' }}>March 2026</div>
-                <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>{p.subtitle}</div>
-              </div>
-              <div style={{
-                padding: '6px 14px', borderRadius: '8px',
-                background: `${p.color}15`, border: `1px solid ${p.color}30`,
-                fontSize: '0.85rem', fontWeight: 700, color: p.color,
-                transition: 'all 0.4s ease',
-              }}>
-                {totalAppts} Appointments
-              </div>
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff' }}>March 2026</div>
+              <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>{p.subtitle}</div>
             </div>
 
             {/* Day headers */}
