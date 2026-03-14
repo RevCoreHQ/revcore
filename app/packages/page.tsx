@@ -196,7 +196,7 @@ export default function PackagesPage() {
         .phone-screen {
           width: 100%;
           height: 100%;
-          background: #0A0A0A;
+          background: #ffffff;
           border-radius: 44px;
           overflow: hidden;
           position: relative;
@@ -253,14 +253,14 @@ export default function PackagesPage() {
         .phone-slide-header {
           text-align: center;
           margin-bottom: 16px;
-          background: rgba(255,255,255,0.03);
+          background: #f8f8f8;
           padding: 12px;
           border-radius: 8px;
         }
         .phone-slide-badge {
           display: inline-block;
           padding: 6px 12px;
-          background: rgba(254,100,98,0.12);
+          background: rgba(254,100,98,0.1);
           color: #FE6462;
           font-size: 0.7rem;
           font-weight: 700;
@@ -273,7 +273,7 @@ export default function PackagesPage() {
         .phone-slide-title {
           font-size: 1.1rem;
           font-weight: 700;
-          color: #ffffff;
+          color: #1a202c;
         }
         .phone-slide-body {
           flex: 1;
@@ -281,7 +281,7 @@ export default function PackagesPage() {
           flex-direction: column;
           gap: 12px;
           overflow-y: auto;
-          color: rgba(255,255,255,0.5);
+          color: #4a5568;
         }
 
         /* FB Ad Carousel */
@@ -306,26 +306,26 @@ export default function PackagesPage() {
           justify-content: space-between;
           align-items: center;
           padding: 6px 12px;
-          background: rgba(255,255,255,0.04);
-          border-bottom: 1px solid rgba(255,255,255,0.06);
+          background: #f0f2f5;
+          border-bottom: 1px solid #e4e6eb;
         }
         .fb-logo-text {
           font-size: 1.2rem;
           font-weight: 700;
-          color: rgba(255,255,255,0.3);
+          color: #1877f2;
           letter-spacing: -0.5px;
         }
         .fb-ad-counter {
           font-size: 0.7rem;
-          color: rgba(255,255,255,0.4);
+          color: #65676b;
           font-weight: 500;
         }
         .fb-post-compact {
           flex: 1;
-          background: rgba(255,255,255,0.03);
+          background: #ffffff;
           display: flex;
           flex-direction: column;
-          border: 1px solid rgba(255,255,255,0.06);
+          border: none;
         }
         .fb-post-top {
           display: flex;
@@ -353,22 +353,22 @@ export default function PackagesPage() {
         .fb-page-name {
           font-size: 0.8rem;
           font-weight: 600;
-          color: #ffffff;
+          color: #050505;
         }
         .fb-sponsored-tag {
           font-size: 0.65rem;
-          color: rgba(255,255,255,0.35);
+          color: #65676b;
         }
         .fb-post-copy {
           padding: 0 12px 6px;
           font-size: 0.85rem;
-          color: rgba(255,255,255,0.6);
+          color: #050505;
           line-height: 1.4;
         }
         .fb-ad-media {
           flex: 1;
           position: relative;
-          background: #f0f2f5;
+          background: #000;
           overflow: hidden;
           min-height: 220px;
         }
@@ -376,6 +376,13 @@ export default function PackagesPage() {
           width: 100%;
           height: 100%;
           object-fit: cover;
+        }
+        .fb-ad-media iframe {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          inset: 0;
+          border: none;
         }
         .ad-type-badge {
           position: absolute;
@@ -401,7 +408,8 @@ export default function PackagesPage() {
           justify-content: space-between;
           padding: 6px 12px;
           font-size: 0.75rem;
-          color: rgba(255,255,255,0.3);
+          color: #65676b;
+          background: #fff;
           border-top: 1px solid rgba(255,255,255,0.06);
         }
         .fb-ad-nav {
@@ -410,14 +418,15 @@ export default function PackagesPage() {
           justify-content: center;
           gap: 10px;
           padding: 6px;
+          background: #fff;
         }
         .fb-nav-arrow {
           width: 28px;
           height: 28px;
           border: none;
-          background: rgba(255,255,255,0.08);
+          background: #e4e6eb;
           border-radius: 50%;
-          color: rgba(255,255,255,0.5);
+          color: #65676b;
           font-size: 1.1rem;
           cursor: pointer;
           transition: all 0.2s;
@@ -426,8 +435,8 @@ export default function PackagesPage() {
           justify-content: center;
         }
         .fb-nav-arrow:hover {
-          background: rgba(255,255,255,0.15);
-          color: #fff;
+          background: #d8dadf;
+          color: #050505;
         }
         .fb-ad-dots {
           display: flex;
@@ -437,14 +446,14 @@ export default function PackagesPage() {
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.2);
+          background: #d8dadf;
           cursor: pointer;
           transition: all 0.2s;
           border: none;
           padding: 0;
         }
         .fb-dot.active {
-          background: #FE6462;
+          background: #1877f2;
           transform: scale(1.1);
         }
 
@@ -1344,7 +1353,6 @@ function PhoneDemo() {
                                   <iframe
                                     src={`https://fast.wistia.net/embed/iframe/${(ad as Record<string, unknown>).wistiaId}?autoPlay=${adIdx === i ? 'true' : 'false'}&muted=true&loop=true&controlsVisibleOnLoad=false&playButton=false`}
                                     allow="autoplay; fullscreen"
-                                    style={{ width: '100%', height: '180px', border: 'none' }}
                                   />
                                 ) : (
                                   <img src={ad.img} alt={ad.page} />
