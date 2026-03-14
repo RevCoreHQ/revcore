@@ -973,6 +973,20 @@ function FunnelVisualization() {
                 className="fv-trap-anim"
               />
 
+              {/* Expanding arrows on Phase 1 & Phase 2 */}
+              {activeIdx >= 2 && (
+                <>
+                  <g className="fv-arrow-left">
+                    <line x1={cx - funnel.topW / 2 - 8} y1={yStart + 4} x2={cx - funnel.topW / 2 - 22} y2={yStart - 6} stroke={funnel.color} strokeWidth="2" strokeOpacity="0.5" strokeLinecap="round" />
+                    <polyline points={`${cx - funnel.topW / 2 - 18},${yStart - 12} ${cx - funnel.topW / 2 - 22},${yStart - 6} ${cx - funnel.topW / 2 - 14},${yStart - 4}`} fill="none" stroke={funnel.color} strokeWidth="2" strokeOpacity="0.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </g>
+                  <g className="fv-arrow-right">
+                    <line x1={cx + funnel.topW / 2 + 8} y1={yStart + 4} x2={cx + funnel.topW / 2 + 22} y2={yStart - 6} stroke={funnel.color} strokeWidth="2" strokeOpacity="0.5" strokeLinecap="round" />
+                    <polyline points={`${cx + funnel.topW / 2 + 14},${yStart - 4} ${cx + funnel.topW / 2 + 22},${yStart - 6} ${cx + funnel.topW / 2 + 18},${yStart - 12}`} fill="none" stroke={funnel.color} strokeWidth="2" strokeOpacity="0.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </g>
+                </>
+              )}
+
               {/* Interactive layers */}
               {funnel.layers.map((label, li) => {
                 const y1 = getLayerY(li);
@@ -1242,6 +1256,20 @@ function FunnelVisualization() {
         @keyframes fvPersonIn {
           from { opacity: 0; transform: scale(0) translateY(8px); }
           to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .fv-arrow-left {
+          animation: fvArrowLeft 1.8s ease-in-out infinite;
+        }
+        .fv-arrow-right {
+          animation: fvArrowRight 1.8s ease-in-out infinite;
+        }
+        @keyframes fvArrowLeft {
+          0%, 100% { transform: translate(0, 0); opacity: 0.4; }
+          50% { transform: translate(-4px, -2px); opacity: 0.8; }
+        }
+        @keyframes fvArrowRight {
+          0%, 100% { transform: translate(0, 0); opacity: 0.4; }
+          50% { transform: translate(4px, -2px); opacity: 0.8; }
         }
 
         @media (max-width: 900px) {
