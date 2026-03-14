@@ -809,6 +809,7 @@ const funnelData = [
     color: '#999999',
     topW: 330, botW: 100,
     people: 6,
+    peopleLabel: 'Potential customers entering your funnel',
     layers: ['Digital Presence', 'Systems', 'Appointments', 'Jobs'],
     descriptions: [
       'How potential customers find you online, your website, ads, search rankings, and social media presence.',
@@ -822,7 +823,8 @@ const funnelData = [
     subtitle: 'Where you are now',
     color: '#FE6462',
     topW: 280, botW: 80,
-    people: 4,
+    people: 3,
+    peopleLabel: '3 leads/mo from referrals only',
     layers: ['Referrals Only', 'Call / Text To Set Appt', 'Appointments', 'Jobs'],
     descriptions: [
       'You rely entirely on word of mouth. No ads, no SEO, no website traffic, inconsistent lead flow.',
@@ -837,6 +839,7 @@ const funnelData = [
     color: '#6B8EFE',
     topW: 420, botW: 120,
     people: 12,
+    peopleLabel: '12 leads/mo from referrals + Meta Ads',
     layers: ['Referrals + Meta Ads', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
       'Meta ads target your service area. Referrals keep flowing, now you have two lead sources.',
@@ -851,6 +854,7 @@ const funnelData = [
     color: '#94D96B',
     topW: 500, botW: 150,
     people: 20,
+    peopleLabel: '20+ leads/mo from referrals, Meta Ads, and SEO',
     layers: ['Referrals + Meta Ads + SEO', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
       'SEO, Google Business, and content marketing compound with Meta ads. You dominate your local market across every channel.',
@@ -934,23 +938,26 @@ function FunnelVisualization() {
               </defs>
 
               {/* People icons above funnel */}
-              {Array.from({ length: funnel.people }).map((_, pi) => {
-                const cols = Math.min(funnel.people, 10);
-                const rows = Math.ceil(funnel.people / cols);
-                const row = Math.floor(pi / cols);
-                const col = pi % cols;
-                const colsInRow = row < rows - 1 ? cols : funnel.people - row * cols;
-                const spacing = 22;
-                const startX = cx - ((colsInRow - 1) * spacing) / 2;
-                const px = startX + col * spacing;
-                const py = 18 + row * 28;
-                return (
-                  <g key={`p-${pi}`} className="fv-person-anim" style={{ animationDelay: `${pi * 50}ms` }}>
-                    <circle cx={px} cy={py} r="5" fill={funnel.color} fillOpacity="0.7" />
-                    <circle cx={px} cy={py - 8} r="3.2" fill={funnel.color} fillOpacity="0.7" />
-                  </g>
-                );
-              })}
+              <g style={{ cursor: 'pointer' }}>
+                <title>{funnel.peopleLabel}</title>
+                {Array.from({ length: funnel.people }).map((_, pi) => {
+                  const cols = Math.min(funnel.people, 10);
+                  const rows = Math.ceil(funnel.people / cols);
+                  const row = Math.floor(pi / cols);
+                  const col = pi % cols;
+                  const colsInRow = row < rows - 1 ? cols : funnel.people - row * cols;
+                  const spacing = 22;
+                  const startX = cx - ((colsInRow - 1) * spacing) / 2;
+                  const px = startX + col * spacing;
+                  const py = 18 + row * 28;
+                  return (
+                    <g key={`p-${pi}`} className="fv-person-anim" style={{ animationDelay: `${pi * 50}ms` }}>
+                      <circle cx={px} cy={py} r="5" fill={funnel.color} fillOpacity="0.7" />
+                      <circle cx={px} cy={py - 8} r="3.2" fill={funnel.color} fillOpacity="0.7" />
+                    </g>
+                  );
+                })}
+              </g>
 
               {/* Full trapezoid outline */}
               <path
