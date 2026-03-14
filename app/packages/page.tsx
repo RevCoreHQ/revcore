@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import type L from 'leaflet';
 import SystemDiagram from '@/components/sections/SystemDiagram';
 import { useScrollReveal, fadeUp, scaleUp, stagger } from '@/hooks/useScrollReveal';
 import { Check, ChevronDown } from 'lucide-react';
 import {
   packagesData, phoneSteps, fbAds, buildFeatures,
   fullScaleExtras, outcomeCards,
-  qualifyQuestions,
+  qualifyQuestions, stateMarkets,
 } from '@/components/packages/data';
 
 /* ═══════════════════════════════════════════════════
@@ -1332,9 +1333,17 @@ function PhoneDemo() {
                                 </div>
                               </div>
                               <div className="fb-post-copy">{ad.copy}</div>
-                              <div className="fb-ad-media">
+                              <div className={`fb-ad-media${(ad as Record<string, unknown>).wistiaId ? ' video' : ''}`}>
                                 <div className={`ad-type-badge ${ad.type.toLowerCase().includes('photo') ? 'photo' : 'video'}`}>{ad.type}</div>
-                                <img src={ad.img} alt={ad.page} />
+                                {(ad as Record<string, unknown>).wistiaId ? (
+                                  <iframe
+                                    src={`https://fast.wistia.net/embed/iframe/${(ad as Record<string, unknown>).wistiaId}?autoPlay=${adIdx === i ? 'true' : 'false'}&muted=true&loop=true&controlsVisibleOnLoad=false&playButton=false`}
+                                    allow="autoplay; fullscreen"
+                                    style={{ width: '100%', height: '180px', border: 'none' }}
+                                  />
+                                ) : (
+                                  <img src={ad.img} alt={ad.page} />
+                                )}
                               </div>
                               <div className="fb-engagement">
                                 <span className="fb-reactions-mini">{ad.reactions}</span>
@@ -1738,19 +1747,55 @@ function OutcomeSection() {
 
 
 /* ═══════════════════════════════════════════════════
-   EXCLUSIVITY — standalone section
+   EXCLUSIVITY — Leaflet map with state pins
    ═══════════════════════════════════════════════════ */
 function ExclusivitySection() {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
+
+  useEffect(() => {
+    if (!inView || !mapRef.current || mapInstanceRef.current) return;
+    import('leaflet').then((L) => {
+      const map = L.map(mapRef.current!, {
+        zoomControl: false,
+        scrollWheelZoom: false,
+        dragging: true,
+        doubleClickZoom: false,
+        attributionControl: false,
+      }).setView([39.8, -98.5], 4);
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 18,
+      }).addTo(map);
+
+      stateMarkets.forEach((state) => {
+        const color = state.claimed ? '#FE6462' : '#94D96B';
+        const svgHtml = `<svg width="20" height="24" viewBox="0 0 20 26" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 0C4.5 0 0 4.5 0 10c0 7.5 10 16 10 16s10-8.5 10-16c0-5.5-4.5-10-10-10z" fill="${color}"/>
+          <circle cx="10" cy="10" r="4" fill="#fff" fill-opacity="0.9"/>
+        </svg>`;
+        const icon = L.divIcon({
+          html: svgHtml,
+          className: 'excl-pin',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+        });
+        const marker = L.marker([state.lat, state.lng], { icon }).addTo(map);
+        marker.bindTooltip(
+          `<strong>${state.state}</strong><br/><span style="color:${color};font-weight:700">${state.claimed ? 'CLAIMED' : 'AVAILABLE'}</span>`,
+          { direction: 'top', offset: [0, -20] }
+        );
+      });
+
+      mapInstanceRef.current = map;
+      setTimeout(() => map.invalidateSize(), 200);
+    });
+  }, [inView]);
+
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={{ ...S.sectionDark, padding: '100px 0' }}>
       <div style={S.gridOverlay} />
-      <div style={{
-        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-        width: 700, height: 700,
-        background: 'radial-gradient(circle, rgba(254,100,98,0.08) 0%, transparent 60%)',
-        pointerEvents: 'none',
-      }} />
       <div style={S.container}>
         <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto', ...fadeUp(inView) }}>
           <div style={S.eyebrowDark}>Market Exclusivity</div>
@@ -1760,40 +1805,38 @@ function ExclusivitySection() {
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', maxWidth: '900px', margin: '3rem auto 0', ...fadeUp(inView, 200) }} className="packages-grid-3">
-          {[
-            { icon: '🔒', title: 'One Partner Per Market', desc: 'We only work with one contractor per trade per zip code. First to claim it owns it.' },
-            { icon: '📈', title: 'Compounding Advantage', desc: 'Every month you build SEO, reviews, and brand equity that competitors can never catch.' },
-            { icon: '🚫', title: 'Competitor Lockout', desc: 'While you scale with RevCore, your competitors are stuck with shared leads and outdated methods.' },
-          ].map((item, i) => (
-            <div key={i} style={{
-              ...S.cardDark, padding: '28px', textAlign: 'center',
-              ...scaleUp(inView, stagger(i, 200, 150)),
-            }}>
-              <div style={{ fontSize: '2rem', marginBottom: '12px' }}>{item.icon}</div>
-              <h3 style={{ color: '#fff', fontWeight: 700, fontSize: '1.05rem', marginBottom: '8px' }}>{item.title}</h3>
-              <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', lineHeight: 1.6 }}>{item.desc}</p>
-            </div>
-          ))}
-        </div>
+        <div style={{ maxWidth: '900px', margin: '3rem auto 0', ...fadeUp(inView, 200) }}>
+          <div
+            ref={mapRef}
+            style={{
+              width: '100%', height: '450px', borderRadius: '16px',
+              border: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden',
+            }}
+          />
 
-        <div style={{ textAlign: 'center', marginTop: '2.5rem', ...fadeUp(inView, 400) }}>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '24px',
-            padding: '14px 28px', borderRadius: '12px',
-            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#FE6462' }} />
-              <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)' }}>Claimed</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#94D96B' }} />
-              <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)' }}>Still Open</span>
+          <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '24px',
+              padding: '14px 28px', borderRadius: '12px',
+              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#FE6462' }} />
+                <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)' }}>Claimed</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#94D96B' }} />
+                <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)' }}>Still Open</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+      <style>{`
+        .excl-pin { background: transparent !important; border: none !important; }
+        .leaflet-tooltip { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(10,10,10,0.95); color: #fff; }
+      `}</style>
     </section>
   );
 }
