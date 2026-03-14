@@ -2194,6 +2194,60 @@ function CalendarMockup() {
 /* ═══════════════════════════════════════════════════
    SEO DEMO — before/after Google search mockups
    ═══════════════════════════════════════════════════ */
+function GoogleSearchBar() {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: '10px',
+      padding: '10px 16px', borderRadius: '24px',
+      border: '1px solid #dfe1e5', background: '#fff',
+      boxShadow: '0 2px 5px rgba(32,33,36,0.1)',
+      margin: '0 20px',
+    }}>
+      <svg width="20" height="20" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#4285f4"/></svg>
+      <span style={{ flex: 1, fontSize: '0.9rem', color: '#202124' }}>roofing contractor near me</span>
+      <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 15c1.66 0 2.99-1.34 2.99-3L15 6c0-1.66-1.34-3-3-3S9 4.34 9 6v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 15 6.7 12H5c0 3.41 2.72 6.23 6 6.72V22h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" fill="#4285f4"/></svg>
+    </div>
+  );
+}
+
+function GoogleTabs() {
+  return (
+    <div style={{
+      display: 'flex', gap: '0', padding: '0 20px',
+      borderBottom: '1px solid #ebebeb', marginTop: '6px',
+    }}>
+      {['All', 'Maps', 'Images', 'Videos', 'Shopping'].map((tab, i) => (
+        <span key={tab} style={{
+          padding: '8px 16px', fontSize: '0.78rem', color: i === 0 ? '#1a73e8' : '#70757a',
+          fontWeight: i === 0 ? 600 : 400,
+          borderBottom: i === 0 ? '3px solid #1a73e8' : '3px solid transparent',
+          cursor: 'pointer',
+        }}>{tab}</span>
+      ))}
+    </div>
+  );
+}
+
+function GoogleResult({ url, favicon, title, desc, dimmed }: { url: string; favicon: string; title: string; desc: string; dimmed?: boolean }) {
+  return (
+    <div style={{ padding: '14px 0', opacity: dimmed ? 0.45 : 1 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+        <div style={{
+          width: '26px', height: '26px', borderRadius: '50%', background: '#f1f3f4',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '0.6rem', fontWeight: 700, color: '#5f6368', flexShrink: 0,
+        }}>{favicon}</div>
+        <div>
+          <div style={{ fontSize: '0.72rem', color: '#202124', lineHeight: 1.2 }}>{url}</div>
+          <div style={{ fontSize: '0.65rem', color: '#4d5156' }}>{url.split(' › ')[0]}</div>
+        </div>
+      </div>
+      <div style={{ fontSize: '1.05rem', color: '#1a0dab', marginBottom: '4px', lineHeight: 1.3, cursor: 'pointer' }}>{title}</div>
+      <div style={{ fontSize: '0.82rem', color: '#4d5156', lineHeight: 1.5 }}>{desc}</div>
+    </div>
+  );
+}
+
 function SEODemo() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
 
@@ -2207,60 +2261,91 @@ function SEODemo() {
         </div>
 
         <div className="seo-grid-2" style={{
-          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px',
-          maxWidth: '1000px', margin: '0 auto',
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px',
+          maxWidth: '1100px', margin: '0 auto',
           ...fadeUp(inView, 200),
         }}>
-          {/* Before */}
+          {/* ─── BEFORE ─── */}
           <div style={{ ...S.card, overflow: 'hidden' }}>
             <div style={{
-              padding: '12px 16px', background: '#fafafa',
+              padding: '10px 16px', background: '#fafafa',
               borderBottom: '1px solid #E5E5E5',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             }}>
               <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#d93025' }}>Before RevCore</span>
-              <span style={{ fontSize: '0.65rem', color: '#999', fontWeight: 600 }}>Page 3+</span>
+              <span style={{ fontSize: '0.65rem', color: '#999', fontWeight: 600 }}>Page 3</span>
             </div>
 
-            <div style={{ padding: '16px', background: '#fff' }}>
-              {/* Google search bar */}
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: '12px',
-                padding: '10px 16px', borderRadius: '24px',
-                border: '1px solid #dfe1e5', background: '#fff',
-                boxShadow: '0 1px 6px rgba(32,33,36,0.08)',
-              }}>
-                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#9aa0a6"/></svg>
-                <span style={{ fontSize: '0.85rem', color: '#202124' }}>roofing contractor near me</span>
+            <div style={{ background: '#fff', paddingBottom: '8px' }}>
+              {/* Google header */}
+              <div style={{ padding: '16px 20px 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '14px' }}>
+                  <svg width="74" height="24" viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#ea4335"/>
+                    <path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#fbbc05"/>
+                    <path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285f4"/>
+                    <path d="M225 3v65h-9.5V3h9.5z" fill="#34a853"/>
+                    <path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.96 0-11.84 4.37-11.59 12.93z" fill="#ea4335"/>
+                    <path d="M35.29 41.19V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49-.21z" fill="#4285f4"/>
+                  </svg>
+                </div>
               </div>
+              <GoogleSearchBar />
+              <GoogleTabs />
 
-              <div style={{ marginTop: '16px' }}>
-                {[
-                  { url: 'www.competitor-roofers.com', title: 'Competitor Roofing Co - Free Estimates', desc: 'Professional roofing services for your area...' },
-                  { url: 'www.another-roofer.com', title: 'Another Roofing - Licensed & Insured', desc: 'Trusted roofing contractors since 2010...' },
-                  { url: 'www.bigbox-roofing.com', title: 'BigBox Roofing Solutions', desc: 'Affordable roof repair and replacement...' },
-                ].map((r, i) => (
-                  <div key={i} style={{ padding: '12px 0', borderBottom: '1px solid #dfe1e5' }}>
-                    <div style={{ fontSize: '0.65rem', color: '#70757a' }}>{r.url}</div>
-                    <div style={{ fontSize: '0.95rem', color: '#1a0dab', marginBottom: '2px' }}>{r.title}</div>
-                    <div style={{ fontSize: '0.78rem', color: '#4d5156', lineHeight: 1.3 }}>{r.desc}</div>
+              <div style={{ padding: '4px 20px 0' }}>
+                <div style={{ fontSize: '0.72rem', color: '#70757a', padding: '8px 0' }}>About 2,340,000 results (0.42 seconds)</div>
+
+                {/* Sponsored ad */}
+                <div style={{ padding: '10px 0', borderBottom: '1px solid #ebebeb' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#202124', background: '#f1f3f4', padding: '2px 6px', borderRadius: '3px', border: '1px solid #dadce0' }}>Sponsored</span>
                   </div>
-                ))}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                    <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#e8f0fe', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#1a73e8' }}>AR</div>
+                    <div style={{ fontSize: '0.72rem', color: '#202124' }}>www.acme-roofing-ads.com</div>
+                  </div>
+                  <div style={{ fontSize: '1rem', color: '#1a0dab', marginBottom: '3px', cursor: 'pointer' }}>Acme Roofing - Get A Free Quote Today</div>
+                  <div style={{ fontSize: '0.8rem', color: '#4d5156', lineHeight: 1.45 }}>Top rated roofing company. Call now for a free estimate. Licensed &amp; insured. Serving the greater metro area.</div>
+                </div>
 
-                {/* Your listing buried */}
-                <div style={{ padding: '16px 12px', marginTop: '8px', textAlign: 'center' }}>
-                  <span style={{ fontSize: '0.75rem', color: '#999', fontStyle: 'italic' }}>
+                <GoogleResult
+                  url="www.competitor-roofers.com › services"
+                  favicon="CR"
+                  title="Competitor Roofing Co - Professional Roof Repair & Replacement"
+                  desc="Trusted roofing contractor with 15+ years of experience. We offer free inspections, emergency repairs, and full roof replacements. Call today for your estimate."
+                />
+                <div style={{ borderBottom: '1px solid #ebebeb' }} />
+                <GoogleResult
+                  url="www.another-roofer.com › about"
+                  favicon="AR"
+                  title="Another Roofing LLC - Licensed & Insured Contractors"
+                  desc="Family-owned roofing company serving residential and commercial clients. BBB accredited. Financing available on all projects."
+                />
+                <div style={{ borderBottom: '1px solid #ebebeb' }} />
+                <GoogleResult
+                  url="www.bigbox-roofing.com › local"
+                  favicon="BB"
+                  title="BigBox Roofing Solutions - Affordable Roof Repair"
+                  desc="Affordable roof repair and replacement services. Free estimates within 24 hours. Satisfaction guaranteed on all work."
+                  dimmed
+                />
+
+                {/* Your listing buried notice */}
+                <div style={{ padding: '18px 12px 8px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.8rem', color: '#999', fontStyle: 'italic' }}>
                     Your business... somewhere on page 3
                   </span>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '4px', marginTop: '8px' }}>
-                    {[1, 2, 3].map(n => (
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '10px' }}>
+                    {[1, 2, 3, 4, 5].map(n => (
                       <span key={n} style={{
-                        width: '24px', height: '24px', borderRadius: '50%',
+                        width: '28px', height: '28px', borderRadius: '50%',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '0.7rem', fontWeight: 600,
-                        background: n === 3 ? '#FE646220' : '#f1f3f4',
-                        color: n === 3 ? '#FE6462' : '#70757a',
-                        border: n === 3 ? '1px solid #FE646240' : 'none',
+                        fontSize: '0.75rem', fontWeight: 500,
+                        background: n === 3 ? '#FE646215' : 'transparent',
+                        color: n === 1 ? '#1a73e8' : n === 3 ? '#FE6462' : '#70757a',
+                        border: n === 3 ? '1px solid #FE646230' : 'none',
+                        cursor: 'pointer',
                       }}>{n}</span>
                     ))}
                   </div>
@@ -2269,78 +2354,123 @@ function SEODemo() {
             </div>
           </div>
 
-          {/* After */}
+          {/* ─── AFTER ─── */}
           <div style={{
             ...S.card, overflow: 'hidden',
             border: '1px solid rgba(148,217,107,0.25)',
             boxShadow: '0 8px 40px rgba(148,217,107,0.08)',
           }}>
             <div style={{
-              padding: '12px 16px', background: 'rgba(148,217,107,0.06)',
+              padding: '10px 16px', background: 'rgba(148,217,107,0.06)',
               borderBottom: '1px solid rgba(148,217,107,0.15)',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             }}>
               <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#16a34a' }}>After RevCore</span>
-              <span style={{ fontSize: '0.65rem', color: '#16a34a', fontWeight: 600 }}>#1 Result</span>
+              <span style={{ fontSize: '0.65rem', color: '#16a34a', fontWeight: 600 }}>#1 in Maps + Organic</span>
             </div>
 
-            <div style={{ padding: '16px', background: '#fff' }}>
-              {/* Google search bar */}
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: '12px',
-                padding: '10px 16px', borderRadius: '24px',
-                border: '1px solid #dfe1e5', background: '#fff',
-                boxShadow: '0 1px 6px rgba(32,33,36,0.08)',
-              }}>
-                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#9aa0a6"/></svg>
-                <span style={{ fontSize: '0.85rem', color: '#202124' }}>roofing contractor near me</span>
+            <div style={{ background: '#fff', paddingBottom: '8px' }}>
+              {/* Google header */}
+              <div style={{ padding: '16px 20px 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '14px' }}>
+                  <svg width="74" height="24" viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#ea4335"/>
+                    <path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#fbbc05"/>
+                    <path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285f4"/>
+                    <path d="M225 3v65h-9.5V3h9.5z" fill="#34a853"/>
+                    <path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.96 0-11.84 4.37-11.59 12.93z" fill="#ea4335"/>
+                    <path d="M35.29 41.19V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49-.21z" fill="#4285f4"/>
+                  </svg>
+                </div>
               </div>
+              <GoogleSearchBar />
+              <GoogleTabs />
 
-              <div style={{ marginTop: '16px' }}>
-                {/* Google Maps pack */}
+              <div style={{ padding: '4px 20px 0' }}>
+                <div style={{ fontSize: '0.72rem', color: '#70757a', padding: '8px 0' }}>About 2,340,000 results (0.38 seconds)</div>
+
+                {/* Google Maps 3-Pack */}
                 <div style={{
-                  padding: '14px', borderRadius: '10px', marginBottom: '12px',
-                  background: 'rgba(148,217,107,0.05)',
-                  border: '1px solid rgba(148,217,107,0.2)',
+                  padding: '14px', borderRadius: '12px', marginBottom: '6px',
+                  background: '#fff', border: '1px solid #dadce0',
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#34a853"/><circle cx="12" cy="9" r="2.5" fill="#fff"/></svg>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#202124' }}>Maps</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid #ebebeb' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#34a853"/><circle cx="12" cy="9" r="2.5" fill="#fff"/></svg>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#202124' }}>Places</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+
+                  {/* #1 — Your business */}
+                  <div style={{
+                    display: 'flex', alignItems: 'flex-start', gap: '10px',
+                    padding: '10px', borderRadius: '8px', marginBottom: '6px',
+                    background: 'rgba(148,217,107,0.06)', border: '1px solid rgba(148,217,107,0.2)',
+                  }}>
                     <div style={{
-                      width: '36px', height: '36px', borderRadius: '50%',
+                      width: '32px', height: '32px', borderRadius: '50%',
                       background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '0.6rem', fontWeight: 700, color: '#fff', flexShrink: 0,
+                      fontSize: '0.55rem', fontWeight: 700, color: '#fff', flexShrink: 0,
                     }}>PR</div>
-                    <div>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1a0dab' }}>Premium Roofing Co</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
-                        <div style={{ display: 'flex', gap: '1px' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#1a0dab' }}>Premium Roofing Co</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#202124' }}>4.9</span>
+                        <div style={{ display: 'flex', gap: '0px' }}>
                           {[1,2,3,4,5].map(s => (
-                            <svg key={s} width="10" height="10" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>
+                            <svg key={s} width="12" height="12" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>
                           ))}
                         </div>
-                        <span style={{ fontSize: '0.65rem', color: '#70757a' }}>4.9 (127)</span>
+                        <span style={{ fontSize: '0.7rem', color: '#70757a' }}>(127)</span>
                       </div>
-                      <div style={{ fontSize: '0.7rem', color: '#70757a', marginTop: '2px' }}>Roofing contractor · Open now</div>
+                      <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Roofing contractor · Phoenix, AZ</div>
+                      <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Open · Closes 6 PM</div>
+                    </div>
+                  </div>
+
+                  {/* #2 — Competitor */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '8px 10px', opacity: 0.6 }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e8eaed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#5f6368', flexShrink: 0 }}>CR</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a0dab' }}>Competitor Roofing Co</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#202124' }}>4.2</span>
+                        <div style={{ display: 'flex' }}>{[1,2,3,4].map(s => <svg key={s} width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>)}<svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#dadce0"/></svg></div>
+                        <span style={{ fontSize: '0.68rem', color: '#70757a' }}>(43)</span>
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: '#70757a' }}>Roofing contractor · Phoenix, AZ</div>
+                    </div>
+                  </div>
+
+                  {/* #3 — Another */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '8px 10px', opacity: 0.5 }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e8eaed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#5f6368', flexShrink: 0 }}>AR</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a0dab' }}>Another Roofing LLC</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#202124' }}>3.8</span>
+                        <div style={{ display: 'flex' }}>{[1,2,3,4].map(s => <svg key={s} width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill={s <= 3 ? '#fbbc04' : '#dadce0'}/></svg>)}<svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#dadce0"/></svg></div>
+                        <span style={{ fontSize: '0.68rem', color: '#70757a' }}>(19)</span>
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: '#70757a' }}>Roofing contractor · Glendale, AZ</div>
                     </div>
                   </div>
                 </div>
 
-                {/* Organic #1 */}
-                <div style={{ padding: '12px 0', borderBottom: '1px solid #dfe1e5' }}>
-                  <div style={{ fontSize: '0.65rem', color: '#70757a' }}>www.premium-roofing.com</div>
-                  <div style={{ fontSize: '0.95rem', color: '#1a0dab', marginBottom: '2px', fontWeight: 600 }}>Premium Roofing Co - #1 Rated Contractor</div>
-                  <div style={{ fontSize: '0.78rem', color: '#4d5156', lineHeight: 1.3 }}>5-star rated roofing contractor serving your area. Free inspections, fast estimates. Book online 24/7.</div>
-                </div>
-
-                <div style={{ padding: '12px 0', borderBottom: '1px solid #dfe1e5', opacity: 0.5 }}>
-                  <div style={{ fontSize: '0.65rem', color: '#70757a' }}>www.competitor-roofers.com</div>
-                  <div style={{ fontSize: '0.95rem', color: '#1a0dab', marginBottom: '2px' }}>Competitor Roofing Co - Free Estimates</div>
-                  <div style={{ fontSize: '0.78rem', color: '#4d5156', lineHeight: 1.3 }}>Professional roofing services...</div>
-                </div>
+                {/* Organic #1 — Your site */}
+                <GoogleResult
+                  url="www.premium-roofing.com › services › phoenix"
+                  favicon="PR"
+                  title="Premium Roofing Co - #1 Rated Roofing Contractor in Phoenix"
+                  desc="5-star rated roofing contractor serving Phoenix, Scottsdale, and the East Valley. Free inspections, same-day estimates, and financing available. Book online 24/7."
+                />
+                <div style={{ borderBottom: '1px solid #ebebeb' }} />
+                <GoogleResult
+                  url="www.competitor-roofers.com › services"
+                  favicon="CR"
+                  title="Competitor Roofing Co - Free Estimates"
+                  desc="Professional roofing services for your area. Licensed and insured contractor."
+                  dimmed
+                />
               </div>
             </div>
           </div>
