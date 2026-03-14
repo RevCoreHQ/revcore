@@ -808,12 +808,13 @@ const funnelData = [
     subtitle: 'The funnel explained',
     color: '#999999',
     topW: 330, botW: 100,
+    people: 6,
     layers: ['Digital Presence', 'Systems', 'Appointments', 'Jobs'],
     descriptions: [
-      'How potential customers find you online — your website, ads, search rankings, and social media presence.',
+      'How potential customers find you online, your website, ads, search rankings, and social media presence.',
       'The tools and automations that capture, organize, and follow up with incoming leads.',
       'How leads get converted into scheduled, confirmed appointments on your calendar.',
-      'The booked jobs that generate revenue — the bottom line of your funnel.',
+      'The booked jobs that generate revenue, the bottom line of your funnel.',
     ],
   },
   {
@@ -821,11 +822,12 @@ const funnelData = [
     subtitle: 'Where you are now',
     color: '#FE6462',
     topW: 280, botW: 80,
+    people: 4,
     layers: ['Referrals Only', 'Call / Text To Set Appt', 'Appointments', 'Jobs'],
     descriptions: [
-      'You rely entirely on word-of-mouth. No ads, no SEO, no website traffic — inconsistent lead flow.',
+      'You rely entirely on word of mouth. No ads, no SEO, no website traffic, inconsistent lead flow.',
       'Every lead requires a manual phone call or text. Leads slip through the cracks when you\'re busy on a job.',
-      'Scheduling is manual. No-shows are frequent. No automated reminders or confirmations.',
+      'Scheduling is manual. No shows are frequent. No automated reminders or confirmations.',
       'Fewer jobs because the top of your funnel is narrow and every step leaks potential customers.',
     ],
   },
@@ -833,24 +835,26 @@ const funnelData = [
     title: 'Phase 1',
     subtitle: 'Foundation',
     color: '#6B8EFE',
-    topW: 360, botW: 105,
+    topW: 420, botW: 120,
+    people: 12,
     layers: ['Referrals + Paid Ads', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
-      'Paid ads on Google & Facebook target your service area. Referrals keep flowing — now you have two lead sources.',
-      'Leads land on your website and self-book appointments. CRM captures every inquiry automatically.',
-      'Automated SMS & email reminders reduce no-shows. Calendar stays organized without manual effort.',
-      'More appointments mean more jobs. Consistent pipeline replaces the feast-or-famine cycle.',
+      'Paid ads on Google & Facebook target your service area. Referrals keep flowing, now you have two lead sources.',
+      'Leads land on your website and self book appointments. CRM captures every inquiry automatically.',
+      'Automated SMS & email reminders reduce no shows. Calendar stays organized without manual effort.',
+      'More appointments mean more jobs. Consistent pipeline replaces the feast or famine cycle.',
     ],
   },
   {
     title: 'Phase 2',
     subtitle: 'Full Scale',
     color: '#94D96B',
-    topW: 440, botW: 130,
-    layers: ['Referrals + Paid Ads + Organic', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
+    topW: 500, botW: 150,
+    people: 20,
+    layers: ['Referrals + Paid Ads + SEO', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
       'SEO, Google Business, and content marketing compound with ads. You dominate your local market across every channel.',
-      'AI-powered follow-ups, review requests, and re-engagement campaigns run on autopilot 24/7.',
+      'AI powered follow ups, review requests, and re-engagement campaigns run on autopilot 24/7.',
       'Smart scheduling optimizes routes and availability. Confirmation rates exceed 90%.',
       'Maximum job volume with minimal overhead. Your funnel is wide at the top and efficient all the way down.',
     ],
@@ -864,11 +868,11 @@ function FunnelVisualization() {
   const [hoveredLayer, setHoveredLayer] = useState<number | null>(null);
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
 
-  const cx = 280;
-  const vbW = 560;
-  const vbH = 480;
+  const cx = 300;
+  const vbW = 600;
+  const vbH = 530;
   const layerCount = 4;
-  const yStart = 24;
+  const yStart = 74;
   const yEnd = vbH - 24;
 
   const funnel = funnelData[activeIdx];
@@ -945,6 +949,25 @@ function FunnelVisualization() {
                   <stop offset="100%" stopColor={funnel.color} stopOpacity="0.04" />
                 </linearGradient>
               </defs>
+
+              {/* People icons above funnel */}
+              {Array.from({ length: funnel.people }).map((_, pi) => {
+                const cols = Math.min(funnel.people, 10);
+                const rows = Math.ceil(funnel.people / cols);
+                const row = Math.floor(pi / cols);
+                const col = pi % cols;
+                const colsInRow = row < rows - 1 ? cols : funnel.people - row * cols;
+                const spacing = 22;
+                const startX = cx - ((colsInRow - 1) * spacing) / 2;
+                const px = startX + col * spacing;
+                const py = 18 + row * 28;
+                return (
+                  <g key={`p-${pi}`} className="fv-person-anim" style={{ animationDelay: `${pi * 50}ms` }}>
+                    <circle cx={px} cy={py} r="5" fill={funnel.color} fillOpacity="0.7" />
+                    <circle cx={px} cy={py - 8} r="3.2" fill={funnel.color} fillOpacity="0.7" />
+                  </g>
+                );
+              })}
 
               {/* Full trapezoid outline */}
               <path
@@ -1137,16 +1160,16 @@ function FunnelVisualization() {
         }
         .fv-funnel-svg {
           width: 100%;
-          max-width: 600px;
+          max-width: 650px;
           height: auto;
         }
 
         .fv-detail {
-          width: 240px;
+          width: 280px;
           flex-shrink: 0;
           display: flex;
           align-items: center;
-          padding: 24px 0 24px 20px;
+          padding: 24px 0 24px 24px;
           opacity: 0;
           transform: translateX(-8px);
           transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
@@ -1158,7 +1181,7 @@ function FunnelVisualization() {
           pointer-events: auto;
         }
         .fv-detail-inner {
-          padding: 20px;
+          padding: 24px;
           border-radius: 14px;
           background: #fff;
           border: 1px solid #E5E5E5;
@@ -1176,9 +1199,9 @@ function FunnelVisualization() {
           margin-bottom: 10px;
         }
         .fv-detail-text {
-          font-size: 0.88rem;
-          line-height: 1.6;
-          color: #444;
+          font-size: 1rem;
+          line-height: 1.65;
+          color: #333;
           margin: 0;
         }
 
@@ -1187,6 +1210,9 @@ function FunnelVisualization() {
         }
         .fv-layer-anim {
           animation: fvLayerIn 0.5s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        .fv-person-anim {
+          animation: fvPersonIn 0.4s cubic-bezier(0.22,1,0.36,1) both;
         }
 
         @keyframes fvFadeIn {
@@ -1200,6 +1226,10 @@ function FunnelVisualization() {
         @keyframes fvLayerIn {
           from { opacity: 0; transform: translateY(6px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fvPersonIn {
+          from { opacity: 0; transform: scale(0) translateY(8px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         @media (max-width: 900px) {
@@ -1514,7 +1544,7 @@ function WebsiteDemo() {
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Website Preview</div>
           <h2 style={S.h2}>Websites That <HL>Convert</HL></h2>
-          <p style={S.sub}>See real RevCore client websites — built to turn visitors into booked appointments.</p>
+          <p style={S.sub}>See real RevCore client websites, built to turn visitors into booked appointments.</p>
         </div>
 
         <div style={{ ...fadeUp(inView, 200), maxWidth: '1000px', margin: '0 auto', position: 'relative' }}>
@@ -1577,7 +1607,7 @@ function WebsiteDemo() {
 
             {/* Footer bar */}
             <div style={{ background: '#13161c', padding: '8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.2)' }}>Live preview — content loads from {site.domain}</span>
+              <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.2)' }}>Live preview, content loads from {site.domain}</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 {/* Dot indicators */}
                 <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
@@ -1719,7 +1749,7 @@ function ExclusivitySection() {
           <div style={S.eyebrowDark}>Market Exclusivity</div>
           <h2 style={{ ...S.h2Dark, fontSize: '2.8rem' }}>While You Build, <HL>They Can&apos;t</HL></h2>
           <p style={{ ...S.subDark, fontSize: '1.1rem', lineHeight: 1.7 }}>
-            Your competitors can&apos;t access RevCore in your market. While you&apos;re building SEO authority, reactivating your database, and training your team — they&apos;re stuck buying shared leads. That gap only widens.
+            Your competitors can&apos;t access RevCore in your market. While you&apos;re building SEO authority, reactivating your database, and training your team, they&apos;re stuck buying shared leads. That gap only widens.
           </p>
         </div>
 
@@ -2261,7 +2291,7 @@ function PPASection() {
                   border: '1px solid rgba(254,100,98,0.3)',
                 }}>
                   <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
-                    Monthly — 15 Appointments
+                    Monthly, 15 Appointments
                   </div>
                   <div style={{ fontSize: '2rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>$2,500</div>
                   <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>$167 per appointment + ad spend</div>
@@ -2358,7 +2388,7 @@ function FunnelSection() {
               We Handle Every Step So You Can Focus on Closing
             </h3>
             <p style={{ color: '#6B6B6B', lineHeight: 1.7, marginBottom: 32 }}>
-              Most contractors only focus on getting leads. We build the entire system — from first impression to appointment confirmation.
+              Most contractors only focus on getting leads. We build the entire system, from first impression to appointment confirmation.
             </p>
             {funnelSteps.map((s, i) => (
               <div key={i} style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
