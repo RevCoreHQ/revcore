@@ -32,6 +32,7 @@ export const packagesData = [
     highlight: true,
     heroFeatures: [
       '20+ Appointments / mo',
+      '20+ Bonus Leads / mo',
       'High Conversion Website',
       'SEO Optimization',
       'Automated Follow-Up',
