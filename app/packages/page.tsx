@@ -2209,17 +2209,18 @@ function SEODemo() {
         </div>
 
         <div style={{
-          display: 'flex', flexDirection: 'column', gap: '32px',
+          display: 'grid', gridTemplateColumns: '1fr auto 1.35fr',
+          gap: '0', alignItems: 'start',
           maxWidth: '1200px', margin: '0 auto',
           ...fadeUp(inView, 200),
         }}>
           {/* ─── BEFORE ─── */}
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#d93025' }}>Before RevCore</span>
-              <span style={{ fontSize: '0.65rem', color: '#999', fontWeight: 600 }}>Page 3</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#d93025' }}>Before RevCore</span>
+              <span style={{ fontSize: '0.6rem', color: '#999', fontWeight: 600 }}>Page 3</span>
             </div>
-          <div style={{ ...S.card, overflow: 'hidden', maxWidth: '680px' }}>
+          <div style={{ ...S.card, overflow: 'hidden' }}>
 
             <div style={{ background: '#fff', paddingBottom: '8px' }}>
               {/* Google header */}
@@ -2301,25 +2302,17 @@ function SEODemo() {
           </div>
 
           {/* ─── ARROW ─── */}
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 0' }}>
-            <div style={{
-              width: 48, height: 48, borderRadius: '50%',
-              background: 'linear-gradient(135deg, #FE6462, #94D96B)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 16px rgba(254,100,98,0.25)',
-            }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <polyline points="5 12 12 19 19 12" />
-              </svg>
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 12px', marginTop: '36px' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 6 15 12 9 18" />
+            </svg>
           </div>
 
           {/* ─── AFTER ─── */}
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#16a34a' }}>After RevCore</span>
-              <span style={{ fontSize: '0.65rem', color: '#16a34a', fontWeight: 600 }}>#1 in Maps + Organic</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#16a34a' }}>After RevCore</span>
+              <span style={{ fontSize: '0.6rem', color: '#16a34a', fontWeight: 600 }}>#1 in Maps + Organic</span>
             </div>
           <div style={{
             ...S.card, overflow: 'hidden',
@@ -2434,7 +2427,7 @@ function SEODemo() {
                 </div>
 
                 {/* Right — GMB Knowledge Panel */}
-                <div style={{ width: '290px', flexShrink: 0, borderLeft: '1px solid #ebebeb', padding: '16px' }}>
+                <div style={{ width: '260px', flexShrink: 0, borderLeft: '1px solid #ebebeb', padding: '12px' }}>
                   <div style={{
                     border: '1px solid #dadce0', borderRadius: '12px', overflow: 'hidden',
                     background: '#fff',
