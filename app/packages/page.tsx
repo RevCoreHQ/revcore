@@ -2198,12 +2198,12 @@ function GoogleResult({ url, favicon, title, desc, dimmed }: { url: string; favi
 /* ── SEO Phase Data ── */
 const seoPhases = [
   { month: 0, label: 'Before RevCore', tagline: 'Buried on page 3', color: '#d93025', page: 3, yourPos: -1, reviews: 0, stars: 0, showMaps: false, mapsPos: -1, gmbOpacity: 0 },
-  { month: 1, label: 'Month 1', tagline: 'Claimed & optimized', color: '#ea4335', page: 1, yourPos: 5, reviews: 0, stars: 0, showMaps: false, mapsPos: -1, gmbOpacity: 0 },
-  { month: 2, label: 'Month 2', tagline: 'Climbing the ranks', color: '#e8710a', page: 1, yourPos: 4, reviews: 12, stars: 4.2, showMaps: false, mapsPos: -1, gmbOpacity: 0 },
-  { month: 3, label: 'Month 3', tagline: 'Getting traction', color: '#f9ab00', page: 1, yourPos: 3, reviews: 28, stars: 4.4, showMaps: true, mapsPos: 3, gmbOpacity: 0.3 },
-  { month: 4, label: 'Month 4', tagline: 'Building authority', color: '#1e8e3e', page: 1, yourPos: 3, reviews: 45, stars: 4.5, showMaps: true, mapsPos: 3, gmbOpacity: 0.6 },
-  { month: 5, label: 'Month 5', tagline: 'Dominating search', color: '#1a73e8', page: 1, yourPos: 2, reviews: 89, stars: 4.7, showMaps: true, mapsPos: 2, gmbOpacity: 0.85 },
-  { month: 6, label: 'Month 6', tagline: 'Top 3 in your market', color: '#16a34a', page: 1, yourPos: 1, reviews: 127, stars: 4.9, showMaps: true, mapsPos: 1, gmbOpacity: 1 },
+  { month: 1, label: 'Month 1', tagline: 'Google Business optimized', color: '#ea4335', page: 1, yourPos: 5, reviews: 3, stars: 4.0, showMaps: false, mapsPos: -1, gmbOpacity: 0.4 },
+  { month: 2, label: 'Month 2', tagline: 'Climbing the ranks', color: '#e8710a', page: 1, yourPos: 4, reviews: 8, stars: 4.2, showMaps: false, mapsPos: -1, gmbOpacity: 0.6 },
+  { month: 3, label: 'Month 3', tagline: 'Getting traction', color: '#f9ab00', page: 1, yourPos: 3, reviews: 14, stars: 4.4, showMaps: true, mapsPos: 3, gmbOpacity: 0.75 },
+  { month: 4, label: 'Month 4', tagline: 'Building authority', color: '#1e8e3e', page: 1, yourPos: 3, reviews: 21, stars: 4.5, showMaps: true, mapsPos: 3, gmbOpacity: 0.85 },
+  { month: 5, label: 'Month 5', tagline: 'Dominating search', color: '#1a73e8', page: 1, yourPos: 2, reviews: 30, stars: 4.7, showMaps: true, mapsPos: 2, gmbOpacity: 0.95 },
+  { month: 6, label: 'Month 6', tagline: 'Top 3 in your market', color: '#16a34a', page: 1, yourPos: 1, reviews: 38, stars: 4.8, showMaps: true, mapsPos: 1, gmbOpacity: 1 },
 ];
 
 const seoCompetitors = [
@@ -2344,14 +2344,32 @@ function SEODemo() {
           )}
         </div>
 
-        {/* ─── Google Search Card ─── */}
+        {/* ─── Google Search Card with arrows ─── */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '12px',
+          maxWidth: '1160px', margin: '0 auto',
+          ...fadeUp(inView, 400),
+        }}>
+          {/* Left arrow */}
+          <button
+            onClick={() => setMonth(m => Math.max(0, m - 1))}
+            style={{
+              width: 36, height: 36, borderRadius: '50%', border: '1px solid #e0e0e0',
+              background: '#fff', cursor: month > 0 ? 'pointer' : 'default',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, opacity: month > 0 ? 0.7 : 0.25,
+              transition: 'opacity 0.3s ease',
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+          </button>
+
         <div style={{
           ...S.card, overflow: 'hidden',
-          maxWidth: '1100px', margin: '0 auto',
+          flex: 1,
           border: `1px solid ${cardBorderColor}`,
           boxShadow: cardShadow,
           transition: 'border-color 0.8s ease, box-shadow 0.8s ease',
-          ...fadeUp(inView, 400),
         }}>
           <div style={{ background: '#fff' }}>
             <div style={{ padding: '16px 20px 0' }}>
@@ -2591,6 +2609,21 @@ function SEODemo() {
               </div>
             </div>
           </div>
+        </div>
+
+          {/* Right arrow */}
+          <button
+            onClick={() => setMonth(m => Math.min(6, m + 1))}
+            style={{
+              width: 36, height: 36, borderRadius: '50%', border: '1px solid #e0e0e0',
+              background: '#fff', cursor: month < 6 ? 'pointer' : 'default',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, opacity: month < 6 ? 0.7 : 0.25,
+              transition: 'opacity 0.3s ease',
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 6 15 12 9 18" /></svg>
+          </button>
         </div>
       </div>
     </section>
