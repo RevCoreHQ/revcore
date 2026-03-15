@@ -1537,7 +1537,6 @@ function PhoneDemo() {
                               </div>
                               <div className="fb-post-copy">{ad.copy}</div>
                               <div className={`fb-ad-media${(ad as Record<string, unknown>).wistiaId ? ' video' : ''}`}>
-                                <div className={`ad-type-badge ${ad.type.toLowerCase().includes('photo') ? 'photo' : 'video'}`}>{ad.type}</div>
                                 {(ad as Record<string, unknown>).wistiaId ? (
                                   <iframe
                                     src={`https://fast.wistia.net/embed/iframe/${(ad as Record<string, unknown>).wistiaId}?autoPlay=${adIdx === i ? 'true' : 'false'}&muted=true&loop=true&controlsVisibleOnLoad=false&playButton=false`}
