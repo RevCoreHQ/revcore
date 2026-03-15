@@ -2195,154 +2195,263 @@ function GoogleResult({ url, favicon, title, desc, dimmed }: { url: string; favi
   );
 }
 
+/* ── SEO Phase Data ── */
+const seoPhases = [
+  { month: 0, label: 'Before RevCore', tagline: 'Buried on page 3', color: '#d93025', page: 3, yourPos: -1, reviews: 0, stars: 0, showMaps: false, mapsPos: -1, gmbOpacity: 0 },
+  { month: 1, label: 'Month 1', tagline: 'Claimed & optimized', color: '#ea4335', page: 1, yourPos: 5, reviews: 0, stars: 0, showMaps: false, mapsPos: -1, gmbOpacity: 0 },
+  { month: 2, label: 'Month 2', tagline: 'Climbing the ranks', color: '#e8710a', page: 1, yourPos: 4, reviews: 12, stars: 4.2, showMaps: false, mapsPos: -1, gmbOpacity: 0 },
+  { month: 3, label: 'Month 3', tagline: 'Getting traction', color: '#f9ab00', page: 1, yourPos: 3, reviews: 28, stars: 4.4, showMaps: true, mapsPos: 3, gmbOpacity: 0.3 },
+  { month: 4, label: 'Month 4', tagline: 'Building authority', color: '#1e8e3e', page: 1, yourPos: 2, reviews: 45, stars: 4.5, showMaps: true, mapsPos: 2, gmbOpacity: 0.6 },
+  { month: 5, label: 'Month 5', tagline: 'Dominating search', color: '#1a73e8', page: 1, yourPos: 1, reviews: 89, stars: 4.7, showMaps: true, mapsPos: 1, gmbOpacity: 0.85 },
+  { month: 6, label: 'Month 6', tagline: 'Market leader', color: '#16a34a', page: 1, yourPos: 1, reviews: 127, stars: 4.9, showMaps: true, mapsPos: 1, gmbOpacity: 1 },
+];
+
+const seoCompetitors = [
+  { id: 'competitor', favicon: 'CR', name: 'Competitor Remodeling Co', url: 'www.competitor-remodeling.com › services', title: 'Competitor Remodeling Co - Professional Kitchen & Bath Renovation', desc: 'Trusted remodeling contractor with 15+ years of experience. We offer free consultations, custom designs, and full home renovations.', stars: 4.2, reviews: 43 },
+  { id: 'another', favicon: 'AR', name: 'Another Remodeling LLC', url: 'www.another-remodeler.com › about', title: 'Another Remodeling LLC - Licensed & Insured Contractors', desc: 'Family-owned remodeling company serving residential clients. BBB accredited. Financing available on all projects.', stars: 3.8, reviews: 19 },
+  { id: 'bigbox', favicon: 'BB', name: 'BigBox Remodeling Solutions', url: 'www.bigbox-remodeling.com › local', title: 'BigBox Remodeling Solutions - Affordable Home Renovation', desc: 'Affordable home renovation and remodeling services. Free estimates within 24 hours. Satisfaction guaranteed.', stars: 3.5, reviews: 8 },
+  { id: 'homeadvisor', favicon: 'HA', name: 'HomeAdvisor Remodeling', url: 'www.homeadvisor.com › remodeling › phoenix', title: 'Top 10 Remodeling Contractors in Phoenix - HomeAdvisor', desc: 'Find the best remodeling contractors in Phoenix. Read reviews, compare quotes, and hire the right pro for your project.', stars: 0, reviews: 0 },
+];
+
 function SEODemo() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
+  const [month, setMonth] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasPlayed, setHasPlayed] = useState(false);
+  const [displayReviews, setDisplayReviews] = useState(0);
+  const [displayStars, setDisplayStars] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const phase = seoPhases[month];
+
+  // Animation engine — advance month every 2200ms
+  useEffect(() => {
+    if (!isPlaying) return;
+    timerRef.current = setInterval(() => {
+      setMonth(prev => {
+        if (prev >= 6) {
+          setIsPlaying(false);
+          setHasPlayed(true);
+          if (timerRef.current) clearInterval(timerRef.current);
+          return 6;
+        }
+        return prev + 1;
+      });
+    }, 2200);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [isPlaying]);
+
+  // Smooth review/star counter interpolation
+  useEffect(() => {
+    const target = seoPhases[month];
+    const startReviews = displayReviews;
+    const startStars = displayStars;
+    const duration = 800;
+    const startTime = performance.now();
+
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      setDisplayReviews(Math.round(startReviews + (target.reviews - startReviews) * ease));
+      setDisplayStars(parseFloat((startStars + (target.stars - startStars) * ease).toFixed(1)));
+      if (t < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [month]);
+
+  const handlePlay = () => {
+    if (hasPlayed) {
+      setMonth(0);
+      setDisplayReviews(0);
+      setDisplayStars(0);
+      setHasPlayed(false);
+      setTimeout(() => setIsPlaying(true), 100);
+    } else {
+      setIsPlaying(true);
+    }
+  };
+
+  // Build organic results order based on current month
+  const getOrganicResults = () => {
+    const premier = {
+      id: 'premier', favicon: 'PR', name: 'Premier Remodeling Co',
+      url: 'www.premier-remodeling.com › services › phoenix',
+      title: 'Premier Remodeling Co - #1 Rated Remodeling Contractor in Phoenix',
+      desc: '5-star rated remodeling contractor serving Phoenix, Scottsdale, and the East Valley. Free consultations, detailed estimates, and financing available.',
+      stars: displayStars, reviews: displayReviews, isPremier: true,
+    };
+    if (phase.page === 3) {
+      return seoCompetitors.map(c => ({ ...c, isPremier: false }));
+    }
+    const pos = phase.yourPos;
+    const others = seoCompetitors.slice(0, 4);
+    const result: any[] = [];
+    let ci = 0;
+    for (let i = 1; i <= 5; i++) {
+      if (i === pos) result.push(premier);
+      else if (ci < others.length) { result.push({ ...others[ci], isPremier: false }); ci++; }
+    }
+    return result;
+  };
+
+  // Maps pack entries
+  const getMapsEntries = () => {
+    const premier = { favicon: 'PR', name: 'Premier Remodeling Co', stars: displayStars, reviews: displayReviews, location: 'Phoenix, AZ', isPremier: true };
+    const comps = [
+      { favicon: 'CR', name: 'Competitor Remodeling Co', stars: 4.2, reviews: 43, location: 'Phoenix, AZ', isPremier: false },
+      { favicon: 'AR', name: 'Another Remodeling LLC', stars: 3.8, reviews: 19, location: 'Glendale, AZ', isPremier: false },
+    ];
+    if (phase.mapsPos === 1) return [premier, comps[0], comps[1]];
+    if (phase.mapsPos === 2) return [comps[0], premier, comps[1]];
+    return [comps[0], comps[1], premier];
+  };
+
+  const cardBorderColor = month >= 5 ? 'rgba(148,217,107,0.35)' : '#E5E5E5';
+  const cardShadow = month >= 5 ? '0 8px 40px rgba(148,217,107,0.1)' : '0 2px 12px rgba(0,0,0,0.06)';
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
       <div style={S.lightPattern} />
       <div style={S.container}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Search Visibility</div>
           <h2 style={S.h2}>From Invisible to <HL>Unavoidable</HL></h2>
-          <p style={S.sub}>When homeowners search for your service, your business needs to be the first thing they see.</p>
+          <p style={S.sub}>Watch your business climb from page 3 to the #1 spot in 6 months.</p>
         </div>
 
+        {/* ─── Controls: Play + Timeline ─── */}
         <div style={{
-          display: 'grid', gridTemplateColumns: '1fr auto 1.35fr',
-          gap: '0', alignItems: 'start',
-          maxWidth: '1200px', margin: '0 auto',
+          display: 'flex', alignItems: 'center', gap: '20px',
+          maxWidth: '700px', margin: '0 auto 1.5rem',
           ...fadeUp(inView, 200),
         }}>
-          {/* ─── BEFORE ─── */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#d93025' }}>Before RevCore</span>
-              <span style={{ fontSize: '0.6rem', color: '#999', fontWeight: 600 }}>Page 3</span>
+          <button
+            onClick={handlePlay}
+            disabled={isPlaying}
+            style={{
+              width: 48, height: 48, borderRadius: '50%', border: 'none',
+              background: isPlaying ? '#e0e0e0' : 'linear-gradient(135deg, #FE6462, #6B8EFE)',
+              cursor: isPlaying ? 'default' : 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, transition: 'all 0.3s ease',
+              boxShadow: isPlaying ? 'none' : '0 4px 16px rgba(254,100,98,0.3)',
+            }}
+          >
+            {hasPlayed && !isPlaying ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+            )}
+          </button>
+
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', position: 'relative' }}>
+            <div style={{
+              position: 'absolute', top: '50%', left: '6px', right: '6px', height: '2px',
+              background: '#e0e0e0', transform: 'translateY(-50%)',
+            }} />
+            <div style={{
+              position: 'absolute', top: '50%', left: '6px', height: '2px',
+              width: `${(month / 6) * 100}%`,
+              background: 'linear-gradient(90deg, #FE6462, #6B8EFE, #16a34a)',
+              transform: 'translateY(-50%)',
+              transition: 'width 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+            }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', position: 'relative' }}>
+              {seoPhases.map((p, i) => (
+                <button
+                  key={i}
+                  onClick={() => { if (!isPlaying) { setMonth(i); if (i === 0) { setHasPlayed(false); } } }}
+                  style={{
+                    width: i === month ? 28 : 12,
+                    height: 12,
+                    borderRadius: i === month ? 6 : '50%',
+                    border: 'none',
+                    background: i <= month ? p.color : '#d0d0d0',
+                    cursor: isPlaying ? 'default' : 'pointer',
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    padding: 0,
+                  }}
+                  title={`${p.label}: ${p.tagline}`}
+                />
+              ))}
             </div>
-          <div style={{ ...S.card, overflow: 'hidden' }}>
+          </div>
+        </div>
 
-            <div style={{ background: '#fff', paddingBottom: '8px' }}>
-              {/* Google header */}
-              <div style={{ padding: '16px 20px 0' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '14px' }}>
-                  <svg width="74" height="24" viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#ea4335"/>
-                    <path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#fbbc05"/>
-                    <path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285f4"/>
-                    <path d="M225 3v65h-9.5V3h9.5z" fill="#34a853"/>
-                    <path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.96 0-11.84 4.37-11.59 12.93z" fill="#ea4335"/>
-                    <path d="M35.29 41.19V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49-.21z" fill="#4285f4"/>
-                  </svg>
-                </div>
+        {/* Month label */}
+        <div style={{ textAlign: 'center', marginBottom: '1.2rem', ...fadeUp(inView, 300) }}>
+          <span style={{
+            fontSize: '0.9rem', fontWeight: 700,
+            color: phase.color,
+            transition: 'color 0.6s ease',
+          }}>{phase.label}</span>
+          <span style={{ fontSize: '0.82rem', color: '#70757a', marginLeft: 8 }}>{phase.tagline}</span>
+          {displayReviews > 0 && (
+            <span style={{ fontSize: '0.78rem', color: '#5f6368', marginLeft: 12 }}>
+              {displayStars} ★ · {displayReviews} reviews
+            </span>
+          )}
+        </div>
+
+        {/* ─── Google Search Card ─── */}
+        <div style={{
+          ...S.card, overflow: 'hidden',
+          maxWidth: '1100px', margin: '0 auto',
+          border: `1px solid ${cardBorderColor}`,
+          boxShadow: cardShadow,
+          transition: 'border-color 0.8s ease, box-shadow 0.8s ease',
+          ...fadeUp(inView, 400),
+        }}>
+          <div style={{ background: '#fff' }}>
+            <div style={{ padding: '16px 20px 0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '14px' }}>
+                <svg width="74" height="24" viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#ea4335"/>
+                  <path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#fbbc05"/>
+                  <path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285f4"/>
+                  <path d="M225 3v65h-9.5V3h9.5z" fill="#34a853"/>
+                  <path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.96 0-11.84 4.37-11.59 12.93z" fill="#ea4335"/>
+                  <path d="M35.29 41.19V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49-.21z" fill="#4285f4"/>
+                </svg>
               </div>
-              <GoogleSearchBar />
-              <GoogleTabs />
+            </div>
+            <GoogleSearchBar />
+            <GoogleTabs />
 
-              <div style={{ padding: '4px 20px 0' }}>
+            <div style={{ display: 'flex', gap: '0' }}>
+              {/* Left — search results */}
+              <div style={{ flex: 1, padding: '4px 20px 16px' }}>
                 <div style={{ fontSize: '0.72rem', color: '#70757a', padding: '8px 0' }}>About 2,340,000 results (0.42 seconds)</div>
 
-                {/* Sponsored ad */}
-                <div style={{ padding: '10px 0', borderBottom: '1px solid #ebebeb' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#202124', background: '#f1f3f4', padding: '2px 6px', borderRadius: '3px', border: '1px solid #dadce0' }}>Sponsored</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                    <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#e8f0fe', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#1a73e8' }}>AR</div>
-                    <div style={{ fontSize: '0.72rem', color: '#202124' }}>www.acme-remodeling-ads.com</div>
-                  </div>
-                  <div style={{ fontSize: '1rem', color: '#1a0dab', marginBottom: '3px', cursor: 'pointer' }}>Acme Remodeling - Get A Free Quote Today</div>
-                  <div style={{ fontSize: '0.8rem', color: '#4d5156', lineHeight: 1.45 }}>Top rated remodeling company. Call now for a free estimate. Licensed &amp; insured. Serving the greater metro area.</div>
-                </div>
-
-                <GoogleResult
-                  url="www.competitor-remodeling.com › services"
-                  favicon="CR"
-                  title="Competitor Remodeling Co - Professional Kitchen & Bath Renovation"
-                  desc="Trusted remodeling contractor with 15+ years of experience. We offer free consultations, custom designs, and full home renovations. Call today for your estimate."
-                />
-                <div style={{ borderBottom: '1px solid #ebebeb' }} />
-                <GoogleResult
-                  url="www.another-remodeler.com › about"
-                  favicon="AR"
-                  title="Another Remodeling LLC - Licensed & Insured Contractors"
-                  desc="Family-owned remodeling company serving residential clients. BBB accredited. Financing available on all projects."
-                />
-                <div style={{ borderBottom: '1px solid #ebebeb' }} />
-                <GoogleResult
-                  url="www.bigbox-remodeling.com › local"
-                  favicon="BB"
-                  title="BigBox Remodeling Solutions - Affordable Home Renovation"
-                  desc="Affordable home renovation and remodeling services. Free estimates within 24 hours. Satisfaction guaranteed on all work."
-                  dimmed
-                />
-
-                {/* Your listing buried notice */}
-                <div style={{ padding: '18px 12px 8px', textAlign: 'center' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#999', fontStyle: 'italic' }}>
-                    Your business... somewhere on page 3
-                  </span>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '10px' }}>
-                    {[1, 2, 3, 4, 5].map(n => (
-                      <span key={n} style={{
-                        width: '28px', height: '28px', borderRadius: '50%',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '0.75rem', fontWeight: 500,
-                        background: n === 3 ? '#FE646215' : 'transparent',
-                        color: n === 1 ? '#1a73e8' : n === 3 ? '#FE6462' : '#70757a',
-                        border: n === 3 ? '1px solid #FE646230' : 'none',
-                        cursor: 'pointer',
-                      }}>{n}</span>
-                    ))}
+                {/* Sponsored ad — fades out after month 1 */}
+                <div style={{
+                  maxHeight: month <= 1 ? '120px' : '0',
+                  opacity: month <= 1 ? 1 : 0,
+                  overflow: 'hidden',
+                  transition: 'max-height 0.6s ease, opacity 0.4s ease',
+                }}>
+                  <div style={{ padding: '10px 0', borderBottom: '1px solid #ebebeb' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                      <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#202124', background: '#f1f3f4', padding: '2px 6px', borderRadius: '3px', border: '1px solid #dadce0' }}>Sponsored</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                      <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#e8f0fe', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#1a73e8' }}>AR</div>
+                      <div style={{ fontSize: '0.72rem', color: '#202124' }}>www.acme-remodeling-ads.com</div>
+                    </div>
+                    <div style={{ fontSize: '1rem', color: '#1a0dab', marginBottom: '3px', cursor: 'pointer' }}>Acme Remodeling - Get A Free Quote Today</div>
+                    <div style={{ fontSize: '0.8rem', color: '#4d5156', lineHeight: 1.45 }}>Top rated remodeling company. Call now for a free estimate.</div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-          </div>
 
-          {/* ─── ARROW ─── */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 12px', marginTop: '36px' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 6 15 12 9 18" />
-            </svg>
-          </div>
-
-          {/* ─── AFTER ─── */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#16a34a' }}>After RevCore</span>
-              <span style={{ fontSize: '0.6rem', color: '#16a34a', fontWeight: 600 }}>#1 in Maps + Organic</span>
-            </div>
-          <div style={{
-            ...S.card, overflow: 'hidden',
-            border: '1px solid rgba(148,217,107,0.25)',
-            boxShadow: '0 8px 40px rgba(148,217,107,0.08)',
-          }}>
-            <div style={{ background: '#fff' }}>
-              {/* Google header */}
-              <div style={{ padding: '16px 20px 0' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '14px' }}>
-                  <svg width="74" height="24" viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#ea4335"/>
-                    <path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#fbbc05"/>
-                    <path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285f4"/>
-                    <path d="M225 3v65h-9.5V3h9.5z" fill="#34a853"/>
-                    <path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.96 0-11.84 4.37-11.59 12.93z" fill="#ea4335"/>
-                    <path d="M35.29 41.19V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49-.21z" fill="#4285f4"/>
-                  </svg>
-                </div>
-              </div>
-              <GoogleSearchBar />
-              <GoogleTabs />
-
-              {/* Two-column: search results left, GMB knowledge panel right */}
-              <div style={{ display: 'flex', gap: '0', padding: '0' }}>
-                {/* Left — search results */}
-                <div style={{ flex: 1, padding: '4px 20px 16px' }}>
-                  <div style={{ fontSize: '0.72rem', color: '#70757a', padding: '8px 0' }}>About 2,340,000 results (0.38 seconds)</div>
-
-                  {/* Google Maps 3-Pack */}
+                {/* Google Maps 3-Pack — slides in at month 3 */}
+                <div style={{
+                  maxHeight: phase.showMaps ? '400px' : '0',
+                  opacity: phase.showMaps ? 1 : 0,
+                  overflow: 'hidden',
+                  transition: 'max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease',
+                }}>
                   <div style={{
                     padding: '14px', borderRadius: '12px', marginBottom: '6px',
                     background: '#fff', border: '1px solid #dadce0',
@@ -2351,88 +2460,127 @@ function SEODemo() {
                       <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#34a853"/><circle cx="12" cy="9" r="2.5" fill="#fff"/></svg>
                       <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#202124' }}>Places</span>
                     </div>
-
-                    {/* #1 — Your business */}
-                    <div style={{
-                      display: 'flex', alignItems: 'flex-start', gap: '10px',
-                      padding: '10px', borderRadius: '8px', marginBottom: '6px',
-                      background: 'rgba(148,217,107,0.06)', border: '1px solid rgba(148,217,107,0.2)',
-                    }}>
-                      <div style={{
-                        width: '32px', height: '32px', borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '0.55rem', fontWeight: 700, color: '#fff', flexShrink: 0,
-                      }}>PR</div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#1a0dab' }}>Premier Remodeling Co</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
-                          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#202124' }}>4.9</span>
-                          <div style={{ display: 'flex', gap: '0px' }}>
-                            {[1,2,3,4,5].map(s => (
-                              <svg key={s} width="12" height="12" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>
-                            ))}
+                    {getMapsEntries().map((entry, i) => (
+                      <div key={entry.name} style={{
+                        display: 'flex', alignItems: 'flex-start', gap: '10px',
+                        padding: entry.isPremier ? '10px' : '8px 10px',
+                        borderRadius: entry.isPremier ? '8px' : '0',
+                        marginBottom: i < 2 ? '6px' : '0',
+                        background: entry.isPremier ? 'rgba(148,217,107,0.06)' : 'transparent',
+                        border: entry.isPremier ? '1px solid rgba(148,217,107,0.2)' : '1px solid transparent',
+                        opacity: entry.isPremier ? 1 : 0.6,
+                        transition: 'all 0.6s ease',
+                      }}>
+                        <div style={{
+                          width: '32px', height: '32px', borderRadius: '50%',
+                          background: entry.isPremier ? 'linear-gradient(135deg, #ff7a1a, #e85d04)' : '#e8eaed',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: '0.55rem', fontWeight: 700,
+                          color: entry.isPremier ? '#fff' : '#5f6368', flexShrink: 0,
+                        }}>{entry.favicon}</div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: entry.isPremier ? '0.88rem' : '0.85rem', fontWeight: 600, color: '#1a0dab' }}>{entry.name}</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
+                            <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#202124' }}>{entry.isPremier ? displayStars : entry.stars}</span>
+                            <div style={{ display: 'flex', gap: '0px' }}>
+                              {[1,2,3,4,5].map(s => (
+                                <svg key={s} width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill={s <= Math.round(entry.isPremier ? displayStars : entry.stars) ? '#fbbc04' : '#dadce0'}/></svg>
+                              ))}
+                            </div>
+                            <span style={{ fontSize: '0.68rem', color: '#70757a' }}>({entry.isPremier ? displayReviews : entry.reviews})</span>
                           </div>
-                          <span style={{ fontSize: '0.7rem', color: '#70757a' }}>(127)</span>
+                          <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Remodeling contractor · {entry.location}</div>
+                          {entry.isPremier && <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Open · Closes 6 PM</div>}
                         </div>
-                        <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Remodeling contractor · Phoenix, AZ</div>
-                        <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Open · Closes 6 PM</div>
                       </div>
-                    </div>
-
-                    {/* #2 — Competitor */}
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '8px 10px', opacity: 0.6 }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e8eaed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#5f6368', flexShrink: 0 }}>CR</div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a0dab' }}>Competitor Remodeling Co</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
-                          <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#202124' }}>4.2</span>
-                          <div style={{ display: 'flex' }}>{[1,2,3,4].map(s => <svg key={s} width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>)}<svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#dadce0"/></svg></div>
-                          <span style={{ fontSize: '0.68rem', color: '#70757a' }}>(43)</span>
-                        </div>
-                        <div style={{ fontSize: '0.7rem', color: '#70757a' }}>Remodeling contractor · Phoenix, AZ</div>
-                      </div>
-                    </div>
-
-                    {/* #3 — Another */}
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '8px 10px', opacity: 0.5 }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e8eaed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#5f6368', flexShrink: 0 }}>AR</div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a0dab' }}>Another Remodeling LLC</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
-                          <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#202124' }}>3.8</span>
-                          <div style={{ display: 'flex' }}>{[1,2,3,4].map(s => <svg key={s} width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill={s <= 3 ? '#fbbc04' : '#dadce0'}/></svg>)}<svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#dadce0"/></svg></div>
-                          <span style={{ fontSize: '0.68rem', color: '#70757a' }}>(19)</span>
-                        </div>
-                        <div style={{ fontSize: '0.7rem', color: '#70757a' }}>Remodeling contractor · Glendale, AZ</div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-
-                  {/* Organic #1 — Your site */}
-                  <GoogleResult
-                    url="www.premier-remodeling.com › services › phoenix"
-                    favicon="PR"
-                    title="Premier Remodeling Co - #1 Rated Remodeling Contractor in Phoenix"
-                    desc="5-star rated remodeling contractor serving Phoenix, Scottsdale, and the East Valley. Free consultations, detailed estimates, and financing available. Book online 24/7."
-                  />
-                  <div style={{ borderBottom: '1px solid #ebebeb' }} />
-                  <GoogleResult
-                    url="www.competitor-remodeling.com › services"
-                    favicon="CR"
-                    title="Competitor Remodeling Co - Free Estimates"
-                    desc="Professional remodeling services for your area. Licensed and insured contractor."
-                    dimmed
-                  />
                 </div>
 
-                {/* Right — GMB Knowledge Panel */}
-                <div style={{ width: '260px', flexShrink: 0, borderLeft: '1px solid #ebebeb', padding: '12px' }}>
+                {/* Organic results */}
+                {getOrganicResults().map((r: any, i: number) => (
+                  <div key={r.id}>
+                    <div style={{
+                      padding: '14px 0',
+                      opacity: r.isPremier ? 1 : (phase.page === 3 ? 1 : 0.7),
+                      borderLeft: r.isPremier ? '3px solid #94D96B' : '3px solid transparent',
+                      paddingLeft: r.isPremier ? '12px' : '0',
+                      transition: 'all 0.6s ease',
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                        <div style={{
+                          width: '26px', height: '26px', borderRadius: '50%',
+                          background: r.isPremier ? 'linear-gradient(135deg, #ff7a1a, #e85d04)' : '#f1f3f4',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: '0.6rem', fontWeight: 700,
+                          color: r.isPremier ? '#fff' : '#5f6368', flexShrink: 0,
+                        }}>{r.favicon}</div>
+                        <div>
+                          <div style={{ fontSize: '0.72rem', color: '#202124', lineHeight: 1.2 }}>{r.url}</div>
+                          <div style={{ fontSize: '0.65rem', color: '#4d5156' }}>{r.url.split(' › ')[0]}</div>
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '1.05rem', color: '#1a0dab', marginBottom: '4px', lineHeight: 1.3, cursor: 'pointer' }}>{r.title}</div>
+                      <div style={{ fontSize: '0.82rem', color: '#4d5156', lineHeight: 1.5 }}>{r.desc}</div>
+                      {r.isPremier && displayReviews > 0 && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+                          <div style={{ display: 'flex', gap: '0px' }}>
+                            {[1,2,3,4,5].map(s => (
+                              <svg key={s} width="12" height="12" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill={s <= Math.round(displayStars) ? '#fbbc04' : '#dadce0'}/></svg>
+                            ))}
+                          </div>
+                          <span style={{ fontSize: '0.75rem', color: '#70757a' }}>{displayStars} ({displayReviews} reviews)</span>
+                        </div>
+                      )}
+                    </div>
+                    {i < getOrganicResults().length - 1 && <div style={{ borderBottom: '1px solid #ebebeb' }} />}
+                  </div>
+                ))}
+
+                {/* Pagination — visible only at month 0-1 */}
+                <div style={{
+                  maxHeight: month <= 1 ? '60px' : '0',
+                  opacity: month <= 1 ? 1 : 0,
+                  overflow: 'hidden',
+                  transition: 'max-height 0.6s ease, opacity 0.4s ease',
+                }}>
+                  <div style={{ padding: '14px 0 8px', textAlign: 'center' }}>
+                    {phase.page === 3 && (
+                      <span style={{ fontSize: '0.8rem', color: '#999', fontStyle: 'italic', display: 'block', marginBottom: '8px' }}>
+                        Your business... somewhere on page 3
+                      </span>
+                    )}
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '6px' }}>
+                      {[1, 2, 3, 4, 5].map(n => (
+                        <span key={n} style={{
+                          width: '28px', height: '28px', borderRadius: '50%',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: '0.75rem', fontWeight: 500,
+                          background: (phase.page === 3 && n === 3) ? '#FE646215' : (phase.page === 1 && n === 1) ? '#e8f0fe' : 'transparent',
+                          color: (phase.page === 3 && n === 3) ? '#FE6462' : (n === 1) ? '#1a73e8' : '#70757a',
+                          border: (phase.page === 3 && n === 3) ? '1px solid #FE646230' : 'none',
+                          cursor: 'pointer',
+                        }}>{n}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right — GMB Knowledge Panel (slides in) */}
+              <div style={{
+                width: phase.gmbOpacity > 0 ? '260px' : '0',
+                opacity: phase.gmbOpacity,
+                overflow: 'hidden',
+                flexShrink: 0,
+                borderLeft: phase.gmbOpacity > 0 ? '1px solid #ebebeb' : 'none',
+                transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease, border-left 0.4s ease',
+              }}>
+                <div style={{ width: '260px', padding: '12px' }}>
                   <div style={{
                     border: '1px solid #dadce0', borderRadius: '12px', overflow: 'hidden',
                     background: '#fff',
                   }}>
-                    {/* Business logo header */}
                     <div style={{
                       height: 80, background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -2444,13 +2592,13 @@ function SEODemo() {
                       <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#202124', marginBottom: 4 }}>Premier Remodeling Co</div>
                       <div style={{ fontSize: '0.78rem', color: '#70757a', marginBottom: 8 }}>Remodeling contractor</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: 12 }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#202124' }}>4.9</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#202124' }}>{displayStars}</span>
                         <div style={{ display: 'flex' }}>
                           {[1,2,3,4,5].map(s => (
-                            <svg key={s} width="14" height="14" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>
+                            <svg key={s} width="14" height="14" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill={s <= Math.round(displayStars) ? '#fbbc04' : '#dadce0'}/></svg>
                           ))}
                         </div>
-                        <span style={{ fontSize: '0.75rem', color: '#1a73e8' }}>127 reviews</span>
+                        <span style={{ fontSize: '0.75rem', color: '#1a73e8' }}>{displayReviews} reviews</span>
                       </div>
 
                       <div style={{ borderTop: '1px solid #ebebeb', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -2493,7 +2641,6 @@ function SEODemo() {
                 </div>
               </div>
             </div>
-          </div>
           </div>
         </div>
       </div>
