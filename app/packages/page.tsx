@@ -2201,9 +2201,9 @@ const seoPhases = [
   { month: 1, label: 'Month 1', tagline: 'Claimed & optimized', color: '#ea4335', page: 1, yourPos: 5, reviews: 0, stars: 0, showMaps: false, mapsPos: -1, gmbOpacity: 0 },
   { month: 2, label: 'Month 2', tagline: 'Climbing the ranks', color: '#e8710a', page: 1, yourPos: 4, reviews: 12, stars: 4.2, showMaps: false, mapsPos: -1, gmbOpacity: 0 },
   { month: 3, label: 'Month 3', tagline: 'Getting traction', color: '#f9ab00', page: 1, yourPos: 3, reviews: 28, stars: 4.4, showMaps: true, mapsPos: 3, gmbOpacity: 0.3 },
-  { month: 4, label: 'Month 4', tagline: 'Building authority', color: '#1e8e3e', page: 1, yourPos: 2, reviews: 45, stars: 4.5, showMaps: true, mapsPos: 2, gmbOpacity: 0.6 },
-  { month: 5, label: 'Month 5', tagline: 'Dominating search', color: '#1a73e8', page: 1, yourPos: 1, reviews: 89, stars: 4.7, showMaps: true, mapsPos: 1, gmbOpacity: 0.85 },
-  { month: 6, label: 'Month 6', tagline: 'Market leader', color: '#16a34a', page: 1, yourPos: 1, reviews: 127, stars: 4.9, showMaps: true, mapsPos: 1, gmbOpacity: 1 },
+  { month: 4, label: 'Month 4', tagline: 'Building authority', color: '#1e8e3e', page: 1, yourPos: 3, reviews: 45, stars: 4.5, showMaps: true, mapsPos: 3, gmbOpacity: 0.6 },
+  { month: 5, label: 'Month 5', tagline: 'Dominating search', color: '#1a73e8', page: 1, yourPos: 2, reviews: 89, stars: 4.7, showMaps: true, mapsPos: 2, gmbOpacity: 0.85 },
+  { month: 6, label: 'Month 6', tagline: 'Top 3 in your market', color: '#16a34a', page: 1, yourPos: 1, reviews: 127, stars: 4.9, showMaps: true, mapsPos: 1, gmbOpacity: 1 },
 ];
 
 const seoCompetitors = [
@@ -2286,7 +2286,7 @@ function SEODemo() {
         <div style={{ textAlign: 'center', marginBottom: '2.5rem', ...fadeUp(inView) }}>
           <div style={S.eyebrow}>Search Visibility</div>
           <h2 style={S.h2}>From Invisible to <HL>Unavoidable</HL></h2>
-          <p style={S.sub}>Watch your business climb from page 3 to the #1 spot in 6 months.</p>
+          <p style={S.sub}>Watch your business climb from page 3 to the top 3 in 6 months.</p>
         </div>
 
         {/* ─── Timeline Steps ─── */}
