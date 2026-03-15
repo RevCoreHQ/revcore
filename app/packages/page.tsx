@@ -2208,22 +2208,18 @@ function SEODemo() {
           <p style={S.sub}>When homeowners search for your service, your business needs to be the first thing they see.</p>
         </div>
 
-        <div className="seo-grid-2" style={{
-          display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '0',
-          maxWidth: '1100px', margin: '0 auto',
-          alignItems: 'center',
+        <div style={{
+          display: 'flex', flexDirection: 'column', gap: '32px',
+          maxWidth: '1200px', margin: '0 auto',
           ...fadeUp(inView, 200),
         }}>
           {/* ─── BEFORE ─── */}
-          <div style={{ ...S.card, overflow: 'hidden' }}>
-            <div style={{
-              padding: '10px 16px', background: '#fafafa',
-              borderBottom: '1px solid #E5E5E5',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
               <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#d93025' }}>Before RevCore</span>
               <span style={{ fontSize: '0.65rem', color: '#999', fontWeight: 600 }}>Page 3</span>
             </div>
+          <div style={{ ...S.card, overflow: 'hidden', maxWidth: '680px' }}>
 
             <div style={{ background: '#fff', paddingBottom: '8px' }}>
               {/* Google header */}
@@ -2302,9 +2298,10 @@ function SEODemo() {
               </div>
             </div>
           </div>
+          </div>
 
           {/* ─── ARROW ─── */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 0' }}>
             <div style={{
               width: 48, height: 48, borderRadius: '50%',
               background: 'linear-gradient(135deg, #FE6462, #94D96B)',
@@ -2312,28 +2309,24 @@ function SEODemo() {
               boxShadow: '0 4px 16px rgba(254,100,98,0.25)',
             }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <polyline points="5 12 12 19 19 12" />
               </svg>
             </div>
           </div>
 
           {/* ─── AFTER ─── */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#16a34a' }}>After RevCore</span>
+              <span style={{ fontSize: '0.65rem', color: '#16a34a', fontWeight: 600 }}>#1 in Maps + Organic</span>
+            </div>
           <div style={{
             ...S.card, overflow: 'hidden',
             border: '1px solid rgba(148,217,107,0.25)',
             boxShadow: '0 8px 40px rgba(148,217,107,0.08)',
           }}>
-            <div style={{
-              padding: '10px 16px', background: 'rgba(148,217,107,0.06)',
-              borderBottom: '1px solid rgba(148,217,107,0.15)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#16a34a' }}>After RevCore</span>
-              <span style={{ fontSize: '0.65rem', color: '#16a34a', fontWeight: 600 }}>#1 in Maps + Organic</span>
-            </div>
-
-            <div style={{ background: '#fff', paddingBottom: '8px' }}>
+            <div style={{ background: '#fff' }}>
               {/* Google header */}
               <div style={{ padding: '16px 20px 0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '14px' }}>
@@ -2350,142 +2343,164 @@ function SEODemo() {
               <GoogleSearchBar />
               <GoogleTabs />
 
-              <div style={{ padding: '4px 20px 0' }}>
-                <div style={{ fontSize: '0.72rem', color: '#70757a', padding: '8px 0' }}>About 2,340,000 results (0.38 seconds)</div>
+              {/* Two-column: search results left, GMB knowledge panel right */}
+              <div style={{ display: 'flex', gap: '0', padding: '0' }}>
+                {/* Left — search results */}
+                <div style={{ flex: 1, padding: '4px 20px 16px' }}>
+                  <div style={{ fontSize: '0.72rem', color: '#70757a', padding: '8px 0' }}>About 2,340,000 results (0.38 seconds)</div>
 
-                {/* Google Maps 3-Pack */}
-                <div style={{
-                  padding: '14px', borderRadius: '12px', marginBottom: '6px',
-                  background: '#fff', border: '1px solid #dadce0',
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid #ebebeb' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#34a853"/><circle cx="12" cy="9" r="2.5" fill="#fff"/></svg>
-                    <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#202124' }}>Places</span>
+                  {/* Google Maps 3-Pack */}
+                  <div style={{
+                    padding: '14px', borderRadius: '12px', marginBottom: '6px',
+                    background: '#fff', border: '1px solid #dadce0',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid #ebebeb' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#34a853"/><circle cx="12" cy="9" r="2.5" fill="#fff"/></svg>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#202124' }}>Places</span>
+                    </div>
+
+                    {/* #1 — Your business */}
+                    <div style={{
+                      display: 'flex', alignItems: 'flex-start', gap: '10px',
+                      padding: '10px', borderRadius: '8px', marginBottom: '6px',
+                      background: 'rgba(148,217,107,0.06)', border: '1px solid rgba(148,217,107,0.2)',
+                    }}>
+                      <div style={{
+                        width: '32px', height: '32px', borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '0.55rem', fontWeight: 700, color: '#fff', flexShrink: 0,
+                      }}>PR</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#1a0dab' }}>Premier Remodeling Co</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#202124' }}>4.9</span>
+                          <div style={{ display: 'flex', gap: '0px' }}>
+                            {[1,2,3,4,5].map(s => (
+                              <svg key={s} width="12" height="12" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>
+                            ))}
+                          </div>
+                          <span style={{ fontSize: '0.7rem', color: '#70757a' }}>(127)</span>
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Remodeling contractor · Phoenix, AZ</div>
+                        <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Open · Closes 6 PM</div>
+                      </div>
+                    </div>
+
+                    {/* #2 — Competitor */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '8px 10px', opacity: 0.6 }}>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e8eaed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#5f6368', flexShrink: 0 }}>CR</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a0dab' }}>Competitor Remodeling Co</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
+                          <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#202124' }}>4.2</span>
+                          <div style={{ display: 'flex' }}>{[1,2,3,4].map(s => <svg key={s} width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>)}<svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#dadce0"/></svg></div>
+                          <span style={{ fontSize: '0.68rem', color: '#70757a' }}>(43)</span>
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: '#70757a' }}>Remodeling contractor · Phoenix, AZ</div>
+                      </div>
+                    </div>
+
+                    {/* #3 — Another */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '8px 10px', opacity: 0.5 }}>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e8eaed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#5f6368', flexShrink: 0 }}>AR</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a0dab' }}>Another Remodeling LLC</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
+                          <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#202124' }}>3.8</span>
+                          <div style={{ display: 'flex' }}>{[1,2,3,4].map(s => <svg key={s} width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill={s <= 3 ? '#fbbc04' : '#dadce0'}/></svg>)}<svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#dadce0"/></svg></div>
+                          <span style={{ fontSize: '0.68rem', color: '#70757a' }}>(19)</span>
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: '#70757a' }}>Remodeling contractor · Glendale, AZ</div>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* #1 — Your business */}
+                  {/* Organic #1 — Your site */}
+                  <GoogleResult
+                    url="www.premier-remodeling.com › services › phoenix"
+                    favicon="PR"
+                    title="Premier Remodeling Co - #1 Rated Remodeling Contractor in Phoenix"
+                    desc="5-star rated remodeling contractor serving Phoenix, Scottsdale, and the East Valley. Free consultations, detailed estimates, and financing available. Book online 24/7."
+                  />
+                  <div style={{ borderBottom: '1px solid #ebebeb' }} />
+                  <GoogleResult
+                    url="www.competitor-remodeling.com › services"
+                    favicon="CR"
+                    title="Competitor Remodeling Co - Free Estimates"
+                    desc="Professional remodeling services for your area. Licensed and insured contractor."
+                    dimmed
+                  />
+                </div>
+
+                {/* Right — GMB Knowledge Panel */}
+                <div style={{ width: '290px', flexShrink: 0, borderLeft: '1px solid #ebebeb', padding: '16px' }}>
                   <div style={{
-                    display: 'flex', alignItems: 'flex-start', gap: '10px',
-                    padding: '10px', borderRadius: '8px', marginBottom: '6px',
-                    background: 'rgba(148,217,107,0.06)', border: '1px solid rgba(148,217,107,0.2)',
+                    border: '1px solid #dadce0', borderRadius: '12px', overflow: 'hidden',
+                    background: '#fff',
                   }}>
+                    {/* Business logo header */}
                     <div style={{
-                      width: '32px', height: '32px', borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
+                      height: 80, background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '0.55rem', fontWeight: 700, color: '#fff', flexShrink: 0,
-                    }}>PR</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#1a0dab' }}>Premier Remodeling Co</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
-                        <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#202124' }}>4.9</span>
-                        <div style={{ display: 'flex', gap: '0px' }}>
+                    }}>
+                      <span style={{ fontSize: '2rem', fontWeight: 800, color: '#fff', letterSpacing: '0.05em' }}>PR</span>
+                    </div>
+
+                    <div style={{ padding: '16px' }}>
+                      <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#202124', marginBottom: 4 }}>Premier Remodeling Co</div>
+                      <div style={{ fontSize: '0.78rem', color: '#70757a', marginBottom: 8 }}>Remodeling contractor</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: 12 }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#202124' }}>4.9</span>
+                        <div style={{ display: 'flex' }}>
                           {[1,2,3,4,5].map(s => (
-                            <svg key={s} width="12" height="12" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>
+                            <svg key={s} width="14" height="14" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>
                           ))}
                         </div>
-                        <span style={{ fontSize: '0.7rem', color: '#70757a' }}>(127)</span>
+                        <span style={{ fontSize: '0.75rem', color: '#1a73e8' }}>127 reviews</span>
                       </div>
-                      <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Remodeling contractor · Phoenix, AZ</div>
-                      <div style={{ fontSize: '0.72rem', color: '#70757a' }}>Open · Closes 6 PM</div>
-                    </div>
-                  </div>
 
-                  {/* #2 — Competitor */}
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '8px 10px', opacity: 0.6 }}>
-                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e8eaed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#5f6368', flexShrink: 0 }}>CR</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a0dab' }}>Competitor Remodeling Co</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
-                        <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#202124' }}>4.2</span>
-                        <div style={{ display: 'flex' }}>{[1,2,3,4].map(s => <svg key={s} width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>)}<svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#dadce0"/></svg></div>
-                        <span style={{ fontSize: '0.68rem', color: '#70757a' }}>(43)</span>
+                      <div style={{ borderTop: '1px solid #ebebeb', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="#70757a"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+                          <span style={{ fontSize: '0.78rem', color: '#202124' }}>Phoenix, AZ</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="#70757a"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+                          <span style={{ fontSize: '0.78rem', color: '#188038', fontWeight: 500 }}>Open · Closes 6 PM</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="#70757a"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                          <span style={{ fontSize: '0.78rem', color: '#1a73e8' }}>(602) 555-0100</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="#70757a"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95a15.65 15.65 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.92 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96z"/></svg>
+                          <span style={{ fontSize: '0.78rem', color: '#1a73e8' }}>premier-remodeling.com</span>
+                        </div>
                       </div>
-                      <div style={{ fontSize: '0.7rem', color: '#70757a' }}>Remodeling contractor · Phoenix, AZ</div>
-                    </div>
-                  </div>
 
-                  {/* #3 — Another */}
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '8px 10px', opacity: 0.5 }}>
-                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e8eaed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: '#5f6368', flexShrink: 0 }}>AR</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a0dab' }}>Another Remodeling LLC</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
-                        <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#202124' }}>3.8</span>
-                        <div style={{ display: 'flex' }}>{[1,2,3,4].map(s => <svg key={s} width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill={s <= 3 ? '#fbbc04' : '#dadce0'}/></svg>)}<svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#dadce0"/></svg></div>
-                        <span style={{ fontSize: '0.68rem', color: '#70757a' }}>(19)</span>
-                      </div>
-                      <div style={{ fontSize: '0.7rem', color: '#70757a' }}>Remodeling contractor · Glendale, AZ</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Organic #1 — Your site */}
-                <GoogleResult
-                  url="www.premier-remodeling.com › services › phoenix"
-                  favicon="PR"
-                  title="Premier Remodeling Co - #1 Rated Remodeling Contractor in Phoenix"
-                  desc="5-star rated remodeling contractor serving Phoenix, Scottsdale, and the East Valley. Free consultations, detailed estimates, and financing available. Book online 24/7."
-                />
-                <div style={{ borderBottom: '1px solid #ebebeb' }} />
-                <GoogleResult
-                  url="www.competitor-remodeling.com › services"
-                  favicon="CR"
-                  title="Competitor Remodeling Co - Free Estimates"
-                  desc="Professional remodeling services for your area. Licensed and insured contractor."
-                  dimmed
-                />
-              </div>
-
-              {/* Google Business Profile Panel */}
-              <div style={{
-                margin: '0 20px 16px', padding: '16px', borderRadius: '12px',
-                border: '1px solid rgba(148,217,107,0.2)', background: 'rgba(148,217,107,0.03)',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22 9.74l-2 1.02-1-1.74 2-1.02-2-1.02 1-1.74 2 1.02L22 4h2v2.26l2 1.02-1 1.74-2-1.02 2 1.02-1 1.74-2-1.02V12h-2V9.74z" fill="#4285f4"/><path d="M5.27 8L3 9.04 2 7.3l2.27-1.04L2 5.22 3 3.48l2.27 1.04V2h2v2.52L9.54 3.48l1 1.74-2.27 1.04 2.27 1.04-1 1.74L7.27 8V10h-2V8z" fill="#ea4335"/><path d="M12 11v2H2v9h20v-9h-2v7H4v-5h16v-2h-6v-2h-2z" fill="#34a853"/><path d="M20 13v7H4v-5h16v-2z" fill="#34a853" opacity="0.4"/></svg>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#202124' }}>Google Business Profile</span>
-                </div>
-                <div style={{ display: 'flex', gap: '14px' }}>
-                  <div style={{
-                    width: 72, height: 72, borderRadius: 10,
-                    background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '1.4rem', fontWeight: 800, color: '#fff', flexShrink: 0,
-                  }}>PR</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#202124', marginBottom: 2 }}>Premier Remodeling Co</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: 4 }}>
-                      <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#202124' }}>4.9</span>
-                      <div style={{ display: 'flex' }}>
-                        {[1,2,3,4,5].map(s => (
-                          <svg key={s} width="14" height="14" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#fbbc04"/></svg>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 14 }}>
+                        {['Call', 'Directions', 'Website'].map(action => (
+                          <div key={action} style={{
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                            padding: '10px 4px', borderRadius: 8,
+                            background: '#f1f3f4',
+                            color: '#1a73e8',
+                            fontSize: '0.68rem', fontWeight: 600, cursor: 'pointer',
+                          }}>
+                            {action === 'Call' && <svg width="16" height="16" viewBox="0 0 24 24" fill="#1a73e8"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>}
+                            {action === 'Directions' && <svg width="16" height="16" viewBox="0 0 24 24" fill="#1a73e8"><path d="M21.71 11.29l-9-9a.996.996 0 0 0-1.41 0l-9 9a.996.996 0 0 0 0 1.41l9 9c.39.39 1.02.39 1.41 0l9-9a.996.996 0 0 0 0-1.41zM14 14.5V12h-4v3H8v-4c0-.55.45-1 1-1h5V7.5l3.5 3.5-3.5 3.5z"/></svg>}
+                            {action === 'Website' && <svg width="16" height="16" viewBox="0 0 24 24" fill="#1a73e8"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95a15.65 15.65 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.92 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.987 7.987 0 0 1 5.08 16z"/></svg>}
+                            {action}
+                          </div>
                         ))}
                       </div>
-                      <span style={{ fontSize: '0.75rem', color: '#70757a' }}>127 reviews</span>
                     </div>
-                    <div style={{ fontSize: '0.78rem', color: '#70757a', marginBottom: 2 }}>Remodeling contractor · Phoenix, AZ</div>
-                    <div style={{ fontSize: '0.78rem', color: '#188038', fontWeight: 500 }}>Open · Closes 6 PM</div>
                   </div>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 12 }}>
-                  {['Call', 'Directions', 'Website'].map(action => (
-                    <div key={action} style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                      padding: '8px', borderRadius: 8,
-                      background: action === 'Call' ? '#1a73e8' : '#f1f3f4',
-                      color: action === 'Call' ? '#fff' : '#1a73e8',
-                      fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer',
-                    }}>
-                      {action === 'Call' && <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>}
-                      {action === 'Directions' && <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M21.71 11.29l-9-9a.996.996 0 0 0-1.41 0l-9 9a.996.996 0 0 0 0 1.41l9 9c.39.39 1.02.39 1.41 0l9-9a.996.996 0 0 0 0-1.41zM14 14.5V12h-4v3H8v-4c0-.55.45-1 1-1h5V7.5l3.5 3.5-3.5 3.5z"/></svg>}
-                      {action === 'Website' && <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95a15.65 15.65 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.92 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.987 7.987 0 0 1 5.08 16z"/></svg>}
-                      {action}
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>
