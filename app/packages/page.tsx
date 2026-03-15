@@ -2794,12 +2794,12 @@ function SoftwareSection() {
 
   return (
     <>
-      <section ref={ref as React.Ref<HTMLElement>} style={{ ...S.sectionDark, padding: '64px 0' }}>
+      <section ref={ref as React.Ref<HTMLElement>} style={{ ...S.sectionDark, padding: '120px 0' }}>
         <SpaceBackground opacity={0.25} />
         <div style={S.container}>
 
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '2.5rem', ...fadeUp(inView) }}>
+          <div style={{ textAlign: 'center', marginBottom: '4rem', ...fadeUp(inView) }}>
             <div style={S.eyebrowDark}>RevCore Software</div>
             <h2 style={S.h2Dark}>Two Tools. Built to <HL>Close More Jobs</HL>.</h2>
             <p style={S.subDark}>
@@ -2810,11 +2810,11 @@ function SoftwareSection() {
           {/* iPads side by side */}
           <div style={{
             display: 'flex', justifyContent: 'center', alignItems: 'flex-end',
-            gap: '2rem', marginBottom: '2rem', flexWrap: 'wrap' as const,
+            gap: '3rem', marginBottom: '3.5rem', flexWrap: 'wrap' as const,
           }}>
             {/* Left — Quoting */}
             <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', ...scaleUp(inView, 150) }}>
-              <IpadMockup tilt={-4} width={380} accentGlow="rgba(148,217,107,0.5)">
+              <IpadMockup tilt={-4} width={480} accentGlow="rgba(148,217,107,0.5)">
                 <QuotingApp />
               </IpadMockup>
               <SwWatchDemoBtn onClick={() => openDemo('quoting')} accent="#94D96B" />
@@ -2822,7 +2822,7 @@ function SoftwareSection() {
 
             {/* Right — Pitch */}
             <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', ...scaleUp(inView, 320) }}>
-              <IpadMockup tilt={4} width={380} accentGlow="rgba(107,142,254,0.5)">
+              <IpadMockup tilt={4} width={480} accentGlow="rgba(107,142,254,0.5)">
                 <PitchApp />
               </IpadMockup>
               <SwWatchDemoBtn onClick={() => openDemo('pitch')} accent="#6B8EFE" />
@@ -2830,28 +2830,28 @@ function SoftwareSection() {
           </div>
 
           {/* Feature cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
             {/* Quoting card */}
             <div style={{
-              borderRadius: '16px', background: '#0f1a10',
-              border: '1px solid rgba(148,217,107,0.12)', padding: '1.5rem',
+              borderRadius: '20px', background: '#0f1a10',
+              border: '1px solid rgba(148,217,107,0.12)', padding: '2rem',
               ...fadeUp(inView, 450),
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
                 <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#94D96B' }} />
-                <span style={{ color: '#94D96B', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em' }}>QUOTING SOFTWARE</span>
+                <span style={{ color: '#94D96B', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em' }}>QUOTING SOFTWARE</span>
               </div>
-              <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '1.1rem', fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '0.4rem' }}>
+              <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '1.25rem', fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '0.5rem' }}>
                 Quote, track &amp; follow up, all in one place.
               </h3>
-              <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', lineHeight: '1.6', marginBottom: '1rem' }}>
+              <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.4)', lineHeight: '1.65', marginBottom: '1.25rem' }}>
                 Generate accurate proposals on-site, track every job, and let automated sequences handle follow-ups.
               </p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                 {swQuotingFeatures.map((f) => (
                   <div key={f} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <CheckCircle size={11} color="#94D96B" />
-                    <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)' }}>{f}</span>
+                    <CheckCircle size={12} color="#94D96B" />
+                    <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)' }}>{f}</span>
                   </div>
                 ))}
               </div>
@@ -2859,25 +2859,25 @@ function SoftwareSection() {
 
             {/* Pitch card */}
             <div style={{
-              borderRadius: '16px', background: '#0f1020',
-              border: '1px solid rgba(107,142,254,0.12)', padding: '1.5rem',
+              borderRadius: '20px', background: '#0f1020',
+              border: '1px solid rgba(107,142,254,0.12)', padding: '2rem',
               ...fadeUp(inView, 580),
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
                 <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#6B8EFE' }} />
-                <span style={{ color: '#6B8EFE', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em' }}>PRESENTATION SOFTWARE</span>
+                <span style={{ color: '#6B8EFE', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em' }}>PRESENTATION SOFTWARE</span>
               </div>
-              <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '1.1rem', fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '0.4rem' }}>
+              <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '1.25rem', fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '0.5rem' }}>
                 Close at the kitchen table. Every time.
               </h3>
-              <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', lineHeight: '1.6', marginBottom: '1rem' }}>
+              <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.4)', lineHeight: '1.65', marginBottom: '1.25rem' }}>
                 A trade-specific iPad presentation that builds trust and collects e-signatures before you leave.
               </p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                 {swPitchFeatures.map((f) => (
                   <div key={f} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <CheckCircle size={11} color="#6B8EFE" />
-                    <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)' }}>{f}</span>
+                    <CheckCircle size={12} color="#6B8EFE" />
+                    <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)' }}>{f}</span>
                   </div>
                 ))}
               </div>
