@@ -303,17 +303,18 @@ export default function PackagesPage() {
           gap: 12px;
           overflow-y: auto;
           color: #4a5568;
+          padding-top: 48px;
         }
 
         /* iOS Home Indicator */
         .phone-home-indicator {
           position: absolute;
-          bottom: 6px;
+          bottom: 8px;
           left: 50%;
           transform: translateX(-50%);
           width: 120px;
           height: 4px;
-          background: rgba(0,0,0,0.2);
+          background: rgba(0,0,0,0.15);
           border-radius: 4px;
           z-index: 20;
         }
@@ -325,12 +326,13 @@ export default function PackagesPage() {
           height: 100%;
           background: #f0f2f5;
           overflow: hidden;
+          padding-top: 44px;
         }
         .fb-feed-topbar {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 4px 12px;
+          padding: 3px 12px;
           background: #fff;
           border-bottom: 1px solid #e4e6eb;
         }
@@ -362,7 +364,7 @@ export default function PackagesPage() {
           display: flex;
           align-items: center;
           gap: 8px;
-          padding: 8px 12px;
+          padding: 6px 12px;
           background: #fff;
           border-bottom: 1px solid #e4e6eb;
         }
@@ -382,16 +384,16 @@ export default function PackagesPage() {
         }
         .fb-stories-bar {
           display: flex;
-          gap: 6px;
-          padding: 8px 12px;
+          gap: 5px;
+          padding: 6px 10px;
           background: #fff;
-          border-bottom: 6px solid #f0f2f5;
+          border-bottom: 4px solid #f0f2f5;
           overflow: hidden;
         }
         .fb-story-item {
-          width: 62px;
-          height: 90px;
-          border-radius: 10px;
+          width: 52px;
+          height: 72px;
+          border-radius: 8px;
           overflow: hidden;
           position: relative;
           flex-shrink: 0;
@@ -509,7 +511,7 @@ export default function PackagesPage() {
           position: relative;
           background: #000;
           overflow: hidden;
-          aspect-ratio: 4/3;
+          aspect-ratio: 1/1;
         }
         .fb-ad-media img {
           width: 100%;
@@ -579,7 +581,7 @@ export default function PackagesPage() {
           align-items: center;
           justify-content: center;
           gap: 10px;
-          padding: 4px;
+          padding: 4px 4px 20px;
           background: #fff;
         }
         .fb-nav-arrow {
