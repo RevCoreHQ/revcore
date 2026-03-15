@@ -2995,7 +2995,7 @@ function PricingSection() {
         const apptDays = getMiniCalendarAppts(expandedPkg);
         const showWebsite = expandedPkg === 'growth' || expandedPkg === 'full';
         const showGMB = expandedPkg === 'full';
-        const visualCount = 1 + (showWebsite ? 1 : 0) + (showGMB ? 1 : 0);
+        const showSoftware = expandedPkg === 'full';
 
         return (
           <div
@@ -3011,8 +3011,8 @@ function PricingSection() {
             <div
               onClick={(e) => e.stopPropagation()}
               style={{
-                width: '90vw', maxWidth: visualCount === 1 ? '480px' : visualCount === 2 ? '780px' : '1100px',
-                maxHeight: '85vh', overflowY: 'auto',
+                width: '92vw', maxWidth: expandedPkg === 'launchpad' ? '560px' : expandedPkg === 'growth' ? '900px' : '1280px',
+                maxHeight: '90vh', overflowY: 'auto',
                 background: 'linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: 24,
@@ -3056,14 +3056,24 @@ function PricingSection() {
                   color: 'white', marginBottom: 6,
                 }}>{pkg.name}</h3>
                 <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.95rem', marginBottom: 8 }}>{pkg.tagline}</p>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-                  <span style={{
-                    fontFamily: 'DM Sans, sans-serif', fontSize: '2rem', fontWeight: 800,
-                    background: `linear-gradient(135deg, #fff 40%, ${pkg.accent}90)`,
-                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}>{fmtPrice(pkg.priceMonthly)}</span>
-                  {pkg.id !== 'launchpad' && <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.25)' }}>/mo</span>}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' as const }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                    <span style={{
+                      fontFamily: 'DM Sans, sans-serif', fontSize: '2rem', fontWeight: 800,
+                      background: `linear-gradient(135deg, #fff 40%, ${pkg.accent}90)`,
+                      WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}>{fmtPrice(pkg.priceMonthly)}</span>
+                    {pkg.id !== 'launchpad' && <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.25)' }}>/mo</span>}
+                  </div>
+                  {showSoftware && (
+                    <span style={{
+                      fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const,
+                      padding: '5px 14px', borderRadius: 100,
+                      background: `${pkg.accent}12`, color: pkg.accent,
+                      border: `1px solid ${pkg.accent}20`,
+                    }}>Includes full tech &amp; automation stack</span>
+                  )}
                 </div>
               </div>
 
@@ -3072,12 +3082,12 @@ function PricingSection() {
               {/* Visual demos */}
               <div style={{
                 padding: '1.5rem 2.5rem 2rem',
-                display: 'flex', gap: 20,
-                justifyContent: visualCount === 1 ? 'center' : 'flex-start',
+                display: 'flex', gap: 20, flexWrap: 'wrap' as const,
+                justifyContent: expandedPkg === 'launchpad' ? 'center' : 'flex-start',
               }}>
 
                 {/* ── Mini Calendar ── */}
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ flex: showSoftware ? '1 1 calc(33.3% - 14px)' : '1', minWidth: showSoftware ? 200 : 0 }}>
                   <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>
                     Appointment Volume
                   </div>
@@ -3115,7 +3125,7 @@ function PricingSection() {
 
                 {/* ── Mini Website ── */}
                 {showWebsite && (
-                  <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ flex: showSoftware ? '1 1 calc(33.3% - 14px)' : '1', minWidth: showSoftware ? 200 : 0 }}>
                     <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>
                       Your Website
                     </div>
@@ -3170,7 +3180,7 @@ function PricingSection() {
 
                 {/* ── Mini GMB Panel ── */}
                 {showGMB && (
-                  <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ flex: '1 1 calc(33.3% - 14px)', minWidth: 200 }}>
                     <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>
                       Google Business Profile
                     </div>
@@ -3216,6 +3226,121 @@ function PricingSection() {
                               fontSize: '0.6rem', fontWeight: 600,
                             }}>{action}</div>
                           ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Sales Software ── */}
+                {showSoftware && (
+                  <div style={{ flex: '1 1 calc(50% - 10px)', minWidth: 200 }}>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>
+                      Sales Software
+                    </div>
+                    <div style={{ borderRadius: 12, overflow: 'hidden', border: `1px solid ${pkg.accent}20` }}>
+                      <div style={{ background: '#1e2128', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ display: 'flex', gap: 5 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#ff5f57' }} />
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#febc2e' }} />
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#28c840' }} />
+                        </div>
+                        <div style={{
+                          flex: 1, background: '#13161c', borderRadius: 5, padding: '4px 10px',
+                          fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)',
+                          border: '1px solid rgba(255,255,255,0.06)',
+                        }}>app.revcore.io/pipeline</div>
+                      </div>
+                      <div style={{
+                        height: 200, background: '#13161c', padding: '16px',
+                        display: 'flex', flexDirection: 'column' as const, gap: 12,
+                      }}>
+                        {/* Pipeline header */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff' }}>Sales Pipeline</span>
+                          <span style={{ fontSize: '0.6rem', color: '#94D96B', fontWeight: 600 }}>$142k in pipeline</span>
+                        </div>
+                        {/* Pipeline columns */}
+                        <div style={{ display: 'flex', gap: 8, flex: 1 }}>
+                          {[
+                            { label: 'New Lead', count: 8, color: '#6B8EFE' },
+                            { label: 'Quoted', count: 5, color: '#f9ab00' },
+                            { label: 'Follow Up', count: 3, color: '#e8710a' },
+                            { label: 'Closed Won', count: 6, color: '#94D96B' },
+                          ].map(col => (
+                            <div key={col.label} style={{
+                              flex: 1, background: 'rgba(255,255,255,0.03)', borderRadius: 8,
+                              padding: '8px 6px', display: 'flex', flexDirection: 'column' as const, gap: 4,
+                              border: '1px solid rgba(255,255,255,0.05)',
+                            }}>
+                              <div style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600, textAlign: 'center' as const }}>{col.label}</div>
+                              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: col.color, textAlign: 'center' as const }}>{col.count}</div>
+                              {Array.from({ length: Math.min(col.count, 3) }, (_, j) => (
+                                <div key={j} style={{
+                                  height: 6, borderRadius: 3, background: `${col.color}30`,
+                                  margin: '0 2px',
+                                }} />
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Quoting Software ── */}
+                {showSoftware && (
+                  <div style={{ flex: '1 1 calc(50% - 10px)', minWidth: 200 }}>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>
+                      Quoting Software
+                    </div>
+                    <div style={{ borderRadius: 12, overflow: 'hidden', border: `1px solid ${pkg.accent}20` }}>
+                      <div style={{ background: '#1e2128', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ display: 'flex', gap: 5 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#ff5f57' }} />
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#febc2e' }} />
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#28c840' }} />
+                        </div>
+                        <div style={{
+                          flex: 1, background: '#13161c', borderRadius: 5, padding: '4px 10px',
+                          fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)',
+                          border: '1px solid rgba(255,255,255,0.06)',
+                        }}>app.revcore.io/quotes</div>
+                      </div>
+                      <div style={{
+                        height: 200, background: '#13161c', padding: '16px',
+                        display: 'flex', flexDirection: 'column' as const, gap: 10,
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff' }}>Quote Builder</span>
+                          <span style={{
+                            fontSize: '0.55rem', fontWeight: 700, padding: '3px 8px', borderRadius: 100,
+                            background: '#94D96B20', color: '#94D96B', border: '1px solid #94D96B30',
+                          }}>SENT</span>
+                        </div>
+                        {/* Quote preview */}
+                        <div style={{
+                          background: 'rgba(255,255,255,0.03)', borderRadius: 8, padding: 12,
+                          border: '1px solid rgba(255,255,255,0.05)', flex: 1,
+                          display: 'flex', flexDirection: 'column' as const, gap: 8,
+                        }}>
+                          <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>Kitchen Remodel — Johnson Residence</div>
+                          {[
+                            { item: 'Demo & removal', price: '$2,800' },
+                            { item: 'Custom cabinetry', price: '$8,400' },
+                            { item: 'Countertops (granite)', price: '$4,200' },
+                            { item: 'Labor & install', price: '$6,100' },
+                          ].map(line => (
+                            <div key={line.item} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>{line.item}</span>
+                              <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>{line.price}</span>
+                            </div>
+                          ))}
+                          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 6, display: 'flex', justifyContent: 'space-between' }}>
+                            <span style={{ fontSize: '0.72rem', color: '#fff', fontWeight: 700 }}>Total</span>
+                            <span style={{ fontSize: '0.72rem', color: '#94D96B', fontWeight: 800 }}>$21,500</span>
+                          </div>
                         </div>
                       </div>
                     </div>
