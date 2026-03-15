@@ -33,16 +33,16 @@ const NODES: SystemNode[] = [
     detail: 'The brain of your entire operation. Every service feeds data back here, giving you one clean dashboard of every lead, every job, every dollar, and every team member in real time.',
     bullets: ['Real-time lead tracking', 'Revenue & source reporting', 'Custom pipeline views', 'Team access & roles'],
     color: '#94D96B',
-    x: 500, y: 330,
+    x: 500, y: 310,
     isHub: true,
   },
   {
     id: 'leads',
     number: '01',
     label: 'Lead Generation',
-    sub: 'Google · Meta · YouTube',
-    detail: 'Hyper-targeted paid ad campaigns driving homeowners in your exact service area directly into your CRM pipeline. Every dollar tracked, every lead attributed to its source.',
-    bullets: ['Google Search & Display Ads', 'Meta & Instagram campaigns', 'YouTube pre-roll ads', 'Conversion-optimized landing pages'],
+    sub: 'Meta Ads',
+    detail: 'Hyper-targeted Meta ad campaigns driving homeowners in your exact service area directly into your CRM pipeline. Every dollar tracked, every lead attributed to its source.',
+    bullets: ['Facebook & Instagram ads', 'Custom audience targeting', 'Retargeting campaigns', 'Conversion-optimized landing pages'],
     color: '#FE6462',
     x: 500, y: 62,
   },
@@ -100,11 +100,11 @@ interface Conn {
 
 /* Hub spokes — data flows into CRM */
 const HUB_CONNECTIONS: Conn[] = [
-  { from: 'leads',      to: 'crm', color: '#FE6462', dur: 2.2, delay: 0.0, d: 'M 500,62 Q 558,200 500,330' },
-  { from: 'seo',        to: 'crm', color: '#6B8EFE', dur: 2.5, delay: 0.5, d: 'M 878,195 Q 680,220 500,330' },
-  { from: 'software',   to: 'crm', color: '#4FC3F7', dur: 2.4, delay: 1.0, d: 'M 800,515 Q 680,380 500,330' },
-  { from: 'automation', to: 'crm', color: '#FEB64A', dur: 2.4, delay: 1.5, d: 'M 200,515 Q 320,380 500,330' },
-  { from: 'training',   to: 'crm', color: '#FF8B89', dur: 2.5, delay: 2.0, d: 'M 122,195 Q 320,220 500,330' },
+  { from: 'leads',      to: 'crm', color: '#FE6462', dur: 2.2, delay: 0.0, d: 'M 500,62 Q 555,190 500,310' },
+  { from: 'seo',        to: 'crm', color: '#6B8EFE', dur: 2.5, delay: 0.5, d: 'M 878,195 Q 680,210 500,310' },
+  { from: 'software',   to: 'crm', color: '#4FC3F7', dur: 2.4, delay: 1.0, d: 'M 800,515 Q 680,370 500,310' },
+  { from: 'automation', to: 'crm', color: '#FEB64A', dur: 2.4, delay: 1.5, d: 'M 200,515 Q 320,370 500,310' },
+  { from: 'training',   to: 'crm', color: '#FF8B89', dur: 2.5, delay: 2.0, d: 'M 122,195 Q 320,210 500,310' },
 ];
 
 /* Pentagon ring — peer connections between outer nodes */
@@ -220,7 +220,7 @@ export default function SystemDiagram() {
               {CONNECTIONS.map((c, i) => {
                 const dimmed = focusId && !isConnected(c, focusId);
                 const bright = focusId && isConnected(c, focusId);
-                const baseOpacity = c.isRing ? 0.06 : 0.1;
+                const baseOpacity = c.isRing ? 0.15 : 0.2;
                 return (
                   <g key={i}>
                     {/* Base line */}
@@ -228,8 +228,8 @@ export default function SystemDiagram() {
                       href={`#sp-${i}`}
                       fill="none"
                       stroke={c.color}
-                      strokeWidth={bright ? 2.5 : 1.5}
-                      opacity={dimmed ? 0.03 : bright ? 0.25 : baseOpacity}
+                      strokeWidth={bright ? 3 : 2}
+                      opacity={dimmed ? 0.05 : bright ? 0.4 : baseOpacity}
                       style={{ transition: `opacity ${TRANSITION}, stroke-width ${TRANSITION}` }}
                     />
                     {/* Animated dash */}
@@ -237,9 +237,9 @@ export default function SystemDiagram() {
                       href={`#sp-${i}`}
                       fill="none"
                       stroke={c.color}
-                      strokeWidth={bright ? 2 : 1}
-                      strokeDasharray={c.isRing ? '4 12' : '6 9'}
-                      opacity={dimmed ? 0.04 : bright ? 0.8 : (c.isRing ? 0.15 : 0.25)}
+                      strokeWidth={bright ? 2.5 : 1.5}
+                      strokeDasharray={c.isRing ? '4 10' : '6 8'}
+                      opacity={dimmed ? 0.06 : bright ? 0.9 : (c.isRing ? 0.3 : 0.45)}
                       style={{
                         animation: `dash-flow-${i} ${bright ? (c.dur * 0.55) : c.dur}s linear infinite`,
                         transition: `opacity ${TRANSITION}, stroke-width ${TRANSITION}`,
@@ -257,9 +257,9 @@ export default function SystemDiagram() {
                   <g key={i}>
                     {/* Glow halo */}
                     <circle
-                      r={bright ? 6 : 3}
+                      r={bright ? 7 : 4}
                       fill={c.color}
-                      opacity={dimmed ? 0.04 : bright ? 0.3 : 0.1}
+                      opacity={dimmed ? 0.05 : bright ? 0.4 : 0.2}
                       filter="url(#dot-glow)"
                     >
                       <animateMotion dur={`${bright ? c.dur * 0.55 : c.dur}s`} repeatCount="indefinite" begin={`${c.delay}s`}>
@@ -268,9 +268,9 @@ export default function SystemDiagram() {
                     </circle>
                     {/* Core dot */}
                     <circle
-                      r={bright ? 3 : (c.isRing ? 2 : 2.5)}
+                      r={bright ? 3.5 : (c.isRing ? 2.5 : 3)}
                       fill={c.color}
-                      opacity={dimmed ? 0.06 : bright ? 1 : (c.isRing ? 0.5 : 0.7)}
+                      opacity={dimmed ? 0.08 : bright ? 1 : (c.isRing ? 0.7 : 0.85)}
                     >
                       <animateMotion dur={`${bright ? c.dur * 0.55 : c.dur}s`} repeatCount="indefinite" begin={`${c.delay}s`}>
                         <mpath href={`#sp-${i}`} />
