@@ -1644,17 +1644,21 @@ function PhoneDemo() {
                           </div>
                         </div>
                         <div className="ios-messages-body">
-                          <div className="ios-message-time">Yesterday 10:00 AM</div>
+                          <div className="ios-message-time">Tue 10:15 AM</div>
                           <div className="ios-message incoming">
-                            Hi John! Just a friendly reminder about your kitchen consultation appointment tomorrow at 10:00 AM. Our estimator Mike will be arriving at your home.
+                            Hi John! Your kitchen consultation with Premier Remodeling is confirmed for Thursday, Jan 19 at 10:00 AM. Our estimator Mike will be visiting your home. Reply CONFIRM to lock it in.
                           </div>
                           <div className="ios-message outgoing">
-                            Sounds good, see you then!
+                            CONFIRM
                           </div>
                           <div className="ios-delivered">Delivered</div>
-                          <div className="ios-message-time">Today 9:00 AM</div>
+                          <div className="ios-message-time">Wed 10:00 AM</div>
                           <div className="ios-message incoming">
-                            Our estimator is on the way, see you in 1 hour!
+                            Reminder: Your appointment with Premier Remodeling is tomorrow at 10:00 AM. Mike will be your estimator. See you then!
+                          </div>
+                          <div className="ios-message-time">Thu 9:00 AM</div>
+                          <div className="ios-message incoming">
+                            Hi John, just a heads up — Mike is heading your way and will arrive in about 1 hour for your 10:00 AM consultation. See you soon!
                           </div>
                         </div>
                         <div className="ios-input-bar">
