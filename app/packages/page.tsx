@@ -2216,30 +2216,10 @@ const seoCompetitors = [
 function SEODemo() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
   const [month, setMonth] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [hasPlayed, setHasPlayed] = useState(false);
   const [displayReviews, setDisplayReviews] = useState(0);
   const [displayStars, setDisplayStars] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const phase = seoPhases[month];
-
-  // Animation engine — advance month every 2200ms
-  useEffect(() => {
-    if (!isPlaying) return;
-    timerRef.current = setInterval(() => {
-      setMonth(prev => {
-        if (prev >= 6) {
-          setIsPlaying(false);
-          setHasPlayed(true);
-          if (timerRef.current) clearInterval(timerRef.current);
-          return 6;
-        }
-        return prev + 1;
-      });
-    }, 2200);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [isPlaying]);
 
   // Smooth review/star counter interpolation
   useEffect(() => {
@@ -2260,18 +2240,6 @@ function SEODemo() {
     requestAnimationFrame(animate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [month]);
-
-  const handlePlay = () => {
-    if (hasPlayed) {
-      setMonth(0);
-      setDisplayReviews(0);
-      setDisplayStars(0);
-      setHasPlayed(false);
-      setTimeout(() => setIsPlaying(true), 100);
-    } else {
-      setIsPlaying(true);
-    }
-  };
 
   // Build organic results order based on current month
   const getOrganicResults = () => {
@@ -2321,31 +2289,12 @@ function SEODemo() {
           <p style={S.sub}>Watch your business climb from page 3 to the #1 spot in 6 months.</p>
         </div>
 
-        {/* ─── Controls: Play + Timeline ─── */}
+        {/* ─── Timeline Steps ─── */}
         <div style={{
-          display: 'flex', alignItems: 'center', gap: '20px',
+          display: 'flex', alignItems: 'center',
           maxWidth: '700px', margin: '0 auto 1.5rem',
           ...fadeUp(inView, 200),
         }}>
-          <button
-            onClick={handlePlay}
-            disabled={isPlaying}
-            style={{
-              width: 48, height: 48, borderRadius: '50%', border: 'none',
-              background: isPlaying ? '#e0e0e0' : 'linear-gradient(135deg, #FE6462, #6B8EFE)',
-              cursor: isPlaying ? 'default' : 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexShrink: 0, transition: 'all 0.3s ease',
-              boxShadow: isPlaying ? 'none' : '0 4px 16px rgba(254,100,98,0.3)',
-            }}
-          >
-            {hasPlayed && !isPlaying ? (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
-            )}
-          </button>
-
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', position: 'relative' }}>
             <div style={{
               position: 'absolute', top: '50%', left: '6px', right: '6px', height: '2px',
@@ -2362,14 +2311,14 @@ function SEODemo() {
               {seoPhases.map((p, i) => (
                 <button
                   key={i}
-                  onClick={() => { if (!isPlaying) { setMonth(i); if (i === 0) { setHasPlayed(false); } } }}
+                  onClick={() => setMonth(i)}
                   style={{
                     width: i === month ? 28 : 12,
                     height: 12,
                     borderRadius: i === month ? 6 : '50%',
                     border: 'none',
                     background: i <= month ? p.color : '#d0d0d0',
-                    cursor: isPlaying ? 'default' : 'pointer',
+                    cursor: 'pointer',
                     transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                     padding: 0,
                   }}
@@ -2420,9 +2369,9 @@ function SEODemo() {
             <GoogleSearchBar />
             <GoogleTabs />
 
-            <div style={{ display: 'flex', gap: '0' }}>
+            <div style={{ display: 'flex', gap: '0', height: '520px', overflow: 'hidden' }}>
               {/* Left — search results */}
-              <div style={{ flex: 1, padding: '4px 20px 16px' }}>
+              <div style={{ flex: 1, padding: '4px 20px 16px', overflow: 'hidden' }}>
                 <div style={{ fontSize: '0.72rem', color: '#70757a', padding: '8px 0' }}>About 2,340,000 results (0.42 seconds)</div>
 
                 {/* Sponsored ad — fades out after month 1 */}
