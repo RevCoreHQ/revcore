@@ -2625,13 +2625,15 @@ function SEODemo() {
                         opacity: entry.isPremier ? 1 : 0.6,
                         transition: 'all 0.6s ease',
                       }}>
-                        <div style={{
-                          width: '32px', height: '32px', borderRadius: '50%',
-                          background: entry.isPremier ? 'linear-gradient(135deg, #ff7a1a, #e85d04)' : '#e8eaed',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '0.55rem', fontWeight: 700,
-                          color: entry.isPremier ? '#fff' : '#5f6368', flexShrink: 0,
-                        }}>{entry.favicon}</div>
+                        {entry.isPremier ? (
+                          <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69b641aaeaf081306e71256e.png" alt="Premier Remodeling" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                        ) : (
+                          <div style={{
+                            width: '32px', height: '32px', borderRadius: '50%', background: '#e8eaed',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '0.55rem', fontWeight: 700, color: '#5f6368', flexShrink: 0,
+                          }}>{entry.favicon}</div>
+                        )}
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: entry.isPremier ? '0.88rem' : '0.85rem', fontWeight: 600, color: '#1a0dab' }}>{entry.name}</div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
@@ -2662,13 +2664,15 @@ function SEODemo() {
                       transition: 'all 0.6s ease',
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                        <div style={{
-                          width: '26px', height: '26px', borderRadius: '50%',
-                          background: r.isPremier ? 'linear-gradient(135deg, #ff7a1a, #e85d04)' : '#f1f3f4',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '0.6rem', fontWeight: 700,
-                          color: r.isPremier ? '#fff' : '#5f6368', flexShrink: 0,
-                        }}>{r.favicon}</div>
+                        {r.isPremier ? (
+                          <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69b641aaeaf081306e71256e.png" alt="Premier Remodeling" style={{ width: 26, height: 26, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                        ) : (
+                          <div style={{
+                            width: '26px', height: '26px', borderRadius: '50%', background: '#f1f3f4',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '0.6rem', fontWeight: 700, color: '#5f6368', flexShrink: 0,
+                          }}>{r.favicon}</div>
+                        )}
                         <div>
                           <div style={{ fontSize: '0.72rem', color: '#202124', lineHeight: 1.2 }}>{r.url}</div>
                           <div style={{ fontSize: '0.65rem', color: '#4d5156' }}>{r.url.split(' › ')[0]}</div>
