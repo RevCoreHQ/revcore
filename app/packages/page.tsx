@@ -3635,39 +3635,18 @@ function PricingSection() {
                           flex: 1, background: '#13161c', borderRadius: 5, padding: '4px 10px',
                           fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)',
                           border: '1px solid rgba(255,255,255,0.06)',
-                        }}>premier-remodeling.com</div>
+                        }}>tomron-construction.com</div>
                       </div>
-                      <div style={{
-                        height: 220, background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
-                        display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center',
-                        padding: 24, textAlign: 'center' as const,
-                      }}>
-                        <div style={{
-                          width: 36, height: 36, borderRadius: '50%',
-                          background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '0.65rem', fontWeight: 800, color: '#fff', marginBottom: 12,
-                        }}>PR</div>
-                        <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', marginBottom: 6, lineHeight: 1.2 }}>
-                          Premier Remodeling Co
-                        </div>
-                        <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', marginBottom: 14 }}>
-                          Phoenix&apos;s Top Kitchen &amp; Bath Remodeler
-                        </div>
-                        <div style={{
-                          padding: '8px 20px', borderRadius: 8,
-                          background: `linear-gradient(135deg, ${pkg.accent}, ${pkg.accent}cc)`,
-                          fontSize: '0.72rem', fontWeight: 700, color: '#fff',
-                        }}>Get Free Estimate</div>
-                        <div style={{ display: 'flex', gap: 16, marginTop: 16 }}>
-                          {['Kitchen', 'Bathroom', 'Full Home'].map(s => (
-                            <div key={s} style={{
-                              padding: '4px 10px', borderRadius: 6,
-                              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)',
-                              fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)',
-                            }}>{s}</div>
-                          ))}
-                        </div>
+                      <div style={{ height: 220, position: 'relative', background: '#0a0a0a' }}>
+                        <iframe
+                          src="https://tomron-construction.vercel.app"
+                          style={{
+                            width: '200%', height: '200%',
+                            transform: 'scale(0.5)', transformOrigin: 'top left',
+                            border: 'none', pointerEvents: 'none',
+                          }}
+                          loading="lazy"
+                        />
                       </div>
                     </div>
                   </div>
