@@ -2198,11 +2198,11 @@ function GoogleResult({ url, favicon, title, desc, dimmed }: { url: string; favi
 /* ── SEO Phase Data ── */
 const seoPhases = [
   { month: 0, label: 'Before RevCore', tagline: 'Buried on page 3', color: '#d93025', page: 3, yourPos: -1, reviews: 0, stars: 0, showMaps: false, mapsPos: -1, gmbOpacity: 0 },
-  { month: 1, label: 'Month 1', tagline: 'Google Business optimized', color: '#ea4335', page: 1, yourPos: 5, reviews: 3, stars: 4.0, showMaps: false, mapsPos: -1, gmbOpacity: 0.4 },
-  { month: 2, label: 'Month 2', tagline: 'Climbing the ranks', color: '#e8710a', page: 1, yourPos: 4, reviews: 8, stars: 4.2, showMaps: false, mapsPos: -1, gmbOpacity: 0.6 },
-  { month: 3, label: 'Month 3', tagline: 'Getting traction', color: '#f9ab00', page: 1, yourPos: 3, reviews: 14, stars: 4.4, showMaps: true, mapsPos: 3, gmbOpacity: 0.75 },
-  { month: 4, label: 'Month 4', tagline: 'Building authority', color: '#1e8e3e', page: 1, yourPos: 3, reviews: 21, stars: 4.5, showMaps: true, mapsPos: 3, gmbOpacity: 0.85 },
-  { month: 5, label: 'Month 5', tagline: 'Dominating search', color: '#1a73e8', page: 1, yourPos: 2, reviews: 30, stars: 4.7, showMaps: true, mapsPos: 2, gmbOpacity: 0.95 },
+  { month: 1, label: 'Month 1', tagline: 'Google Business optimized', color: '#ea4335', page: 1, yourPos: 5, reviews: 3, stars: 4.0, showMaps: false, mapsPos: -1, gmbOpacity: 1 },
+  { month: 2, label: 'Month 2', tagline: 'Climbing the ranks', color: '#e8710a', page: 1, yourPos: 4, reviews: 8, stars: 4.2, showMaps: false, mapsPos: -1, gmbOpacity: 1 },
+  { month: 3, label: 'Month 3', tagline: 'Getting traction', color: '#f9ab00', page: 1, yourPos: 3, reviews: 14, stars: 4.4, showMaps: true, mapsPos: 3, gmbOpacity: 1 },
+  { month: 4, label: 'Month 4', tagline: 'Building authority', color: '#1e8e3e', page: 1, yourPos: 3, reviews: 21, stars: 4.5, showMaps: true, mapsPos: 3, gmbOpacity: 1 },
+  { month: 5, label: 'Month 5', tagline: 'Dominating search', color: '#1a73e8', page: 1, yourPos: 2, reviews: 30, stars: 4.7, showMaps: true, mapsPos: 2, gmbOpacity: 1 },
   { month: 6, label: 'Month 6', tagline: 'Top 3 in your market', color: '#16a34a', page: 1, yourPos: 1, reviews: 38, stars: 4.8, showMaps: true, mapsPos: 1, gmbOpacity: 1 },
 ];
 
