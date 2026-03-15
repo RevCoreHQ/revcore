@@ -257,7 +257,7 @@ export default function PackagesPage() {
         .phone-slide {
           position: absolute;
           inset: 0;
-          padding: 50px 16px 20px;
+          padding: 0;
           opacity: 0;
           transform: translateX(100%);
           transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1348,10 +1348,6 @@ function PhoneDemo() {
                 <div className="phone-screen-content">
                   {/* Slide 1: FB Ads */}
                   <div className={`phone-slide${step === 0 ? ' active' : step > 0 ? ' prev' : ''}`}>
-                    <div className="phone-slide-header">
-                      <div className="phone-slide-badge">Step 1</div>
-                      <div className="phone-slide-title">Scroll-Stopping Ads</div>
-                    </div>
                     <div className="phone-slide-body" style={{ gap: 0 }}>
                       <div className="fb-ad-carousel">
                         {fbAds.map((ad, i) => (
@@ -1402,10 +1398,6 @@ function PhoneDemo() {
 
                   {/* Slide 2: Qualify */}
                   <div className={`phone-slide${step === 1 ? ' active' : step > 1 ? ' prev' : ''}`}>
-                    <div className="phone-slide-header">
-                      <div className="phone-slide-badge">Step 2</div>
-                      <div className="phone-slide-title">Qualifying Questions</div>
-                    </div>
                     <div className="phone-slide-body">
                       <div className="qualify-form-container">
                         <div className="qualify-form-header">
@@ -1435,10 +1427,6 @@ function PhoneDemo() {
 
                   {/* Slide 3: Calendar */}
                   <div className={`phone-slide${step === 2 ? ' active' : step > 2 ? ' prev' : ''}`}>
-                    <div className="phone-slide-header">
-                      <div className="phone-slide-badge">Step 3</div>
-                      <div className="phone-slide-title">Self-Booking Calendar</div>
-                    </div>
                     <div className="phone-slide-body">
                       <div className="scheduler-container">
                         <div className="scheduler-header">
@@ -1471,10 +1459,6 @@ function PhoneDemo() {
 
                   {/* Slide 4: Reminders */}
                   <div className={`phone-slide${step === 3 ? ' active' : ''}`}>
-                    <div className="phone-slide-header">
-                      <div className="phone-slide-badge">Step 4</div>
-                      <div className="phone-slide-title">Automatic Reminders</div>
-                    </div>
                     <div className="phone-slide-body">
                       <div className="reminders-preview">
                         <div className="ios-messages-header">
