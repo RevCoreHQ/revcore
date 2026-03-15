@@ -63,7 +63,7 @@ export const packagesData = [
       'GMB Optimization',
       'High Conversion Website',
       'SEO Optimization',
-      'Sales Software',
+      'Presentation Software',
       'Quoting Software',
     ],
     moreFeatures: [
