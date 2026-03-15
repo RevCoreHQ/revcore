@@ -3847,12 +3847,13 @@ function PricingSection() {
    ═══════════════════════════════════════════════════ */
 function ROICalculator() {
   const [pkg, setPkg] = useState<'core' | 'full'>('core');
-  const [appts, setAppts] = useState(20);
+  const [dailySpend, setDailySpend] = useState(100);
   const [jobValue, setJobValue] = useState(18000);
   const [closeRate, setCloseRate] = useState(35);
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
 
-  const adSpend = appts <= 20 ? 1500 : appts <= 40 ? 3000 : appts <= 60 ? 4500 : 6000;
+  const adSpend = dailySpend * 30;
+  const appts = dailySpend <= 50 ? 15 : dailySpend <= 100 ? 25 : dailySpend <= 150 ? 40 : 60;
   const pkgCost = pkg === 'core' ? 3497 : 4997;
   const gross = Math.round(appts * (closeRate / 100) * jobValue);
   const net = gross - pkgCost - adSpend;
@@ -3864,7 +3865,7 @@ function ROICalculator() {
         <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
           <div style={{ ...S.eyebrow, color: 'rgba(254,100,98,0.9)' }}>See Your Potential</div>
           <h2 style={S.h2}>System <HL>ROI</HL> Calculator</h2>
-          <p style={S.sub}>Select your package and appointment volume to see your projected net revenue.</p>
+          <p style={S.sub}>Select your package and ad spend to see your projected net revenue.</p>
         </div>
 
         <div style={{
@@ -3887,19 +3888,24 @@ function ROICalculator() {
             </div>
           </div>
 
-          {/* Appointments */}
+          {/* Daily Ad Spend */}
           <div style={{ marginBottom: 32 }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: '#6B6B6B', marginBottom: 12, fontWeight: 600 }}>Appointments Per Month</label>
+            <label style={{ display: 'block', fontSize: '0.85rem', color: '#6B6B6B', marginBottom: 12, fontWeight: 600 }}>Daily Ad Spend</label>
             <div className="roi-appts-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-              {[{ a: 20, ad: '$1,500' }, { a: 40, ad: '$3,000' }, { a: 60, ad: '$4,500' }, { a: 80, ad: '$6,000' }].map(o => (
-                <button key={o.a} onClick={() => setAppts(o.a)} style={{
+              {[
+                { daily: 50, appts: '~15', monthly: '$1,500' },
+                { daily: 100, appts: '~25', monthly: '$3,000' },
+                { daily: 150, appts: '~40', monthly: '$4,500' },
+                { daily: 250, appts: '~60', monthly: '$7,500' },
+              ].map(o => (
+                <button key={o.daily} onClick={() => setDailySpend(o.daily)} style={{
                   padding: '16px 12px', borderRadius: 10, cursor: 'pointer', transition: 'all 0.2s',
                   textAlign: 'center', color: '#0A0A0A', border: 'none',
-                  background: appts === o.a ? 'rgba(254,100,98,0.08)' : '#F5F5F5',
-                  outline: appts === o.a ? '2px solid #FE6462' : '2px solid #E5E5E5',
+                  background: dailySpend === o.daily ? 'rgba(254,100,98,0.08)' : '#F5F5F5',
+                  outline: dailySpend === o.daily ? '2px solid #FE6462' : '2px solid #E5E5E5',
                 }}>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>{o.a} Appts</div>
-                  <div style={{ fontSize: '0.8rem', color: '#6B6B6B', marginTop: 4 }}>~{o.ad}/mo ads</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>${o.daily}/day</div>
+                  <div style={{ fontSize: '0.8rem', color: '#6B6B6B', marginTop: 4 }}>{o.appts} appts/mo</div>
                 </button>
               ))}
             </div>
@@ -3947,7 +3953,7 @@ function ROICalculator() {
             </div>
             <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
               <div style={{ fontSize: '0.9rem', color: '#6B6B6B' }}>
-                Investment: ${pkgCost.toLocaleString()}/mo + ${adSpend.toLocaleString()}/mo ad spend
+                Investment: ${pkgCost.toLocaleString()}/mo + ${adSpend.toLocaleString()}/mo ad spend (${dailySpend}/day)
               </div>
             </div>
           </div>
