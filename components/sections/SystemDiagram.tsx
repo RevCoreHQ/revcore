@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, X } from 'lucide-react';
-import SpaceBackground from '@/components/SpaceBackground';
 
 /* ─── Canvas dimensions ────────────────────────────────────────────────────── */
 const W = 1000;
@@ -176,8 +175,13 @@ export default function SystemDiagram() {
   }
 
   return (
-    <section style={{ padding: '100px 0 120px', background: '#070b0f', overflow: 'hidden', position: 'relative' }}>
-      <SpaceBackground opacity={0.45} parallax={0.15} />
+    <section style={{ padding: '100px 0 120px', background: '#F5F5F5', overflow: 'hidden', position: 'relative' }}>
+      {/* Light dot pattern */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.045) 1px, transparent 1px)',
+        backgroundSize: '24px 24px', pointerEvents: 'none', zIndex: 0,
+      }} />
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
 
         {/* ── Header ── */}
@@ -185,7 +189,7 @@ export default function SystemDiagram() {
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.15em',
-            textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', marginBottom: '1rem',
+            textTransform: 'uppercase', color: '#6B6B6B', marginBottom: '1rem',
           }}>
             <span style={{ width: '24px', height: '2px', background: '#94D96B', display: 'block' }} />
             Complete System
@@ -193,7 +197,7 @@ export default function SystemDiagram() {
           <h2 style={{
             fontFamily: 'DM Sans, sans-serif', fontWeight: 800,
             fontSize: 'clamp(2rem, 4vw, 3rem)', lineHeight: 1.1,
-            letterSpacing: '-0.03em', color: 'white', marginBottom: '1rem',
+            letterSpacing: '-0.03em', color: '#0A0A0A', marginBottom: '1rem',
           }}>
             You can&apos;t scale without{' '}
             <span style={{
@@ -201,9 +205,9 @@ export default function SystemDiagram() {
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             }}>all of this.</span>
           </h2>
-          <p style={{ color: 'rgba(255,255,255,0.4)', maxWidth: '520px', margin: '0 auto', lineHeight: '1.75', fontSize: '0.9375rem' }}>
+          <p style={{ color: '#6B6B6B', maxWidth: '520px', margin: '0 auto', lineHeight: '1.75', fontSize: '0.9375rem' }}>
             Every node feeds the center. Every system talks to every other.{' '}
-            <span style={{ color: 'rgba(255,255,255,0.65)' }}>Click any planet to explore.</span>
+            <span style={{ color: '#0A0A0A', fontWeight: 600 }}>Click any planet to explore.</span>
           </p>
         </div>
 
@@ -280,8 +284,8 @@ export default function SystemDiagram() {
               {CONNECTIONS.map((c, i) => {
                 const dimmed = focusId && !isConnected(c, focusId);
                 const bright = focusId && isConnected(c, focusId);
-                const baseOpacity = c.isRing ? 0.05 : 0.08;
-                const dashOpacity = c.isRing ? 0.18 : 0.28;
+                const baseOpacity = c.isRing ? 0.08 : 0.12;
+                const dashOpacity = c.isRing ? 0.25 : 0.35;
                 return (
                   <g key={i}>
                     {/* Glow line */}
@@ -290,7 +294,7 @@ export default function SystemDiagram() {
                       fill="none"
                       stroke={c.color}
                       strokeWidth={bright ? 5 : c.isRing ? 1.5 : 2}
-                      opacity={dimmed ? 0.02 : bright ? 0.2 : baseOpacity}
+                      opacity={dimmed ? 0.04 : bright ? 0.25 : baseOpacity}
                       filter={bright ? 'url(#glow)' : undefined}
                       style={{ transition: 'opacity 0.4s ease, stroke-width 0.4s ease' }}
                     />
@@ -301,7 +305,7 @@ export default function SystemDiagram() {
                       stroke={c.color}
                       strokeWidth={bright ? 2 : 1}
                       strokeDasharray={c.isRing ? '4 12' : '6 9'}
-                      opacity={dimmed ? 0.04 : bright ? 0.9 : dashOpacity}
+                      opacity={dimmed ? 0.06 : bright ? 0.9 : dashOpacity}
                       style={{
                         animation: `dash-flow-${i} ${bright ? (c.dur * 0.55) : c.dur}s linear infinite`,
                         transition: 'opacity 0.4s ease, stroke-width 0.4s ease',
@@ -321,7 +325,7 @@ export default function SystemDiagram() {
                     <circle
                       r={bright ? 7 : baseR + 2}
                       fill={c.color}
-                      opacity={dimmed ? 0.04 : bright ? 0.3 : 0.1}
+                      opacity={dimmed ? 0.06 : bright ? 0.35 : 0.15}
                       filter="url(#glow)"
                     >
                       <animateMotion dur={`${bright ? c.dur * 0.55 : c.dur}s`} repeatCount="indefinite" begin={`${c.delay}s`}>
@@ -331,7 +335,7 @@ export default function SystemDiagram() {
                     <circle
                       r={bright ? 4.5 : baseR}
                       fill={c.color}
-                      opacity={dimmed ? 0.06 : bright ? 1 : (c.isRing ? 0.55 : 0.75)}
+                      opacity={dimmed ? 0.08 : bright ? 1 : (c.isRing ? 0.6 : 0.8)}
                       filter={bright ? 'url(#glow)' : undefined}
                     >
                       <animateMotion dur={`${bright ? c.dur * 0.55 : c.dur}s`} repeatCount="indefinite" begin={`${c.delay}s`}>
@@ -367,14 +371,14 @@ export default function SystemDiagram() {
                     <g transform={`rotate(${tilt}, ${tx}, ${ty})`}>
                       <ellipse cx={tx} cy={ty} rx={rx} ry={ry}
                         stroke={node.ringColor} strokeWidth={node.isHub ? 2 : 1.5}
-                        fill="none" opacity={isFocus ? 0.35 : 0.18}
+                        fill="none" opacity={isFocus ? 0.45 : 0.25}
                         clipPath={`url(#ring-back-${node.id})`}
                         style={{ transition: 'opacity 0.35s ease' }}
                       />
                       {node.isHub && (
                         <ellipse cx={tx} cy={ty} rx={rx * 1.35} ry={ry * 1.4}
                           stroke={node.ringColor} strokeWidth="1"
-                          fill="none" opacity={isFocus ? 0.2 : 0.1}
+                          fill="none" opacity={isFocus ? 0.3 : 0.15}
                           clipPath={`url(#ring-back-${node.id})`}
                           style={{ transition: 'opacity 0.35s ease' }}
                         />
@@ -489,7 +493,7 @@ export default function SystemDiagram() {
                       fontFamily: 'DM Sans, sans-serif',
                       fontWeight: 700,
                       fontSize: node.isHub ? '0.88rem' : '0.76rem',
-                      color: isActiveNode || isHoveredNode ? 'white' : 'rgba(255,255,255,0.75)',
+                      color: isActiveNode || isHoveredNode ? '#0A0A0A' : '#333',
                       lineHeight: 1.25,
                       letterSpacing: '-0.01em',
                       transition: 'color 0.2s ease',
@@ -499,8 +503,8 @@ export default function SystemDiagram() {
                     </div>
                     <div style={{
                       fontSize: node.isHub ? '0.68rem' : '0.62rem',
-                      color: `${node.color}${isActiveNode || isHoveredNode ? 'ff' : '99'}`,
-                      fontWeight: 500,
+                      color: node.color,
+                      fontWeight: 600,
                       marginTop: '2px',
                       transition: 'color 0.2s ease',
                       whiteSpace: 'nowrap',
@@ -525,14 +529,14 @@ export default function SystemDiagram() {
           {activeNode && (
             <div style={{
               borderRadius: '20px',
-              background: `linear-gradient(135deg, ${activeNode.color}0e 0%, rgba(7,11,15,0.95) 60%)`,
-              border: `1px solid ${activeNode.color}30`,
+              background: `linear-gradient(135deg, ${activeNode.color}0a 0%, #ffffff 60%)`,
+              border: `1px solid ${activeNode.color}25`,
               padding: '2.5rem',
               display: 'grid',
               gridTemplateColumns: '1fr auto',
               gap: '2.5rem',
               alignItems: 'start',
-              backdropFilter: 'blur(12px)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
             }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
@@ -549,12 +553,12 @@ export default function SystemDiagram() {
                 </div>
                 <h3 style={{
                   fontFamily: 'DM Sans, sans-serif', fontWeight: 800,
-                  fontSize: 'clamp(1.4rem, 2.5vw, 1.9rem)', color: 'white',
+                  fontSize: 'clamp(1.4rem, 2.5vw, 1.9rem)', color: '#0A0A0A',
                   lineHeight: 1.15, marginBottom: '0.875rem',
                 }}>
                   {activeNode.label}
                 </h3>
-                <p style={{ color: 'rgba(255,255,255,0.5)', lineHeight: '1.75', fontSize: '0.9375rem', maxWidth: '540px' }}>
+                <p style={{ color: '#6B6B6B', lineHeight: '1.75', fontSize: '0.9375rem', maxWidth: '540px' }}>
                   {activeNode.detail}
                 </p>
               </div>
@@ -564,18 +568,18 @@ export default function SystemDiagram() {
                     <div key={b} style={{
                       display: 'flex', alignItems: 'center', gap: '8px',
                       padding: '8px 14px', borderRadius: '8px',
-                      background: 'rgba(255,255,255,0.04)',
-                      border: `1px solid ${activeNode.color}18`,
+                      background: `${activeNode.color}08`,
+                      border: `1px solid ${activeNode.color}15`,
                     }}>
                       <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: activeNode.color, flexShrink: 0 }} />
-                      <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>{b}</span>
+                      <span style={{ fontSize: '0.8rem', color: '#444', fontWeight: 500 }}>{b}</span>
                     </div>
                   ))}
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <Link href="/contact" style={{
                     display: 'inline-flex', alignItems: 'center', gap: '6px',
-                    background: activeNode.color, color: '#0A0A0A',
+                    background: activeNode.color, color: '#fff',
                     padding: '9px 18px', borderRadius: '100px',
                     fontWeight: 700, fontSize: '0.8rem', textDecoration: 'none', flexShrink: 0,
                   }}>
@@ -584,8 +588,8 @@ export default function SystemDiagram() {
                   <button
                     onClick={() => setActive(null)}
                     style={{
-                      background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)',
-                      color: 'rgba(255,255,255,0.5)', borderRadius: '100px',
+                      background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.08)',
+                      color: '#6B6B6B', borderRadius: '100px',
                       padding: '9px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center',
                     }}
                     aria-label="Close detail"
@@ -601,9 +605,9 @@ export default function SystemDiagram() {
         {/* Hint */}
         <div style={{
           textAlign: 'center', marginTop: '1.5rem',
-          opacity: activeNode ? 0 : 0.4,
+          opacity: activeNode ? 0 : 0.5,
           transition: 'opacity 0.35s ease',
-          fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)',
+          fontSize: '0.78rem', color: '#6B6B6B',
           letterSpacing: '0.05em', pointerEvents: 'none',
         }}>
           ↑ click any planet above to explore
