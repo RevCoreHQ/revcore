@@ -133,6 +133,12 @@ export const fbAds = [
     type: 'Photo Ad', reactions: '2.4K', comments: '186 comments',
   },
   {
+    initials: 'PR', page: 'Premium Remodeling',
+    copy: 'Your dream kitchen is closer than you think — get a free quote today',
+    img: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69b62168ad0276f2c9eb8bc3.jpeg',
+    type: 'Photo Ad', reactions: '1.9K', comments: '214 comments',
+  },
+  {
     initials: 'SR', page: 'Storm Roofing Co',
     copy: 'New roof for as low as $7,000 + FREE Gutters',
     wistiaId: 'kn9y82ujo3',
@@ -146,9 +152,21 @@ export const fbAds = [
   },
   {
     initials: 'PR', page: 'Premium Remodeling',
+    copy: 'Transform your space — premium craftsmanship, honest pricing',
+    img: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69b6216887f0f260a4ffaeff.jpeg',
+    type: 'Photo Ad', reactions: '2.2K', comments: '167 comments',
+  },
+  {
+    initials: 'PR', page: 'Premium Remodeling',
     copy: 'Full Kitchen/Bathroom remodels starting $9,500',
     wistiaId: 'jy4i1p30r0',
     type: 'Video Ad', reactions: '2.7K', comments: '198 comments',
+  },
+  {
+    initials: 'SR', page: 'Storm Roofing Co',
+    copy: 'Don\'t wait for water damage — schedule your free roof inspection',
+    img: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69b621d55b89c76b959033bc.jpeg',
+    type: 'Photo Ad', reactions: '2.8K', comments: '291 comments',
   },
 ];
 
