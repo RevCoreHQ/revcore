@@ -305,11 +305,149 @@ export default function PackagesPage() {
           color: #4a5568;
         }
 
+        /* iOS Home Indicator */
+        .phone-home-indicator {
+          position: absolute;
+          bottom: 6px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 120px;
+          height: 4px;
+          background: rgba(0,0,0,0.2);
+          border-radius: 4px;
+          z-index: 20;
+        }
+
+        /* FB Feed Layout */
+        .fb-feed-wrapper {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          background: #f0f2f5;
+          overflow: hidden;
+        }
+        .fb-feed-topbar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 4px 12px;
+          background: #fff;
+          border-bottom: 1px solid #e4e6eb;
+        }
+        .fb-feed-topbar-logo {
+          font-size: 1.4rem;
+          font-weight: 700;
+          color: #1877f2;
+          letter-spacing: -0.5px;
+        }
+        .fb-feed-topbar-icons {
+          display: flex;
+          gap: 6px;
+        }
+        .fb-feed-topbar-icon {
+          width: 28px;
+          height: 28px;
+          background: #e4e6eb;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .fb-feed-topbar-icon svg {
+          width: 14px;
+          height: 14px;
+          fill: #050505;
+        }
+        .fb-create-post {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 12px;
+          background: #fff;
+          border-bottom: 1px solid #e4e6eb;
+        }
+        .fb-create-avatar {
+          width: 28px;
+          height: 28px;
+          background: #e4e6eb;
+          border-radius: 50%;
+        }
+        .fb-create-input {
+          flex: 1;
+          padding: 6px 12px;
+          background: #f0f2f5;
+          border-radius: 20px;
+          font-size: 0.72rem;
+          color: #65676b;
+        }
+        .fb-stories-bar {
+          display: flex;
+          gap: 6px;
+          padding: 8px 12px;
+          background: #fff;
+          border-bottom: 6px solid #f0f2f5;
+          overflow: hidden;
+        }
+        .fb-story-item {
+          width: 62px;
+          height: 90px;
+          border-radius: 10px;
+          overflow: hidden;
+          position: relative;
+          flex-shrink: 0;
+        }
+        .fb-story-item img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .fb-story-item .fb-story-name {
+          position: absolute;
+          bottom: 4px;
+          left: 4px;
+          right: 4px;
+          font-size: 0.5rem;
+          color: #fff;
+          font-weight: 600;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .fb-story-create {
+          background: #f0f2f5;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+          border: 1px solid #e4e6eb;
+        }
+        .fb-story-create-icon {
+          width: 22px;
+          height: 22px;
+          background: #1877f2;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+          font-size: 0.8rem;
+          font-weight: 700;
+        }
+        .fb-story-create-text {
+          font-size: 0.45rem;
+          color: #65676b;
+          font-weight: 600;
+        }
+
         /* FB Ad Carousel */
         .fb-ad-carousel {
           flex: 1;
           position: relative;
           overflow: hidden;
+          display: flex;
+          flex-direction: column;
         }
         .fb-ad-slide {
           display: none;
@@ -321,25 +459,6 @@ export default function PackagesPage() {
         @keyframes fbSlideIn {
           from { opacity: 0; transform: translateX(20px); }
           to { opacity: 1; transform: translateX(0); }
-        }
-        .fb-feed-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 6px 12px;
-          background: #f0f2f5;
-          border-bottom: 1px solid #e4e6eb;
-        }
-        .fb-logo-text {
-          font-size: 1.2rem;
-          font-weight: 700;
-          color: #1877f2;
-          letter-spacing: -0.5px;
-        }
-        .fb-ad-counter {
-          font-size: 0.7rem;
-          color: #65676b;
-          font-weight: 500;
         }
         .fb-post-compact {
           flex: 1;
@@ -382,16 +501,15 @@ export default function PackagesPage() {
         }
         .fb-post-copy {
           padding: 0 12px 6px;
-          font-size: 0.85rem;
+          font-size: 0.82rem;
           color: #050505;
-          line-height: 1.4;
+          line-height: 1.35;
         }
         .fb-ad-media {
-          flex: 1;
           position: relative;
           background: #000;
           overflow: hidden;
-          min-height: 220px;
+          aspect-ratio: 4/3;
         }
         .fb-ad-media img {
           width: 100%;
@@ -427,28 +545,51 @@ export default function PackagesPage() {
         .fb-engagement {
           display: flex;
           justify-content: space-between;
-          padding: 6px 12px;
-          font-size: 0.75rem;
+          padding: 4px 12px;
+          font-size: 0.72rem;
           color: #65676b;
           background: #fff;
-          border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .fb-action-bar {
+          display: flex;
+          justify-content: space-around;
+          padding: 4px 0;
+          border-top: 1px solid #e4e6eb;
+          border-bottom: 1px solid #e4e6eb;
+          background: #fff;
+        }
+        .fb-action-btn {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.7rem;
+          color: #65676b;
+          font-weight: 600;
+          padding: 4px 8px;
+          border-radius: 4px;
+          cursor: default;
+        }
+        .fb-action-btn svg {
+          width: 14px;
+          height: 14px;
+          fill: #65676b;
         }
         .fb-ad-nav {
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 10px;
-          padding: 6px;
+          padding: 4px;
           background: #fff;
         }
         .fb-nav-arrow {
-          width: 28px;
-          height: 28px;
+          width: 24px;
+          height: 24px;
           border: none;
           background: #e4e6eb;
           border-radius: 50%;
           color: #65676b;
-          font-size: 1.1rem;
+          font-size: 1rem;
           cursor: pointer;
           transition: all 0.2s;
           display: flex;
@@ -461,11 +602,11 @@ export default function PackagesPage() {
         }
         .fb-ad-dots {
           display: flex;
-          gap: 6px;
+          gap: 5px;
         }
         .fb-dot {
-          width: 8px;
-          height: 8px;
+          width: 7px;
+          height: 7px;
           border-radius: 50%;
           background: #d8dadf;
           cursor: pointer;
@@ -1346,22 +1487,46 @@ function PhoneDemo() {
               <div className="phone-screen">
                 <div className="phone-notch" />
                 <div className="phone-screen-content">
-                  {/* Slide 1: FB Ads */}
+                  {/* Slide 1: FB Ads Feed */}
                   <div className={`phone-slide${step === 0 ? ' active' : step > 0 ? ' prev' : ''}`}>
-                    <div className="phone-slide-body" style={{ gap: 0 }}>
+                    <div className="fb-feed-wrapper">
+                      {/* Top bar */}
+                      <div className="fb-feed-topbar">
+                        <span className="fb-feed-topbar-logo">facebook</span>
+                        <div className="fb-feed-topbar-icons">
+                          <div className="fb-feed-topbar-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+                          <div className="fb-feed-topbar-icon"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div>
+                        </div>
+                      </div>
+
+                      {/* Create post */}
+                      <div className="fb-create-post">
+                        <div className="fb-create-avatar" />
+                        <div className="fb-create-input">What&apos;s on your mind?</div>
+                      </div>
+
+                      {/* Stories */}
+                      <div className="fb-stories-bar">
+                        <div className="fb-story-item fb-story-create">
+                          <div className="fb-story-create-icon">+</div>
+                          <span className="fb-story-create-text">Create</span>
+                        </div>
+                        <div className="fb-story-item" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}><span className="fb-story-name">Mike R.</span></div>
+                        <div className="fb-story-item" style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)' }}><span className="fb-story-name">Sarah K.</span></div>
+                        <div className="fb-story-item" style={{ background: 'linear-gradient(135deg, #4facfe, #00f2fe)' }}><span className="fb-story-name">Tom B.</span></div>
+                        <div className="fb-story-item" style={{ background: 'linear-gradient(135deg, #43e97b, #38f9d7)' }}><span className="fb-story-name">Lisa M.</span></div>
+                      </div>
+
+                      {/* Ad in feed */}
                       <div className="fb-ad-carousel">
                         {fbAds.map((ad, i) => (
                           <div key={i} className={`fb-ad-slide${adIdx === i ? ' active' : ''}`}>
-                            <div className="fb-feed-header">
-                              <span className="fb-logo-text">facebook</span>
-                              <div className="fb-ad-counter">{i + 1}/{fbAds.length}</div>
-                            </div>
                             <div className="fb-post-compact">
                               <div className="fb-post-top">
                                 <div className="fb-avatar-sm">{ad.initials}</div>
                                 <div className="fb-post-meta-sm">
                                   <span className="fb-page-name">{ad.page}</span>
-                                  <span className="fb-sponsored-tag">Sponsored</span>
+                                  <span className="fb-sponsored-tag">Sponsored · <svg viewBox="0 0 16 16" style={{ width: 10, height: 10, fill: '#65676b', verticalAlign: 'middle' }}><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm0 14.5a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13z"/></svg></span>
                                 </div>
                               </div>
                               <div className="fb-post-copy">{ad.copy}</div>
@@ -1379,6 +1544,11 @@ function PhoneDemo() {
                               <div className="fb-engagement">
                                 <span className="fb-reactions-mini">{ad.reactions}</span>
                                 <span className="fb-comments-mini">{ad.comments}</span>
+                              </div>
+                              <div className="fb-action-bar">
+                                <span className="fb-action-btn"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>Like</span>
+                                <span className="fb-action-btn"><svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>Comment</span>
+                                <span className="fb-action-btn"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>Share</span>
                               </div>
                             </div>
                           </div>
@@ -1494,6 +1664,7 @@ function PhoneDemo() {
                 </div>
               </div>
             </div>
+            <div className="phone-home-indicator" />
             <div className="phone-nav">
               {phoneSteps.map((_, i) => (
                 <button key={i} className={`phone-nav-dot${step === i ? ' active' : ''}`} onClick={() => goToStep(i)} />
