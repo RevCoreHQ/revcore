@@ -154,7 +154,7 @@ export const fbAds = [
   {
     initials: 'PR', page: 'Premium Remodeling',
     copy: 'Transform your space — premium craftsmanship, honest pricing',
-    img: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69b6216887f0f260a4ffaeff.jpeg',
+    img: 'https://storage.googleapis.com/msgsndr/odDqIyBG9N40GtGHw9NQ/media/6940aa5c021234a338f385d9.jpg',
     type: 'Photo Ad', reactions: '2.2K', comments: '167 comments',
   },
   {
@@ -166,7 +166,7 @@ export const fbAds = [
   {
     initials: 'SR', page: 'Storm Roofing Co',
     copy: 'Don\'t wait for water damage — schedule your free roof inspection',
-    img: 'https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69b621d55b89c76b959033bc.jpeg',
+    img: 'https://storage.googleapis.com/msgsndr/odDqIyBG9N40GtGHw9NQ/media/6940ac5e96e7534e8feed63b.jpg',
     type: 'Photo Ad', reactions: '2.8K', comments: '291 comments',
   },
 ];
