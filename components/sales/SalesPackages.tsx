@@ -23,7 +23,7 @@ const packages = [
   },
   {
     id: 'growth',
-    name: 'Growth Engine',
+    name: 'Growth Partner',
     tagline: 'Complete top-of-funnel system with website and SEO.',
     priceMonthly: 3497,
     note: '+ ad spend (you control budget)',
@@ -46,7 +46,7 @@ const packages = [
     accent: '#94D96B',
     highlight: false,
     heroFeatures: [
-      { label: 'Everything in Growth Engine', sub: 'every feature, fully managed' },
+      { label: 'Everything in Growth Partner', sub: 'every feature, fully managed' },
       { label: 'Dedicated Success Manager', sub: 'one point of contact, always' },
       { label: 'Full Automation Stack', sub: 'Rehash Engine™, review & referral automations' },
       { label: 'Sales Training & Tools', sub: 'scripts, quoting software & presentation app' },

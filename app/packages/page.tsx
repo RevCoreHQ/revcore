@@ -897,7 +897,7 @@ const funnelData = [
     layers: ['Referrals + Paid Ads + Optimized Website + SEO', 'Auto Booking System', 'Appt Reminders', 'Jobs'],
     descriptions: [
       'Every channel compounds. SEO rankings build month over month, paid ads drive immediate traffic, your website converts visitors around the clock, and referrals never stop. This is how you dominate a market.',
-      'The full system handles volume effortlessly. AI powered follow ups, review requests, and re-engagement campaigns run on autopilot 24/7.',
+      'The full system handles volume effortlessly. Automated follow ups, review requests, and re-engagement campaigns run on autopilot 24/7.',
       'Confirmation rates exceed 90%. The infrastructure pays for itself many times over at this volume.',
       'Maximum job volume with minimal overhead. Your funnel is wide at the top and efficient all the way down. This is what a real growth engine looks like.',
     ],
@@ -3166,7 +3166,7 @@ function PricingSection() {
                   <div style={{
                     position: 'absolute', top: 24, right: 24,
                     background: pkg.accent,
-                    color: 'white', fontSize: '0.6rem', fontWeight: 700,
+                    color: 'white', fontSize: '0.65rem', fontWeight: 700,
                     padding: '5px 14px', borderRadius: 100,
                     letterSpacing: '0.1em', textTransform: 'uppercase',
                     zIndex: 2,
@@ -3175,7 +3175,7 @@ function PricingSection() {
                   <div style={{
                     position: 'absolute', top: 24, right: 24,
                     border: `1px solid rgba(255,255,255,0.08)`, color: 'rgba(255,255,255,0.3)',
-                    fontSize: '0.6rem', fontWeight: 600,
+                    fontSize: '0.65rem', fontWeight: 600,
                     padding: '5px 14px', borderRadius: 100,
                     letterSpacing: '0.1em', textTransform: 'uppercase',
                     zIndex: 2,
@@ -3186,7 +3186,7 @@ function PricingSection() {
                 <div style={{ padding: '2.25rem 2.25rem 1.5rem', position: 'relative', zIndex: 1 }}>
                   <h3 style={{
                       fontFamily: 'DM Sans, sans-serif',
-                      fontSize: '1.5rem',
+                      fontSize: '1.6rem',
                       fontWeight: 800,
                       color: 'white',
                       marginBottom: '0.5rem', userSelect: 'none',
@@ -3194,7 +3194,7 @@ function PricingSection() {
                   >{pkg.name}</h3>
                   <p style={{
                     color: 'rgba(255,255,255,0.4)',
-                    fontSize: '0.9rem',
+                    fontSize: '0.95rem',
                     lineHeight: 1.5, marginBottom: '1.75rem',
                   }}>{pkg.tagline}</p>
 
@@ -3217,15 +3217,15 @@ function PricingSection() {
 
                   {isQuarterly ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.3)' }}>billed {pkg.quarterlyTotal}</span>
+                      <span style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.3)' }}>billed {pkg.quarterlyTotal}</span>
                       <span style={{
-                        fontSize: '0.72rem', fontWeight: 700, color: '#94D96B',
+                        fontSize: '0.78rem', fontWeight: 700, color: '#94D96B',
                         background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.12)',
                         padding: '3px 10px', borderRadius: 100,
                       }}>save {pkg.quarterlySave}</span>
                     </div>
                   ) : (
-                    <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.3)', fontWeight: 500 }}>{pkg.noteMonthly}</span>
+                    <span style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.3)', fontWeight: 500 }}>{pkg.noteMonthly}</span>
                   )}
                 </div>
 
@@ -3235,7 +3235,7 @@ function PricingSection() {
                 {/* Features */}
                 <div style={{ padding: '0 2.25rem 1.5rem', position: 'relative', zIndex: 1 }}>
                   <p style={{
-                    fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+                    fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
                     color: 'rgba(255,255,255,0.2)', margin: '1.25rem 0 1rem',
                   }}>
                     {pkg.featuresTitle || "What's included"}
@@ -3245,7 +3245,7 @@ function PricingSection() {
                       <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '6px 0' }}>
                         <Check size={14} style={{ color: pkg.accent, flexShrink: 0 }} />
                         <span style={{
-                          fontSize: '0.95rem',
+                          fontSize: '1rem',
                           fontWeight: 600,
                           color: 'rgba(255,255,255,0.8)',
                         }}>{f}</span>
@@ -3257,9 +3257,9 @@ function PricingSection() {
                   {isLaunchpad(pkg.id) && (
                     <div style={{
                       marginTop: 14, padding: '10px 14px', borderRadius: 10,
-                      background: 'rgba(254,100,98,0.04)', border: '1px solid rgba(254,100,98,0.08)',
+                      background: 'rgba(232,128,126,0.04)', border: '1px solid rgba(232,128,126,0.10)',
                     }}>
-                      <span style={{ fontSize: '0.8rem', color: 'rgba(254,100,98,0.5)', fontWeight: 500 }}>
+                      <span style={{ fontSize: '0.85rem', color: 'rgba(232,128,126,0.55)', fontWeight: 500 }}>
                         Does not include website, SEO, or sales tools
                       </span>
                     </div>
@@ -3269,7 +3269,7 @@ function PricingSection() {
                   <button onClick={(e) => { e.stopPropagation(); setExpanded(p => ({ ...p, [pkg.id]: !p[pkg.id] })); }} style={{
                     display: 'flex', alignItems: 'center', gap: 6,
                     background: 'none', border: 'none', cursor: 'pointer',
-                    color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem', fontWeight: 600,
+                    color: 'rgba(255,255,255,0.3)', fontSize: '0.9rem', fontWeight: 600,
                     marginTop: 14, padding: 0, fontFamily: 'DM Sans, sans-serif',
                   }}>
                     <ChevronDown size={14} style={{ transform: expanded[pkg.id] ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
@@ -3282,7 +3282,7 @@ function PricingSection() {
                       {pkg.moreFeatures.map((f, fi) => (
                         <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <Check size={14} style={{ color: pkg.accent, flexShrink: 0 }} />
-                          <span style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.45)' }}>{f}</span>
+                          <span style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.45)' }}>{f}</span>
                         </div>
                       ))}
                     </div>
@@ -3295,7 +3295,7 @@ function PricingSection() {
                     width: '100%',
                     padding: 16,
                     borderRadius: 12,
-                    fontSize: '0.95rem',
+                    fontSize: '1rem',
                     fontWeight: 700,
                     cursor: 'pointer',
                     border: isRecommended ? 'none' : `1px solid ${pkg.accent}25`,
@@ -3734,7 +3734,7 @@ function ROICalculator() {
                   cursor: 'pointer', transition: 'all 0.2s', color: '#0A0A0A', border: 'none',
                   background: pkg === p ? 'rgba(254,100,98,0.08)' : '#F5F5F5',
                   outline: pkg === p ? '2px solid #FE6462' : '2px solid #E5E5E5',
-                }}>{p === 'core' ? 'Growth Engine' : 'Full Scale Partner'}</button>
+                }}>{p === 'core' ? 'Growth Partner' : 'Full Scale Partner'}</button>
               ))}
             </div>
           </div>

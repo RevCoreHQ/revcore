@@ -3,14 +3,14 @@ export const packagesData = [
   {
     id: 'launchpad',
     name: 'Launchpad',
-    badge: 'Starter',
+    badge: 'Minimum Package',
     badgeType: 'outline' as const,
     tagline: 'Get consistent appointments with pre-qualified leads.',
     priceMonthly: 2500,
     noteMonthly: '+ ad spend',
     quarterlyTotal: '$6,750/quarter',
     quarterlySave: '$250/mo',
-    accent: '#FE6462',
+    accent: '#E8807E',
     highlight: false,
     heroFeatures: [
       '15 Appointments / mo',
@@ -20,7 +20,7 @@ export const packagesData = [
   },
   {
     id: 'growth',
-    name: 'Growth Engine',
+    name: 'Growth Partner',
     badge: 'Most Popular',
     badgeType: 'popular' as const,
     tagline: 'Complete top-of-funnel system with website and SEO.',
@@ -56,7 +56,7 @@ export const packagesData = [
     quarterlySave: '$500/mo',
     accent: '#94D96B',
     highlight: false,
-    featuresTitle: 'Everything in Growth Engine, plus',
+    featuresTitle: 'Everything in Growth Partner, plus',
     heroFeatures: [
       '40+ Appointments / mo',
       'GMB Optimization',
