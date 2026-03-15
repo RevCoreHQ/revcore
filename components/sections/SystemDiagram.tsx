@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, X } from 'lucide-react';
+import { useScrollReveal, fadeUp, scaleUp, stagger } from '@/hooks/useScrollReveal';
 
 /* ─── Canvas dimensions ────────────────────────────────────────────────────── */
 const W = 1000;
@@ -18,15 +19,8 @@ interface SystemNode {
   detail: string;
   bullets: string[];
   color: string;
-  highlight: string;    // bright highlight for gradient
-  darkColor: string;    // dark edge for gradient
-  ringColor: string;    // ring stripe color
   x: number;
   y: number;
-  r: number;            // SVG radius
-  ringRx: number;       // ring ellipse x-radius
-  ringRy: number;       // ring ellipse y-radius
-  ringTilt: number;     // ring tilt in degrees
   isHub?: boolean;
 }
 
@@ -39,12 +33,7 @@ const NODES: SystemNode[] = [
     detail: 'The brain of your entire operation. Every service feeds data back here, giving you one clean dashboard of every lead, every job, every dollar, and every team member in real time.',
     bullets: ['Real-time lead tracking', 'Revenue & source reporting', 'Custom pipeline views', 'Team access & roles'],
     color: '#94D96B',
-    highlight: '#e4ffd0',
-    darkColor: '#1a4009',
-    ringColor: '#a8e87a',
-    x: 500, y: 330, r: 52,
-    ringRx: 100, ringRy: 20,
-    ringTilt: 0,
+    x: 500, y: 330,
     isHub: true,
   },
   {
@@ -55,12 +44,7 @@ const NODES: SystemNode[] = [
     detail: 'Hyper-targeted paid ad campaigns driving homeowners in your exact service area directly into your CRM pipeline. Every dollar tracked, every lead attributed to its source.',
     bullets: ['Google Search & Display Ads', 'Meta & Instagram campaigns', 'YouTube pre-roll ads', 'Conversion-optimized landing pages'],
     color: '#FE6462',
-    highlight: '#ffd8d4',
-    darkColor: '#3d0909',
-    ringColor: '#ff9e9c',
-    x: 500, y: 52, r: 34,
-    ringRx: 62, ringRy: 12,
-    ringTilt: -8,
+    x: 500, y: 62,
   },
   {
     id: 'seo',
@@ -70,12 +54,7 @@ const NODES: SystemNode[] = [
     detail: 'Long-term organic visibility that compounds month over month, so homeowners in your market find you on Google before they ever see your competitors.',
     bullets: ['Local SEO audit & strategy', 'Google Business optimization', 'Review generation system', 'Keyword & content planning'],
     color: '#6B8EFE',
-    highlight: '#d0daff',
-    darkColor: '#09093d',
-    ringColor: '#9aaeff',
-    x: 878, y: 185, r: 34,
-    ringRx: 62, ringRy: 12,
-    ringTilt: 25,
+    x: 878, y: 195,
   },
   {
     id: 'software',
@@ -85,12 +64,7 @@ const NODES: SystemNode[] = [
     detail: 'Two proprietary tools built exclusively for home service trades. Quote on-site, present professionally on iPad, collect e-signatures, and sync every job back to your CRM automatically.',
     bullets: ['On-site quoting tool', 'Custom iPad presentation', 'E-signature close', 'Job pipeline sync'],
     color: '#4FC3F7',
-    highlight: '#ccf4ff',
-    darkColor: '#083a4d',
-    ringColor: '#86d8fc',
-    x: 800, y: 515, r: 34,
-    ringRx: 62, ringRy: 12,
-    ringTilt: -20,
+    x: 800, y: 515,
   },
   {
     id: 'automation',
@@ -100,12 +74,7 @@ const NODES: SystemNode[] = [
     detail: 'Our automation engine runs 24/7, following up on cold quotes, re-engaging old leads through the rehash engine, requesting reviews, and firing appointment reminders. Zero team effort.',
     bullets: ['Quote follow-up sequences', 'Rehash engine (old leads)', 'Review request automation', 'Appointment reminders'],
     color: '#FEB64A',
-    highlight: '#ffeacc',
-    darkColor: '#3d2309',
-    ringColor: '#ffd28a',
-    x: 200, y: 515, r: 34,
-    ringRx: 62, ringRy: 12,
-    ringTilt: 20,
+    x: 200, y: 515,
   },
   {
     id: 'training',
@@ -115,12 +84,7 @@ const NODES: SystemNode[] = [
     detail: 'We train your reps in the field, scripts, objection handling, Good/Better/Best pricing presentations, and how to close at the kitchen table every time. Paired with our tools for maximum close rate.',
     bullets: ['In-home sales scripts', 'Objection handling', 'Good/Better/Best pricing', 'Field performance tracking'],
     color: '#FF8B89',
-    highlight: '#ffd4d2',
-    darkColor: '#3d0910',
-    ringColor: '#ffb8b6',
-    x: 122, y: 185, r: 34,
-    ringRx: 62, ringRy: 12,
-    ringTilt: -25,
+    x: 122, y: 195,
   },
 ];
 
@@ -131,25 +95,25 @@ interface Conn {
   dur: number;
   delay: number;
   d: string;
-  isRing?: boolean;   // outer pentagon connection (dimmer)
+  isRing?: boolean;
 }
 
 /* Hub spokes — data flows into CRM */
 const HUB_CONNECTIONS: Conn[] = [
-  { from: 'leads',      to: 'crm', color: '#FE6462', dur: 2.2, delay: 0.0, d: 'M 500,52 Q 558,195 500,330' },
-  { from: 'seo',        to: 'crm', color: '#6B8EFE', dur: 2.5, delay: 0.5, d: 'M 878,185 Q 680,215 500,330' },
+  { from: 'leads',      to: 'crm', color: '#FE6462', dur: 2.2, delay: 0.0, d: 'M 500,62 Q 558,200 500,330' },
+  { from: 'seo',        to: 'crm', color: '#6B8EFE', dur: 2.5, delay: 0.5, d: 'M 878,195 Q 680,220 500,330' },
   { from: 'software',   to: 'crm', color: '#4FC3F7', dur: 2.4, delay: 1.0, d: 'M 800,515 Q 680,380 500,330' },
   { from: 'automation', to: 'crm', color: '#FEB64A', dur: 2.4, delay: 1.5, d: 'M 200,515 Q 320,380 500,330' },
-  { from: 'training',   to: 'crm', color: '#FF8B89', dur: 2.5, delay: 2.0, d: 'M 122,185 Q 320,215 500,330' },
+  { from: 'training',   to: 'crm', color: '#FF8B89', dur: 2.5, delay: 2.0, d: 'M 122,195 Q 320,220 500,330' },
 ];
 
 /* Pentagon ring — peer connections between outer nodes */
 const RING_CONNECTIONS: Conn[] = [
-  { from: 'leads',      to: 'seo',        color: '#A878E0', dur: 3.5, delay: 0.4, d: 'M 500,52 Q 760,10 878,185',        isRing: true },
-  { from: 'seo',        to: 'software',   color: '#6B8EFE', dur: 3.8, delay: 1.1, d: 'M 878,185 Q 980,355 800,515',       isRing: true },
-  { from: 'software',   to: 'automation', color: '#4FC3F7', dur: 3.6, delay: 0.7, d: 'M 800,515 Q 500,625 200,515',       isRing: true },
-  { from: 'automation', to: 'training',   color: '#FEB64A', dur: 3.9, delay: 1.5, d: 'M 200,515 Q 20,355 122,185',        isRing: true },
-  { from: 'training',   to: 'leads',      color: '#FF8B89', dur: 3.4, delay: 0.9, d: 'M 122,185 Q 240,10 500,52',         isRing: true },
+  { from: 'leads',      to: 'seo',        color: '#A878E0', dur: 3.5, delay: 0.4, d: 'M 500,62 Q 760,20 878,195',        isRing: true },
+  { from: 'seo',        to: 'software',   color: '#6B8EFE', dur: 3.8, delay: 1.1, d: 'M 878,195 Q 980,360 800,515',       isRing: true },
+  { from: 'software',   to: 'automation', color: '#4FC3F7', dur: 3.6, delay: 0.7, d: 'M 800,515 Q 500,630 200,515',       isRing: true },
+  { from: 'automation', to: 'training',   color: '#FEB64A', dur: 3.9, delay: 1.5, d: 'M 200,515 Q 20,360 122,195',        isRing: true },
+  { from: 'training',   to: 'leads',      color: '#FF8B89', dur: 3.4, delay: 0.9, d: 'M 122,195 Q 240,20 500,62',         isRing: true },
 ];
 
 const CONNECTIONS: Conn[] = [...HUB_CONNECTIONS, ...RING_CONNECTIONS];
@@ -162,10 +126,16 @@ function isConnected(conn: Conn, id: NodeId) {
   return conn.from === id || conn.to === id;
 }
 
+const OUTER_NODES = NODES.filter(n => !n.isHub);
+const HUB_NODE = NODES.find(n => n.isHub)!;
+
+const TRANSITION = '0.4s cubic-bezier(0.22,1,0.36,1)';
+
 /* ─── Component ─────────────────────────────────────────────────────────────── */
 export default function SystemDiagram() {
   const [active, setActive] = useState<NodeId | null>(null);
   const [hovered, setHovered] = useState<NodeId | null>(null);
+  const { ref, inView } = useScrollReveal({ threshold: 0.1 });
 
   const focusId = hovered ?? active;
   const activeNode = active ? NODES.find(n => n.id === active) : null;
@@ -175,7 +145,7 @@ export default function SystemDiagram() {
   }
 
   return (
-    <section style={{ padding: '100px 0 120px', background: '#F5F5F5', overflow: 'hidden', position: 'relative' }}>
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '100px 0 120px', background: '#F5F5F5', overflow: 'hidden', position: 'relative' }}>
       {/* Light dot pattern */}
       <div style={{
         position: 'absolute', inset: 0,
@@ -185,7 +155,7 @@ export default function SystemDiagram() {
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
 
         {/* ── Header ── */}
-        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3.5rem', ...fadeUp(inView) }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.15em',
@@ -199,26 +169,31 @@ export default function SystemDiagram() {
             fontSize: 'clamp(2rem, 4vw, 3rem)', lineHeight: 1.1,
             letterSpacing: '-0.03em', color: '#0A0A0A', marginBottom: '1rem',
           }}>
-            You can&apos;t scale without{' '}
+            Everything works as{' '}
             <span style={{
-              background: 'linear-gradient(118deg, #FE6462, #FEB64A)',
+              background: 'linear-gradient(118deg, #94D96B, #4FC3F7)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-            }}>all of this.</span>
+            }}>one system.</span>
           </h2>
           <p style={{ color: '#6B6B6B', maxWidth: '520px', margin: '0 auto', lineHeight: '1.75', fontSize: '0.9375rem' }}>
-            Every node feeds the center. Every system talks to every other.{' '}
-            <span style={{ color: '#0A0A0A', fontWeight: 600 }}>Click any planet to explore.</span>
+            Every service feeds data to your CRM. Every tool talks to every other.{' '}
+            <span style={{ color: '#0A0A0A', fontWeight: 600 }}>Click any node to explore.</span>
           </p>
         </div>
 
         {/* ── Diagram ── */}
-        <div style={{ position: 'relative', width: '100%', paddingBottom: `${(H / W) * 100}%` }}>
+        <div className="sysdiag-diagram" style={{ position: 'relative', width: '100%', paddingBottom: `${(H / W) * 100}%` }}>
           <div style={{ position: 'absolute', inset: 0 }}>
 
-            {/* SVG layer — connections + planet visuals */}
+            {/* SVG layer — connections only */}
             <svg
+              className="sysdiag-svg"
               viewBox={`0 0 ${W} ${H}`}
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible' }}
+              style={{
+                position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible',
+                opacity: inView ? 1 : 0,
+                transition: `opacity 1.2s ease 400ms`,
+              }}
               xmlns="http://www.w3.org/2000/svg"
             >
               <defs>
@@ -226,57 +201,18 @@ export default function SystemDiagram() {
                 {CONNECTIONS.map((c, i) => (
                   <path key={i} id={`sp-${i}`} d={c.d} />
                 ))}
-
-                {/* Planet radial gradients */}
-                {NODES.map(n => (
-                  <radialGradient key={n.id} id={`pg-${n.id}`} cx="36%" cy="28%" r="72%" fx="36%" fy="28%">
-                    <stop offset="0%"   stopColor={n.highlight}  stopOpacity="0.9" />
-                    <stop offset="28%"  stopColor={n.color}      stopOpacity="1" />
-                    <stop offset="80%"  stopColor={n.darkColor}  stopOpacity="1" />
-                    <stop offset="100%" stopColor={n.darkColor}  stopOpacity="1" />
-                  </radialGradient>
-                ))}
-
-                {/* Second band gradient for surface detail */}
-                {NODES.map(n => (
-                  <radialGradient key={n.id} id={`ps-${n.id}`} cx="60%" cy="65%" r="55%">
-                    <stop offset="0%"   stopColor={n.darkColor} stopOpacity="0.5" />
-                    <stop offset="100%" stopColor={n.darkColor} stopOpacity="0" />
-                  </radialGradient>
-                ))}
-
-                {/* Ring half-clip paths */}
-                {NODES.map(n => (
-                  <g key={n.id}>
-                    <clipPath id={`ring-back-${n.id}`}>
-                      <rect x={n.x - 200} y={n.y - 200} width="400" height="200" />
-                    </clipPath>
-                    <clipPath id={`ring-front-${n.id}`}>
-                      <rect x={n.x - 200} y={n.y} width="400" height="200" />
-                    </clipPath>
-                  </g>
-                ))}
-
-                {/* Glow filters */}
-                <filter id="glow">
-                  <feGaussianBlur stdDeviation="2.5" result="blur" />
-                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-                <filter id="glow-strong">
-                  <feGaussianBlur stdDeviation="8" result="blur" />
-                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-                <filter id="planet-shadow">
-                  <feGaussianBlur stdDeviation="4" result="blur" />
+                {/* Lightweight glow */}
+                <filter id="dot-glow">
+                  <feGaussianBlur stdDeviation="2" result="blur" />
                   <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
                 </filter>
               </defs>
 
-              {/* ── Radar pulses on CRM hub ── */}
+              {/* ── CRM radar pulses ── */}
               {[0, 0.8, 1.6].map((d, i) => (
-                <circle key={i} cx={500} cy={330} r="2" fill="none" stroke="#94D96B" strokeWidth="1">
-                  <animate attributeName="r"       values="55;150" dur="2.4s" begin={`${d}s`} repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.35;0" dur="2.4s" begin={`${d}s`} repeatCount="indefinite" />
+                <circle key={i} cx={HUB_NODE.x} cy={HUB_NODE.y} r="2" fill="none" stroke="#94D96B" strokeWidth="1">
+                  <animate attributeName="r"       values="30;100" dur="2.4s" begin={`${d}s`} repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.15;0" dur="2.4s" begin={`${d}s`} repeatCount="indefinite" />
                 </circle>
               ))}
 
@@ -284,19 +220,17 @@ export default function SystemDiagram() {
               {CONNECTIONS.map((c, i) => {
                 const dimmed = focusId && !isConnected(c, focusId);
                 const bright = focusId && isConnected(c, focusId);
-                const baseOpacity = c.isRing ? 0.08 : 0.12;
-                const dashOpacity = c.isRing ? 0.25 : 0.35;
+                const baseOpacity = c.isRing ? 0.06 : 0.1;
                 return (
                   <g key={i}>
-                    {/* Glow line */}
+                    {/* Base line */}
                     <use
                       href={`#sp-${i}`}
                       fill="none"
                       stroke={c.color}
-                      strokeWidth={bright ? 5 : c.isRing ? 1.5 : 2}
-                      opacity={dimmed ? 0.04 : bright ? 0.25 : baseOpacity}
-                      filter={bright ? 'url(#glow)' : undefined}
-                      style={{ transition: 'opacity 0.4s ease, stroke-width 0.4s ease' }}
+                      strokeWidth={bright ? 2.5 : 1.5}
+                      opacity={dimmed ? 0.03 : bright ? 0.25 : baseOpacity}
+                      style={{ transition: `opacity ${TRANSITION}, stroke-width ${TRANSITION}` }}
                     />
                     {/* Animated dash */}
                     <use
@@ -305,10 +239,10 @@ export default function SystemDiagram() {
                       stroke={c.color}
                       strokeWidth={bright ? 2 : 1}
                       strokeDasharray={c.isRing ? '4 12' : '6 9'}
-                      opacity={dimmed ? 0.06 : bright ? 0.9 : dashOpacity}
+                      opacity={dimmed ? 0.04 : bright ? 0.8 : (c.isRing ? 0.15 : 0.25)}
                       style={{
                         animation: `dash-flow-${i} ${bright ? (c.dur * 0.55) : c.dur}s linear infinite`,
-                        transition: 'opacity 0.4s ease, stroke-width 0.4s ease',
+                        transition: `opacity ${TRANSITION}, stroke-width ${TRANSITION}`,
                       }}
                     />
                   </g>
@@ -319,151 +253,104 @@ export default function SystemDiagram() {
               {CONNECTIONS.map((c, i) => {
                 const dimmed = focusId && !isConnected(c, focusId);
                 const bright = focusId && isConnected(c, focusId);
-                const baseR = c.isRing ? 2.5 : 3;
                 return (
                   <g key={i}>
+                    {/* Glow halo */}
                     <circle
-                      r={bright ? 7 : baseR + 2}
+                      r={bright ? 6 : 3}
                       fill={c.color}
-                      opacity={dimmed ? 0.06 : bright ? 0.35 : 0.15}
-                      filter="url(#glow)"
+                      opacity={dimmed ? 0.04 : bright ? 0.3 : 0.1}
+                      filter="url(#dot-glow)"
                     >
                       <animateMotion dur={`${bright ? c.dur * 0.55 : c.dur}s`} repeatCount="indefinite" begin={`${c.delay}s`}>
                         <mpath href={`#sp-${i}`} />
                       </animateMotion>
                     </circle>
+                    {/* Core dot */}
                     <circle
-                      r={bright ? 4.5 : baseR}
+                      r={bright ? 3 : (c.isRing ? 2 : 2.5)}
                       fill={c.color}
-                      opacity={dimmed ? 0.08 : bright ? 1 : (c.isRing ? 0.6 : 0.8)}
-                      filter={bright ? 'url(#glow)' : undefined}
+                      opacity={dimmed ? 0.06 : bright ? 1 : (c.isRing ? 0.5 : 0.7)}
                     >
                       <animateMotion dur={`${bright ? c.dur * 0.55 : c.dur}s`} repeatCount="indefinite" begin={`${c.delay}s`}>
                         <mpath href={`#sp-${i}`} />
                       </animateMotion>
                     </circle>
-                  </g>
-                );
-              })}
-
-              {/* ── Planets (atmosphere → ring-back → body → ring-front → highlight) ── */}
-              {NODES.map(node => {
-                const isFocus = focusId === node.id;
-                const r = node.r;
-                const rx = node.ringRx;
-                const ry = node.ringRy;
-                const tx = node.x;
-                const ty = node.y;
-                const tilt = node.ringTilt;
-                const glowScale = isFocus ? 1.4 : 1;
-
-                return (
-                  <g key={node.id} style={{ transition: 'opacity 0.35s ease' }}
-                    opacity={focusId && focusId !== node.id ? 0.38 : 1}
-                  >
-                    {/* Outer atmospheric haze */}
-                    <circle cx={tx} cy={ty} r={r * 2.6 * glowScale} fill={node.color} opacity={isFocus ? 0.14 : 0.06} filter="url(#glow-strong)" style={{ transition: 'all 0.35s ease' }} />
-
-                    {/* Mid glow */}
-                    <circle cx={tx} cy={ty} r={r * 1.7} fill={node.color} opacity={isFocus ? 0.22 : 0.1} filter="url(#glow)" style={{ transition: 'all 0.35s ease' }} />
-
-                    {/* Ring back half (behind planet) */}
-                    <g transform={`rotate(${tilt}, ${tx}, ${ty})`}>
-                      <ellipse cx={tx} cy={ty} rx={rx} ry={ry}
-                        stroke={node.ringColor} strokeWidth={node.isHub ? 2 : 1.5}
-                        fill="none" opacity={isFocus ? 0.45 : 0.25}
-                        clipPath={`url(#ring-back-${node.id})`}
-                        style={{ transition: 'opacity 0.35s ease' }}
-                      />
-                      {node.isHub && (
-                        <ellipse cx={tx} cy={ty} rx={rx * 1.35} ry={ry * 1.4}
-                          stroke={node.ringColor} strokeWidth="1"
-                          fill="none" opacity={isFocus ? 0.3 : 0.15}
-                          clipPath={`url(#ring-back-${node.id})`}
-                          style={{ transition: 'opacity 0.35s ease' }}
-                        />
-                      )}
-                    </g>
-
-                    {/* Planet body — base gradient */}
-                    <circle cx={tx} cy={ty} r={r}
-                      fill={`url(#pg-${node.id})`}
-                      style={{ transition: 'r 0.35s ease' }}
-                    />
-
-                    {/* Surface shadow band (dark side) */}
-                    <circle cx={tx} cy={ty} r={r}
-                      fill={`url(#ps-${node.id})`}
-                      style={{ transition: 'r 0.35s ease' }}
-                    />
-
-                    {/* Limb darkening ring */}
-                    <circle cx={tx} cy={ty} r={r}
-                      fill="none"
-                      stroke={node.darkColor}
-                      strokeWidth={r * 0.22}
-                      opacity="0.55"
-                      style={{ transition: 'r 0.35s ease' }}
-                    />
-
-                    {/* Specular highlight (top-left) */}
-                    <ellipse
-                      cx={tx - r * 0.25} cy={ty - r * 0.28}
-                      rx={r * 0.38} ry={r * 0.28}
-                      fill="white" opacity="0.18"
-                    />
-                    <circle
-                      cx={tx - r * 0.3} cy={ty - r * 0.32}
-                      r={r * 0.14}
-                      fill="white" opacity="0.35"
-                    />
-
-                    {/* Ring front half (in front of planet) */}
-                    <g transform={`rotate(${tilt}, ${tx}, ${ty})`}>
-                      <ellipse cx={tx} cy={ty} rx={rx} ry={ry}
-                        stroke={node.ringColor} strokeWidth={node.isHub ? 2.5 : 2}
-                        fill="none" opacity={isFocus ? 0.75 : 0.5}
-                        clipPath={`url(#ring-front-${node.id})`}
-                        style={{ transition: 'opacity 0.35s ease' }}
-                      />
-                      {node.isHub && (
-                        <ellipse cx={tx} cy={ty} rx={rx * 1.35} ry={ry * 1.4}
-                          stroke={node.ringColor} strokeWidth="1.5"
-                          fill="none" opacity={isFocus ? 0.45 : 0.25}
-                          clipPath={`url(#ring-front-${node.id})`}
-                          style={{ transition: 'opacity 0.35s ease' }}
-                        />
-                      )}
-                    </g>
-
-                    {/* Active ring pulse */}
-                    {isFocus && (
-                      <>
-                        <circle cx={tx} cy={ty} r={r + 4} fill="none" stroke={node.color} strokeWidth="1.5" opacity="0.4">
-                          <animate attributeName="r" values={`${r + 4};${r + 26}`} dur="1.4s" repeatCount="indefinite" />
-                          <animate attributeName="opacity" values="0.4;0" dur="1.4s" repeatCount="indefinite" />
-                        </circle>
-                        <circle cx={tx} cy={ty} r={r + 4} fill="none" stroke={node.color} strokeWidth="1" opacity="0.25">
-                          <animate attributeName="r" values={`${r + 4};${r + 26}`} dur="1.4s" begin="0.5s" repeatCount="indefinite" />
-                          <animate attributeName="opacity" values="0.25;0" dur="1.4s" begin="0.5s" repeatCount="indefinite" />
-                        </circle>
-                      </>
-                    )}
                   </g>
                 );
               })}
             </svg>
 
-            {/* ── HTML node buttons + labels ── */}
-            {NODES.map(node => {
-              const isActiveNode = active === node.id;
-              const isHoveredNode = hovered === node.id;
+            {/* ── Card nodes ── */}
+            {/* CRM Hub */}
+            <button
+              className="sysdiag-card sysdiag-hub"
+              onClick={() => toggle(HUB_NODE.id)}
+              onMouseEnter={() => setHovered(HUB_NODE.id)}
+              onMouseLeave={() => setHovered(null)}
+              aria-label={`${HUB_NODE.label} — click for details`}
+              style={{
+                position: 'absolute',
+                left: toLeft(HUB_NODE.x),
+                top: toTop(HUB_NODE.y),
+                transform: `translate(-50%, -50%)`,
+                width: '180px',
+                background: '#fff',
+                borderRadius: '20px',
+                border: `1px solid ${focusId === 'crm' ? '#94D96B40' : '#E8E8E8'}`,
+                boxShadow: focusId === 'crm'
+                  ? `0 12px 36px rgba(0,0,0,0.08), 0 0 0 1px #94D96B18`
+                  : '0 2px 12px rgba(0,0,0,0.04)',
+                padding: '20px 16px 16px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                opacity: focusId && focusId !== 'crm' ? 0.4 : 1,
+                transition: `all ${TRANSITION}`,
+                zIndex: active === 'crm' ? 10 : 3,
+                ...scaleUp(inView, 200),
+              }}
+            >
+              {/* Accent bar */}
+              <div style={{
+                position: 'absolute', top: 0, left: '25%', right: '25%', height: '3px',
+                borderRadius: '0 0 4px 4px',
+                background: HUB_NODE.color,
+                opacity: focusId === 'crm' ? 1 : 0.6,
+                transition: `opacity ${TRANSITION}`,
+              }} />
+              {/* Badge */}
+              <div style={{
+                width: '38px', height: '38px', borderRadius: '50%', margin: '0 auto 10px',
+                background: '#94D96B12', border: '1px solid #94D96B25',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '0.85rem', fontWeight: 700, color: '#94D96B',
+              }}>★</div>
+              {/* Label */}
+              <div style={{
+                fontFamily: 'DM Sans, sans-serif', fontWeight: 700,
+                fontSize: '0.92rem', color: '#0A0A0A',
+                lineHeight: 1.25, letterSpacing: '-0.01em',
+              }}>
+                {HUB_NODE.label}
+              </div>
+              {/* Subtitle */}
+              <div style={{
+                fontSize: '0.68rem', color: '#94D96B',
+                fontWeight: 600, marginTop: '3px',
+              }}>
+                {HUB_NODE.sub}
+              </div>
+            </button>
+
+            {/* Outer nodes */}
+            {OUTER_NODES.map((node, i) => {
+              const isFocused = focusId === node.id;
               const dimmed = focusId && focusId !== node.id;
-              const btnSize = node.isHub ? 116 : 80;
 
               return (
                 <button
                   key={node.id}
+                  className="sysdiag-card"
                   onClick={() => toggle(node.id)}
                   onMouseEnter={() => setHovered(node.id)}
                   onMouseLeave={() => setHovered(null)}
@@ -472,45 +359,54 @@ export default function SystemDiagram() {
                     position: 'absolute',
                     left: toLeft(node.x),
                     top: toTop(node.y),
-                    transform: `translate(-50%, -50%) scale(${isActiveNode || isHoveredNode ? 1.1 : 1})`,
-                    background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-                    transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease',
-                    opacity: dimmed ? 0.38 : 1,
-                    zIndex: isActiveNode ? 10 : 2,
-                    display: 'flex', flexDirection: 'column', alignItems: 'center',
+                    transform: `translate(-50%, -50%)`,
+                    width: '150px',
+                    background: '#fff',
+                    borderRadius: '18px',
+                    border: `1px solid ${isFocused ? node.color + '40' : '#E8E8E8'}`,
+                    boxShadow: isFocused
+                      ? `0 12px 36px rgba(0,0,0,0.08), 0 0 0 1px ${node.color}18`
+                      : '0 2px 12px rgba(0,0,0,0.04)',
+                    padding: '16px 14px 14px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    opacity: dimmed ? 0.4 : 1,
+                    transition: `all ${TRANSITION}`,
+                    zIndex: active === node.id ? 10 : 2,
+                    ...scaleUp(inView, stagger(i, 400, 120)),
                   }}
                 >
-                  {/* Transparent circle hitbox */}
-                  <div style={{ width: `${btnSize}px`, height: `${btnSize}px`, borderRadius: '50%' }} />
-
-                  {/* Label below planet */}
+                  {/* Accent bar */}
                   <div style={{
-                    marginTop: '6px',
-                    textAlign: 'center',
-                    pointerEvents: 'none',
+                    position: 'absolute', top: 0, left: '25%', right: '25%', height: '3px',
+                    borderRadius: '0 0 4px 4px',
+                    background: node.color,
+                    opacity: isFocused ? 1 : 0.5,
+                    transition: `opacity ${TRANSITION}`,
+                  }} />
+                  {/* Number badge */}
+                  <div style={{
+                    width: '30px', height: '30px', borderRadius: '50%', margin: '0 auto 8px',
+                    background: node.color + '12', border: `1px solid ${node.color}25`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '0.72rem', fontWeight: 700, color: node.color,
                   }}>
-                    <div style={{
-                      fontFamily: 'DM Sans, sans-serif',
-                      fontWeight: 700,
-                      fontSize: node.isHub ? '0.88rem' : '0.76rem',
-                      color: isActiveNode || isHoveredNode ? '#0A0A0A' : '#333',
-                      lineHeight: 1.25,
-                      letterSpacing: '-0.01em',
-                      transition: 'color 0.2s ease',
-                      whiteSpace: 'nowrap',
-                    }}>
-                      {node.label}
-                    </div>
-                    <div style={{
-                      fontSize: node.isHub ? '0.68rem' : '0.62rem',
-                      color: node.color,
-                      fontWeight: 600,
-                      marginTop: '2px',
-                      transition: 'color 0.2s ease',
-                      whiteSpace: 'nowrap',
-                    }}>
-                      {node.sub}
-                    </div>
+                    {node.number}
+                  </div>
+                  {/* Label */}
+                  <div style={{
+                    fontFamily: 'DM Sans, sans-serif', fontWeight: 700,
+                    fontSize: '0.82rem', color: '#0A0A0A',
+                    lineHeight: 1.25, letterSpacing: '-0.01em',
+                  }}>
+                    {node.label}
+                  </div>
+                  {/* Subtitle */}
+                  <div style={{
+                    fontSize: '0.65rem', color: node.color,
+                    fontWeight: 600, marginTop: '3px',
+                  }}>
+                    {node.sub}
                   </div>
                 </button>
               );
@@ -523,11 +419,11 @@ export default function SystemDiagram() {
           marginTop: '2.5rem',
           opacity: activeNode ? 1 : 0,
           transform: activeNode ? 'translateY(0)' : 'translateY(24px)',
-          transition: 'opacity 0.4s cubic-bezier(0.22,1,0.36,1), transform 0.4s cubic-bezier(0.22,1,0.36,1)',
+          transition: `opacity ${TRANSITION}, transform ${TRANSITION}`,
           pointerEvents: activeNode ? 'auto' : 'none',
         }}>
           {activeNode && (
-            <div style={{
+            <div className="sysdiag-detail" style={{
               borderRadius: '20px',
               background: `linear-gradient(135deg, ${activeNode.color}0a 0%, #ffffff 60%)`,
               border: `1px solid ${activeNode.color}25`,
@@ -606,11 +502,12 @@ export default function SystemDiagram() {
         <div style={{
           textAlign: 'center', marginTop: '1.5rem',
           opacity: activeNode ? 0 : 0.5,
-          transition: 'opacity 0.35s ease',
+          transition: `opacity 0.35s ease`,
           fontSize: '0.78rem', color: '#6B6B6B',
           letterSpacing: '0.05em', pointerEvents: 'none',
+          ...fadeUp(inView, 1100),
         }}>
-          ↑ click any planet above to explore
+          ↑ click any node above to explore
         </div>
       </div>
 
@@ -626,8 +523,40 @@ export default function SystemDiagram() {
           50% { box-shadow: 0 0 16px currentColor, 0 0 28px currentColor; }
         }
 
+        .sysdiag-card {
+          font-family: inherit;
+        }
+        .sysdiag-card:hover {
+          transform: translate(-50%, -50%) translateY(-6px) !important;
+          box-shadow: 0 16px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.04) !important;
+        }
+
         @media (max-width: 768px) {
-          .sysdiag-mobile-hide { display: none !important; }
+          .sysdiag-svg { display: none !important; }
+          .sysdiag-diagram {
+            padding-bottom: 0 !important;
+          }
+          .sysdiag-card {
+            position: relative !important;
+            left: auto !important;
+            top: auto !important;
+            transform: none !important;
+            width: 100% !important;
+            margin-bottom: 12px;
+          }
+          .sysdiag-card:hover {
+            transform: translateY(-4px) !important;
+          }
+          .sysdiag-hub { order: -1; }
+          .sysdiag-diagram > div {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative !important;
+          }
+          .sysdiag-detail {
+            grid-template-columns: 1fr !important;
+          }
         }
       `}</style>
     </section>
