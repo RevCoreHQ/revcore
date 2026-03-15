@@ -182,13 +182,13 @@ export default function PackagesPage() {
         .phone-frame {
           position: absolute;
           inset: 0;
-          background: linear-gradient(145deg, #2a2a3a 0%, #1a1a2a 50%, #151525 100%);
+          background: linear-gradient(145deg, #e8854a 0%, #d4713a 50%, #c0622e 100%);
           border-radius: 48px;
           padding: 5px;
           box-shadow:
             0 40px 80px rgba(0,0,0,0.5),
             0 20px 40px rgba(0,0,0,0.4),
-            inset 0 1px 2px rgba(255,255,255,0.08);
+            inset 0 1px 2px rgba(255,255,255,0.25);
         }
         .phone-frame::before {
           content: '';
@@ -197,9 +197,9 @@ export default function PackagesPage() {
           top: 140px;
           width: 4px;
           height: 70px;
-          background: linear-gradient(180deg, #333 0%, #222 100%);
+          background: linear-gradient(180deg, #d4713a 0%, #b85a28 100%);
           border-radius: 0 3px 3px 0;
-          box-shadow: inset 0 1px 1px rgba(255,255,255,0.2);
+          box-shadow: inset 0 1px 1px rgba(255,255,255,0.3);
         }
         .phone-frame::after {
           content: '';
@@ -208,11 +208,11 @@ export default function PackagesPage() {
           top: 120px;
           width: 4px;
           height: 35px;
-          background: linear-gradient(180deg, #333 0%, #222 100%);
+          background: linear-gradient(180deg, #d4713a 0%, #b85a28 100%);
           border-radius: 3px 0 0 3px;
           box-shadow:
-            inset 0 1px 1px rgba(255,255,255,0.2),
-            0 55px 0 0 #2a2a3a;
+            inset 0 1px 1px rgba(255,255,255,0.3),
+            0 55px 0 0 #d4713a;
         }
         .phone-screen {
           width: 100%;

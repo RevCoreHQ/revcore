@@ -128,7 +128,7 @@ export const phoneSteps = [
 export const fbAds = [
   {
     initials: 'PR', page: 'Premium Remodeling',
-    copy: "Get a Premium Kitchen remodel without the 'Premium' price",
+    copy: "Your neighbors just finished their dream kitchen — here's how it turned out",
     img: 'https://storage.googleapis.com/msgsndr/odDqIyBG9N40GtGHw9NQ/media/6940aa5c021234a338f385d9.jpg',
     type: 'Photo Ad', reactions: '2.4K', comments: '186 comments',
   },
@@ -140,7 +140,7 @@ export const fbAds = [
   },
   {
     initials: 'SR', page: 'Storm Roofing Co',
-    copy: 'New roof for as low as $7,000 + FREE Gutters',
+    copy: 'Is your roof ready for storm season? Find out in 30 seconds',
     wistiaId: 'kn9y82ujo3',
     type: 'Video Ad', reactions: '1.8K', comments: '243 comments',
   },
@@ -158,7 +158,7 @@ export const fbAds = [
   },
   {
     initials: 'PR', page: 'Premium Remodeling',
-    copy: 'Full Kitchen/Bathroom remodels starting $9,500',
+    copy: 'See why 200+ homeowners chose us this year — free consultation',
     wistiaId: 'jy4i1p30r0',
     type: 'Video Ad', reactions: '2.7K', comments: '198 comments',
   },
