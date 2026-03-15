@@ -2556,10 +2556,10 @@ function SEODemo() {
                     background: '#fff',
                   }}>
                     <div style={{
-                      height: 80, background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      height: 80, overflow: 'hidden', position: 'relative',
                     }}>
-                      <span style={{ fontSize: '2rem', fontWeight: 800, color: '#fff', letterSpacing: '0.05em' }}>PR</span>
+                      <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69b640f15b89c73d7c929733.png" alt="Premier Remodeling" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69b641aaeaf081306e71256e.png" alt="Premier Remodeling Logo" style={{ position: 'absolute', bottom: 8, left: 12, height: 28, width: 'auto' }} />
                     </div>
 
                     <div style={{ padding: '16px' }}>
@@ -3496,10 +3496,10 @@ function PricingSection() {
                     </div>
                     <div style={{ borderRadius: 12, overflow: 'hidden', background: '#fff', border: `1px solid ${pkg.accent}20` }}>
                       <div style={{
-                        height: 64, background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        height: 64, overflow: 'hidden', position: 'relative',
                       }}>
-                        <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#fff', letterSpacing: '0.05em' }}>PR</span>
+                        <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69b640f15b89c73d7c929733.png" alt="Premier Remodeling" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                        <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69b641aaeaf081306e71256e.png" alt="Logo" style={{ position: 'absolute', bottom: 6, left: 10, height: 22, width: 'auto' }} />
                       </div>
                       <div style={{ padding: '14px' }}>
                         <div style={{ fontSize: '1rem', fontWeight: 700, color: '#202124', marginBottom: 3 }}>Premier Remodeling Co</div>
