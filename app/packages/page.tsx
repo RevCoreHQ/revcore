@@ -84,9 +84,9 @@ export default function PackagesPage() {
         .pkg-dimmed { pointer-events: none; }
         .pkg-card { user-select: none; }
         .pkg-card:not(.pkg-dimmed):hover {
-          transform: translateY(-4px) !important;
-          border-color: rgba(255,255,255,0.12) !important;
-          box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+          transform: translateY(-6px) !important;
+          border-color: var(--pkg-accent-border, rgba(255,255,255,0.15)) !important;
+          box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 30px var(--pkg-accent-glow, rgba(107,142,254,0.06)), inset 0 1px 0 rgba(255,255,255,0.08) !important;
         }
 
         /* ── Phone Demo Section ── */
@@ -2781,8 +2781,8 @@ function PricingSection() {
                 className={`pkg-card${isFocused ? ' pkg-focused' : ''}${isDimmed ? ' pkg-dimmed' : ''}`}
                 style={{
                   borderRadius: 24,
-                  background: 'rgba(255,255,255,0.03)',
-                  border: `1px solid ${isFocused ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.06)'}`,
+                  background: `linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)`,
+                  border: `1px solid ${isFocused ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.07)'}`,
                   overflow: 'hidden', position: 'relative',
                   display: 'flex', flexDirection: 'column' as const,
                   transform: isDimmed ? 'scale(0.96)' : 'scale(1)',
@@ -2790,28 +2790,30 @@ function PricingSection() {
                   opacity: isDimmed ? 0.25 : isOtherFocused ? 0.5 : 1,
                   filter: isDimmed ? 'grayscale(1)' : 'none',
                   boxShadow: isFocused
-                    ? `0 0 0 1px rgba(255,255,255,0.1), 0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)`
-                    : '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04)',
+                    ? `0 0 0 1px rgba(255,255,255,0.1), 0 24px 60px rgba(0,0,0,0.5), 0 0 40px ${pkg.accent}10, inset 0 1px 0 rgba(255,255,255,0.08)`
+                    : `0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)`,
                   transition: 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.45s ease, border-color 0.35s ease, filter 0.35s ease',
                   cursor: isDimmed ? 'default' : 'pointer',
                   backdropFilter: 'blur(40px)',
                   WebkitBackdropFilter: 'blur(40px)',
                   ...scaleUp(inView, stagger(i, 200, 150)),
                   ['--pkg-accent' as string]: pkg.accent,
+                  ['--pkg-accent-border' as string]: `${pkg.accent}35`,
+                  ['--pkg-accent-glow' as string]: `${pkg.accent}12`,
                 }}
               >
-                {/* Thin top accent line */}
+                {/* Top accent gradient bar */}
                 <div style={{
-                  height: 1,
-                  background: `linear-gradient(90deg, transparent 0%, ${pkg.accent}60 50%, transparent 100%)`,
-                  opacity: isFocused ? 1 : 0.4,
+                  height: 2,
+                  background: `linear-gradient(90deg, transparent 0%, ${pkg.accent}80 30%, ${pkg.accent} 50%, ${pkg.accent}80 70%, transparent 100%)`,
+                  opacity: isFocused ? 1 : 0.6,
                   transition: 'opacity 0.35s ease',
                 }} />
 
-                {/* Subtle glass sheen */}
+                {/* Glass sheen + accent radial glow */}
                 <div style={{
                   position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                  background: 'linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 40%)',
+                  background: `linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 35%), radial-gradient(ellipse at 50% 0%, ${pkg.accent}08 0%, transparent 60%)`,
                   pointerEvents: 'none', zIndex: 0, borderRadius: 24,
                 }} />
 
@@ -2860,7 +2862,10 @@ function PricingSection() {
                       fontFamily: 'DM Sans, sans-serif',
                       fontSize: '3rem',
                       fontWeight: 800, letterSpacing: '-0.03em',
-                      color: 'white',
+                      background: `linear-gradient(135deg, #fff 40%, ${pkg.accent}90)`,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
                     }}>
                       {fmtPrice(pkg.priceMonthly)}
                     </span>
@@ -2884,7 +2889,7 @@ function PricingSection() {
                 </div>
 
                 {/* Divider */}
-                <div style={{ margin: '0 2.25rem', height: 1, background: 'rgba(255,255,255,0.06)' }} />
+                <div style={{ margin: '0 2.25rem', height: 1, background: `linear-gradient(90deg, transparent, ${pkg.accent}20, transparent)` }} />
 
                 {/* Features */}
                 <div style={{ padding: '0 2.25rem 1.5rem', position: 'relative', zIndex: 1 }}>
@@ -2952,13 +2957,14 @@ function PricingSection() {
                     fontSize: '0.95rem',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    border: isRecommended ? 'none' : `1px solid rgba(255,255,255,0.08)`,
+                    border: isRecommended ? 'none' : `1px solid ${pkg.accent}25`,
                     background: isRecommended
-                      ? pkg.accent
-                      : 'rgba(255,255,255,0.04)',
-                    color: isRecommended ? 'white' : 'rgba(255,255,255,0.6)',
+                      ? `linear-gradient(135deg, ${pkg.accent}, ${pkg.accent}cc)`
+                      : `linear-gradient(135deg, ${pkg.accent}12, ${pkg.accent}08)`,
+                    color: isRecommended ? 'white' : `rgba(255,255,255,0.7)`,
                     transition: 'all 0.3s ease',
                     letterSpacing: '0.02em',
+                    boxShadow: isRecommended ? `0 4px 20px ${pkg.accent}30` : 'none',
                   }}>Claim Your Market</button>
                 </div>
               </div>
