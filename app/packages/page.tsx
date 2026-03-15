@@ -1525,7 +1525,11 @@ function PhoneDemo() {
                           <div key={i} className={`fb-ad-slide${adIdx === i ? ' active' : ''}`}>
                             <div className="fb-post-compact">
                               <div className="fb-post-top">
-                                <div className="fb-avatar-sm">{ad.initials}</div>
+                                {ad.initials === 'PR' ? (
+                                  <img src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69b641aaeaf081306e71256e.png" alt="Premier Remodeling" className="fb-avatar-sm" style={{ objectFit: 'cover' }} />
+                                ) : (
+                                  <div className="fb-avatar-sm">{ad.initials}</div>
+                                )}
                                 <div className="fb-post-meta-sm">
                                   <span className="fb-page-name">{ad.page}</span>
                                   <span className="fb-sponsored-tag">Sponsored · <svg viewBox="0 0 16 16" style={{ width: 10, height: 10, fill: '#65676b', verticalAlign: 'middle' }}><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm0 14.5a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13z"/></svg></span>
