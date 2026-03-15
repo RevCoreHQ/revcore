@@ -1,11 +1,15 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import type L from 'leaflet';
 import SystemDiagram from '@/components/sections/SystemDiagram';
 import SpaceBackground from '@/components/SpaceBackground';
+import IpadMockup from '@/components/iPadMockup';
+import QuotingApp from '@/components/QuotingApp';
+import PitchApp from '@/components/PitchApp';
 import { useScrollReveal, fadeUp, scaleUp, stagger } from '@/hooks/useScrollReveal';
-import { Check, ChevronDown } from 'lucide-react';
+import { Check, CheckCircle, ChevronDown } from 'lucide-react';
 import {
   packagesData, phoneSteps, fbAds,
   qualifyQuestions, stateMarkets,
@@ -74,6 +78,7 @@ export default function PackagesPage() {
       <WebsiteDemo />
       <CalendarMockup />
       <SEODemo />
+      <SoftwareSection />
       <SystemDiagram />
       <ExclusivitySection />
       <SelectiveSection />
@@ -95,6 +100,17 @@ export default function PackagesPage() {
           from { opacity: 0; transform: scale(0.95); }
           to { opacity: 1; transform: scale(1); }
         }
+
+        /* ── Software Demo Overlay ── */
+        @keyframes demoPulseA {
+          0% { transform: scale(1); opacity: 0.6; }
+          100% { transform: scale(1.35); opacity: 0; }
+        }
+        @keyframes demoBackdropIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes demoIpadIn { from { opacity: 0; transform: scale(0.87) translateY(22px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes demoStepIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes demoFadeUp { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes demoDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
         /* ── Phone Demo Section ── */
         .phone-demo-container {
@@ -2634,6 +2650,316 @@ function SEODemo() {
         </div>
       </div>
     </section>
+  );
+}
+
+
+/* ═══════════════════════════════════════════════════
+   SOFTWARE SECTION — Two tools, Watch Demo
+   ═══════════════════════════════════════════════════ */
+const swQuotingFeatures = [
+  'On-site quote generation',
+  'Job tracking pipeline',
+  'Automated follow-up sequences',
+  'Review request automation',
+  'Good / Better / Best options',
+  'E-signature collection',
+];
+const swPitchFeatures = [
+  'Trade-specific slide decks',
+  'Before & after comparisons',
+  'Financing option display',
+  'Works offline on iPad',
+  'Built-in social proof',
+  'E-signature close',
+];
+
+type SwDemoStep = { tag: string; title: string; desc: string; bullets: string[] };
+const PKG_QUOTING_STEPS: (SwDemoStep & { tab: 'dashboard' | 'quote' | 'jobs' | 'followup' })[] = [
+  { tab: 'dashboard', tag: 'Live Dashboard', title: 'Every metric,\nat a glance.', desc: 'Revenue, open quotes, follow-ups, and new reviews updated in real time.', bullets: ['$89.3K tracked this month', '12 open quotes monitored', '7 follow-ups queued automatically'] },
+  { tab: 'quote', tag: 'Quote Builder', title: 'Quote built\nbefore you leave.', desc: 'Add line items from your pre-built catalog, adjust quantities, and fire off a professional quote at the door.', bullets: ['Pre-loaded pricing catalog', 'Live total calculation', 'One-tap send via SMS or email'] },
+  { tab: 'jobs', tag: 'Job Pipeline', title: 'Every job,\nevery status.', desc: 'See every active quote with its current status and dollar value.', bullets: ['Color-coded job statuses', 'Dollar value at a glance', 'Tap any job to act instantly'] },
+  { tab: 'followup', tag: 'Automation', title: 'Follow-ups that\nrun while you sleep.', desc: 'When a quote goes cold, timed SMS and email sequences fire automatically.', bullets: ['Multi-touch: 24h, 72h, 7-day triggers', 'Auto-fires on quote status change', 'Progress tracked per contact'] },
+];
+const PKG_PITCH_STEPS: (SwDemoStep & { slide: number })[] = [
+  { slide: 0, tag: 'Brand Intro', title: 'Walk in with\na presentation.', desc: 'Open with a branded, customer-personalized intro before you say a word.', bullets: ['Personalized per customer name', 'Your logo, brand, and photos', 'Credibility built on slide one'] },
+  { slide: 2, tag: 'Your Process', title: 'Show them exactly\nwhat happens.', desc: 'A clear 4-step walkthrough eliminates objections before they\'re asked.', bullets: ['Step-by-step visual timeline', 'Removes friction and uncertainty', 'Sets professional expectations early'] },
+  { slide: 7, tag: 'Project Gallery', title: 'Proof they\ncan see.', desc: 'Six project photos built right into the presentation.', bullets: ['Full-bleed project photos', 'Labeled by service type', 'Always current from your portfolio'] },
+  { slide: 6, tag: 'Pricing Tiers', title: 'Good, Better,\nBest pricing.', desc: 'Present three tiers so the customer picks a level, not whether to buy.', bullets: ['Interactive tier selection', 'Monthly pricing displayed clearly', 'No long-term contract messaging'] },
+  { slide: 9, tag: 'E-Signature', title: 'Close the deal\non the spot.', desc: 'The final slide collects a digital signature and submits the contract.', bullets: ['Tap-to-sign on the iPad', 'Full contract summary visible', 'Instant confirmation sent'] },
+];
+
+function SwWatchDemoBtn({ onClick, accent }: { onClick: () => void; accent: string }) {
+  return (
+    <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginTop: '1.25rem' }}>
+      <span style={{ position: 'absolute', inset: '-6px', borderRadius: '100px', border: `1px solid ${accent}55`, animation: 'demoPulseA 2.6s ease-out infinite', pointerEvents: 'none' }} />
+      <span style={{ position: 'absolute', inset: '-6px', borderRadius: '100px', border: `1px solid ${accent}35`, animation: 'demoPulseA 2.6s ease-out 1s infinite', pointerEvents: 'none' }} />
+      <button
+        onClick={onClick}
+        style={{
+          position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '8px',
+          padding: '9px 18px', borderRadius: '100px', background: 'transparent',
+          border: `1.5px solid ${accent}45`, color: accent, fontSize: '0.8rem',
+          fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+          letterSpacing: '0.01em', transition: 'all 0.25s',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = `${accent}12`; e.currentTarget.style.borderColor = `${accent}80`; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = `${accent}45`; }}
+      >
+        <span style={{
+          width: '20px', height: '20px', borderRadius: '50%',
+          background: `${accent}20`, border: `1px solid ${accent}40`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        }}>
+          <svg width="6" height="8" viewBox="0 0 7 9" fill="none"><path d="M1 1l5 3.5L1 8V1z" fill={accent} /></svg>
+        </span>
+        Watch Demo
+      </button>
+    </div>
+  );
+}
+
+function SoftwareSection() {
+  const { ref, inView } = useScrollReveal({ threshold: 0.06 });
+
+  /* Demo overlay state */
+  const [demoMode, setDemoMode] = useState<'quoting' | 'pitch' | null>(null);
+  const [demoStep, setDemoStep] = useState(0);
+  const [activityTs, setActivityTs] = useState(0);
+
+  /* Lock body scroll when demo open */
+  useEffect(() => {
+    document.body.style.overflow = demoMode ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [demoMode]);
+
+  /* Keyboard nav */
+  useEffect(() => {
+    if (!demoMode) return;
+    const steps = demoMode === 'quoting' ? PKG_QUOTING_STEPS : PKG_PITCH_STEPS;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setDemoMode(null); setDemoStep(0); }
+      if (e.key === 'ArrowRight' && demoStep < steps.length - 1) setDemoStep(demoStep + 1);
+      if (e.key === 'ArrowLeft' && demoStep > 0) setDemoStep(demoStep - 1);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [demoMode, demoStep]);
+
+  /* Auto-advance after 5.5s idle */
+  useEffect(() => {
+    if (!demoMode) return;
+    const steps = demoMode === 'quoting' ? PKG_QUOTING_STEPS : PKG_PITCH_STEPS;
+    const t = setTimeout(() => {
+      setDemoStep(s => s < steps.length - 1 ? s + 1 : 0);
+    }, 5500);
+    return () => clearTimeout(t);
+  }, [demoMode, demoStep, activityTs]);
+
+  const openDemo = (mode: 'quoting' | 'pitch') => { setDemoStep(0); setDemoMode(mode); };
+  const closeDemo = () => { setDemoMode(null); setDemoStep(0); };
+
+  /* Build text panel for demo overlay */
+  const renderTextPanel = (steps: SwDemoStep[], accent: string) => {
+    const s = demoStep;
+    return (
+      <div style={{ flex: '0 0 36%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '2.5rem 3rem', position: 'relative', zIndex: 10, animation: 'demoFadeUp 0.5s ease 0.2s both' }}>
+        <div key={s} style={{ animation: 'demoStepIn 0.38s cubic-bezier(0.22,1,0.36,1) both' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '100px', background: `${accent}14`, border: `1px solid ${accent}28`, marginBottom: '1.5rem' }}>
+            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: accent }} />
+            <span style={{ fontSize: '0.68rem', fontWeight: 700, color: accent, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>{steps[s].tag}</span>
+          </div>
+          <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.2)', fontWeight: 600, letterSpacing: '0.12em', marginBottom: '0.6rem', textTransform: 'uppercase' as const }}>
+            {String(s + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}
+          </div>
+          <h2 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 'clamp(1.7rem, 2.4vw, 2.2rem)', fontWeight: 800, color: 'white', lineHeight: 1.12, letterSpacing: '-0.03em', margin: '0 0 1rem', whiteSpace: 'pre-line' as const }}>
+            {steps[s].title}
+          </h2>
+          <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.42)', lineHeight: '1.75', margin: '0 0 1.75rem' }}>
+            {steps[s].desc}
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px', marginBottom: '2.5rem' }}>
+            {steps[s].bullets.map((b, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '20px', height: '20px', borderRadius: '6px', background: `${accent}14`, border: `1px solid ${accent}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="8" height="7" viewBox="0 0 8 7" fill="none"><path d="M1.5 3.5L3.2 5.2L6.5 1.8" stroke={accent} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </div>
+                <span style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>{b}</span>
+              </div>
+            ))}
+          </div>
+          {/* Navigation dots + arrows */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              {steps.map((_, i) => (
+                <button key={i} onClick={() => { setDemoStep(i); setActivityTs(Date.now()); }} style={{ width: i === s ? '22px' : '6px', height: '6px', borderRadius: '100px', background: i === s ? accent : 'rgba(255,255,255,0.18)', border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.35s cubic-bezier(0.34,1.56,0.64,1)' }} />
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button onClick={() => { if (s > 0) { setDemoStep(s - 1); setActivityTs(Date.now()); } }} disabled={s === 0} style={{ width: '36px', height: '36px', borderRadius: '50%', background: s === 0 ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', color: s === 0 ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.65)', cursor: s === 0 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s', fontSize: '1rem' }}>&#8592;</button>
+              <button onClick={() => { if (s < steps.length - 1) { setDemoStep(s + 1); setActivityTs(Date.now()); } }} disabled={s === steps.length - 1} style={{ width: '36px', height: '36px', borderRadius: '50%', background: s === steps.length - 1 ? 'rgba(255,255,255,0.04)' : `${accent}20`, border: `1px solid ${s === steps.length - 1 ? 'rgba(255,255,255,0.1)' : accent + '40'}`, color: s === steps.length - 1 ? 'rgba(255,255,255,0.18)' : accent, cursor: s === steps.length - 1 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s', fontSize: '1rem' }}>&#8594;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const demoAccent = demoMode === 'quoting' ? '#94D96B' : '#6B8EFE';
+  const demoSteps: SwDemoStep[] = demoMode === 'quoting' ? PKG_QUOTING_STEPS : PKG_PITCH_STEPS;
+
+  return (
+    <>
+      <section ref={ref as React.Ref<HTMLElement>} style={{ ...S.sectionDark, padding: '64px 0' }}>
+        <SpaceBackground opacity={0.25} />
+        <div style={S.container}>
+
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: '2.5rem', ...fadeUp(inView) }}>
+            <div style={S.eyebrowDark}>RevCore Software</div>
+            <h2 style={S.h2Dark}>Two Tools. Built to <HL>Close More Jobs</HL>.</h2>
+            <p style={S.subDark}>
+              Purpose-built for home service contractors. Quote faster, present better, automate everything.
+            </p>
+          </div>
+
+          {/* iPads side by side */}
+          <div style={{
+            display: 'flex', justifyContent: 'center', alignItems: 'flex-end',
+            gap: '2rem', marginBottom: '2rem', flexWrap: 'wrap' as const,
+          }}>
+            {/* Left — Quoting */}
+            <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', ...scaleUp(inView, 150) }}>
+              <IpadMockup tilt={-4} width={380} accentGlow="rgba(148,217,107,0.5)">
+                <QuotingApp />
+              </IpadMockup>
+              <SwWatchDemoBtn onClick={() => openDemo('quoting')} accent="#94D96B" />
+            </div>
+
+            {/* Right — Pitch */}
+            <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', ...scaleUp(inView, 320) }}>
+              <IpadMockup tilt={4} width={380} accentGlow="rgba(107,142,254,0.5)">
+                <PitchApp />
+              </IpadMockup>
+              <SwWatchDemoBtn onClick={() => openDemo('pitch')} accent="#6B8EFE" />
+            </div>
+          </div>
+
+          {/* Feature cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+            {/* Quoting card */}
+            <div style={{
+              borderRadius: '16px', background: '#0f1a10',
+              border: '1px solid rgba(148,217,107,0.12)', padding: '1.5rem',
+              ...fadeUp(inView, 450),
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#94D96B' }} />
+                <span style={{ color: '#94D96B', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em' }}>QUOTING SOFTWARE</span>
+              </div>
+              <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '1.1rem', fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '0.4rem' }}>
+                Quote, track &amp; follow up, all in one place.
+              </h3>
+              <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', lineHeight: '1.6', marginBottom: '1rem' }}>
+                Generate accurate proposals on-site, track every job, and let automated sequences handle follow-ups.
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px' }}>
+                {swQuotingFeatures.map((f) => (
+                  <div key={f} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <CheckCircle size={11} color="#94D96B" />
+                    <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)' }}>{f}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Pitch card */}
+            <div style={{
+              borderRadius: '16px', background: '#0f1020',
+              border: '1px solid rgba(107,142,254,0.12)', padding: '1.5rem',
+              ...fadeUp(inView, 580),
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#6B8EFE' }} />
+                <span style={{ color: '#6B8EFE', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em' }}>PRESENTATION SOFTWARE</span>
+              </div>
+              <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '1.1rem', fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '0.4rem' }}>
+                Close at the kitchen table. Every time.
+              </h3>
+              <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', lineHeight: '1.6', marginBottom: '1rem' }}>
+                A trade-specific iPad presentation that builds trust and collects e-signatures before you leave.
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px' }}>
+                {swPitchFeatures.map((f) => (
+                  <div key={f} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <CheckCircle size={11} color="#6B8EFE" />
+                    <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)' }}>{f}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* Demo overlay portal */}
+      {demoMode && typeof document !== 'undefined' && createPortal(
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', background: 'rgba(4,7,11,0.94)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', animation: 'demoBackdropIn 0.3s ease both' }}
+          onMouseMove={() => setActivityTs(Date.now())}
+          onClick={(e) => e.target === e.currentTarget && closeDemo()}
+        >
+          {/* Top bar */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 28px', animation: 'demoFadeUp 0.4s ease 0.2s both' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: demoAccent, display: 'block', animation: 'demoDot 2s ease-in-out infinite' }} />
+              <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Interactive Demo</span>
+            </div>
+            <button
+              onClick={closeDemo}
+              style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', transition: 'all 0.15s' }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = 'white'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
+            >&#10005;</button>
+          </div>
+
+          {/* Content panels */}
+          <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', maxWidth: '1380px', margin: '0 auto', padding: '72px 2rem 2rem' }} onClick={(e) => e.stopPropagation()}>
+            {demoMode === 'quoting' ? (
+              <>
+                <div style={{ flex: '0 0 64%', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', padding: '2rem', animation: 'demoIpadIn 0.55s cubic-bezier(0.22,1,0.36,1) both' }}>
+                  <div style={{ width: '100%', maxWidth: '700px' }}>
+                    <IpadMockup width="100%" accentGlow="rgba(148,217,107,0.6)">
+                      <QuotingApp controlledTab={PKG_QUOTING_STEPS[demoStep]?.tab ?? 'dashboard'} />
+                    </IpadMockup>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginTop: '1.25rem', padding: '6px 14px', borderRadius: '100px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', animation: 'demoFadeUp 0.5s ease 1.2s both' }}>
+                    <span style={{ fontSize: '0.67rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500, letterSpacing: '0.04em' }}>Live &amp; interactive — click around</span>
+                  </div>
+                </div>
+                {renderTextPanel(PKG_QUOTING_STEPS, '#94D96B')}
+              </>
+            ) : (
+              <>
+                {renderTextPanel(PKG_PITCH_STEPS, '#6B8EFE')}
+                <div style={{ flex: '0 0 64%', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', padding: '2rem', animation: 'demoIpadIn 0.55s cubic-bezier(0.22,1,0.36,1) both' }}>
+                  <div style={{ width: '100%', maxWidth: '700px' }}>
+                    <IpadMockup width="100%" accentGlow="rgba(107,142,254,0.6)">
+                      <PitchApp controlledSlide={PKG_PITCH_STEPS[demoStep]?.slide ?? 0} />
+                    </IpadMockup>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginTop: '1.25rem', padding: '6px 14px', borderRadius: '100px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', animation: 'demoFadeUp 0.5s ease 1.2s both' }}>
+                    <span style={{ fontSize: '0.67rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500, letterSpacing: '0.04em' }}>Live &amp; interactive — click around</span>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
   );
 }
 
