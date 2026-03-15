@@ -35,9 +35,9 @@ export const packagesData = [
       'High Conversion Website',
       'SEO Optimization',
       'Automated Follow-Up',
-      'Review Request Automation',
     ],
     moreFeatures: [
+      'Review Request Automation',
       'Top-of-funnel paid ads management',
       'Automated appointment reminders',
       '24/7 Website chat widget',
