@@ -81,12 +81,19 @@ export default function PackagesPage() {
       <ROICalculator />
       <SocialProofStrip />
       <style>{`
-        .pkg-dimmed { pointer-events: none; }
         .pkg-card { user-select: none; }
-        .pkg-card:not(.pkg-dimmed):hover {
+        .pkg-card:hover {
           transform: translateY(-6px) !important;
           border-color: var(--pkg-accent-border, rgba(255,255,255,0.15)) !important;
           box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 30px var(--pkg-accent-glow, rgba(107,142,254,0.06)), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+        }
+        @keyframes pkgModalFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes pkgModalScaleIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
         }
 
         /* ── Phone Demo Section ── */
@@ -2692,7 +2699,7 @@ function PricingSection() {
   const [isQuarterly, setIsQuarterly] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [focusedPkg, setFocusedPkg] = useState<string | null>(null);
-  const [dimmedPkgs, setDimmedPkgs] = useState<Record<string, boolean>>({});
+  const [expandedPkg, setExpandedPkg] = useState<string | null>(null);
   const { ref, inView } = useScrollReveal({ threshold: 0.06 });
 
   const fmtPrice = (monthly: number) => {
@@ -2701,17 +2708,30 @@ function PricingSection() {
   };
 
   const handleCardClick = (pkgId: string) => {
-    if (dimmedPkgs[pkgId]) return;
     setFocusedPkg(prev => prev === pkgId ? null : pkgId);
   };
 
-  const handleTitleDoubleClick = (e: React.MouseEvent, pkgId: string) => {
+  const handleCardDoubleClick = (e: React.MouseEvent, pkgId: string) => {
     e.stopPropagation();
-    setDimmedPkgs(prev => ({ ...prev, [pkgId]: !prev[pkgId] }));
-    if (focusedPkg === pkgId) setFocusedPkg(null);
+    setExpandedPkg(pkgId);
   };
 
+  // Close modal on Escape
+  useEffect(() => {
+    if (!expandedPkg) return;
+    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setExpandedPkg(null); };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [expandedPkg]);
+
   const isLaunchpad = (id: string) => id === 'launchpad';
+
+  // Mini calendar appointment data per tier
+  const getMiniCalendarAppts = (pkgId: string) => {
+    if (pkgId === 'launchpad') return [2, 5, 8, 11, 13, 16, 18, 20, 22, 24, 26, 28, 30, 31, 7];
+    if (pkgId === 'growth') return [1, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22, 23, 25, 26, 28, 29, 31, 4];
+    return [1, 2, 3, 5, 6, 7, 8, 10, 11, 12, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 4, 9, 13, 18];
+  };
 
   return (
     <section ref={ref as React.Ref<HTMLElement>} id="pricing" style={{ ...S.sectionDark, padding: '120px 0' }}>
@@ -2769,7 +2789,6 @@ function PricingSection() {
         }}>
           {packagesData.map((pkg, i) => {
             const isFocused = focusedPkg === pkg.id;
-            const isDimmed = dimmedPkgs[pkg.id];
             const hasAnyFocus = focusedPkg !== null;
             const isOtherFocused = hasAnyFocus && !isFocused;
             const isRecommended = pkg.id === 'growth';
@@ -2778,22 +2797,21 @@ function PricingSection() {
               <div
                 key={pkg.id}
                 onClick={() => handleCardClick(pkg.id)}
-                className={`pkg-card${isFocused ? ' pkg-focused' : ''}${isDimmed ? ' pkg-dimmed' : ''}`}
+                onDoubleClick={(e) => handleCardDoubleClick(e, pkg.id)}
+                className={`pkg-card${isFocused ? ' pkg-focused' : ''}`}
                 style={{
                   borderRadius: 24,
                   background: `linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)`,
                   border: `1px solid ${isFocused ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.07)'}`,
                   overflow: 'hidden', position: 'relative',
                   display: 'flex', flexDirection: 'column' as const,
-                  transform: isDimmed ? 'scale(0.96)' : 'scale(1)',
                   zIndex: isFocused ? 10 : 1,
-                  opacity: isDimmed ? 0.25 : isOtherFocused ? 0.5 : 1,
-                  filter: isDimmed ? 'grayscale(1)' : 'none',
+                  opacity: isOtherFocused ? 0.5 : 1,
                   boxShadow: isFocused
                     ? `0 0 0 1px rgba(255,255,255,0.1), 0 24px 60px rgba(0,0,0,0.5), 0 0 40px ${pkg.accent}10, inset 0 1px 0 rgba(255,255,255,0.08)`
                     : `0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)`,
-                  transition: 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.45s ease, border-color 0.35s ease, filter 0.35s ease',
-                  cursor: isDimmed ? 'default' : 'pointer',
+                  transition: 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.45s ease, border-color 0.35s ease',
+                  cursor: 'pointer',
                   backdropFilter: 'blur(40px)',
                   WebkitBackdropFilter: 'blur(40px)',
                   ...scaleUp(inView, stagger(i, 200, 150)),
@@ -2840,15 +2858,12 @@ function PricingSection() {
 
                 {/* Content */}
                 <div style={{ padding: '2.25rem 2.25rem 1.5rem', position: 'relative', zIndex: 1 }}>
-                  <h3
-                    onDoubleClick={(e) => handleTitleDoubleClick(e, pkg.id)}
-                    style={{
+                  <h3 style={{
                       fontFamily: 'DM Sans, sans-serif',
                       fontSize: '1.5rem',
                       fontWeight: 800,
                       color: 'white',
                       marginBottom: '0.5rem', userSelect: 'none',
-                      cursor: 'pointer',
                     }}
                   >{pkg.name}</h3>
                   <p style={{
@@ -2973,6 +2988,256 @@ function PricingSection() {
         </div>
 
       </div>
+
+      {/* ─── Package Visual Demo Modal ─── */}
+      {expandedPkg && (() => {
+        const pkg = packagesData.find(p => p.id === expandedPkg)!;
+        const apptDays = getMiniCalendarAppts(expandedPkg);
+        const showWebsite = expandedPkg === 'growth' || expandedPkg === 'full';
+        const showGMB = expandedPkg === 'full';
+        const visualCount = 1 + (showWebsite ? 1 : 0) + (showGMB ? 1 : 0);
+
+        return (
+          <div
+            onClick={() => setExpandedPkg(null)}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 1000,
+              background: 'rgba(0,0,0,0.75)',
+              backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              animation: 'pkgModalFadeIn 0.3s ease',
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                width: '90vw', maxWidth: visualCount === 1 ? '480px' : visualCount === 2 ? '780px' : '1100px',
+                maxHeight: '85vh', overflowY: 'auto',
+                background: 'linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 24,
+                backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)',
+                position: 'relative',
+                animation: 'pkgModalScaleIn 0.3s ease',
+              }}
+            >
+              {/* Accent top bar */}
+              <div style={{
+                height: 3,
+                background: `linear-gradient(90deg, transparent, ${pkg.accent}, transparent)`,
+                borderRadius: '24px 24px 0 0',
+              }} />
+
+              {/* Close button */}
+              <button
+                onClick={() => setExpandedPkg(null)}
+                style={{
+                  position: 'absolute', top: 20, right: 20, zIndex: 10,
+                  width: 32, height: 32, borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'rgba(255,255,255,0.5)', fontSize: '1rem',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', transition: 'all 0.2s',
+                }}
+              >✕</button>
+
+              {/* Header */}
+              <div style={{ padding: '2rem 2.5rem 1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+                  <span style={{
+                    fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const,
+                    padding: '4px 12px', borderRadius: 100,
+                    background: `${pkg.accent}15`, color: pkg.accent,
+                    border: `1px solid ${pkg.accent}25`,
+                  }}>{pkg.badge}</span>
+                </div>
+                <h3 style={{
+                  fontFamily: 'DM Sans, sans-serif', fontSize: '1.8rem', fontWeight: 800,
+                  color: 'white', marginBottom: 6,
+                }}>{pkg.name}</h3>
+                <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.95rem', marginBottom: 8 }}>{pkg.tagline}</p>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                  <span style={{
+                    fontFamily: 'DM Sans, sans-serif', fontSize: '2rem', fontWeight: 800,
+                    background: `linear-gradient(135deg, #fff 40%, ${pkg.accent}90)`,
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}>{fmtPrice(pkg.priceMonthly)}</span>
+                  {pkg.id !== 'launchpad' && <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.25)' }}>/mo</span>}
+                </div>
+              </div>
+
+              <div style={{ margin: '0 2.5rem', height: 1, background: `linear-gradient(90deg, transparent, ${pkg.accent}25, transparent)` }} />
+
+              {/* Visual demos */}
+              <div style={{
+                padding: '1.5rem 2.5rem 2rem',
+                display: 'flex', gap: 20,
+                justifyContent: visualCount === 1 ? 'center' : 'flex-start',
+              }}>
+
+                {/* ── Mini Calendar ── */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>
+                    Appointment Volume
+                  </div>
+                  <div style={{
+                    background: '#fff', borderRadius: 12, overflow: 'hidden',
+                    border: `1px solid ${pkg.accent}20`,
+                  }}>
+                    <div style={{ padding: '10px 14px', borderBottom: '1px solid #ebebeb', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#202124' }}>March 2026</span>
+                      <span style={{ fontSize: '0.65rem', color: '#70757a' }}>{apptDays.length} appointments</span>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid #f0f0f0' }}>
+                      {['S','M','T','W','T','F','S'].map((d, di) => (
+                        <div key={di} style={{ padding: '6px 0', textAlign: 'center', fontSize: '0.6rem', fontWeight: 600, color: '#70757a' }}>{d}</div>
+                      ))}
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
+                      {Array.from({ length: 31 }, (_, idx) => {
+                        const day = idx + 1;
+                        const hasAppt = apptDays.includes(day);
+                        return (
+                          <div key={day} style={{
+                            padding: '4px 2px', minHeight: 32,
+                            borderRight: (idx + 1) % 7 === 0 ? 'none' : '1px solid #f5f5f5',
+                            borderBottom: '1px solid #f5f5f5',
+                          }}>
+                            <div style={{ fontSize: '0.6rem', color: '#202124', textAlign: 'center', marginBottom: 2 }}>{day}</div>
+                            {hasAppt && <div style={{ height: 4, borderRadius: 2, margin: '0 2px', background: '#e67c73' }} />}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── Mini Website ── */}
+                {showWebsite && (
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>
+                      Your Website
+                    </div>
+                    <div style={{ borderRadius: 12, overflow: 'hidden', border: `1px solid ${pkg.accent}20` }}>
+                      <div style={{ background: '#1e2128', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ display: 'flex', gap: 5 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#ff5f57' }} />
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#febc2e' }} />
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#28c840' }} />
+                        </div>
+                        <div style={{
+                          flex: 1, background: '#13161c', borderRadius: 5, padding: '4px 10px',
+                          fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)',
+                          border: '1px solid rgba(255,255,255,0.06)',
+                        }}>premier-remodeling.com</div>
+                      </div>
+                      <div style={{
+                        height: 220, background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
+                        display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center',
+                        padding: 24, textAlign: 'center' as const,
+                      }}>
+                        <div style={{
+                          width: 36, height: 36, borderRadius: '50%',
+                          background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: '0.65rem', fontWeight: 800, color: '#fff', marginBottom: 12,
+                        }}>PR</div>
+                        <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', marginBottom: 6, lineHeight: 1.2 }}>
+                          Premier Remodeling Co
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', marginBottom: 14 }}>
+                          Phoenix&apos;s Top Kitchen &amp; Bath Remodeler
+                        </div>
+                        <div style={{
+                          padding: '8px 20px', borderRadius: 8,
+                          background: `linear-gradient(135deg, ${pkg.accent}, ${pkg.accent}cc)`,
+                          fontSize: '0.72rem', fontWeight: 700, color: '#fff',
+                        }}>Get Free Estimate</div>
+                        <div style={{ display: 'flex', gap: 16, marginTop: 16 }}>
+                          {['Kitchen', 'Bathroom', 'Full Home'].map(s => (
+                            <div key={s} style={{
+                              padding: '4px 10px', borderRadius: 6,
+                              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)',
+                              fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)',
+                            }}>{s}</div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Mini GMB Panel ── */}
+                {showGMB && (
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>
+                      Google Business Profile
+                    </div>
+                    <div style={{ borderRadius: 12, overflow: 'hidden', background: '#fff', border: `1px solid ${pkg.accent}20` }}>
+                      <div style={{
+                        height: 64, background: 'linear-gradient(135deg, #ff7a1a, #e85d04)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#fff', letterSpacing: '0.05em' }}>PR</span>
+                      </div>
+                      <div style={{ padding: '14px' }}>
+                        <div style={{ fontSize: '1rem', fontWeight: 700, color: '#202124', marginBottom: 3 }}>Premier Remodeling Co</div>
+                        <div style={{ fontSize: '0.72rem', color: '#70757a', marginBottom: 6 }}>Remodeling contractor</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 10 }}>
+                          <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#202124' }}>4.8</span>
+                          <div style={{ display: 'flex' }}>
+                            {[1,2,3,4,5].map(s => (
+                              <svg key={s} width="12" height="12" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill={s <= 4 ? '#fbbc04' : '#dadce0'}/></svg>
+                            ))}
+                          </div>
+                          <span style={{ fontSize: '0.68rem', color: '#1a73e8' }}>38 reviews</span>
+                        </div>
+                        <div style={{ borderTop: '1px solid #ebebeb', paddingTop: 10, display: 'flex', flexDirection: 'column' as const, gap: 6 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="#70757a"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+                            <span style={{ fontSize: '0.72rem', color: '#202124' }}>Phoenix, AZ</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="#70757a"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+                            <span style={{ fontSize: '0.72rem', color: '#188038', fontWeight: 500 }}>Open · Closes 6 PM</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="#70757a"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                            <span style={{ fontSize: '0.72rem', color: '#1a73e8' }}>(602) 555-0100</span>
+                          </div>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginTop: 12 }}>
+                          {['Call', 'Directions', 'Website'].map(action => (
+                            <div key={action} style={{
+                              display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 3,
+                              padding: '8px 4px', borderRadius: 6,
+                              background: '#f1f3f4', color: '#1a73e8',
+                              fontSize: '0.6rem', fontWeight: 600,
+                            }}>{action}</div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* CTA */}
+              <div style={{ padding: '0 2.5rem 2rem' }}>
+                <button style={{
+                  width: '100%', padding: 16, borderRadius: 12,
+                  fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', border: 'none',
+                  background: `linear-gradient(135deg, ${pkg.accent}, ${pkg.accent}cc)`,
+                  color: 'white', letterSpacing: '0.02em',
+                  boxShadow: `0 4px 20px ${pkg.accent}30`,
+                  transition: 'all 0.3s ease',
+                }}>Claim Your Market</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </section>
   );
 }
