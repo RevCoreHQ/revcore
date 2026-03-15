@@ -3138,9 +3138,10 @@ function SoftwareSection() {
 function SelectiveSection() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
   const disqualifiers = [
-    { text: "You're looking for the cheapest option", detail: "We're a growth partner, not a discount vendor." },
-    { text: "You don't follow up on leads", detail: 'We bring them in. You have to close them.' },
-    { text: "You're not ready to grow", detail: 'Our system creates demand. You need the capacity to meet it.' },
+    { text: "You're shopping for the cheapest option", detail: "We're a growth partner, not a line item to negotiate. If price is the only factor, we're not the right fit." },
+    { text: "You don't follow up on leads", detail: "We generate the demand. But if your team ignores the phone, no system can fix that." },
+    { text: "You're not ready to scale", detail: "Our system creates more jobs than most companies can handle. You need the crew and capacity to meet the demand." },
+    { text: "You blame marketing when sales doesn't close", detail: "If your close rate is the problem, that's a sales issue — not a lead issue. We address both, but only if you're coachable." },
   ];
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
@@ -3153,7 +3154,7 @@ function SelectiveSection() {
             <span style={{ width: 20, height: 2, background: '#FE6462', display: 'block' }} />
           </div>
           <h2 style={S.h2}>This Isn&apos;t for <HL>Everyone</HL></h2>
-          <p style={{ ...S.sub, marginBottom: '2.5rem' }}>We&apos;re selective about who we work with. RevCore is built for contractors who are serious about growth, not tire-kickers.</p>
+          <p style={{ ...S.sub, marginBottom: '2.5rem' }}>We accept 3–4 new partners per market. If that sounds unreasonable, this isn&apos;t the right fit.</p>
         </div>
 
         <div style={{ maxWidth: '640px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '16px', ...fadeUp(inView, 200) }}>
@@ -3178,7 +3179,7 @@ function SelectiveSection() {
 
         <div style={{ textAlign: 'center', marginTop: '2rem', ...fadeUp(inView, 400) }}>
           <p style={{ color: '#6B6B6B', fontSize: '0.9rem', fontStyle: 'italic' }}>
-            Still here? Good. You&apos;re exactly who we built this for.
+            If you&apos;re still reading, you&apos;re in the top 5% of contractors who actually want to grow — not just talk about it.
           </p>
         </div>
       </div>
