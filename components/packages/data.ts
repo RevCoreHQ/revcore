@@ -33,7 +33,7 @@ export const packagesData = [
     heroFeatures: [
       '20+ Appointments / mo',
       '20+ Bonus Leads / mo',
-      'High Conversion Website',
+      'Conversion Optimized Website',
       'SEO Optimization',
       'Automated Follow-Up',
     ],
@@ -61,7 +61,7 @@ export const packagesData = [
     heroFeatures: [
       '40+ Appointments / mo',
       'GMB Optimization',
-      'High Conversion Website',
+      'Conversion Optimized Website',
       'SEO Optimization',
       'Presentation Software',
       'Quoting Software',
