@@ -10,7 +10,7 @@ export const packagesData = [
     noteMonthly: '+ ad spend',
     quarterlyTotal: '$6,750/quarter',
     quarterlySave: '$250/mo',
-    accent: '#E8807E',
+    accent: '#888888',
     highlight: false,
     heroFeatures: [
       '15 Appointments / mo',
@@ -28,7 +28,7 @@ export const packagesData = [
     noteMonthly: '+ ad spend',
     quarterlyTotal: '$9,441/quarter',
     quarterlySave: '$350/mo',
-    accent: '#6B8EFE',
+    accent: '#F97316',
     highlight: true,
     heroFeatures: [
       '20+ Appointments / mo',
@@ -55,7 +55,7 @@ export const packagesData = [
     noteMonthly: '+ ad spend',
     quarterlyTotal: '$13,491/quarter',
     quarterlySave: '$500/mo',
-    accent: '#94D96B',
+    accent: '#8B5CF6',
     highlight: false,
     featuresTitle: 'Everything in Growth Partner, plus',
     heroFeatures: [

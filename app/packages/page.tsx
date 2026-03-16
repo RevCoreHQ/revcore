@@ -64,7 +64,7 @@ const S = {
 };
 
 const HL = ({ children }: { children: React.ReactNode }) => (
-  <span style={{ background: 'linear-gradient(135deg, #FE6462, #6B8EFE)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{children}</span>
+  <span style={{ background: 'linear-gradient(135deg, #F97316, #8B5CF6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{children}</span>
 );
 
 /* ═══════════════════════════════════════════════════
@@ -3233,15 +3233,15 @@ function PricingSection() {
       <div style={{
         position: 'absolute', top: '25%', left: '55%', transform: 'translateX(-50%)',
         width: 1000, height: 600,
-        background: 'radial-gradient(ellipse at center, rgba(107,142,254,0.1) 0%, transparent 70%)',
+        background: 'radial-gradient(ellipse at center, rgba(249,115,22,0.08) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
       <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '3.5rem', ...fadeUp(inView) }}>
           <div style={S.eyebrowDark}>
-            <span style={{ width: 20, height: 2, background: '#6B8EFE', display: 'block' }} />
+            <span style={{ width: 20, height: 2, background: '#F97316', display: 'block' }} />
             Choose Your Path
-            <span style={{ width: 20, height: 2, background: '#6B8EFE', display: 'block' }} />
+            <span style={{ width: 20, height: 2, background: '#F97316', display: 'block' }} />
           </div>
           <h2 style={{ ...S.h2Dark, fontSize: 'clamp(2rem, 4vw, 3rem)' }}>Growth Packages Built for <HL>Contractors</HL></h2>
           <p style={{ ...S.subDark, fontSize: '1.1rem', marginBottom: '2rem' }}>Three proven systems designed to meet you where you are and take you where you want to go.</p>
@@ -3267,7 +3267,7 @@ function PricingSection() {
               }}>
                 Quarterly
                 <span style={{
-                  background: '#94D96B', color: '#0a0a0a', fontSize: '0.65rem', fontWeight: 800,
+                  background: '#F97316', color: '#fff', fontSize: '0.65rem', fontWeight: 800,
                   padding: '3px 9px', borderRadius: 100, letterSpacing: '0.05em',
                 }}>SAVE 10%</span>
               </button>
@@ -3396,8 +3396,8 @@ function PricingSection() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                       <span style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.3)' }}>billed {pkg.quarterlyTotal}</span>
                       <span style={{
-                        fontSize: '0.78rem', fontWeight: 700, color: '#94D96B',
-                        background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.12)',
+                        fontSize: '0.78rem', fontWeight: 700, color: pkg.accent,
+                        background: `${pkg.accent}14`, border: `1px solid ${pkg.accent}20`,
                         padding: '3px 10px', borderRadius: 100,
                       }}>save {pkg.quarterlySave}</span>
                     </div>
@@ -3434,9 +3434,9 @@ function PricingSection() {
                   {isLaunchpad(pkg.id) && (
                     <div style={{
                       marginTop: 14, padding: '10px 14px', borderRadius: 10,
-                      background: 'rgba(232,128,126,0.04)', border: '1px solid rgba(232,128,126,0.10)',
+                      background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
                     }}>
-                      <span style={{ fontSize: '0.85rem', color: 'rgba(232,128,126,0.55)', fontWeight: 500 }}>
+                      <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>
                         Does not include website, SEO, or sales tools
                       </span>
                     </div>
