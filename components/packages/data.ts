@@ -28,7 +28,7 @@ export const packagesData = [
     noteMonthly: '+ ad spend',
     quarterlyTotal: '$9,441/quarter',
     quarterlySave: '$350/mo',
-    accent: '#F97316',
+    accent: '#E8700E',
     highlight: true,
     heroFeatures: [
       '20+ Appointments / mo',

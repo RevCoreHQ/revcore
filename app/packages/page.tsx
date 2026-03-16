@@ -64,7 +64,7 @@ const S = {
 };
 
 const HL = ({ children }: { children: React.ReactNode }) => (
-  <span style={{ background: 'linear-gradient(135deg, #F97316, #8B5CF6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{children}</span>
+  <span style={{ background: 'linear-gradient(135deg, #E8700E, #8B5CF6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{children}</span>
 );
 
 /* ═══════════════════════════════════════════════════
@@ -3239,9 +3239,9 @@ function PricingSection() {
       <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '3.5rem', ...fadeUp(inView) }}>
           <div style={S.eyebrowDark}>
-            <span style={{ width: 20, height: 2, background: '#F97316', display: 'block' }} />
+            <span style={{ width: 20, height: 2, background: '#E8700E', display: 'block' }} />
             Choose Your Path
-            <span style={{ width: 20, height: 2, background: '#F97316', display: 'block' }} />
+            <span style={{ width: 20, height: 2, background: '#E8700E', display: 'block' }} />
           </div>
           <h2 style={{ ...S.h2Dark, fontSize: 'clamp(2rem, 4vw, 3rem)' }}>Growth Packages Built for <HL>Contractors</HL></h2>
           <p style={{ ...S.subDark, fontSize: '1.1rem', marginBottom: '2rem' }}>Three proven systems designed to meet you where you are and take you where you want to go.</p>
@@ -3267,7 +3267,7 @@ function PricingSection() {
               }}>
                 Quarterly
                 <span style={{
-                  background: '#F97316', color: '#fff', fontSize: '0.65rem', fontWeight: 800,
+                  background: '#22c55e', color: '#fff', fontSize: '0.65rem', fontWeight: 800,
                   padding: '3px 9px', borderRadius: 100, letterSpacing: '0.05em',
                 }}>SAVE 10%</span>
               </button>
@@ -3286,6 +3286,7 @@ function PricingSection() {
             const hasAnyFocus = focusedPkg !== null;
             const isOtherFocused = hasAnyFocus && !isFocused;
             const isRecommended = pkg.id === 'growth';
+            const isPremium = pkg.id === 'full';
 
             return (
               <div
@@ -3295,14 +3296,16 @@ function PricingSection() {
                 className={`pkg-card${isFocused ? ' pkg-focused' : ''}`}
                 style={{
                   borderRadius: 24,
-                  background: isRecommended
+                  background: (isRecommended || isPremium)
                     ? `linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)`
                     : `linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)`,
                   border: isFocused
                     ? '1px solid rgba(255,255,255,0.18)'
                     : isRecommended
                       ? `1px solid ${pkg.accent}30`
-                      : '1px solid rgba(255,255,255,0.07)',
+                      : isPremium
+                        ? `1px solid ${pkg.accent}20`
+                        : '1px solid rgba(255,255,255,0.07)',
                   overflow: 'hidden', position: 'relative',
                   display: 'flex', flexDirection: 'column' as const,
                   zIndex: isFocused ? 10 : isRecommended ? 2 : 1,
@@ -3312,7 +3315,9 @@ function PricingSection() {
                     ? `0 0 0 1px rgba(255,255,255,0.1), 0 24px 60px rgba(0,0,0,0.5), 0 0 40px ${pkg.accent}10, inset 0 1px 0 rgba(255,255,255,0.08)`
                     : isRecommended
                       ? `0 12px 48px rgba(0,0,0,0.5), 0 0 60px ${pkg.accent}12, inset 0 1px 0 rgba(255,255,255,0.08)`
-                      : `0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)`,
+                      : isPremium
+                        ? `0 10px 40px rgba(0,0,0,0.45), 0 0 40px ${pkg.accent}0a, inset 0 1px 0 rgba(255,255,255,0.06)`
+                        : `0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)`,
                   transition: 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.45s ease, border-color 0.35s ease',
                   cursor: 'pointer',
                   backdropFilter: 'blur(40px)',
@@ -3325,9 +3330,9 @@ function PricingSection() {
               >
                 {/* Top accent gradient bar */}
                 <div style={{
-                  height: isRecommended ? 3 : 2,
+                  height: isRecommended ? 3 : isPremium ? 2.5 : 2,
                   background: `linear-gradient(90deg, transparent 0%, ${pkg.accent}80 30%, ${pkg.accent} 50%, ${pkg.accent}80 70%, transparent 100%)`,
-                  opacity: isFocused || isRecommended ? 1 : 0.6,
+                  opacity: isFocused || isRecommended || isPremium ? 1 : 0.6,
                   transition: 'opacity 0.35s ease',
                 }} />
 
