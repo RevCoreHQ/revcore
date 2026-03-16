@@ -1744,13 +1744,32 @@ function WebsiteDemo() {
     <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
       <div style={S.lightPattern} />
       <div style={S.container}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem', ...fadeUp(inView) }}>
-          <div style={S.eyebrow}>Website Preview</div>
-          <h2 style={S.h2}>Websites That <HL>Convert</HL></h2>
-          <p style={S.sub}>See real RevCore client websites, built to turn visitors into booked appointments.</p>
+        <div style={{ textAlign: 'center', marginBottom: '1.5rem', ...fadeUp(inView) }}>
+          <div style={S.eyebrow}>Your Digital Storefront</div>
+          <h2 style={S.h2}>Every Lead Ends Up <HL>Here</HL></h2>
+          <p style={S.sub}>A $200K remodel starts with a Google search. If your website looks like it was built in 2015, you already lost.</p>
+          <p style={{ fontSize: '0.95rem', color: '#888', maxWidth: '580px', margin: '0.75rem auto 0', lineHeight: 1.6 }}>
+            Ads, Google, referrals, business cards — every lead checks your website before they call. It&apos;s the first impression for every single prospect, and the difference between &ldquo;get me a quote&rdquo; and &ldquo;I&apos;ll keep looking.&rdquo;
+          </p>
         </div>
 
-        <div style={{ ...fadeUp(inView, 200), maxWidth: '1000px', margin: '0 auto', position: 'relative' }}>
+        {/* Traffic source convergence */}
+        <div style={{ ...fadeUp(inView, 150), display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+          {[
+            { icon: '📱', label: 'Meta Ads' },
+            { icon: '🔍', label: 'Google Search' },
+            { icon: '🤝', label: 'Referrals' },
+            { icon: '📇', label: 'Business Cards' },
+          ].map((src, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '100px', background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.06)' }}>
+              <span style={{ fontSize: '14px' }}>{src.icon}</span>
+              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#555', letterSpacing: '0.01em' }}>{src.label}</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ ...fadeUp(inView, 300), maxWidth: '1000px', margin: '0 auto', position: 'relative' }}>
           {/* Left arrow */}
           <div onClick={goPrev} style={arrowBtn('left', goPrev) as React.CSSProperties} className="wd-arrow">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
