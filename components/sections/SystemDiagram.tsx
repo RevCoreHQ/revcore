@@ -288,7 +288,7 @@ export default function SystemDiagram() {
               onClick={() => toggle(HUB_NODE.id)}
               onMouseEnter={() => setHovered(HUB_NODE.id)}
               onMouseLeave={() => setHovered(null)}
-              aria-label={`${HUB_NODE.label} — click for details`}
+              aria-label={`${HUB_NODE.label}, click for details`}
               style={{
                 position: 'absolute',
                 left: toLeft(HUB_NODE.x),
@@ -354,7 +354,7 @@ export default function SystemDiagram() {
                   onClick={() => toggle(node.id)}
                   onMouseEnter={() => setHovered(node.id)}
                   onMouseLeave={() => setHovered(null)}
-                  aria-label={`${node.label} — click for details`}
+                  aria-label={`${node.label}, click for details`}
                   style={{
                     position: 'absolute',
                     left: toLeft(node.x),

@@ -1658,7 +1658,7 @@ function PhoneDemo() {
                           </div>
                           <div className="ios-message-time">Thu 9:00 AM</div>
                           <div className="ios-message incoming">
-                            Hi John, just a heads up — Mike is heading your way and will arrive in about 1 hour for your 10:00 AM consultation. See you soon!
+                            Hi John, just a heads up, Mike is heading your way and will arrive in about 1 hour for your 10:00 AM consultation. See you soon!
                           </div>
                         </div>
                         <div className="ios-input-bar">
@@ -1749,7 +1749,7 @@ function WebsiteDemo() {
           <h2 style={S.h2}>Every Lead Ends Up <HL>Here</HL></h2>
           <p style={S.sub}>A $200K remodel starts with a Google search. If your website looks like it was built in 2015, you already lost.</p>
           <p style={{ fontSize: '0.95rem', color: '#888', maxWidth: '580px', margin: '0.75rem auto 0', lineHeight: 1.6 }}>
-            Ads, Google, referrals, business cards — every lead checks your website before they call. It&apos;s the first impression for every single prospect, and the difference between &ldquo;get me a quote&rdquo; and &ldquo;I&apos;ll keep looking.&rdquo;
+            Ads, Google, referrals, business cards, every lead checks your website before they call. It&apos;s the first impression for every single prospect, and the difference between &ldquo;get me a quote&rdquo; and &ldquo;I&apos;ll keep looking.&rdquo;
           </p>
         </div>
 
@@ -3102,7 +3102,7 @@ function SoftwareSection() {
                     </IpadMockup>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginTop: '1.25rem', padding: '6px 14px', borderRadius: '100px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', animation: 'demoFadeUp 0.5s ease 1.2s both' }}>
-                    <span style={{ fontSize: '0.67rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500, letterSpacing: '0.04em' }}>Live &amp; interactive — click around</span>
+                    <span style={{ fontSize: '0.67rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500, letterSpacing: '0.04em' }}>Live &amp; interactive, click around</span>
                   </div>
                 </div>
                 {renderTextPanel(PKG_QUOTING_STEPS, '#94D96B')}
@@ -3117,7 +3117,7 @@ function SoftwareSection() {
                     </IpadMockup>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginTop: '1.25rem', padding: '6px 14px', borderRadius: '100px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', animation: 'demoFadeUp 0.5s ease 1.2s both' }}>
-                    <span style={{ fontSize: '0.67rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500, letterSpacing: '0.04em' }}>Live &amp; interactive — click around</span>
+                    <span style={{ fontSize: '0.67rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500, letterSpacing: '0.04em' }}>Live &amp; interactive, click around</span>
                   </div>
                 </div>
               </>
@@ -3140,7 +3140,7 @@ function SelectiveSection() {
     { text: "You're shopping for the cheapest option", detail: "We're a growth partner, not a line item to negotiate. If price is the only factor, we're not the right fit." },
     { text: "You don't follow up on leads", detail: "We generate the demand. But if your team ignores the phone, no system can fix that." },
     { text: "You're not ready to scale", detail: "Our system creates more jobs than most companies can handle. You need the crew and capacity to meet the demand." },
-    { text: "You blame marketing when sales doesn't close", detail: "If your close rate is the problem, that's a sales issue — not a lead issue. We address both, but only if you're coachable." },
+    { text: "You blame marketing when sales doesn't close", detail: "If your close rate is the problem, that's a sales issue, not a lead issue. We address both, but only if you're coachable." },
   ];
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
@@ -3178,7 +3178,7 @@ function SelectiveSection() {
 
         <div style={{ textAlign: 'center', marginTop: '2rem', ...fadeUp(inView, 400) }}>
           <p style={{ color: '#6B6B6B', fontSize: '0.9rem', fontStyle: 'italic' }}>
-            If you&apos;re still reading, you&apos;re in the top 5% of contractors who actually want to grow — not just talk about it.
+            If you&apos;re still reading, you&apos;re in the top 5% of contractors who actually want to grow, not just talk about it.
           </p>
         </div>
       </div>
@@ -3798,7 +3798,7 @@ function PricingSection() {
                           border: '1px solid rgba(255,255,255,0.05)', flex: 1,
                           display: 'flex', flexDirection: 'column' as const, gap: 8,
                         }}>
-                          <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>Kitchen Remodel — Johnson Residence</div>
+                          <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>Kitchen Remodel, Johnson Residence</div>
                           {[
                             { item: 'Demo & removal', price: '$2,800' },
                             { item: 'Custom cabinetry', price: '$8,400' },
