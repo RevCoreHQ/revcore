@@ -3295,15 +3295,24 @@ function PricingSection() {
                 className={`pkg-card${isFocused ? ' pkg-focused' : ''}`}
                 style={{
                   borderRadius: 24,
-                  background: `linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)`,
-                  border: `1px solid ${isFocused ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.07)'}`,
+                  background: isRecommended
+                    ? `linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)`
+                    : `linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)`,
+                  border: isFocused
+                    ? '1px solid rgba(255,255,255,0.18)'
+                    : isRecommended
+                      ? `1px solid ${pkg.accent}30`
+                      : '1px solid rgba(255,255,255,0.07)',
                   overflow: 'hidden', position: 'relative',
                   display: 'flex', flexDirection: 'column' as const,
-                  zIndex: isFocused ? 10 : 1,
+                  zIndex: isFocused ? 10 : isRecommended ? 2 : 1,
                   opacity: isOtherFocused ? 0.5 : 1,
+                  transform: isRecommended && !isFocused ? 'scale(1.03)' : undefined,
                   boxShadow: isFocused
                     ? `0 0 0 1px rgba(255,255,255,0.1), 0 24px 60px rgba(0,0,0,0.5), 0 0 40px ${pkg.accent}10, inset 0 1px 0 rgba(255,255,255,0.08)`
-                    : `0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)`,
+                    : isRecommended
+                      ? `0 12px 48px rgba(0,0,0,0.5), 0 0 60px ${pkg.accent}12, inset 0 1px 0 rgba(255,255,255,0.08)`
+                      : `0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)`,
                   transition: 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.45s ease, border-color 0.35s ease',
                   cursor: 'pointer',
                   backdropFilter: 'blur(40px)',
@@ -3316,9 +3325,9 @@ function PricingSection() {
               >
                 {/* Top accent gradient bar */}
                 <div style={{
-                  height: 2,
+                  height: isRecommended ? 3 : 2,
                   background: `linear-gradient(90deg, transparent 0%, ${pkg.accent}80 30%, ${pkg.accent} 50%, ${pkg.accent}80 70%, transparent 100%)`,
-                  opacity: isFocused ? 1 : 0.6,
+                  opacity: isFocused || isRecommended ? 1 : 0.6,
                   transition: 'opacity 0.35s ease',
                 }} />
 
