@@ -33,7 +33,7 @@ const NODES: SystemNode[] = [
     detail: 'The brain of your entire operation. Every service feeds data back here, giving you one clean dashboard of every lead, every job, every dollar, and every team member in real time.',
     bullets: ['Real-time lead tracking', 'Revenue & source reporting', 'Custom pipeline views', 'Team access & roles'],
     color: '#94D96B',
-    x: 500, y: 330,
+    x: 500, y: 295,
     isHub: true,
   },
   {
@@ -100,11 +100,11 @@ interface Conn {
 
 /* Hub spokes — data flows into CRM */
 const HUB_CONNECTIONS: Conn[] = [
-  { from: 'leads',      to: 'crm', color: '#FE6462', dur: 2.2, delay: 0.0, d: 'M 500,62 Q 555,200 500,330' },
-  { from: 'seo',        to: 'crm', color: '#6B8EFE', dur: 2.5, delay: 0.5, d: 'M 878,195 Q 680,220 500,330' },
-  { from: 'software',   to: 'crm', color: '#4FC3F7', dur: 2.4, delay: 1.0, d: 'M 800,515 Q 680,380 500,330' },
-  { from: 'automation', to: 'crm', color: '#FEB64A', dur: 2.4, delay: 1.5, d: 'M 200,515 Q 320,380 500,330' },
-  { from: 'training',   to: 'crm', color: '#FF8B89', dur: 2.5, delay: 2.0, d: 'M 122,195 Q 320,220 500,330' },
+  { from: 'leads',      to: 'crm', color: '#FE6462', dur: 2.2, delay: 0.0, d: 'M 500,62 Q 540,175 500,295' },
+  { from: 'seo',        to: 'crm', color: '#6B8EFE', dur: 2.5, delay: 0.5, d: 'M 878,195 Q 680,200 500,295' },
+  { from: 'software',   to: 'crm', color: '#4FC3F7', dur: 2.4, delay: 1.0, d: 'M 800,515 Q 680,360 500,295' },
+  { from: 'automation', to: 'crm', color: '#FEB64A', dur: 2.4, delay: 1.5, d: 'M 200,515 Q 320,360 500,295' },
+  { from: 'training',   to: 'crm', color: '#FF8B89', dur: 2.5, delay: 2.0, d: 'M 122,195 Q 320,200 500,295' },
 ];
 
 /* Pentagon ring — peer connections between outer nodes */
