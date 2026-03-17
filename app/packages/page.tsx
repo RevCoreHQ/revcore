@@ -2024,38 +2024,55 @@ const calendarPhases: CalPhase[] = [
     name: 'Paid Ads + Organic', color: '#94D96B', subtitle: 'Full Scale',
     description: 'Every growth channel compounding. Your month is booked out weeks in advance.',
     appts: {
-      // Week 1 — paid ads (days 2,4,6,7) + organic (day 3,5)
-      2:  [{ time: '9:00 AM',  name: 'David Martinez',    phone: '(602) 555-0412', email: 'dmartinez@gmail.com',      address: '3847 W Thunderbird Rd, Phoenix AZ 85053',    service: 'Kitchen Remodel' }],
-      3:  [{ time: '11:00 AM', name: 'Maria Young',       phone: '(602) 555-2001', email: 'myoung@gmail.com',        address: '3920 W Indian School Rd, Phoenix AZ 85019',  service: 'Full Home Renovation' }],
-      4:  [{ time: '1:00 PM',  name: 'Jennifer Thompson', phone: '(480) 555-0538', email: 'jthompson22@outlook.com', address: '9201 E Indian Bend Rd, Scottsdale AZ 85250', service: 'Full Home Renovation' }],
-      5:  [{ time: '10:00 AM', name: 'Derek Wright',      phone: '(623) 555-2003', email: 'dwright@yahoo.com',       address: '11240 N 43rd Ave, Glendale AZ 85304',        service: 'Design Consultation' }],
-      6:  [{ time: '10:30 AM', name: 'Marcus Garcia',     phone: '(623) 555-0619', email: 'mgarcia@yahoo.com',       address: '5520 W Peoria Ave, Glendale AZ 85302',      service: 'Flooring Installation' }],
-      7:  [{ time: '2:30 PM',  name: 'Rachel Robinson',   phone: '(602) 555-0724', email: 'rrobinson@gmail.com',     address: '2215 N 44th St, Phoenix AZ 85008',           service: 'Bathroom Renovation' }],
-      // Week 2 — paid ads (days 9,10,12,13,14) + organic (day 11)
-      9:  [{ time: '9:30 AM',  name: 'Chris Mitchell',    phone: '(480) 555-0837', email: 'cmitchell@hotmail.com',   address: '6630 E Baseline Rd, Mesa AZ 85206',          service: 'Design Consultation' }],
-      10: [{ time: '11:00 AM', name: 'Amanda Davis',      phone: '(623) 555-0941', email: 'adavis17@gmail.com',      address: '14220 N 59th Ave, Glendale AZ 85306',        service: 'Countertop Replacement' }],
-      11: [{ time: '2:00 PM',  name: 'Tyler Lopez',       phone: '(602) 555-2004', email: 'tlopez@gmail.com',        address: '2515 E Thomas Rd, Phoenix AZ 85016',         service: 'Flooring Installation' }],
-      12: [{ time: '3:00 PM',  name: 'Kevin Taylor',      phone: '(623) 555-1274', email: 'ktaylor55@gmail.com',     address: '8821 W Maryland Ave, Glendale AZ 85305',     service: 'Cabinet Refacing' }],
-      13: [{ time: '8:00 AM',  name: 'Nicole Moore',      phone: '(480) 555-1168', email: 'nmoore@yahoo.com',        address: '1450 S Dobson Rd, Mesa AZ 85202',            service: 'Full Home Renovation' }],
-      14: [{ time: '10:30 AM', name: 'Ashley Jackson',    phone: '(602) 555-1389', email: 'ajackson@gmail.com',      address: '4102 N 24th St, Phoenix AZ 85016',           service: 'Kitchen Consultation' }],
-      // Week 3 — paid ads (days 17,19,21) + organic (day 16)
-      16: [{ time: '9:00 AM',  name: 'Nathan Scott',      phone: '(623) 555-2006', email: 'nscott@hotmail.com',      address: '7330 W Glendale Ave, Glendale AZ 85303',     service: 'Cabinet Refacing' }],
-      17: [{ time: '1:30 PM',  name: 'Megan Harris',      phone: '(623) 555-1507', email: 'mharris@outlook.com',     address: '10432 W Camelback Rd, Phoenix AZ 85037',     service: 'Tile Installation' }],
-      19: [{ time: '9:00 AM',  name: 'Ryan Martin',       phone: '(602) 555-1618', email: 'rmartin@gmail.com',       address: '2750 W Guadalupe Rd, Chandler AZ 85224',     service: 'Bathroom Estimate' }],
-      21: [{ time: '2:00 PM',  name: 'Stephanie Lee',     phone: '(480) 555-1723', email: 'slee@yahoo.com',          address: '5580 E Broadway Rd, Mesa AZ 85206',          service: 'Full Home Renovation' }],
-      // Week 4 — paid ads (days 23-28) + organic (day 24 extra)
-      23: [{ time: '10:00 AM', name: 'Jake Walker',       phone: '(623) 555-1834', email: 'jwalker@gmail.com',       address: '6890 W Bethany Home Rd, Glendale AZ 85303',  service: 'Interior Painting' }],
-      24: [
-        { time: '8:30 AM',  name: 'Brian Cooper',      phone: '(602) 555-1945', email: 'bcooper@gmail.com',       address: '3310 E Osborn Rd, Phoenix AZ 85018',         service: 'Kitchen Remodel' },
-        { time: '3:00 PM',  name: 'Angela Green',      phone: '(602) 555-2007', email: 'agreen@gmail.com',        address: '5060 N 19th Ave, Phoenix AZ 85015',          service: 'Countertop Replacement' },
+      // Week 1 (days 1-7): 7 appts
+      1:  [{ time: '10:00 AM', name: 'Victor Reyes',       phone: '(480) 555-3101', email: 'vreyes@gmail.com',        address: '4410 E Shea Blvd, Phoenix AZ 85028',         service: 'Full Home Renovation' }],
+      2:  [{ time: '8:30 AM',  name: 'Sandra Hoffman',     phone: '(602) 555-3215', email: 'shoffman@yahoo.com',      address: '1925 W Bethany Home Rd, Phoenix AZ 85015',   service: 'Kitchen Remodel' }],
+      3:  [
+        { time: '9:00 AM',  name: 'Carlos Mendoza',     phone: '(623) 555-3322', email: 'cmendoza@outlook.com',    address: '6740 W Northern Ave, Glendale AZ 85303',     service: 'Bathroom Renovation' },
+        { time: '2:30 PM',  name: 'Tiffany Nguyen',     phone: '(480) 555-3418', email: 'tnguyen@gmail.com',       address: '3050 S Rural Rd, Tempe AZ 85282',            service: 'Design Consultation' },
       ],
-      25: [{ time: '3:00 PM',  name: 'Danielle Price',    phone: '(480) 555-2051', email: 'dprice@yahoo.com',        address: '7420 S Mill Ave, Tempe AZ 85283',            service: 'Design Consultation' }],
-      26: [{ time: '11:00 AM', name: 'Patrick Nelson',    phone: '(623) 555-2167', email: 'pnelson@outlook.com',     address: '4850 W Glendale Ave, Glendale AZ 85301',    service: 'Flooring Installation' }],
-      27: [{ time: '9:00 AM',  name: 'Lauren White',      phone: '(602) 555-2273', email: 'lwhite@gmail.com',        address: '1940 N 7th St, Phoenix AZ 85006',            service: 'Bathroom Renovation' }],
-      28: [{ time: '1:00 PM',  name: 'Trevor Hall',       phone: '(480) 555-2389', email: 'thall@hotmail.com',       address: '5630 E University Dr, Mesa AZ 85205',        service: 'Countertop Replacement' }],
-      // Week 5
-      30: [{ time: '10:00 AM', name: 'Courtney Evans',    phone: '(623) 555-2495', email: 'cevans@gmail.com',        address: '8210 W Camelback Rd, Phoenix AZ 85037',      service: 'Cabinet Refacing' }],
-      31: [{ time: '2:30 PM',  name: 'Jason Reed',        phone: '(602) 555-2601', email: 'jreed@gmail.com',         address: '2680 E Thomas Rd, Phoenix AZ 85016',         service: 'Full Home Renovation' }],
+      5:  [{ time: '11:30 AM', name: 'Gregory Palmer',     phone: '(602) 555-3529', email: 'gpalmer@hotmail.com',     address: '8815 N Central Ave, Phoenix AZ 85020',       service: 'Countertop Replacement' }],
+      6:  [{ time: '1:00 PM',  name: 'Heather Burke',      phone: '(623) 555-3637', email: 'hburke@gmail.com',        address: '12450 W Camelback Rd, Litchfield Park AZ 85340', service: 'Flooring Installation' }],
+      7:  [{ time: '10:00 AM', name: 'Raymond Foster',     phone: '(480) 555-3744', email: 'rfoster@yahoo.com',       address: '2280 E Baseline Rd, Gilbert AZ 85234',       service: 'Cabinet Refacing' }],
+      // Week 2 (days 8-14): 8 appts
+      8:  [{ time: '9:00 AM',  name: 'Vanessa Cruz',       phone: '(602) 555-3851', email: 'vcruz@gmail.com',         address: '5540 N 35th Ave, Phoenix AZ 85017',          service: 'Full Home Renovation' }],
+      9:  [{ time: '1:30 PM',  name: 'Dennis Richardson',  phone: '(623) 555-3968', email: 'drichardson@outlook.com', address: '9920 W Happy Valley Rd, Peoria AZ 85383',    service: 'Kitchen Consultation' }],
+      10: [
+        { time: '8:00 AM',  name: 'Kristina Morales',   phone: '(480) 555-4075', email: 'kmorales@gmail.com',      address: '1670 S Stapley Dr, Mesa AZ 85204',           service: 'Tile Installation' },
+        { time: '3:00 PM',  name: 'Wayne Fletcher',     phone: '(602) 555-4182', email: 'wfletcher@yahoo.com',     address: '4320 E McDowell Rd, Phoenix AZ 85008',       service: 'Interior Painting' },
+      ],
+      11: [{ time: '10:30 AM', name: 'Julia Castillo',     phone: '(623) 555-4296', email: 'jcastillo@gmail.com',     address: '7180 W Olive Ave, Peoria AZ 85345',          service: 'Bathroom Estimate' }],
+      12: [{ time: '2:00 PM',  name: 'Brett Simmons',      phone: '(480) 555-4403', email: 'bsimmons@hotmail.com',    address: '3890 E Southern Ave, Mesa AZ 85206',         service: 'Flooring Installation' }],
+      13: [{ time: '9:30 AM',  name: 'Monica Dunn',        phone: '(602) 555-4517', email: 'mdunn@gmail.com',         address: '2100 W Camelback Rd, Phoenix AZ 85015',      service: 'Design Consultation' }],
+      14: [{ time: '11:00 AM', name: 'Craig Sullivan',     phone: '(623) 555-4624', email: 'csullivan@outlook.com',   address: '15620 N 59th Ave, Glendale AZ 85306',        service: 'Full Home Renovation' }],
+      // Week 3 (days 15-21): 8 appts
+      15: [{ time: '8:30 AM',  name: 'Alicia Ramirez',     phone: '(480) 555-4731', email: 'aramirez@yahoo.com',      address: '6290 S Price Rd, Chandler AZ 85249',         service: 'Kitchen Remodel' }],
+      16: [{ time: '1:00 PM',  name: 'Dustin Perry',       phone: '(602) 555-4848', email: 'dperry@gmail.com',        address: '3710 N 7th Ave, Phoenix AZ 85013',           service: 'Cabinet Refacing' }],
+      17: [
+        { time: '9:00 AM',  name: 'Natasha Holmes',     phone: '(623) 555-4955', email: 'nholmes@gmail.com',       address: '10830 W Thunderbird Blvd, Sun City AZ 85351', service: 'Countertop Replacement' },
+        { time: '4:00 PM',  name: 'Shane Gutierrez',    phone: '(480) 555-5062', email: 'sgutierrez@outlook.com',  address: '1440 E University Dr, Tempe AZ 85281',       service: 'Bathroom Renovation' },
+      ],
+      19: [{ time: '10:00 AM', name: 'Brenda Ortiz',       phone: '(602) 555-5179', email: 'bortiz@yahoo.com',        address: '5810 W Encanto Blvd, Phoenix AZ 85035',      service: 'Tile Installation' }],
+      20: [{ time: '2:30 PM',  name: 'Philip Warren',      phone: '(623) 555-5286', email: 'pwarren@gmail.com',       address: '8460 W Dunlap Ave, Phoenix AZ 85037',        service: 'Full Home Renovation' }],
+      21: [{ time: '11:00 AM', name: 'Sabrina Fields',     phone: '(480) 555-5393', email: 'sfields@hotmail.com',     address: '4750 E Elliot Rd, Gilbert AZ 85234',         service: 'Interior Painting' }],
+      // Week 4 (days 22-28): 9 appts
+      22: [{ time: '9:00 AM',  name: 'Roberto Vega',       phone: '(602) 555-5507', email: 'rvega@gmail.com',         address: '2340 E Roosevelt St, Phoenix AZ 85006',      service: 'Kitchen Remodel' }],
+      23: [
+        { time: '8:00 AM',  name: 'Lindsey Chapman',    phone: '(623) 555-5614', email: 'lchapman@gmail.com',      address: '6120 W Myrtle Ave, Glendale AZ 85301',      service: 'Design Consultation' },
+        { time: '3:30 PM',  name: 'Terrence Gibson',    phone: '(480) 555-5721', email: 'tgibson@yahoo.com',       address: '950 S Extension Rd, Mesa AZ 85210',          service: 'Flooring Installation' },
+      ],
+      24: [{ time: '10:30 AM', name: 'Erica Santos',       phone: '(602) 555-5838', email: 'esantos@outlook.com',     address: '7730 N 19th Ave, Phoenix AZ 85021',          service: 'Bathroom Renovation' }],
+      25: [{ time: '1:00 PM',  name: 'Derek Watts',        phone: '(623) 555-5945', email: 'dwatts@gmail.com',        address: '14010 N 51st Ave, Glendale AZ 85306',        service: 'Full Home Renovation' }],
+      26: [
+        { time: '9:30 AM',  name: 'Cassandra Long',     phone: '(480) 555-6052', email: 'clong@gmail.com',         address: '3560 E Broadway Rd, Mesa AZ 85204',          service: 'Countertop Replacement' },
+        { time: '2:00 PM',  name: 'Isaac Murray',       phone: '(602) 555-6169', email: 'imurray@hotmail.com',     address: '4480 N 20th St, Phoenix AZ 85016',           service: 'Cabinet Refacing' },
+      ],
+      27: [{ time: '11:30 AM', name: 'Gabriella Flores',   phone: '(623) 555-6276', email: 'gflores@yahoo.com',       address: '8950 W Camelback Rd, Phoenix AZ 85037',      service: 'Kitchen Consultation' }],
+      28: [{ time: '8:30 AM',  name: 'Mitchell Boyd',      phone: '(480) 555-6383', email: 'mboyd@gmail.com',         address: '2090 S Alma School Rd, Chandler AZ 85286',   service: 'Tile Installation' }],
+      // Week 5 (days 29-31): 3 appts
+      29: [{ time: '10:00 AM', name: 'Rosa Delgado',       phone: '(602) 555-6497', email: 'rdelgado@gmail.com',      address: '5230 W Indian School Rd, Phoenix AZ 85031',  service: 'Full Home Renovation' }],
+      30: [{ time: '1:30 PM',  name: 'Clayton Barnes',     phone: '(623) 555-6504', email: 'cbarnes@outlook.com',     address: '11780 N 75th Ave, Peoria AZ 85345',          service: 'Bathroom Renovation' }],
+      31: [{ time: '9:00 AM',  name: 'Paige Henderson',    phone: '(480) 555-6611', email: 'phenderson@gmail.com',    address: '4160 E Guadalupe Rd, Gilbert AZ 85234',      service: 'Design Consultation' }],
     },
   },
 ];
