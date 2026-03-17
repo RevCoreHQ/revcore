@@ -1694,7 +1694,6 @@ const DEMO_SITES = [
   { url: 'https://www.aquaticpoolaz.com', domain: 'aquaticpoolaz.com' },
   { url: 'https://timberlinefallsut.com', domain: 'timberlinefallsut.com' },
   { url: 'https://tomron-construction.vercel.app', domain: 'tomron-construction.vercel.app' },
-  { url: 'https://rnr-stoneworks.vercel.app', domain: 'rnr-stoneworks.vercel.app' },
 ];
 
 function WebsiteDemo() {
