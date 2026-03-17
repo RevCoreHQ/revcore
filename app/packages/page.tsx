@@ -4009,6 +4009,7 @@ function SiteGrader() {
   const [report, setReport] = useState<GraderReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [openCheck, setOpenCheck] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
 
   const run = async () => {
@@ -4150,6 +4151,58 @@ function SiteGrader() {
                   {report.url}
                 </p>
               </div>
+
+              {/* Copy Summary */}
+              <button
+                onClick={() => {
+                  const lines: string[] = [];
+                  lines.push(`SEO AUDIT: ${report.url}`);
+                  lines.push(`Score: ${report.score}/100 (${scoreLabel})`);
+                  lines.push(`${report.summary.fail} Issues | ${report.summary.warning} Warnings | ${report.summary.pass} Passing`);
+                  lines.push('');
+                  if (criticals.length > 0) {
+                    lines.push('FIX IMMEDIATELY:');
+                    criticals.forEach(c => {
+                      lines.push(`  ✕ ${c.title} — ${c.current}`);
+                      lines.push(`    → ${c.recommendation}`);
+                    });
+                    lines.push('');
+                  }
+                  if (warnings.length > 0) {
+                    lines.push('WARNINGS:');
+                    warnings.forEach(c => {
+                      lines.push(`  ! ${c.title} — ${c.current}`);
+                      lines.push(`    → ${c.recommendation}`);
+                    });
+                    lines.push('');
+                  }
+                  if (passing.length > 0) {
+                    lines.push('PASSING:');
+                    lines.push(`  ${passing.map(c => `✓ ${c.title}`).join(', ')}`);
+                  }
+                  lines.push('');
+                  lines.push('Powered by RevCore SEO Analyser');
+                  navigator.clipboard.writeText(lines.join('\n'));
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                style={{
+                  flexShrink: 0, alignSelf: 'flex-start',
+                  padding: '8px 16px', borderRadius: 8,
+                  background: copied ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.06)',
+                  border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.1)'}`,
+                  color: copied ? '#22c55e' : 'rgba(255,255,255,0.5)',
+                  fontSize: '0.72rem', fontWeight: 700, fontFamily: 'DM Sans, sans-serif',
+                  cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                }}
+              >
+                {copied ? (
+                  <><svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Copied</>
+                ) : (
+                  <><svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><rect x={9} y={9} width={13} height={13} rx={2}/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Summary</>
+                )}
+              </button>
             </div>
 
             {/* Critical issues - always shown first, red */}
