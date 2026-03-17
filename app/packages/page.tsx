@@ -1820,9 +1820,6 @@ function WebsiteDemo() {
           <div style={S.eyebrow}>Your Digital Storefront</div>
           <h2 style={S.h2}>Every Lead Ends Up <HL>Here</HL></h2>
           <p style={S.sub}>A $200K remodel starts with a Google search. If your website looks like it was built in 2015, you already lost.</p>
-          <p style={{ fontSize: '0.95rem', color: '#888', maxWidth: '580px', margin: '0.75rem auto 0', lineHeight: 1.6 }}>
-            Ads, Google, referrals, business cards, every lead checks your website before they call. It&apos;s the first impression for every single prospect, and the difference between &ldquo;get me a quote&rdquo; and &ldquo;I&apos;ll keep looking.&rdquo;
-          </p>
         </div>
 
         {/* Traffic source convergence */}
@@ -1933,15 +1930,16 @@ function WebsiteDemo() {
         <div style={{ maxWidth: 800, margin: '3rem auto 0', ...fadeUp(inView, 400) }}>
           <div style={{
             borderRadius: 16, overflow: 'hidden',
-            background: '#0A0A0A', border: '1px solid rgba(255,255,255,0.08)',
+            background: '#fff', border: '1px solid rgba(0,0,0,0.08)',
             padding: '2rem 2rem 1.5rem',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
           }}>
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#ef4444', marginBottom: '0.5rem' }}>Free Website Audit</div>
-              <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', color: '#fff', margin: '0 0 0.4rem', lineHeight: 1.2 }}>
-                How Does Your Website <span style={{ background: 'linear-gradient(135deg, #E8700E, #8B5CF6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Score</span>?
+              <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', color: '#0A0A0A', margin: '0 0 0.4rem', lineHeight: 1.2 }}>
+                How Does Your Website <HL>Score</HL>?
               </h3>
-              <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', margin: 0 }}>Enter your URL. We grade harsh, most contractor sites score below 40.</p>
+              <p style={{ fontSize: '0.85rem', color: '#888', margin: 0 }}>Enter your URL. We grade harsh, most contractor sites score below 40.</p>
             </div>
 
             {/* Input */}
@@ -1953,8 +1951,8 @@ function WebsiteDemo() {
                   onKeyDown={e => e.key === 'Enter' && runGrader()}
                   placeholder="yourcompany.com"
                   style={{
-                    flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: 10, padding: '12px 16px', color: 'white', fontSize: '0.85rem',
+                    flex: 1, background: '#F5F5F5', border: '1px solid rgba(0,0,0,0.1)',
+                    borderRadius: 10, padding: '12px 16px', color: '#0A0A0A', fontSize: '0.85rem',
                     outline: 'none', fontFamily: 'DM Sans, sans-serif',
                   }}
                 />
@@ -1962,8 +1960,8 @@ function WebsiteDemo() {
                   onClick={runGrader}
                   disabled={graderLoading || !graderUrl.trim()}
                   style={{
-                    background: graderLoading ? 'rgba(255,255,255,0.06)' : '#ef4444',
-                    border: 'none', borderRadius: 10, color: graderLoading ? 'rgba(255,255,255,0.3)' : 'white',
+                    background: graderLoading ? '#eee' : '#ef4444',
+                    border: 'none', borderRadius: 10, color: graderLoading ? '#999' : 'white',
                     fontFamily: 'DM Sans', fontWeight: 700, fontSize: '0.82rem',
                     padding: '12px 20px', cursor: graderLoading ? 'not-allowed' : 'pointer',
                     whiteSpace: 'nowrap', transition: 'all 0.2s',
@@ -1972,7 +1970,7 @@ function WebsiteDemo() {
                 >
                   {graderLoading ? (
                     <>
-                      <span style={{ display: 'inline-block', width: 14, height: 14, border: '2px solid rgba(255,255,255,0.15)', borderTopColor: 'rgba(255,255,255,0.5)', borderRadius: '50%', animation: 'seo-spin 0.7s linear infinite' }} />
+                      <span style={{ display: 'inline-block', width: 14, height: 14, border: '2px solid rgba(0,0,0,0.1)', borderTopColor: '#999', borderRadius: '50%', animation: 'seo-spin 0.7s linear infinite' }} />
                       Grading...
                     </>
                   ) : 'Grade My Site'}
@@ -1982,7 +1980,7 @@ function WebsiteDemo() {
 
             {/* Error */}
             {graderError && (
-              <div style={{ maxWidth: 560, margin: '0 auto 1rem', padding: '10px 14px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 10 }}>
+              <div style={{ maxWidth: 560, margin: '0 auto 1rem', padding: '10px 14px', background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10 }}>
                 <p style={{ color: '#ef4444', fontSize: '0.8rem', margin: 0 }}>{graderError}</p>
               </div>
             )}
@@ -1990,8 +1988,8 @@ function WebsiteDemo() {
             {/* Loading */}
             {graderLoading && (
               <div style={{ textAlign: 'center', padding: '30px 0' }}>
-                <div style={{ width: 32, height: 32, border: '3px solid rgba(255,255,255,0.08)', borderTopColor: '#ef4444', borderRadius: '50%', animation: 'seo-spin 0.8s linear infinite', margin: '0 auto 10px' }} />
-                <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', margin: 0 }}>Scanning {graderUrl}...</p>
+                <div style={{ width: 32, height: 32, border: '3px solid rgba(0,0,0,0.06)', borderTopColor: '#ef4444', borderRadius: '50%', animation: 'seo-spin 0.8s linear infinite', margin: '0 auto 10px' }} />
+                <p style={{ color: '#999', fontSize: '0.8rem', margin: 0 }}>Scanning {graderUrl}...</p>
               </div>
             )}
 
@@ -2001,24 +1999,24 @@ function WebsiteDemo() {
                 {/* Score header */}
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 20, padding: '20px',
-                  background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+                  background: '#FAFAFA', border: '1px solid rgba(0,0,0,0.06)',
                   borderRadius: 12, marginBottom: 12,
                 }}>
                   {/* Score ring */}
                   <div style={{ position: 'relative', width: 80, height: 80, flexShrink: 0 }}>
                     <svg width={80} height={80} style={{ transform: 'rotate(-90deg)' }}>
-                      <circle cx={40} cy={40} r={30} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={6} />
+                      <circle cx={40} cy={40} r={30} fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth={6} />
                       <circle
                         cx={40} cy={40} r={30} fill="none"
                         stroke={graderScoreColor} strokeWidth={6}
                         strokeDasharray={`${(graderReport.score / 100) * 2 * Math.PI * 30} ${2 * Math.PI * 30}`}
                         strokeLinecap="round"
-                        style={{ filter: `drop-shadow(0 0 6px ${graderScoreColor}80)`, transition: 'stroke-dasharray 1s ease' }}
+                        style={{ filter: `drop-shadow(0 0 6px ${graderScoreColor}40)`, transition: 'stroke-dasharray 1s ease' }}
                       />
                     </svg>
                     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                       <span style={{ fontFamily: 'DM Sans', fontWeight: 800, fontSize: '1.3rem', color: graderScoreColor, lineHeight: 1 }}>{graderReport.score}</span>
-                      <span style={{ fontSize: '0.5rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', marginTop: 2 }}>/ 100</span>
+                      <span style={{ fontSize: '0.5rem', color: '#999', letterSpacing: '0.08em', marginTop: 2 }}>/ 100</span>
                     </div>
                   </div>
 
@@ -2027,17 +2025,17 @@ function WebsiteDemo() {
                       {graderScoreLabel}
                     </div>
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
-                      <span style={{ fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 100, background: 'rgba(239,68,68,0.12)', color: '#ef4444' }}>
+                      <span style={{ fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 100, background: 'rgba(239,68,68,0.08)', color: '#ef4444' }}>
                         {graderReport.summary.fail} Issues
                       </span>
-                      <span style={{ fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 100, background: 'rgba(245,158,11,0.12)', color: '#f59e0b' }}>
+                      <span style={{ fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 100, background: 'rgba(245,158,11,0.08)', color: '#f59e0b' }}>
                         {graderReport.summary.warning} Warnings
                       </span>
-                      <span style={{ fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 100, background: 'rgba(34,197,94,0.12)', color: '#22c55e' }}>
+                      <span style={{ fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 100, background: 'rgba(34,197,94,0.08)', color: '#22c55e' }}>
                         {graderReport.summary.pass} Passing
                       </span>
                     </div>
-                    <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)', margin: 0 }}>{graderReport.url}</p>
+                    <p style={{ fontSize: '0.72rem', color: '#999', margin: 0 }}>{graderReport.url}</p>
                   </div>
 
                   {/* Copy Summary */}
@@ -2077,9 +2075,9 @@ function WebsiteDemo() {
                     style={{
                       flexShrink: 0, alignSelf: 'flex-start',
                       padding: '7px 14px', borderRadius: 8,
-                      background: graderCopied ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.06)',
-                      border: `1px solid ${graderCopied ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.1)'}`,
-                      color: graderCopied ? '#22c55e' : 'rgba(255,255,255,0.5)',
+                      background: graderCopied ? 'rgba(34,197,94,0.08)' : '#F5F5F5',
+                      border: `1px solid ${graderCopied ? 'rgba(34,197,94,0.3)' : 'rgba(0,0,0,0.1)'}`,
+                      color: graderCopied ? '#22c55e' : '#888',
                       fontSize: '0.68rem', fontWeight: 700, fontFamily: 'DM Sans, sans-serif',
                       cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap',
                       display: 'flex', alignItems: 'center', gap: 6,
@@ -2105,31 +2103,31 @@ function WebsiteDemo() {
                         return (
                           <div key={check.id} onClick={() => setGraderOpenCheck(isOpen ? null : check.id)} style={{
                             borderRadius: 10, cursor: 'pointer', overflow: 'hidden',
-                            border: `1px solid ${isOpen ? 'rgba(239,68,68,0.35)' : 'rgba(239,68,68,0.15)'}`,
-                            background: isOpen ? 'rgba(239,68,68,0.06)' : 'rgba(239,68,68,0.03)',
+                            border: `1px solid ${isOpen ? 'rgba(239,68,68,0.25)' : 'rgba(239,68,68,0.12)'}`,
+                            background: isOpen ? 'rgba(239,68,68,0.04)' : 'rgba(239,68,68,0.02)',
                             transition: 'all 0.2s',
                           }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px' }}>
                               <div style={{
                                 width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
-                                background: 'rgba(239,68,68,0.15)', border: '1.5px solid rgba(239,68,68,0.5)',
+                                background: 'rgba(239,68,68,0.1)', border: '1.5px solid rgba(239,68,68,0.4)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 fontSize: '0.6rem', fontWeight: 800, color: '#ef4444',
                               }}>✕</div>
                               <div style={{ flex: 1, minWidth: 0 }}>
-                                <span style={{ fontFamily: 'DM Sans', fontWeight: 700, fontSize: '0.78rem', color: 'rgba(255,255,255,0.85)' }}>{check.title}</span>
-                                <p style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', margin: '2px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{check.current}</p>
+                                <span style={{ fontFamily: 'DM Sans', fontWeight: 700, fontSize: '0.78rem', color: '#0A0A0A' }}>{check.title}</span>
+                                <p style={{ fontSize: '0.68rem', color: '#999', margin: '2px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{check.current}</p>
                               </div>
-                              <span style={{ fontSize: '0.55rem', fontWeight: 700, padding: '2px 6px', borderRadius: 100, background: 'rgba(239,68,68,0.15)', color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.06em', flexShrink: 0 }}>High Impact</span>
+                              <span style={{ fontSize: '0.55rem', fontWeight: 700, padding: '2px 6px', borderRadius: 100, background: 'rgba(239,68,68,0.1)', color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.06em', flexShrink: 0 }}>High Impact</span>
                               <svg width={11} height={11} viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0)' }}>
-                                <path d="M3 5l4 4 4-4" stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M3 5l4 4 4-4" stroke="#ccc" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
                               </svg>
                             </div>
                             <div style={{ maxHeight: isOpen ? 200 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
-                              <div style={{ padding: '0 12px 10px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                              <div style={{ padding: '0 12px 10px', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
                                 <p style={{ fontSize: '0.72rem', color: '#ef4444', fontWeight: 600, margin: '8px 0 4px' }}>Fix:</p>
-                                <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.6 }}>{check.recommendation}</p>
-                                <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.3)', margin: '6px 0 0', lineHeight: 1.6, fontStyle: 'italic' }}>{check.why}</p>
+                                <p style={{ fontSize: '0.72rem', color: '#666', margin: 0, lineHeight: 1.6 }}>{check.recommendation}</p>
+                                <p style={{ fontSize: '0.72rem', color: '#aaa', margin: '6px 0 0', lineHeight: 1.6, fontStyle: 'italic' }}>{check.why}</p>
                               </div>
                             </div>
                           </div>
@@ -2151,25 +2149,25 @@ function WebsiteDemo() {
                         return (
                           <div key={check.id} onClick={() => setGraderOpenCheck(isOpen ? null : check.id)} style={{
                             borderRadius: 10, cursor: 'pointer', overflow: 'hidden',
-                            border: `1px solid ${isOpen ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.06)'}`,
-                            background: isOpen ? 'rgba(245,158,11,0.04)' : 'rgba(255,255,255,0.02)',
+                            border: `1px solid ${isOpen ? 'rgba(245,158,11,0.25)' : 'rgba(0,0,0,0.06)'}`,
+                            background: isOpen ? 'rgba(245,158,11,0.03)' : '#FAFAFA',
                             transition: 'all 0.2s',
                           }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px' }}>
                               <div style={{
                                 width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
-                                background: 'rgba(245,158,11,0.12)', border: '1.5px solid rgba(245,158,11,0.4)',
+                                background: 'rgba(245,158,11,0.1)', border: '1.5px solid rgba(245,158,11,0.35)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 fontSize: '0.65rem', fontWeight: 800, color: '#f59e0b',
                               }}>!</div>
-                              <span style={{ flex: 1, fontFamily: 'DM Sans', fontWeight: 600, fontSize: '0.75rem', color: 'rgba(255,255,255,0.65)' }}>{check.title}</span>
+                              <span style={{ flex: 1, fontFamily: 'DM Sans', fontWeight: 600, fontSize: '0.75rem', color: '#444' }}>{check.title}</span>
                               <svg width={11} height={11} viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0)' }}>
-                                <path d="M3 5l4 4 4-4" stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M3 5l4 4 4-4" stroke="#ccc" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
                               </svg>
                             </div>
                             <div style={{ maxHeight: isOpen ? 200 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
-                              <div style={{ padding: '0 12px 10px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                                <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.55)', margin: '8px 0 0', lineHeight: 1.6 }}>{check.recommendation}</p>
+                              <div style={{ padding: '0 12px 10px', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+                                <p style={{ fontSize: '0.72rem', color: '#666', margin: '8px 0 0', lineHeight: 1.6 }}>{check.recommendation}</p>
                               </div>
                             </div>
                           </div>
@@ -2189,10 +2187,10 @@ function WebsiteDemo() {
                       {graderPassing.map(check => (
                         <div key={check.id} style={{
                           display: 'flex', alignItems: 'center', gap: 5, padding: '5px 10px',
-                          borderRadius: 8, background: 'rgba(34,197,94,0.04)', border: '1px solid rgba(34,197,94,0.1)',
+                          borderRadius: 8, background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.12)',
                         }}>
                           <span style={{ fontSize: '0.6rem', color: '#22c55e', fontWeight: 700 }}>✓</span>
-                          <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)', fontWeight: 500 }}>{check.title}</span>
+                          <span style={{ fontSize: '0.68rem', color: '#666', fontWeight: 500 }}>{check.title}</span>
                         </div>
                       ))}
                     </div>
