@@ -1110,7 +1110,7 @@ function FunnelVisualization() {
         </div>
 
         {/* Funnel + right detail panel */}
-        <div className="fv-stage" style={fadeUp(inView, 300)}>
+        <div className={`fv-stage${selectedLayer !== null ? ' fv-stage-active' : ''}`} style={fadeUp(inView, 300)}>
           {/* Funnel SVG */}
           <div className="fv-funnel-container">
             <svg viewBox={`0 0 ${vbW} ${vbH}`} className="fv-funnel-svg">
@@ -1330,15 +1330,17 @@ function FunnelVisualization() {
         .fv-stage {
           display: flex;
           align-items: stretch;
+          justify-content: center;
           gap: 0;
           max-width: 1200px;
           margin: 0 auto;
         }
 
         .fv-funnel-container {
-          flex: 1;
+          flex: 0 1 750px;
           display: flex;
           justify-content: center;
+          transition: flex 0.8s cubic-bezier(0.22,1,0.36,1);
         }
         .fv-funnel-svg {
           width: 100%;
@@ -1347,14 +1349,28 @@ function FunnelVisualization() {
         }
 
         .fv-right-panel {
-          width: 420px;
+          width: 0;
           flex-shrink: 0;
           display: flex;
           align-items: center;
+          padding: 20px 0;
+          overflow: hidden;
+          opacity: 0;
+          transition: width 0.8s cubic-bezier(0.22,1,0.36,1),
+                      padding 0.8s cubic-bezier(0.22,1,0.36,1),
+                      opacity 0.5s ease;
+        }
+        .fv-stage-active .fv-right-panel {
+          width: 420px;
           padding: 20px 0 20px 40px;
+          opacity: 1;
+          transition: width 0.8s cubic-bezier(0.22,1,0.36,1),
+                      padding 0.8s cubic-bezier(0.22,1,0.36,1),
+                      opacity 0.5s ease 0.2s;
         }
         .fv-right-content {
-          animation: fvFadeIn 0.35s cubic-bezier(0.22,1,0.36,1);
+          animation: fvFadeIn 0.5s cubic-bezier(0.22,1,0.36,1);
+          min-width: 380px;
         }
         .fv-right-label {
           font-size: 1.2rem;
@@ -1371,6 +1387,7 @@ function FunnelVisualization() {
           font-size: 0.9rem;
           color: #aaa;
           font-style: italic;
+          min-width: 380px;
         }
 
         .fv-trap-anim {
@@ -1418,8 +1435,10 @@ function FunnelVisualization() {
           .fv-steps {
             grid-template-columns: repeat(2, 1fr);
           }
-          .fv-right-panel {
-            display: none;
+          .fv-right-panel,
+          .fv-stage-active .fv-right-panel {
+            display: none !important;
+            width: 0 !important;
           }
         }
         @media (max-width: 640px) {
