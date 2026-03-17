@@ -3176,7 +3176,7 @@ function SelectiveSection() {
     { text: "You're shopping for the cheapest option", detail: "We're a growth partner, not a line item to negotiate. If price is the only factor, we're not the right fit." },
     { text: "You email an estimate and don't follow up", detail: "We generate the demand. But if your team ignores the phone, no system can fix that." },
     { text: "You're not ready to scale", detail: "Our system creates more jobs than most companies can handle. You need the crew and capacity to meet the demand." },
-    { text: "You blame marketing when sales doesn't close", detail: "If your close rate is the problem, that's a sales issue, not a lead issue. We address both, but only if you're coachable." },
+    { text: "You blame marketing when the sales team doesn't close", detail: "If your close rate is the problem, that's a sales issue, not a lead issue. We address both, but only if you're coachable." },
   ];
   return (
     <section ref={ref as React.Ref<HTMLElement>} style={S.section}>
