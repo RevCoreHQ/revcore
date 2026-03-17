@@ -85,7 +85,7 @@ export default function PackagesPage() {
       <PricingSection />
       <ROICalculator />
       <SocialProofStrip />
-      <SiteGrader />
+      {/* SiteGrader is now embedded in WebsiteDemo */}
       <style>{`
         .pkg-card { user-select: none; }
         .pkg-card:hover {
@@ -1707,8 +1707,25 @@ function PhoneDemo() {
 }
 
 /* ═══════════════════════════════════════════════════
-   WEBSITE DEMO — live site in browser frame
+   WEBSITE DEMO — live site in browser frame + site grader
    ═══════════════════════════════════════════════════ */
+interface GraderCheck {
+  id: string;
+  category: string;
+  title: string;
+  status: 'pass' | 'warning' | 'fail';
+  current: string;
+  recommendation: string;
+  impact: 'high' | 'medium' | 'low';
+  why: string;
+}
+interface GraderReport {
+  url: string;
+  score: number;
+  checks: GraderCheck[];
+  summary: { pass: number; warning: number; fail: number };
+}
+
 const DEMO_SITES = [
   { url: 'https://www.aquaticpoolaz.com', domain: 'aquaticpoolaz.com' },
   { url: 'https://timberlinefallsut.com', domain: 'timberlinefallsut.com' },
@@ -1724,6 +1741,42 @@ function WebsiteDemo() {
   const IFRAME_W = 1440;
   const IFRAME_H = 900;
   const site = DEMO_SITES[activeIdx];
+
+  // Site Grader state
+  const [graderUrl, setGraderUrl] = useState('');
+  const [graderLoading, setGraderLoading] = useState(false);
+  const [graderReport, setGraderReport] = useState<GraderReport | null>(null);
+  const [graderError, setGraderError] = useState<string | null>(null);
+  const [graderOpenCheck, setGraderOpenCheck] = useState<string | null>(null);
+  const [graderCopied, setGraderCopied] = useState(false);
+
+  const runGrader = async () => {
+    if (!graderUrl.trim()) return;
+    setGraderLoading(true); setGraderError(null); setGraderReport(null); setGraderOpenCheck(null);
+    try {
+      const res = await fetch('/api/seo-check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: graderUrl.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Analysis failed');
+      setGraderReport(data);
+    } catch (e: unknown) { setGraderError((e as Error).message); }
+    finally { setGraderLoading(false); }
+  };
+
+  const graderCriticals = graderReport ? graderReport.checks.filter((c: GraderCheck) => c.status === 'fail' && c.impact === 'high') : [];
+  const graderWarnings = graderReport ? graderReport.checks.filter((c: GraderCheck) => c.status === 'warning' || (c.status === 'fail' && c.impact !== 'high')) : [];
+  const graderPassing = graderReport ? graderReport.checks.filter((c: GraderCheck) => c.status === 'pass') : [];
+
+  const graderScoreColor = graderReport
+    ? graderReport.score >= 75 ? '#22c55e' : graderReport.score >= 50 ? '#f59e0b' : '#ef4444'
+    : '#ef4444';
+
+  const graderScoreLabel = graderReport
+    ? graderReport.score >= 80 ? 'Decent' : graderReport.score >= 60 ? 'Needs Work' : graderReport.score >= 40 ? 'Poor' : 'Critical'
+    : '';
 
   useEffect(() => {
     const update = () => {
@@ -1875,10 +1928,285 @@ function WebsiteDemo() {
             </div>
           </div>
         </div>
+
+        {/* ── Site Grader ── */}
+        <div style={{ maxWidth: 800, margin: '3rem auto 0', ...fadeUp(inView, 400) }}>
+          <div style={{
+            borderRadius: 16, overflow: 'hidden',
+            background: '#0A0A0A', border: '1px solid rgba(255,255,255,0.08)',
+            padding: '2rem 2rem 1.5rem',
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#ef4444', marginBottom: '0.5rem' }}>Free Website Audit</div>
+              <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', color: '#fff', margin: '0 0 0.4rem', lineHeight: 1.2 }}>
+                How Does Your Website <span style={{ background: 'linear-gradient(135deg, #E8700E, #8B5CF6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Score</span>?
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', margin: 0 }}>Enter your URL. We grade harsh, most contractor sites score below 40.</p>
+            </div>
+
+            {/* Input */}
+            <div style={{ maxWidth: 560, margin: '0 auto 1.5rem' }}>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <input
+                  value={graderUrl}
+                  onChange={e => setGraderUrl(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && runGrader()}
+                  placeholder="yourcompany.com"
+                  style={{
+                    flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 10, padding: '12px 16px', color: 'white', fontSize: '0.85rem',
+                    outline: 'none', fontFamily: 'DM Sans, sans-serif',
+                  }}
+                />
+                <button
+                  onClick={runGrader}
+                  disabled={graderLoading || !graderUrl.trim()}
+                  style={{
+                    background: graderLoading ? 'rgba(255,255,255,0.06)' : '#ef4444',
+                    border: 'none', borderRadius: 10, color: graderLoading ? 'rgba(255,255,255,0.3)' : 'white',
+                    fontFamily: 'DM Sans', fontWeight: 700, fontSize: '0.82rem',
+                    padding: '12px 20px', cursor: graderLoading ? 'not-allowed' : 'pointer',
+                    whiteSpace: 'nowrap', transition: 'all 0.2s',
+                    display: 'flex', alignItems: 'center', gap: 8,
+                  }}
+                >
+                  {graderLoading ? (
+                    <>
+                      <span style={{ display: 'inline-block', width: 14, height: 14, border: '2px solid rgba(255,255,255,0.15)', borderTopColor: 'rgba(255,255,255,0.5)', borderRadius: '50%', animation: 'seo-spin 0.7s linear infinite' }} />
+                      Grading...
+                    </>
+                  ) : 'Grade My Site'}
+                </button>
+              </div>
+            </div>
+
+            {/* Error */}
+            {graderError && (
+              <div style={{ maxWidth: 560, margin: '0 auto 1rem', padding: '10px 14px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 10 }}>
+                <p style={{ color: '#ef4444', fontSize: '0.8rem', margin: 0 }}>{graderError}</p>
+              </div>
+            )}
+
+            {/* Loading */}
+            {graderLoading && (
+              <div style={{ textAlign: 'center', padding: '30px 0' }}>
+                <div style={{ width: 32, height: 32, border: '3px solid rgba(255,255,255,0.08)', borderTopColor: '#ef4444', borderRadius: '50%', animation: 'seo-spin 0.8s linear infinite', margin: '0 auto 10px' }} />
+                <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', margin: 0 }}>Scanning {graderUrl}...</p>
+              </div>
+            )}
+
+            {/* Results */}
+            {graderReport && !graderLoading && (
+              <div>
+                {/* Score header */}
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 20, padding: '20px',
+                  background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: 12, marginBottom: 12,
+                }}>
+                  {/* Score ring */}
+                  <div style={{ position: 'relative', width: 80, height: 80, flexShrink: 0 }}>
+                    <svg width={80} height={80} style={{ transform: 'rotate(-90deg)' }}>
+                      <circle cx={40} cy={40} r={30} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={6} />
+                      <circle
+                        cx={40} cy={40} r={30} fill="none"
+                        stroke={graderScoreColor} strokeWidth={6}
+                        strokeDasharray={`${(graderReport.score / 100) * 2 * Math.PI * 30} ${2 * Math.PI * 30}`}
+                        strokeLinecap="round"
+                        style={{ filter: `drop-shadow(0 0 6px ${graderScoreColor}80)`, transition: 'stroke-dasharray 1s ease' }}
+                      />
+                    </svg>
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontFamily: 'DM Sans', fontWeight: 800, fontSize: '1.3rem', color: graderScoreColor, lineHeight: 1 }}>{graderReport.score}</span>
+                      <span style={{ fontSize: '0.5rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', marginTop: 2 }}>/ 100</span>
+                    </div>
+                  </div>
+
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '1rem', fontWeight: 800, color: graderScoreColor, fontFamily: 'DM Sans', marginBottom: 4 }}>
+                      {graderScoreLabel}
+                    </div>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
+                      <span style={{ fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 100, background: 'rgba(239,68,68,0.12)', color: '#ef4444' }}>
+                        {graderReport.summary.fail} Issues
+                      </span>
+                      <span style={{ fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 100, background: 'rgba(245,158,11,0.12)', color: '#f59e0b' }}>
+                        {graderReport.summary.warning} Warnings
+                      </span>
+                      <span style={{ fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: 100, background: 'rgba(34,197,94,0.12)', color: '#22c55e' }}>
+                        {graderReport.summary.pass} Passing
+                      </span>
+                    </div>
+                    <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)', margin: 0 }}>{graderReport.url}</p>
+                  </div>
+
+                  {/* Copy Summary */}
+                  <button
+                    onClick={() => {
+                      const lines: string[] = [];
+                      lines.push(`SEO AUDIT: ${graderReport.url}`);
+                      lines.push(`Score: ${graderReport.score}/100 (${graderScoreLabel})`);
+                      lines.push(`${graderReport.summary.fail} Issues | ${graderReport.summary.warning} Warnings | ${graderReport.summary.pass} Passing`);
+                      lines.push('');
+                      if (graderCriticals.length > 0) {
+                        lines.push('FIX IMMEDIATELY:');
+                        graderCriticals.forEach(c => {
+                          lines.push(`  ✕ ${c.title} — ${c.current}`);
+                          lines.push(`    → ${c.recommendation}`);
+                        });
+                        lines.push('');
+                      }
+                      if (graderWarnings.length > 0) {
+                        lines.push('WARNINGS:');
+                        graderWarnings.forEach(c => {
+                          lines.push(`  ! ${c.title} — ${c.current}`);
+                          lines.push(`    → ${c.recommendation}`);
+                        });
+                        lines.push('');
+                      }
+                      if (graderPassing.length > 0) {
+                        lines.push('PASSING:');
+                        lines.push(`  ${graderPassing.map(c => `✓ ${c.title}`).join(', ')}`);
+                      }
+                      lines.push('');
+                      lines.push('Powered by RevCore SEO Analyser');
+                      navigator.clipboard.writeText(lines.join('\n'));
+                      setGraderCopied(true);
+                      setTimeout(() => setGraderCopied(false), 2000);
+                    }}
+                    style={{
+                      flexShrink: 0, alignSelf: 'flex-start',
+                      padding: '7px 14px', borderRadius: 8,
+                      background: graderCopied ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.06)',
+                      border: `1px solid ${graderCopied ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.1)'}`,
+                      color: graderCopied ? '#22c55e' : 'rgba(255,255,255,0.5)',
+                      fontSize: '0.68rem', fontWeight: 700, fontFamily: 'DM Sans, sans-serif',
+                      cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap',
+                      display: 'flex', alignItems: 'center', gap: 6,
+                    }}
+                  >
+                    {graderCopied ? (
+                      <><svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Copied</>
+                    ) : (
+                      <><svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><rect x={9} y={9} width={13} height={13} rx={2}/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Summary</>
+                    )}
+                  </button>
+                </div>
+
+                {/* Critical issues */}
+                {graderCriticals.length > 0 && (
+                  <div style={{ marginBottom: 10 }}>
+                    <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#ef4444', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6, padding: '0 4px' }}>
+                      Fix Immediately ({graderCriticals.length})
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                      {graderCriticals.map(check => {
+                        const isOpen = graderOpenCheck === check.id;
+                        return (
+                          <div key={check.id} onClick={() => setGraderOpenCheck(isOpen ? null : check.id)} style={{
+                            borderRadius: 10, cursor: 'pointer', overflow: 'hidden',
+                            border: `1px solid ${isOpen ? 'rgba(239,68,68,0.35)' : 'rgba(239,68,68,0.15)'}`,
+                            background: isOpen ? 'rgba(239,68,68,0.06)' : 'rgba(239,68,68,0.03)',
+                            transition: 'all 0.2s',
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px' }}>
+                              <div style={{
+                                width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
+                                background: 'rgba(239,68,68,0.15)', border: '1.5px solid rgba(239,68,68,0.5)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '0.6rem', fontWeight: 800, color: '#ef4444',
+                              }}>✕</div>
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <span style={{ fontFamily: 'DM Sans', fontWeight: 700, fontSize: '0.78rem', color: 'rgba(255,255,255,0.85)' }}>{check.title}</span>
+                                <p style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', margin: '2px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{check.current}</p>
+                              </div>
+                              <span style={{ fontSize: '0.55rem', fontWeight: 700, padding: '2px 6px', borderRadius: 100, background: 'rgba(239,68,68,0.15)', color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.06em', flexShrink: 0 }}>High Impact</span>
+                              <svg width={11} height={11} viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0)' }}>
+                                <path d="M3 5l4 4 4-4" stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </div>
+                            <div style={{ maxHeight: isOpen ? 200 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
+                              <div style={{ padding: '0 12px 10px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                                <p style={{ fontSize: '0.72rem', color: '#ef4444', fontWeight: 600, margin: '8px 0 4px' }}>Fix:</p>
+                                <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.6 }}>{check.recommendation}</p>
+                                <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.3)', margin: '6px 0 0', lineHeight: 1.6, fontStyle: 'italic' }}>{check.why}</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Warnings */}
+                {graderWarnings.length > 0 && (
+                  <div style={{ marginBottom: 10 }}>
+                    <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#f59e0b', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6, padding: '0 4px' }}>
+                      Warnings ({graderWarnings.length})
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                      {graderWarnings.map(check => {
+                        const isOpen = graderOpenCheck === check.id;
+                        return (
+                          <div key={check.id} onClick={() => setGraderOpenCheck(isOpen ? null : check.id)} style={{
+                            borderRadius: 10, cursor: 'pointer', overflow: 'hidden',
+                            border: `1px solid ${isOpen ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.06)'}`,
+                            background: isOpen ? 'rgba(245,158,11,0.04)' : 'rgba(255,255,255,0.02)',
+                            transition: 'all 0.2s',
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px' }}>
+                              <div style={{
+                                width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
+                                background: 'rgba(245,158,11,0.12)', border: '1.5px solid rgba(245,158,11,0.4)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '0.65rem', fontWeight: 800, color: '#f59e0b',
+                              }}>!</div>
+                              <span style={{ flex: 1, fontFamily: 'DM Sans', fontWeight: 600, fontSize: '0.75rem', color: 'rgba(255,255,255,0.65)' }}>{check.title}</span>
+                              <svg width={11} height={11} viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0)' }}>
+                                <path d="M3 5l4 4 4-4" stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </div>
+                            <div style={{ maxHeight: isOpen ? 200 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
+                              <div style={{ padding: '0 12px 10px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                                <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.55)', margin: '8px 0 0', lineHeight: 1.6 }}>{check.recommendation}</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Passing */}
+                {graderPassing.length > 0 && (
+                  <div>
+                    <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#22c55e', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6, padding: '0 4px' }}>
+                      Passing ({graderPassing.length})
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                      {graderPassing.map(check => (
+                        <div key={check.id} style={{
+                          display: 'flex', alignItems: 'center', gap: 5, padding: '5px 10px',
+                          borderRadius: 8, background: 'rgba(34,197,94,0.04)', border: '1px solid rgba(34,197,94,0.1)',
+                        }}>
+                          <span style={{ fontSize: '0.6rem', color: '#22c55e', fontWeight: 700 }}>✓</span>
+                          <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)', fontWeight: 500 }}>{check.title}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <style>{`
         .wd-arrow:hover { background: #f5f5f5 !important; border-color: rgba(0,0,0,0.15) !important; }
+        @keyframes seo-spin { to { transform: rotate(360deg); } }
         @media (max-width: 1100px) {
           .wd-arrow { display: none !important; }
         }
@@ -4018,346 +4346,6 @@ function ROICalculator() {
 /* ═══════════════════════════════════════════════════
    SOCIAL PROOF STRIP
    ═══════════════════════════════════════════════════ */
-/* ═══════════════════════════════════════════════════
-   SITE GRADER — compact SEO audit
-   ═══════════════════════════════════════════════════ */
-interface GraderCheck {
-  id: string;
-  category: string;
-  title: string;
-  status: 'pass' | 'warning' | 'fail';
-  current: string;
-  recommendation: string;
-  impact: 'high' | 'medium' | 'low';
-  why: string;
-}
-interface GraderReport {
-  url: string;
-  score: number;
-  checks: GraderCheck[];
-  summary: { pass: number; warning: number; fail: number };
-}
-
-function SiteGrader() {
-  const [url, setUrl] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [report, setReport] = useState<GraderReport | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [openCheck, setOpenCheck] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
-  const { ref, inView } = useScrollReveal({ threshold: 0.08 });
-
-  const run = async () => {
-    if (!url.trim()) return;
-    setLoading(true); setError(null); setReport(null); setOpenCheck(null);
-    try {
-      const res = await fetch('/api/seo-check', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: url.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Analysis failed');
-      setReport(data);
-    } catch (e: unknown) { setError((e as Error).message); }
-    finally { setLoading(false); }
-  };
-
-  const criticals = report ? report.checks.filter(c => c.status === 'fail' && c.impact === 'high') : [];
-  const warnings = report ? report.checks.filter(c => c.status === 'warning' || (c.status === 'fail' && c.impact !== 'high')) : [];
-  const passing = report ? report.checks.filter(c => c.status === 'pass') : [];
-
-  const scoreColor = report
-    ? report.score >= 75 ? '#22c55e' : report.score >= 50 ? '#f59e0b' : '#ef4444'
-    : '#ef4444';
-
-  const scoreLabel = report
-    ? report.score >= 80 ? 'Decent' : report.score >= 60 ? 'Needs Work' : report.score >= 40 ? 'Poor' : 'Critical'
-    : '';
-
-  return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ ...S.sectionDark, padding: '80px 0' }}>
-      <SpaceBackground opacity={0.2} />
-      <div style={{ ...S.container, maxWidth: 800 }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem', ...fadeUp(inView) }}>
-          <div style={S.eyebrowDark}>Free Website Audit</div>
-          <h2 style={{ ...S.h2Dark, fontSize: 'clamp(1.5rem, 3vw, 2.2rem)' }}>
-            How Does Your Website <HL>Score</HL>?
-          </h2>
-          <p style={{ ...S.subDark, fontSize: '0.95rem' }}>
-            Enter your URL. We grade harsh, most contractor sites score below 40.
-          </p>
-        </div>
-
-        {/* Input */}
-        <div style={{ ...fadeUp(inView, 150), maxWidth: 600, margin: '0 auto 2rem' }}>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <input
-              value={url}
-              onChange={e => setUrl(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && run()}
-              placeholder="yourcompany.com"
-              style={{
-                flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: 10, padding: '13px 16px', color: 'white', fontSize: '0.9rem',
-                outline: 'none', fontFamily: 'DM Sans, sans-serif',
-              }}
-            />
-            <button
-              onClick={run}
-              disabled={loading || !url.trim()}
-              style={{
-                background: loading ? 'rgba(255,255,255,0.06)' : '#ef4444',
-                border: 'none', borderRadius: 10, color: loading ? 'rgba(255,255,255,0.3)' : 'white',
-                fontFamily: 'DM Sans', fontWeight: 700, fontSize: '0.85rem',
-                padding: '13px 24px', cursor: loading ? 'not-allowed' : 'pointer',
-                whiteSpace: 'nowrap', transition: 'all 0.2s',
-                display: 'flex', alignItems: 'center', gap: 8,
-              }}
-            >
-              {loading ? (
-                <>
-                  <span style={{ display: 'inline-block', width: 14, height: 14, border: '2px solid rgba(255,255,255,0.15)', borderTopColor: 'rgba(255,255,255,0.5)', borderRadius: '50%', animation: 'seo-spin 0.7s linear infinite' }} />
-                  Grading...
-                </>
-              ) : 'Grade My Site'}
-            </button>
-          </div>
-        </div>
-
-        {/* Error */}
-        {error && (
-          <div style={{ maxWidth: 600, margin: '0 auto 1.5rem', padding: '12px 16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 10 }}>
-            <p style={{ color: '#ef4444', fontSize: '0.83rem', margin: 0 }}>{error}</p>
-          </div>
-        )}
-
-        {/* Loading */}
-        {loading && (
-          <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <div style={{ width: 36, height: 36, border: '3px solid rgba(255,255,255,0.08)', borderTopColor: '#ef4444', borderRadius: '50%', animation: 'seo-spin 0.8s linear infinite', margin: '0 auto 12px' }} />
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.83rem', margin: 0 }}>Scanning {url}...</p>
-          </div>
-        )}
-
-        {/* Results */}
-        {report && !loading && (
-          <div style={{ ...fadeUp(inView, 200) }}>
-            {/* Score header */}
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 24, padding: '24px',
-              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
-              borderRadius: 16, marginBottom: 16,
-            }}>
-              {/* Score ring */}
-              <div style={{ position: 'relative', width: 100, height: 100, flexShrink: 0 }}>
-                <svg width={100} height={100} style={{ transform: 'rotate(-90deg)' }}>
-                  <circle cx={50} cy={50} r={38} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={8} />
-                  <circle
-                    cx={50} cy={50} r={38} fill="none"
-                    stroke={scoreColor} strokeWidth={8}
-                    strokeDasharray={`${(report.score / 100) * 2 * Math.PI * 38} ${2 * Math.PI * 38}`}
-                    strokeLinecap="round"
-                    style={{ filter: `drop-shadow(0 0 6px ${scoreColor}80)`, transition: 'stroke-dasharray 1s ease' }}
-                  />
-                </svg>
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontFamily: 'DM Sans', fontWeight: 800, fontSize: '1.6rem', color: scoreColor, lineHeight: 1 }}>{report.score}</span>
-                  <span style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', marginTop: 2 }}>/ 100</span>
-                </div>
-              </div>
-
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: scoreColor, fontFamily: 'DM Sans', marginBottom: 6 }}>
-                  {scoreLabel}
-                </div>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '3px 10px', borderRadius: 100, background: 'rgba(239,68,68,0.12)', color: '#ef4444' }}>
-                    {report.summary.fail} Issues
-                  </span>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '3px 10px', borderRadius: 100, background: 'rgba(245,158,11,0.12)', color: '#f59e0b' }}>
-                    {report.summary.warning} Warnings
-                  </span>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '3px 10px', borderRadius: 100, background: 'rgba(34,197,94,0.12)', color: '#22c55e' }}>
-                    {report.summary.pass} Passing
-                  </span>
-                </div>
-                <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.35)', margin: 0, lineHeight: 1.5 }}>
-                  {report.url}
-                </p>
-              </div>
-
-              {/* Copy Summary */}
-              <button
-                onClick={() => {
-                  const lines: string[] = [];
-                  lines.push(`SEO AUDIT: ${report.url}`);
-                  lines.push(`Score: ${report.score}/100 (${scoreLabel})`);
-                  lines.push(`${report.summary.fail} Issues | ${report.summary.warning} Warnings | ${report.summary.pass} Passing`);
-                  lines.push('');
-                  if (criticals.length > 0) {
-                    lines.push('FIX IMMEDIATELY:');
-                    criticals.forEach(c => {
-                      lines.push(`  ✕ ${c.title} — ${c.current}`);
-                      lines.push(`    → ${c.recommendation}`);
-                    });
-                    lines.push('');
-                  }
-                  if (warnings.length > 0) {
-                    lines.push('WARNINGS:');
-                    warnings.forEach(c => {
-                      lines.push(`  ! ${c.title} — ${c.current}`);
-                      lines.push(`    → ${c.recommendation}`);
-                    });
-                    lines.push('');
-                  }
-                  if (passing.length > 0) {
-                    lines.push('PASSING:');
-                    lines.push(`  ${passing.map(c => `✓ ${c.title}`).join(', ')}`);
-                  }
-                  lines.push('');
-                  lines.push('Powered by RevCore SEO Analyser');
-                  navigator.clipboard.writeText(lines.join('\n'));
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 2000);
-                }}
-                style={{
-                  flexShrink: 0, alignSelf: 'flex-start',
-                  padding: '8px 16px', borderRadius: 8,
-                  background: copied ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.06)',
-                  border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.1)'}`,
-                  color: copied ? '#22c55e' : 'rgba(255,255,255,0.5)',
-                  fontSize: '0.72rem', fontWeight: 700, fontFamily: 'DM Sans, sans-serif',
-                  cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap',
-                  display: 'flex', alignItems: 'center', gap: 6,
-                }}
-              >
-                {copied ? (
-                  <><svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Copied</>
-                ) : (
-                  <><svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><rect x={9} y={9} width={13} height={13} rx={2}/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Summary</>
-                )}
-              </button>
-            </div>
-
-            {/* Critical issues - always shown first, red */}
-            {criticals.length > 0 && (
-              <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#ef4444', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8, padding: '0 4px' }}>
-                  Fix Immediately ({criticals.length})
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {criticals.map(check => {
-                    const isOpen = openCheck === check.id;
-                    return (
-                      <div key={check.id} onClick={() => setOpenCheck(isOpen ? null : check.id)} style={{
-                        borderRadius: 10, cursor: 'pointer', overflow: 'hidden',
-                        border: `1px solid ${isOpen ? 'rgba(239,68,68,0.35)' : 'rgba(239,68,68,0.15)'}`,
-                        background: isOpen ? 'rgba(239,68,68,0.06)' : 'rgba(239,68,68,0.03)',
-                        transition: 'all 0.2s',
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px' }}>
-                          <div style={{
-                            width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
-                            background: 'rgba(239,68,68,0.15)', border: '1.5px solid rgba(239,68,68,0.5)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '0.65rem', fontWeight: 800, color: '#ef4444',
-                          }}>✕</div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <span style={{ fontFamily: 'DM Sans', fontWeight: 700, fontSize: '0.8rem', color: 'rgba(255,255,255,0.85)' }}>{check.title}</span>
-                            <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)', margin: '2px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{check.current}</p>
-                          </div>
-                          <span style={{ fontSize: '0.58rem', fontWeight: 700, padding: '2px 7px', borderRadius: 100, background: 'rgba(239,68,68,0.15)', color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.06em', flexShrink: 0 }}>High Impact</span>
-                          <svg width={12} height={12} viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0)' }}>
-                            <path d="M3 5l4 4 4-4" stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </div>
-                        <div style={{ maxHeight: isOpen ? 200 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
-                          <div style={{ padding: '0 14px 12px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                            <p style={{ fontSize: '0.75rem', color: '#ef4444', fontWeight: 600, margin: '10px 0 4px' }}>Fix:</p>
-                            <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.6 }}>{check.recommendation}</p>
-                            <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', margin: '8px 0 0', lineHeight: 1.6, fontStyle: 'italic' }}>{check.why}</p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Warnings */}
-            {warnings.length > 0 && (
-              <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#f59e0b', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8, padding: '0 4px' }}>
-                  Warnings ({warnings.length})
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {warnings.map(check => {
-                    const isOpen = openCheck === check.id;
-                    return (
-                      <div key={check.id} onClick={() => setOpenCheck(isOpen ? null : check.id)} style={{
-                        borderRadius: 10, cursor: 'pointer', overflow: 'hidden',
-                        border: `1px solid ${isOpen ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.06)'}`,
-                        background: isOpen ? 'rgba(245,158,11,0.04)' : 'rgba(255,255,255,0.02)',
-                        transition: 'all 0.2s',
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px' }}>
-                          <div style={{
-                            width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
-                            background: 'rgba(245,158,11,0.12)', border: '1.5px solid rgba(245,158,11,0.4)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '0.7rem', fontWeight: 800, color: '#f59e0b',
-                          }}>!</div>
-                          <span style={{ flex: 1, fontFamily: 'DM Sans', fontWeight: 600, fontSize: '0.78rem', color: 'rgba(255,255,255,0.65)' }}>{check.title}</span>
-                          <svg width={12} height={12} viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0)' }}>
-                            <path d="M3 5l4 4 4-4" stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </div>
-                        <div style={{ maxHeight: isOpen ? 200 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
-                          <div style={{ padding: '0 14px 12px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                            <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', margin: '10px 0 0', lineHeight: 1.6 }}>{check.recommendation}</p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Passing - collapsed */}
-            {passing.length > 0 && (
-              <div>
-                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#22c55e', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8, padding: '0 4px' }}>
-                  Passing ({passing.length})
-                </div>
-                <div style={{
-                  display: 'flex', flexWrap: 'wrap', gap: 6,
-                }}>
-                  {passing.map(check => (
-                    <div key={check.id} style={{
-                      display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px',
-                      borderRadius: 8, background: 'rgba(34,197,94,0.04)', border: '1px solid rgba(34,197,94,0.1)',
-                    }}>
-                      <span style={{ fontSize: '0.65rem', color: '#22c55e', fontWeight: 700 }}>✓</span>
-                      <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', fontWeight: 500 }}>{check.title}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      <style>{`
-        @keyframes seo-spin { to { transform: rotate(360deg); } }
-      `}</style>
-    </section>
-  );
-}
-
 function SocialProofStrip() {
   const { ref, inView } = useScrollReveal({ threshold: 0.2 });
   const stats = [
