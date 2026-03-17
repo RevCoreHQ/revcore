@@ -3139,7 +3139,7 @@ function SelectiveSection() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
   const disqualifiers = [
     { text: "You're shopping for the cheapest option", detail: "We're a growth partner, not a line item to negotiate. If price is the only factor, we're not the right fit." },
-    { text: "You don't follow up on leads", detail: "We generate the demand. But if your team ignores the phone, no system can fix that." },
+    { text: "You email an estimate and don't follow up", detail: "We generate the demand. But if your team ignores the phone, no system can fix that." },
     { text: "You're not ready to scale", detail: "Our system creates more jobs than most companies can handle. You need the crew and capacity to meet the demand." },
     { text: "You blame marketing when sales doesn't close", detail: "If your close rate is the problem, that's a sales issue, not a lead issue. We address both, but only if you're coachable." },
   ];
