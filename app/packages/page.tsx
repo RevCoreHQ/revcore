@@ -3298,14 +3298,14 @@ function PricingSection() {
                 style={{
                   borderRadius: 24,
                   background: (isRecommended || isPremium)
-                    ? `linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)`
+                    ? `linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.025) 100%)`
                     : `linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)`,
                   border: isFocused
                     ? '1px solid rgba(255,255,255,0.18)'
                     : isRecommended
-                      ? `1px solid ${pkg.accent}30`
+                      ? `1px solid ${pkg.accent}1a`
                       : isPremium
-                        ? `1px solid ${pkg.accent}20`
+                        ? `1px solid ${pkg.accent}14`
                         : '1px solid rgba(255,255,255,0.07)',
                   overflow: 'hidden', position: 'relative',
                   display: 'flex', flexDirection: 'column' as const,
@@ -3315,9 +3315,9 @@ function PricingSection() {
                   boxShadow: isFocused
                     ? `0 0 0 1px rgba(255,255,255,0.1), 0 24px 60px rgba(0,0,0,0.5), 0 0 40px ${pkg.accent}10, inset 0 1px 0 rgba(255,255,255,0.08)`
                     : isRecommended
-                      ? `0 12px 48px rgba(0,0,0,0.5), 0 0 60px ${pkg.accent}12, inset 0 1px 0 rgba(255,255,255,0.08)`
+                      ? `0 12px 48px rgba(0,0,0,0.5), 0 0 40px ${pkg.accent}0a, inset 0 1px 0 rgba(255,255,255,0.08)`
                       : isPremium
-                        ? `0 10px 40px rgba(0,0,0,0.45), 0 0 40px ${pkg.accent}0a, inset 0 1px 0 rgba(255,255,255,0.06)`
+                        ? `0 10px 40px rgba(0,0,0,0.45), 0 0 30px ${pkg.accent}08, inset 0 1px 0 rgba(255,255,255,0.06)`
                         : `0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)`,
                   transition: 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.45s ease, border-color 0.35s ease',
                   cursor: 'pointer',
@@ -3325,8 +3325,8 @@ function PricingSection() {
                   WebkitBackdropFilter: 'blur(40px)',
                   ...scaleUp(inView, stagger(i, 200, 150)),
                   ['--pkg-accent' as string]: pkg.accent,
-                  ['--pkg-accent-border' as string]: `${pkg.accent}35`,
-                  ['--pkg-accent-glow' as string]: `${pkg.accent}12`,
+                  ['--pkg-accent-border' as string]: `${pkg.accent}20`,
+                  ['--pkg-accent-glow' as string]: `${pkg.accent}08`,
                 }}
               >
                 {/* Top accent gradient bar */}
@@ -3340,7 +3340,7 @@ function PricingSection() {
                 {/* Glass sheen + accent radial glow */}
                 <div style={{
                   position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                  background: `linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 35%), radial-gradient(ellipse at 50% 0%, ${pkg.accent}08 0%, transparent 60%)`,
+                  background: `linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 35%), radial-gradient(ellipse at 50% 0%, ${pkg.accent}05 0%, transparent 60%)`,
                   pointerEvents: 'none', zIndex: 0, borderRadius: 24,
                 }} />
 
