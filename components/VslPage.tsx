@@ -234,9 +234,6 @@ export default function VslPage(props: VslPageProps) {
             <h1 className="vsl-hero-h1" style={{ fontSize: 'clamp(2.8rem, 6.5vw, 4.5rem)', fontWeight: 700, lineHeight: 1.12, color: '#222', maxWidth: 1000, margin: '0 auto 28px', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
               {headline}
             </h1>
-            <p style={{ fontSize: '1.1rem', color: '#666', maxWidth: 520, margin: '0 auto', lineHeight: 1.6 }}>
-              {subheadline}
-            </p>
           </section>
 
           {/* Video */}
@@ -249,21 +246,6 @@ export default function VslPage(props: VslPageProps) {
                   style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
                 />
               </div>
-            </div>
-          </section>
-
-          {/* CTA right below video */}
-          <section style={{ padding: '0 24px 64px', textAlign: 'center' }}>
-            <div style={{ opacity: ctaVisible ? 1 : 0, transform: ctaVisible ? 'translateY(0)' : 'translateY(8px)', transition: 'opacity 0.5s ease, transform 0.5s ease' }}>
-              <button className="vsl-btn" onClick={() => setModalOpen(true)}>
-                Schedule Your Free Strategy Call
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
-                  <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <p style={{ marginTop: 14, fontSize: '0.82rem', color: '#999' }}>
-                Free &nbsp;&middot;&nbsp; No obligation &nbsp;&middot;&nbsp; Limited territories available
-              </p>
             </div>
           </section>
 
