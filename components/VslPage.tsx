@@ -382,20 +382,6 @@ export default function VslPage(props: VslPageProps) {
                 ))}
               </div>
 
-              {/* Portrait video testimonials */}
-              <div className="vsl-video-testimonials" style={{ display: 'flex', justifyContent: 'center', gap: 24 }}>
-                {VIDEO_TESTIMONIAL_IDS.map((id) => (
-                  <div key={id} style={{ maxWidth: 300, width: '100%', borderRadius: 8, overflow: 'hidden', border: '1px solid #eee', background: '#000', position: 'relative', aspectRatio: '9/16' }}>
-                    <div style={{ position: 'relative', paddingBottom: '177.78%', height: 0 }}>
-                      <iframe
-                        src={`https://www.loom.com/embed/${id}`}
-                        allowFullScreen
-                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </section>
 
