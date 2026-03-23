@@ -61,7 +61,7 @@ export default function VslPage(props: VslPageProps) {
           align-items: center;
           justify-content: center;
           gap: 10px;
-          background: linear-gradient(180deg, #EE3030 0%, #C92020 100%);
+          background: linear-gradient(180deg, #2EAE7D 0%, #25956B 100%);
           color: #ffffff;
           padding: 20px 48px;
           border-radius: 8px;
@@ -72,12 +72,12 @@ export default function VslPage(props: VslPageProps) {
           cursor: pointer;
           transition: transform 0.2s ease, box-shadow 0.2s ease;
           letter-spacing: 0.02em;
-          box-shadow: 0 4px 20px rgba(238,48,48,0.3);
+          box-shadow: 0 4px 20px rgba(46,174,125,0.3);
           text-transform: uppercase;
         }
         .vsl-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 8px 30px rgba(238,48,48,0.45);
+          box-shadow: 0 8px 30px rgba(46,174,125,0.45);
         }
         .vsl-testimonial-card {
           border-radius: 8px;
@@ -173,7 +173,7 @@ export default function VslPage(props: VslPageProps) {
                 </span>
               </div>
               <h2 style={{ fontSize: 'clamp(1.6rem,2.5vw,2rem)', fontWeight: 800, lineHeight: 1.15, color: '#fff', marginBottom: 16, fontFamily: 'Inter, sans-serif' }}>
-                {modalTitle}<br/><span style={{ color: '#17AF84' }}>{modalTitleAccent}</span>
+                {modalTitle}<br/><span style={{ color: '#2EAE7D' }}>{modalTitleAccent}</span>
               </h2>
               <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, marginBottom: 32, fontFamily: 'Inter, sans-serif' }}>
                 {modalDescription}
@@ -181,8 +181,8 @@ export default function VslPage(props: VslPageProps) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
                 {[
                   { label: 'Quick 15-Min Call',  desc: 'No fluff. Just real answers to your questions.',         color: '#EE3030', check: false },
-                  { label: 'Territory Check',    desc: 'Confirm exclusive rights are available in your market.', color: '#17AF84', check: true  },
-                  { label: 'Zero Obligation',    desc: '100% free strategy call. No pressure, just value.',      color: '#17AF84', check: true  },
+                  { label: 'Territory Check',    desc: 'Confirm exclusive rights are available in your market.', color: '#2EAE7D', check: true  },
+                  { label: 'Zero Obligation',    desc: '100% free strategy call. No pressure, just value.',      color: '#2EAE7D', check: true  },
                 ].map(({ label, desc, color, check }) => (
                   <div key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                     <div style={{ width: 26, height: 26, borderRadius: '50%', flexShrink: 0, marginTop: 1, background: `${color}1a`, border: `1px solid ${color}33`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -238,7 +238,7 @@ export default function VslPage(props: VslPageProps) {
 
           {/* Hero — Eyebrow + Massive Headline */}
           <section className="vsl-fade-up" style={{ padding: '80px 24px 40px', textAlign: 'center' }}>
-            <p style={{ display: 'inline-flex', alignItems: 'center', gap: 10, fontSize: '1.05rem', fontWeight: 600, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 20, fontFamily: 'Inter, sans-serif' }}>
+            <p style={{ display: 'inline-flex', alignItems: 'center', gap: 10, fontSize: '1.05rem', fontWeight: 600, color: '#2EAE7D', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 20, fontFamily: 'Inter, sans-serif' }}>
               <img
                 src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png"
                 alt=""
@@ -348,20 +348,20 @@ export default function VslPage(props: VslPageProps) {
                         <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#EE3030" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#EE3030', fontFamily: 'Inter, sans-serif' }}>12x Booked Qualified Appointments</span>
                       </div>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(23,175,132,0.06)', border: '1px solid rgba(23,175,132,0.15)', padding: '10px 18px', borderRadius: 100 }}>
-                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#17AF84', fontFamily: 'Inter, sans-serif' }}>$64K Closed on First Estimate</span>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(46,174,125,0.06)', border: '1px solid rgba(46,174,125,0.15)', padding: '10px 18px', borderRadius: 100 }}>
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#2EAE7D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#2EAE7D', fontFamily: 'Inter, sans-serif' }}>$64K Closed on First Estimate</span>
                       </div>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(23,175,132,0.06)', border: '1px solid rgba(23,175,132,0.15)', padding: '10px 18px', borderRadius: 100 }}>
-                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#17AF84', fontFamily: 'Inter, sans-serif' }}>6 Figures Added in First 90 Days</span>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(46,174,125,0.06)', border: '1px solid rgba(46,174,125,0.15)', padding: '10px 18px', borderRadius: 100 }}>
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#2EAE7D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#2EAE7D', fontFamily: 'Inter, sans-serif' }}>6 Figures Added in First 90 Days</span>
                       </div>
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
                       {['Hired a full-time sales representative', 'Expanding production team', 'Now offering custom landscaping services'].map(item => (
                         <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
+                          <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#2EAE7D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
                           <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#555', fontFamily: 'Inter, sans-serif' }}>{item}</span>
                         </div>
                       ))}
@@ -400,7 +400,7 @@ export default function VslPage(props: VslPageProps) {
           <section style={{ padding: '80px 24px', borderTop: '1px solid #eee', background: '#f7f7f7' }}>
             <div style={{ maxWidth: 1100, margin: '0 auto' }}>
               <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12, fontFamily: 'Inter, sans-serif' }}>Client Results</p>
+                <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#2EAE7D', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12, fontFamily: 'Inter, sans-serif' }}>Client Results</p>
                 <h2 style={{ fontSize: 'clamp(1.5rem,3.5vw,2.4rem)', fontWeight: 700, color: '#222', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em' }}>
                   What Contractors Are Saying
                 </h2>
@@ -476,20 +476,20 @@ export default function VslPage(props: VslPageProps) {
                         <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#EE3030" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#EE3030', fontFamily: 'Inter, sans-serif' }}>12x Booked Qualified Appointments</span>
                       </div>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(23,175,132,0.06)', border: '1px solid rgba(23,175,132,0.15)', padding: '10px 18px', borderRadius: 100 }}>
-                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#17AF84', fontFamily: 'Inter, sans-serif' }}>$64K Closed on First Estimate</span>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(46,174,125,0.06)', border: '1px solid rgba(46,174,125,0.15)', padding: '10px 18px', borderRadius: 100 }}>
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#2EAE7D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#2EAE7D', fontFamily: 'Inter, sans-serif' }}>$64K Closed on First Estimate</span>
                       </div>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(23,175,132,0.06)', border: '1px solid rgba(23,175,132,0.15)', padding: '10px 18px', borderRadius: 100 }}>
-                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#17AF84', fontFamily: 'Inter, sans-serif' }}>6 Figures Added in First 90 Days</span>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(46,174,125,0.06)', border: '1px solid rgba(46,174,125,0.15)', padding: '10px 18px', borderRadius: 100 }}>
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#2EAE7D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#2EAE7D', fontFamily: 'Inter, sans-serif' }}>6 Figures Added in First 90 Days</span>
                       </div>
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
                       {['Hired a full-time sales representative', 'Expanding production team', 'Now offering custom landscaping services'].map(item => (
                         <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
+                          <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#2EAE7D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
                           <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#555', fontFamily: 'Inter, sans-serif' }}>{item}</span>
                         </div>
                       ))}
@@ -527,7 +527,7 @@ export default function VslPage(props: VslPageProps) {
           {/* Bottom CTA — dark section */}
           <section style={{ padding: '96px 24px', textAlign: 'center', background: '#111' }}>
             <div style={{ maxWidth: 640, margin: '0 auto' }}>
-              <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#EE3030', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 16, fontFamily: 'Inter, sans-serif' }}>Don&rsquo;t Wait</p>
+              <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#2EAE7D', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 16, fontFamily: 'Inter, sans-serif' }}>Don&rsquo;t Wait</p>
               <h2 style={{ fontSize: 'clamp(1.75rem,4.5vw,2.8rem)', fontWeight: 700, color: '#ffffff', marginBottom: 20, lineHeight: 1.12, fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
                 Ready to Scale Your Business?
               </h2>
@@ -544,7 +544,7 @@ export default function VslPage(props: VslPageProps) {
 
               <div style={{ marginTop: 56, paddingTop: 40, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                 <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.35)', marginBottom: 14 }}>Want to learn more about what we do?</p>
-                <a href="https://www.revcorehq.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.95rem', fontWeight: 700, color: '#EE3030', textDecoration: 'none', fontFamily: 'Inter, sans-serif', letterSpacing: '0.02em', transition: 'opacity 0.2s' }}
+                <a href="https://www.revcorehq.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.95rem', fontWeight: 700, color: '#2EAE7D', textDecoration: 'none', fontFamily: 'Inter, sans-serif', letterSpacing: '0.02em', transition: 'opacity 0.2s' }}
                   onMouseOver={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '0.7'; }}
                   onMouseOut={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '1'; }}
                 >
