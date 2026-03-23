@@ -293,6 +293,21 @@ export default function VslPage(props: VslPageProps) {
           {/* Featured Testimonial — right below VSL video */}
           <section style={{ padding: '0 24px 60px' }}>
             <div style={{ maxWidth: 900, margin: '0 auto' }}>
+
+              {/* Spotlight header */}
+              <div style={{ textAlign: 'center', marginBottom: 28 }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(238,48,48,0.06)', border: '1px solid rgba(238,48,48,0.12)', padding: '8px 20px', borderRadius: 100, marginBottom: 16 }}>
+                  <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#EE3030" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#EE3030', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Raleway, sans-serif' }}>Weekly Client Spotlight</span>
+                </div>
+                <h3 style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.6rem)', fontWeight: 800, color: '#1B2B40', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.02em', marginBottom: 8 }}>
+                  See What&rsquo;s Possible With RevCore
+                </h3>
+                <p style={{ fontSize: '0.88rem', color: '#8B9DB3', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
+                  Every week we feature a client who&rsquo;s winning with RevCore. Here&rsquo;s this week&rsquo;s spotlight.
+                </p>
+              </div>
+
               <div style={{
                 borderRadius: 20, overflow: 'hidden',
                 background: '#F4F7FA',
@@ -416,6 +431,12 @@ export default function VslPage(props: VslPageProps) {
               </div>
 
               {/* Featured Video Testimonial — Aquatic Pools */}
+              <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid #E4EAF0', padding: '6px 16px', borderRadius: 100 }}>
+                  <svg viewBox="0 0 24 24" fill="none" width="12" height="12" stroke="#EE3030" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#5D7189', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'Raleway, sans-serif' }}>Featured Video Testimonial</span>
+                </div>
+              </div>
               <div style={{
                 borderRadius: 20, overflow: 'hidden',
                 background: '#ffffff',
