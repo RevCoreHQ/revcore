@@ -217,8 +217,7 @@ export default function VslPage(props: VslPageProps) {
           {/* Dark urgency bar */}
           <div style={{ background: '#333', padding: '12px 24px', textAlign: 'center' }}>
             <p style={{ fontSize: '0.82rem', fontWeight: 600, color: '#fff', letterSpacing: '0.04em', fontFamily: 'Inter, sans-serif', margin: 0 }}>
-              <span style={{ color: '#EE3030', fontWeight: 700 }}>&#9679;</span>
-              &nbsp;&nbsp;Only onboarding <strong>3 more clients</strong> for {(() => { const q = Math.ceil((new Date().getMonth() + 1) / 3); return `Q${q} ${new Date().getFullYear()}`; })()}
+              Limited Availability Remaining for {(() => { const q = Math.ceil((new Date().getMonth() + 1) / 3); return `Q${q} ${new Date().getFullYear()}`; })()}
             </p>
           </div>
 
