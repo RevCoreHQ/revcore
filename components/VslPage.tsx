@@ -102,14 +102,14 @@ export default function VslPage(props: VslPageProps) {
           .vsl-video-testimonials { flex-direction: column !important; align-items: center !important; }
           .vsl-featured-grid { grid-template-columns: 1fr !important; }
           .vsl-featured-grid > div:first-child { max-height: 500px; }
-          .vsl-hero-h1 { font-size: 2.2rem !important; }
+          .vsl-hero-h1 { font-size: 2.8rem !important; }
         }
         @media (max-width: 600px) {
           .vsl-modal-grid { height: 100vh !important; border-radius: 12px !important; max-width: 100vw !important; }
           .vsl-modal-cal  { border-radius: 12px !important; }
           .vsl-modal-cal iframe { height: 100vh !important; min-height: 100vh !important; }
           .vsl-proof-grid { grid-template-columns: 1fr 1fr !important; }
-          .vsl-hero-h1 { font-size: 1.75rem !important; }
+          .vsl-hero-h1 { font-size: 2rem !important; }
         }
         @keyframes vslFadeUp {
           from { opacity: 0; transform: translateY(16px); }
@@ -229,21 +229,21 @@ export default function VslPage(props: VslPageProps) {
           </div>
 
           {/* Hero — Eyebrow + Massive Headline */}
-          <section className="vsl-fade-up" style={{ padding: '72px 24px 40px', textAlign: 'center' }}>
-            <p style={{ fontSize: '0.9rem', fontWeight: 700, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: 24, fontFamily: 'Raleway, sans-serif' }}>
+          <section className="vsl-fade-up" style={{ padding: '80px 24px 48px', textAlign: 'center' }}>
+            <p style={{ fontSize: '1rem', fontWeight: 800, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 28, fontFamily: 'Raleway, sans-serif' }}>
               {eyebrow}
             </p>
-            <h1 className="vsl-hero-h1" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.08, color: '#000', maxWidth: 920, margin: '0 auto 24px', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.03em', textTransform: 'uppercase' }}>
+            <h1 className="vsl-hero-h1" style={{ fontSize: 'clamp(2.8rem, 7vw, 5rem)', fontWeight: 900, lineHeight: 1.05, color: '#000', maxWidth: 1100, margin: '0 auto 28px', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.04em', textTransform: 'uppercase' }}>
               {headline}
             </h1>
-            <p style={{ fontSize: '1.1rem', color: '#666', maxWidth: 520, margin: '0 auto', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '1.15rem', color: '#555', maxWidth: 540, margin: '0 auto', lineHeight: 1.6 }}>
               {subheadline}
             </p>
           </section>
 
           {/* Video */}
-          <section style={{ padding: '0 24px 48px' }}>
-            <div style={{ maxWidth: 960, margin: '0 auto' }}>
+          <section style={{ padding: '0 16px 48px' }}>
+            <div style={{ maxWidth: 1100, margin: '0 auto' }}>
               <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, background: '#000' }}>
                 <iframe
                   src={`https://www.loom.com/embed/${mainVideoLoomId}`}
@@ -270,11 +270,11 @@ export default function VslPage(props: VslPageProps) {
           </section>
 
           {/* Divider line */}
-          <div style={{ maxWidth: 960, margin: '0 auto', borderTop: '1px solid #eee' }} />
+          <div style={{ maxWidth: 1100, margin: '0 auto', borderTop: '1px solid #eee' }} />
 
           {/* Weekly Client Spotlight */}
           <section style={{ padding: '64px 24px 60px' }}>
-            <div style={{ maxWidth: 960, margin: '0 auto' }}>
+            <div style={{ maxWidth: 1100, margin: '0 auto' }}>
 
               {/* Spotlight header */}
               <div style={{ textAlign: 'center', marginBottom: 36 }}>
@@ -385,7 +385,7 @@ export default function VslPage(props: VslPageProps) {
 
           {/* Social Proof */}
           <section style={{ padding: '80px 24px', borderTop: '1px solid #eee', background: '#f7f7f7' }}>
-            <div style={{ maxWidth: 960, margin: '0 auto' }}>
+            <div style={{ maxWidth: 1100, margin: '0 auto' }}>
               <div style={{ textAlign: 'center', marginBottom: 48 }}>
                 <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12, fontFamily: 'Raleway, sans-serif' }}>Client Results</p>
                 <h2 style={{ fontSize: 'clamp(1.5rem,3.5vw,2.4rem)', fontWeight: 900, color: '#000', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.02em' }}>
