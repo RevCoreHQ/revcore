@@ -363,7 +363,7 @@ export default function VslPage(props: VslPageProps) {
                     </div>
 
                     {/* Key results */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 28 }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
                       <div style={{
                         display: 'inline-flex', alignItems: 'center', gap: 10,
                         background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.2)',
@@ -373,7 +373,7 @@ export default function VslPage(props: VslPageProps) {
                           <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
                           <polyline points="17 6 23 6 23 12" />
                         </svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FE6462', fontFamily: 'DM Sans, sans-serif' }}>12x Increase in Booked Qualified Appointments</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FE6462', fontFamily: 'DM Sans, sans-serif' }}>12x Booked Qualified Appointments</span>
                       </div>
                       <div style={{
                         display: 'inline-flex', alignItems: 'center', gap: 10,
@@ -385,6 +385,33 @@ export default function VslPage(props: VslPageProps) {
                         </svg>
                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#94D96B', fontFamily: 'DM Sans, sans-serif' }}>$64K Closed on First Estimate</span>
                       </div>
+                      <div style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 10,
+                        background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.2)',
+                        padding: '10px 18px', borderRadius: 100,
+                      }}>
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                          <polyline points="17 6 23 6 23 12" />
+                        </svg>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#94D96B', fontFamily: 'DM Sans, sans-serif' }}>6 Figures Added in First 90 Days</span>
+                      </div>
+                    </div>
+
+                    {/* Growth milestones */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+                      {[
+                        'Hired a full-time sales representative',
+                        'Expanding production team',
+                        'Now offering custom landscaping services',
+                      ].map(item => (
+                        <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.6)', fontFamily: 'DM Sans, sans-serif' }}>{item}</span>
+                        </div>
+                      ))}
                     </div>
 
                     {/* Services used */}
