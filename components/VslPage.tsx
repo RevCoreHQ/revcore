@@ -222,7 +222,7 @@ export default function VslPage(props: VslPageProps) {
           </div>
 
           {/* Hero — Eyebrow + Massive Headline */}
-          <section className="vsl-fade-up" style={{ padding: '80px 24px 40px', textAlign: 'center' }}>
+          <section className="vsl-fade-up" style={{ padding: '40px 24px 40px', textAlign: 'center' }}>
             <p style={{ display: 'inline-flex', alignItems: 'center', gap: 10, fontSize: '1.05rem', fontWeight: 600, color: '#2EAE7D', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 20, fontFamily: 'Inter, sans-serif' }}>
               <img
                 src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png"
