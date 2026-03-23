@@ -54,7 +54,7 @@ export default function VslPage(props: VslPageProps) {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
         .vsl-btn {
           display: inline-flex;
@@ -67,7 +67,7 @@ export default function VslPage(props: VslPageProps) {
           border-radius: 8px;
           font-size: 1.1rem;
           font-weight: 800;
-          font-family: 'Raleway', sans-serif;
+          font-family: 'Inter', sans-serif;
           border: none;
           cursor: pointer;
           transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -168,14 +168,14 @@ export default function VslPage(props: VslPageProps) {
                 <svg viewBox="0 0 24 24" fill="#EE3030" width="12" height="12">
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                 </svg>
-                <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#EE3030', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Raleway, sans-serif' }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#EE3030', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif' }}>
                   {modalBadge}
                 </span>
               </div>
-              <h2 style={{ fontSize: 'clamp(1.6rem,2.5vw,2rem)', fontWeight: 800, lineHeight: 1.15, color: '#fff', marginBottom: 16, fontFamily: 'Raleway, sans-serif' }}>
+              <h2 style={{ fontSize: 'clamp(1.6rem,2.5vw,2rem)', fontWeight: 800, lineHeight: 1.15, color: '#fff', marginBottom: 16, fontFamily: 'Inter, sans-serif' }}>
                 {modalTitle}<br/><span style={{ color: '#17AF84' }}>{modalTitleAccent}</span>
               </h2>
-              <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, marginBottom: 32, fontFamily: 'Raleway, sans-serif' }}>
+              <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, marginBottom: 32, fontFamily: 'Inter, sans-serif' }}>
                 {modalDescription}
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
@@ -191,13 +191,13 @@ export default function VslPage(props: VslPageProps) {
                       </svg>
                     </div>
                     <div>
-                      <p style={{ fontSize: '0.875rem', fontWeight: 700, color: '#fff', marginBottom: 2, fontFamily: 'Raleway, sans-serif' }}>{label}</p>
-                      <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, fontFamily: 'Raleway, sans-serif' }}>{desc}</p>
+                      <p style={{ fontSize: '0.875rem', fontWeight: 700, color: '#fff', marginBottom: 2, fontFamily: 'Inter, sans-serif' }}>{label}</p>
+                      <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, fontFamily: 'Inter, sans-serif' }}>{desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <p style={{ fontSize: '0.85rem', fontStyle: 'italic', color: 'rgba(255,255,255,0.35)', lineHeight: 1.6, paddingLeft: 14, borderLeft: '2px solid rgba(238,48,48,0.4)', fontFamily: 'Raleway, sans-serif' }}>
+              <p style={{ fontSize: '0.85rem', fontStyle: 'italic', color: 'rgba(255,255,255,0.35)', lineHeight: 1.6, paddingLeft: 14, borderLeft: '2px solid rgba(238,48,48,0.4)', fontFamily: 'Inter, sans-serif' }}>
                 {modalTestimonial}
               </p>
             </div>
@@ -210,7 +210,7 @@ export default function VslPage(props: VslPageProps) {
       )}
 
       {/* Page */}
-      <div style={{ fontFamily: 'Raleway, sans-serif', background: '#ffffff', minHeight: '100vh', color: '#000', WebkitFontSmoothing: 'antialiased', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ fontFamily: 'Inter, sans-serif', background: '#ffffff', minHeight: '100vh', color: '#000', WebkitFontSmoothing: 'antialiased', position: 'relative', overflow: 'hidden' }}>
 
         <div style={{ position: 'relative', zIndex: 1 }}>
 
@@ -222,7 +222,7 @@ export default function VslPage(props: VslPageProps) {
                 alt="RevCore"
                 style={{ height: 26, width: 'auto', filter: 'brightness(0)' }}
               />
-              <span style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em', fontFamily: 'Raleway, sans-serif', color: '#000' }}>
+              <span style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em', fontFamily: 'Inter, sans-serif', color: '#000' }}>
                 Rev<span style={{ color: '#EE3030' }}>Core</span>
               </span>
             </div>
@@ -230,10 +230,10 @@ export default function VslPage(props: VslPageProps) {
 
           {/* Hero — Eyebrow + Massive Headline */}
           <section className="vsl-fade-up" style={{ padding: '80px 24px 48px', textAlign: 'center' }}>
-            <p style={{ fontSize: '1rem', fontWeight: 800, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 28, fontFamily: 'Raleway, sans-serif' }}>
+            <p style={{ fontSize: '1rem', fontWeight: 800, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 28, fontFamily: 'Inter, sans-serif' }}>
               {eyebrow}
             </p>
-            <h1 className="vsl-hero-h1" style={{ fontSize: 'clamp(2.8rem, 7vw, 5rem)', fontWeight: 900, lineHeight: 1.05, color: '#000', maxWidth: 1100, margin: '0 auto 28px', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.04em', textTransform: 'uppercase' }}>
+            <h1 className="vsl-hero-h1" style={{ fontSize: 'clamp(2.8rem, 7vw, 5rem)', fontWeight: 900, lineHeight: 1.05, color: '#000', maxWidth: 1100, margin: '0 auto 28px', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.04em', textTransform: 'uppercase' }}>
               {headline}
             </h1>
             <p style={{ fontSize: '1.15rem', color: '#555', maxWidth: 540, margin: '0 auto', lineHeight: 1.6 }}>
@@ -280,9 +280,9 @@ export default function VslPage(props: VslPageProps) {
               <div style={{ textAlign: 'center', marginBottom: 36 }}>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(238,48,48,0.06)', border: '1px solid rgba(238,48,48,0.12)', padding: '8px 20px', borderRadius: 100, marginBottom: 16 }}>
                   <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#EE3030" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-                  <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#EE3030', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Raleway, sans-serif' }}>Weekly Client Spotlight</span>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#EE3030', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif' }}>Weekly Client Spotlight</span>
                 </div>
-                <h3 style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 800, color: '#000', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.02em', marginBottom: 10 }}>
+                <h3 style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 800, color: '#000', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', marginBottom: 10 }}>
                   See What&rsquo;s Possible With RevCore
                 </h3>
                 <p style={{ fontSize: '0.95rem', color: '#888', maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>
@@ -318,14 +318,14 @@ export default function VslPage(props: VslPageProps) {
                         style={{ height: 48, width: 'auto', borderRadius: 8 }}
                       />
                       <div>
-                        <div style={{ fontFamily: 'Raleway, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: '#000', lineHeight: 1.2 }}>Aquatic Pool &amp; Spa</div>
+                        <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: '#000', lineHeight: 1.2 }}>Aquatic Pool &amp; Spa</div>
                         <div style={{ fontSize: '0.75rem', color: '#999', fontWeight: 500, marginTop: 2 }}>Phoenix, Arizona</div>
                       </div>
                     </div>
 
                     <div style={{ position: 'relative', marginBottom: 28 }}>
                       <div style={{ position: 'absolute', top: -8, left: -4, fontSize: '3rem', color: 'rgba(0,0,0,0.06)', fontFamily: 'Georgia, serif', lineHeight: 1 }}>&ldquo;</div>
-                      <p style={{ fontSize: '1.05rem', color: '#555', lineHeight: 1.7, fontStyle: 'italic', paddingLeft: 20, fontFamily: 'Raleway, sans-serif' }}>
+                      <p style={{ fontSize: '1.05rem', color: '#555', lineHeight: 1.7, fontStyle: 'italic', paddingLeft: 20, fontFamily: 'Inter, sans-serif' }}>
                         He pretty much has 10x&apos;d our calls since we had him on board. Now we&apos;re coming up with different ideas to put more staff in place just because of the amount of new customers and new projects.
                       </p>
                     </div>
@@ -333,15 +333,15 @@ export default function VslPage(props: VslPageProps) {
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(238,48,48,0.06)', border: '1px solid rgba(238,48,48,0.15)', padding: '10px 18px', borderRadius: 100 }}>
                         <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#EE3030" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#EE3030', fontFamily: 'Raleway, sans-serif' }}>12x Booked Qualified Appointments</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#EE3030', fontFamily: 'Inter, sans-serif' }}>12x Booked Qualified Appointments</span>
                       </div>
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(23,175,132,0.06)', border: '1px solid rgba(23,175,132,0.15)', padding: '10px 18px', borderRadius: 100 }}>
                         <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#17AF84', fontFamily: 'Raleway, sans-serif' }}>$64K Closed on First Estimate</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#17AF84', fontFamily: 'Inter, sans-serif' }}>$64K Closed on First Estimate</span>
                       </div>
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(23,175,132,0.06)', border: '1px solid rgba(23,175,132,0.15)', padding: '10px 18px', borderRadius: 100 }}>
                         <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#17AF84', fontFamily: 'Raleway, sans-serif' }}>6 Figures Added in First 90 Days</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#17AF84', fontFamily: 'Inter, sans-serif' }}>6 Figures Added in First 90 Days</span>
                       </div>
                     </div>
 
@@ -349,16 +349,16 @@ export default function VslPage(props: VslPageProps) {
                       {['Hired a full-time sales representative', 'Expanding production team', 'Now offering custom landscaping services'].map(item => (
                         <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
-                          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#555', fontFamily: 'Raleway, sans-serif' }}>{item}</span>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#555', fontFamily: 'Inter, sans-serif' }}>{item}</span>
                         </div>
                       ))}
                     </div>
 
                     <div style={{ marginBottom: 8 }}>
-                      <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#999', marginBottom: 10, fontFamily: 'Raleway, sans-serif' }}>Active RevCore Services</div>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#999', marginBottom: 10, fontFamily: 'Inter, sans-serif' }}>Active RevCore Services</div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                         {['Custom Website', 'Paid Meta Ads', 'SEO Optimization', 'GMB Optimization', 'Sales Software', 'CRM & Automation'].map(svc => (
-                          <span key={svc} style={{ fontSize: '0.7rem', fontWeight: 600, color: '#666', padding: '5px 12px', borderRadius: 100, background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.08)', fontFamily: 'Raleway, sans-serif' }}>{svc}</span>
+                          <span key={svc} style={{ fontSize: '0.7rem', fontWeight: 600, color: '#666', padding: '5px 12px', borderRadius: 100, background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.08)', fontFamily: 'Inter, sans-serif' }}>{svc}</span>
                         ))}
                       </div>
                     </div>
@@ -387,8 +387,8 @@ export default function VslPage(props: VslPageProps) {
           <section style={{ padding: '80px 24px', borderTop: '1px solid #eee', background: '#f7f7f7' }}>
             <div style={{ maxWidth: 1100, margin: '0 auto' }}>
               <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12, fontFamily: 'Raleway, sans-serif' }}>Client Results</p>
-                <h2 style={{ fontSize: 'clamp(1.5rem,3.5vw,2.4rem)', fontWeight: 900, color: '#000', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.02em' }}>
+                <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12, fontFamily: 'Inter, sans-serif' }}>Client Results</p>
+                <h2 style={{ fontSize: 'clamp(1.5rem,3.5vw,2.4rem)', fontWeight: 900, color: '#000', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em' }}>
                   What Contractors Are Saying
                 </h2>
               </div>
@@ -413,7 +413,7 @@ export default function VslPage(props: VslPageProps) {
               <div style={{ textAlign: 'center', marginBottom: 20 }}>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid #eee', padding: '6px 16px', borderRadius: 100 }}>
                   <svg viewBox="0 0 24 24" fill="none" width="12" height="12" stroke="#EE3030" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-                  <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'Raleway, sans-serif' }}>Featured Video Testimonial</span>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'Inter, sans-serif' }}>Featured Video Testimonial</span>
                 </div>
               </div>
 
@@ -446,14 +446,14 @@ export default function VslPage(props: VslPageProps) {
                         style={{ height: 48, width: 'auto', borderRadius: 8 }}
                       />
                       <div>
-                        <div style={{ fontFamily: 'Raleway, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: '#000', lineHeight: 1.2 }}>Aquatic Pool &amp; Spa</div>
+                        <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: '#000', lineHeight: 1.2 }}>Aquatic Pool &amp; Spa</div>
                         <div style={{ fontSize: '0.75rem', color: '#999', fontWeight: 500, marginTop: 2 }}>Phoenix, Arizona</div>
                       </div>
                     </div>
 
                     <div style={{ position: 'relative', marginBottom: 28 }}>
                       <div style={{ position: 'absolute', top: -8, left: -4, fontSize: '3rem', color: 'rgba(0,0,0,0.06)', fontFamily: 'Georgia, serif', lineHeight: 1 }}>&ldquo;</div>
-                      <p style={{ fontSize: '1.05rem', color: '#555', lineHeight: 1.7, fontStyle: 'italic', paddingLeft: 20, fontFamily: 'Raleway, sans-serif' }}>
+                      <p style={{ fontSize: '1.05rem', color: '#555', lineHeight: 1.7, fontStyle: 'italic', paddingLeft: 20, fontFamily: 'Inter, sans-serif' }}>
                         He pretty much has 10x&apos;d our calls since we had him on board. Now we&apos;re coming up with different ideas to put more staff in place just because of the amount of new customers and new projects.
                       </p>
                     </div>
@@ -461,15 +461,15 @@ export default function VslPage(props: VslPageProps) {
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(238,48,48,0.06)', border: '1px solid rgba(238,48,48,0.15)', padding: '10px 18px', borderRadius: 100 }}>
                         <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#EE3030" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#EE3030', fontFamily: 'Raleway, sans-serif' }}>12x Booked Qualified Appointments</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#EE3030', fontFamily: 'Inter, sans-serif' }}>12x Booked Qualified Appointments</span>
                       </div>
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(23,175,132,0.06)', border: '1px solid rgba(23,175,132,0.15)', padding: '10px 18px', borderRadius: 100 }}>
                         <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#17AF84', fontFamily: 'Raleway, sans-serif' }}>$64K Closed on First Estimate</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#17AF84', fontFamily: 'Inter, sans-serif' }}>$64K Closed on First Estimate</span>
                       </div>
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(23,175,132,0.06)', border: '1px solid rgba(23,175,132,0.15)', padding: '10px 18px', borderRadius: 100 }}>
                         <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#17AF84', fontFamily: 'Raleway, sans-serif' }}>6 Figures Added in First 90 Days</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#17AF84', fontFamily: 'Inter, sans-serif' }}>6 Figures Added in First 90 Days</span>
                       </div>
                     </div>
 
@@ -477,16 +477,16 @@ export default function VslPage(props: VslPageProps) {
                       {['Hired a full-time sales representative', 'Expanding production team', 'Now offering custom landscaping services'].map(item => (
                         <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
-                          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#555', fontFamily: 'Raleway, sans-serif' }}>{item}</span>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#555', fontFamily: 'Inter, sans-serif' }}>{item}</span>
                         </div>
                       ))}
                     </div>
 
                     <div style={{ marginBottom: 8 }}>
-                      <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#999', marginBottom: 10, fontFamily: 'Raleway, sans-serif' }}>Active RevCore Services</div>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#999', marginBottom: 10, fontFamily: 'Inter, sans-serif' }}>Active RevCore Services</div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                         {['Custom Website', 'Paid Meta Ads', 'SEO Optimization', 'GMB Optimization', 'Sales Software', 'CRM & Automation'].map(svc => (
-                          <span key={svc} style={{ fontSize: '0.7rem', fontWeight: 600, color: '#666', padding: '5px 12px', borderRadius: 100, background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.08)', fontFamily: 'Raleway, sans-serif' }}>{svc}</span>
+                          <span key={svc} style={{ fontSize: '0.7rem', fontWeight: 600, color: '#666', padding: '5px 12px', borderRadius: 100, background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.08)', fontFamily: 'Inter, sans-serif' }}>{svc}</span>
                         ))}
                       </div>
                     </div>
@@ -514,8 +514,8 @@ export default function VslPage(props: VslPageProps) {
           {/* Bottom CTA — dark section */}
           <section style={{ padding: '96px 24px', textAlign: 'center', background: '#111' }}>
             <div style={{ maxWidth: 640, margin: '0 auto' }}>
-              <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#EE3030', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 16, fontFamily: 'Raleway, sans-serif' }}>Don&rsquo;t Wait</p>
-              <h2 style={{ fontSize: 'clamp(1.75rem,4.5vw,2.8rem)', fontWeight: 900, color: '#ffffff', marginBottom: 20, lineHeight: 1.08, fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+              <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#EE3030', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 16, fontFamily: 'Inter, sans-serif' }}>Don&rsquo;t Wait</p>
+              <h2 style={{ fontSize: 'clamp(1.75rem,4.5vw,2.8rem)', fontWeight: 900, color: '#ffffff', marginBottom: 20, lineHeight: 1.08, fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
                 Ready to Scale Your Business?
               </h2>
               <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.5)', marginBottom: 40, lineHeight: 1.7 }}>
@@ -531,7 +531,7 @@ export default function VslPage(props: VslPageProps) {
 
               <div style={{ marginTop: 56, paddingTop: 40, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                 <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.35)', marginBottom: 14 }}>Want to learn more about what we do?</p>
-                <a href="https://www.revcorehq.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.95rem', fontWeight: 700, color: '#EE3030', textDecoration: 'none', fontFamily: 'Raleway, sans-serif', letterSpacing: '0.02em', transition: 'opacity 0.2s' }}
+                <a href="https://www.revcorehq.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.95rem', fontWeight: 700, color: '#EE3030', textDecoration: 'none', fontFamily: 'Inter, sans-serif', letterSpacing: '0.02em', transition: 'opacity 0.2s' }}
                   onMouseOver={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '0.7'; }}
                   onMouseOut={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '1'; }}
                 >
@@ -543,7 +543,7 @@ export default function VslPage(props: VslPageProps) {
 
           {/* Footer */}
           <div style={{ padding: '28px 24px', textAlign: 'center', background: '#0a0a0a' }}>
-            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'Raleway, sans-serif' }}>&copy; 2026 RevCore. All Rights Reserved.</p>
+            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'Inter, sans-serif' }}>&copy; 2026 RevCore. All Rights Reserved.</p>
           </div>
 
         </div>
