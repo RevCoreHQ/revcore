@@ -275,6 +275,86 @@ export default function VslPage(props: VslPageProps) {
             </div>
           </section>
 
+          {/* Featured Testimonial — right below VSL video */}
+          <section style={{ padding: '0 24px 60px' }}>
+            <div style={{ maxWidth: 900, margin: '0 auto' }}>
+              <div style={{
+                borderRadius: 20, overflow: 'hidden',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+                border: '1px solid rgba(255,255,255,0.08)',
+              }}>
+                <div className="vsl-featured-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
+                  {/* Video side */}
+                  <div style={{ position: 'relative', background: '#000' }}>
+                    <div style={{ position: 'relative', paddingBottom: '177.78%', height: 0 }}>
+                      <iframe
+                        src="https://www.loom.com/embed/f56aca282489411496eb44f81f60a6f0"
+                        frameBorder="0"
+                        allowFullScreen
+                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Details side */}
+                  <div style={{ padding: '40px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
+                      <img
+                        src="https://assets.cdn.filesafe.space/RAmAO69TYtGlSS2rVnm9/media/69a5e65c9c149958e1420465.png"
+                        alt="Aquatic Pool & Spa"
+                        style={{ height: 48, width: 'auto', borderRadius: 8 }}
+                      />
+                      <div>
+                        <div style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: '#fff', lineHeight: 1.2 }}>Aquatic Pool &amp; Spa</div>
+                        <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500, marginTop: 2 }}>Phoenix, Arizona</div>
+                      </div>
+                    </div>
+
+                    <div style={{ position: 'relative', marginBottom: 28 }}>
+                      <div style={{ position: 'absolute', top: -8, left: -4, fontSize: '3rem', color: 'rgba(254,100,98,0.2)', fontFamily: 'Georgia, serif', lineHeight: 1 }}>&ldquo;</div>
+                      <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, fontStyle: 'italic', paddingLeft: 20, fontFamily: 'DM Sans, sans-serif' }}>
+                        He pretty much has 10x&apos;d our calls since we had him on board. Now we&apos;re coming up with different ideas to put more staff in place just because of the amount of new customers and new projects.
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.2)', padding: '10px 18px', borderRadius: 100 }}>
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#FE6462" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FE6462', fontFamily: 'DM Sans, sans-serif' }}>12x Booked Qualified Appointments</span>
+                      </div>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.2)', padding: '10px 18px', borderRadius: 100 }}>
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#94D96B', fontFamily: 'DM Sans, sans-serif' }}>$64K Closed on First Estimate</span>
+                      </div>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.2)', padding: '10px 18px', borderRadius: 100 }}>
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#94D96B', fontFamily: 'DM Sans, sans-serif' }}>6 Figures Added in First 90 Days</span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+                      {['Hired a full-time sales representative', 'Expanding production team', 'Now offering custom landscaping services'].map(item => (
+                        <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.6)', fontFamily: 'DM Sans, sans-serif' }}>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ marginBottom: 8 }}>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10, fontFamily: 'DM Sans, sans-serif' }}>Active RevCore Services</div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {['Custom Website', 'Paid Meta Ads', 'SEO Optimization', 'GMB Optimization', 'Sales Software', 'CRM & Automation'].map(svc => (
+                          <span key={svc} style={{ fontSize: '0.7rem', fontWeight: 600, color: 'rgba(255,255,255,0.55)', padding: '5px 12px', borderRadius: 100, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', fontFamily: 'DM Sans, sans-serif' }}>{svc}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Mid CTA */}
           <section style={{ padding: '0 24px 80px', textAlign: 'center' }}>
             <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.45)', marginBottom: 28, maxWidth: 440, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.6 }}>
