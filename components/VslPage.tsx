@@ -214,6 +214,14 @@ export default function VslPage(props: VslPageProps) {
 
         <div style={{ position: 'relative', zIndex: 1 }}>
 
+          {/* Dark urgency bar */}
+          <div style={{ background: '#333', padding: '12px 24px', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.82rem', fontWeight: 600, color: '#fff', letterSpacing: '0.04em', fontFamily: 'Inter, sans-serif', margin: 0 }}>
+              <span style={{ color: '#EE3030', fontWeight: 700 }}>&#9679;</span>
+              &nbsp;&nbsp;Only onboarding <strong>3 more clients</strong> for {(() => { const q = Math.ceil((new Date().getMonth() + 1) / 3); return `Q${q} ${new Date().getFullYear()}`; })()}
+            </p>
+          </div>
+
           {/* Header */}
           <div style={{ padding: '0 24px', background: '#ffffff', borderBottom: '1px solid #eee' }}>
             <div style={{ maxWidth: 1000, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
@@ -230,8 +238,13 @@ export default function VslPage(props: VslPageProps) {
 
           {/* Hero — Eyebrow + Massive Headline */}
           <section className="vsl-fade-up" style={{ padding: '80px 24px 40px', textAlign: 'center' }}>
-            <p style={{ fontSize: '1.05rem', fontWeight: 600, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 20, fontFamily: 'Inter, sans-serif' }}>
-              {eyebrow}
+            <p style={{ display: 'inline-flex', alignItems: 'center', gap: 10, fontSize: '1.05rem', fontWeight: 600, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 20, fontFamily: 'Inter, sans-serif' }}>
+              <img
+                src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png"
+                alt=""
+                style={{ height: 18, width: 'auto', filter: 'brightness(0) saturate(100%) invert(56%) sepia(62%) saturate(487%) hue-rotate(109deg) brightness(96%) contrast(91%)' }}
+              />
+              RevCore Presents...
             </p>
             <h1 className="vsl-hero-h1" style={{ fontSize: 'clamp(2.8rem, 6.5vw, 4.5rem)', fontWeight: 700, lineHeight: 1.12, color: '#222', maxWidth: 1000, margin: '0 auto 28px', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
               {headline}
