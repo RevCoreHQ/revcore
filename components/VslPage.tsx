@@ -118,6 +118,8 @@ export default function VslPage(props: VslPageProps) {
           .vsl-modal-cal  { border-radius: 16px !important; }
           .vsl-proof-grid { grid-template-columns: 1fr !important; }
           .vsl-video-testimonials { flex-direction: column !important; align-items: center !important; }
+          .vsl-featured-grid { grid-template-columns: 1fr !important; }
+          .vsl-featured-grid > div:first-child { max-height: 500px; }
         }
         @media (max-width: 600px) {
           .vsl-modal-grid { height: 100vh !important; border-radius: 12px !important; max-width: 100vw !important; }
@@ -315,6 +317,84 @@ export default function VslPage(props: VslPageProps) {
                     <img src={src} alt="Client result" style={{ width: '100%', height: 'auto', display: 'block' }} />
                   </div>
                 ))}
+              </div>
+
+              {/* ── Featured Video Testimonial — Aquatic Pools ── */}
+              <div style={{
+                borderRadius: 20, overflow: 'hidden',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                marginBottom: 48,
+              }}>
+                <div className="vsl-featured-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
+                  {/* Video side */}
+                  <div style={{ position: 'relative', background: '#000' }}>
+                    <div style={{ position: 'relative', paddingBottom: '177.78%', height: 0 }}>
+                      <iframe
+                        src="https://www.loom.com/embed/f56aca282489411496eb44f81f60a6f0"
+                        frameBorder="0"
+                        allowFullScreen
+                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Details side */}
+                  <div style={{ padding: '40px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    {/* Logo + badge */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
+                      <img
+                        src="https://assets.cdn.filesafe.space/RAmAO69TYtGlSS2rVnm9/media/69a5e65c9c149958e1420465.png"
+                        alt="Aquatic Pool & Spa"
+                        style={{ height: 48, width: 'auto', borderRadius: 8 }}
+                      />
+                      <div>
+                        <div style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: '#fff', lineHeight: 1.2 }}>Aquatic Pool & Spa</div>
+                        <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500, marginTop: 2 }}>Phoenix, Arizona</div>
+                      </div>
+                    </div>
+
+                    {/* Pull quote */}
+                    <div style={{ position: 'relative', marginBottom: 28 }}>
+                      <div style={{ position: 'absolute', top: -8, left: -4, fontSize: '3rem', color: 'rgba(254,100,98,0.2)', fontFamily: 'Georgia, serif', lineHeight: 1 }}>&ldquo;</div>
+                      <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, fontStyle: 'italic', paddingLeft: 20, fontFamily: 'DM Sans, sans-serif' }}>
+                        He pretty much has 10x&apos;d our calls since we had him on board. Now we&apos;re coming up with different ideas to put more staff in place just because of the amount of new customers and new projects.
+                      </p>
+                    </div>
+
+                    {/* Key result */}
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 10,
+                      background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.2)',
+                      padding: '10px 18px', borderRadius: 100, marginBottom: 28, width: 'fit-content',
+                    }}>
+                      <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#FE6462" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                        <polyline points="17 6 23 6 23 12" />
+                      </svg>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FE6462', fontFamily: 'DM Sans, sans-serif' }}>10x Increase in Calls</span>
+                    </div>
+
+                    {/* Services used */}
+                    <div style={{ marginBottom: 8 }}>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10, fontFamily: 'DM Sans, sans-serif' }}>
+                        Active RevCore Services
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {['Custom Website', 'Paid Meta Ads', 'SEO Optimization', 'GMB Optimization', 'Sales Software', 'CRM & Automation'].map(svc => (
+                          <span key={svc} style={{
+                            fontSize: '0.7rem', fontWeight: 600, color: 'rgba(255,255,255,0.55)',
+                            padding: '5px 12px', borderRadius: 100,
+                            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
+                            fontFamily: 'DM Sans, sans-serif',
+                          }}>
+                            {svc}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Portrait video testimonials */}
