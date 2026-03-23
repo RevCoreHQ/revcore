@@ -222,20 +222,6 @@ export default function VslPage(props: VslPageProps) {
             </p>
           </div>
 
-          {/* Header */}
-          <div style={{ padding: '0 24px', background: '#ffffff', borderBottom: '1px solid #eee' }}>
-            <div style={{ maxWidth: 1000, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-              <img
-                src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png"
-                alt="RevCore"
-                style={{ height: 26, width: 'auto', filter: 'brightness(0)' }}
-              />
-              <span style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em', fontFamily: 'Inter, sans-serif', color: '#000' }}>
-                Rev<span style={{ color: '#EE3030' }}>Core</span>
-              </span>
-            </div>
-          </div>
-
           {/* Hero — Eyebrow + Massive Headline */}
           <section className="vsl-fade-up" style={{ padding: '80px 24px 40px', textAlign: 'center' }}>
             <p style={{ display: 'inline-flex', alignItems: 'center', gap: 10, fontSize: '1.05rem', fontWeight: 600, color: '#2EAE7D', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 20, fontFamily: 'Inter, sans-serif' }}>
