@@ -59,66 +59,28 @@ export default function VslPage(props: VslPageProps) {
         .vsl-btn {
           display: inline-flex;
           align-items: center;
+          justify-content: center;
           gap: 10px;
-          background: linear-gradient(135deg, #EE3030, #FD4E4F);
+          background: linear-gradient(180deg, #EE3030 0%, #C92020 100%);
           color: #ffffff;
-          padding: 16px 36px;
-          border-radius: 100px;
-          font-size: 0.95rem;
-          font-weight: 700;
+          padding: 20px 48px;
+          border-radius: 8px;
+          font-size: 1.1rem;
+          font-weight: 800;
           font-family: 'Raleway', sans-serif;
           border: none;
           cursor: pointer;
           transition: transform 0.2s ease, box-shadow 0.2s ease;
           letter-spacing: 0.02em;
-          box-shadow: 0 4px 20px rgba(238,48,48,0.25);
+          box-shadow: 0 4px 20px rgba(238,48,48,0.3);
+          text-transform: uppercase;
         }
         .vsl-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 8px 30px rgba(238,48,48,0.4);
-        }
-        .vsl-section-tag {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 0.75rem;
-          font-weight: 700;
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          color: #2B719D;
-          margin-bottom: 1.25rem;
-          font-family: 'Raleway', sans-serif;
-        }
-        .vsl-section-tag::before {
-          content: '';
-          width: 24px;
-          height: 2px;
-          background: #2B719D;
-          display: block;
-          flex-shrink: 0;
-        }
-        .vsl-section-tag-light {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 0.75rem;
-          font-weight: 700;
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.5);
-          margin-bottom: 1.25rem;
-          font-family: 'Raleway', sans-serif;
-        }
-        .vsl-section-tag-light::before {
-          content: '';
-          width: 24px;
-          height: 2px;
-          background: #EE3030;
-          display: block;
-          flex-shrink: 0;
+          box-shadow: 0 8px 30px rgba(238,48,48,0.45);
         }
         .vsl-testimonial-card {
-          border-radius: 12px;
+          border-radius: 8px;
           overflow: hidden;
           border: 1px solid #E4EAF0;
           transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -140,12 +102,14 @@ export default function VslPage(props: VslPageProps) {
           .vsl-video-testimonials { flex-direction: column !important; align-items: center !important; }
           .vsl-featured-grid { grid-template-columns: 1fr !important; }
           .vsl-featured-grid > div:first-child { max-height: 500px; }
+          .vsl-hero-h1 { font-size: 2.2rem !important; }
         }
         @media (max-width: 600px) {
           .vsl-modal-grid { height: 100vh !important; border-radius: 12px !important; max-width: 100vw !important; }
           .vsl-modal-cal  { border-radius: 12px !important; }
           .vsl-modal-cal iframe { height: 100vh !important; min-height: 100vh !important; }
           .vsl-proof-grid { grid-template-columns: 1fr 1fr !important; }
+          .vsl-hero-h1 { font-size: 1.75rem !important; }
         }
         @keyframes vslFadeUp {
           from { opacity: 0; transform: translateY(16px); }
@@ -160,7 +124,7 @@ export default function VslPage(props: VslPageProps) {
           onClick={(e) => { if (e.target === e.currentTarget) setModalOpen(false); }}
           style={{
             position: 'fixed', inset: 0,
-            background: 'rgba(27,43,64,0.85)',
+            background: 'rgba(0,0,0,0.8)',
             backdropFilter: 'blur(10px)',
             zIndex: 10000,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -246,77 +210,95 @@ export default function VslPage(props: VslPageProps) {
       )}
 
       {/* Page */}
-      <div style={{ fontFamily: 'Raleway, sans-serif', background: '#ffffff', minHeight: '100vh', color: '#1B2B40', WebkitFontSmoothing: 'antialiased', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ fontFamily: 'Raleway, sans-serif', background: '#ffffff', minHeight: '100vh', color: '#000', WebkitFontSmoothing: 'antialiased', position: 'relative', overflow: 'hidden' }}>
 
         <div style={{ position: 'relative', zIndex: 1 }}>
 
           {/* Header */}
-          <div style={{ borderBottom: '1px solid #E4EAF0', padding: '0 24px', background: '#ffffff' }}>
-            <div style={{ maxWidth: 900, margin: '0 auto', height: 72, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+          <div style={{ padding: '0 24px', background: '#ffffff', borderBottom: '1px solid #eee' }}>
+            <div style={{ maxWidth: 1000, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
               <img
                 src="https://assets.cdn.filesafe.space/NYlSya2nYSkSnnXEbY2l/media/69a9af9fb003fa7bb8bb92ee.png"
                 alt="RevCore"
-                style={{ height: 28, width: 'auto', filter: 'brightness(0)' }}
+                style={{ height: 26, width: 'auto', filter: 'brightness(0)' }}
               />
-              <span style={{ fontSize: '1.3rem', fontWeight: 800, letterSpacing: '-0.02em', fontFamily: 'Raleway, sans-serif', color: '#1B2B40' }}>
+              <span style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em', fontFamily: 'Raleway, sans-serif', color: '#000' }}>
                 Rev<span style={{ color: '#EE3030' }}>Core</span>
               </span>
             </div>
           </div>
 
-          {/* Headline */}
-          <section className="vsl-fade-up" style={{ padding: '60px 24px 36px', textAlign: 'center' }}>
-            <span className="vsl-section-tag">{eyebrow}</span>
-            <h1 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', fontWeight: 800, lineHeight: 1.1, color: '#1B2B40', maxWidth: 720, margin: '0 auto 16px', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.02em' }}>
+          {/* Hero — Eyebrow + Massive Headline */}
+          <section className="vsl-fade-up" style={{ padding: '72px 24px 40px', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.9rem', fontWeight: 700, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: 24, fontFamily: 'Raleway, sans-serif' }}>
+              {eyebrow}
+            </p>
+            <h1 className="vsl-hero-h1" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.08, color: '#000', maxWidth: 920, margin: '0 auto 24px', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.03em', textTransform: 'uppercase' }}>
               {headline}
             </h1>
-            <p style={{ fontSize: '1rem', color: '#5D7189', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '1.1rem', color: '#666', maxWidth: 520, margin: '0 auto', lineHeight: 1.6 }}>
               {subheadline}
             </p>
           </section>
 
           {/* Video */}
-          <section style={{ padding: '0 24px 44px' }}>
-            <div style={{ maxWidth: 860, margin: '0 auto' }}>
-              <div style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', boxShadow: '0 16px 60px rgba(27,43,64,0.12)', border: '1px solid #E4EAF0' }}>
-                <div style={{ position: 'relative', paddingBottom: '57.6%', height: 0 }}>
-                  <iframe
-                    src={`https://www.loom.com/embed/${mainVideoLoomId}`}
-                    allowFullScreen
-                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
-                  />
-                </div>
+          <section style={{ padding: '0 24px 48px' }}>
+            <div style={{ maxWidth: 960, margin: '0 auto' }}>
+              <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, background: '#000' }}>
+                <iframe
+                  src={`https://www.loom.com/embed/${mainVideoLoomId}`}
+                  allowFullScreen
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+                />
               </div>
             </div>
           </section>
 
-          {/* Featured Testimonial — right below VSL video */}
-          <section style={{ padding: '0 24px 60px' }}>
-            <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          {/* CTA right below video */}
+          <section style={{ padding: '0 24px 64px', textAlign: 'center' }}>
+            <div style={{ opacity: ctaVisible ? 1 : 0, transform: ctaVisible ? 'translateY(0)' : 'translateY(8px)', transition: 'opacity 0.5s ease, transform 0.5s ease' }}>
+              <button className="vsl-btn" onClick={() => setModalOpen(true)}>
+                Schedule Your Free Strategy Call
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+                  <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <p style={{ marginTop: 14, fontSize: '0.82rem', color: '#999' }}>
+                Free &nbsp;&middot;&nbsp; No obligation &nbsp;&middot;&nbsp; Limited territories available
+              </p>
+            </div>
+          </section>
+
+          {/* Divider line */}
+          <div style={{ maxWidth: 960, margin: '0 auto', borderTop: '1px solid #eee' }} />
+
+          {/* Weekly Client Spotlight */}
+          <section style={{ padding: '64px 24px 60px' }}>
+            <div style={{ maxWidth: 960, margin: '0 auto' }}>
 
               {/* Spotlight header */}
-              <div style={{ textAlign: 'center', marginBottom: 28 }}>
+              <div style={{ textAlign: 'center', marginBottom: 36 }}>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(238,48,48,0.06)', border: '1px solid rgba(238,48,48,0.12)', padding: '8px 20px', borderRadius: 100, marginBottom: 16 }}>
                   <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#EE3030" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
                   <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#EE3030', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Raleway, sans-serif' }}>Weekly Client Spotlight</span>
                 </div>
-                <h3 style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.6rem)', fontWeight: 800, color: '#1B2B40', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.02em', marginBottom: 8 }}>
+                <h3 style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 800, color: '#000', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.02em', marginBottom: 10 }}>
                   See What&rsquo;s Possible With RevCore
                 </h3>
-                <p style={{ fontSize: '0.88rem', color: '#8B9DB3', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
+                <p style={{ fontSize: '0.95rem', color: '#888', maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>
                   Every week we feature a client who&rsquo;s winning with RevCore. Here&rsquo;s this week&rsquo;s spotlight.
                 </p>
               </div>
 
+              {/* Featured testimonial card */}
               <div style={{
-                borderRadius: 20, overflow: 'hidden',
-                background: '#F4F7FA',
-                border: '1px solid #E4EAF0',
-                boxShadow: '0 4px 24px rgba(27,43,64,0.06)',
+                borderRadius: 12, overflow: 'hidden',
+                background: '#f9f9f9',
+                border: '1px solid #eee',
               }}>
                 <div className="vsl-featured-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
                   {/* Video side */}
-                  <div style={{ position: 'relative', background: '#000', borderRadius: '20px 0 0 20px', overflow: 'hidden' }}>
+                  <div style={{ position: 'relative', background: '#000' }}>
                     <div style={{ position: 'relative', paddingBottom: '177.78%', height: 0 }}>
                       <iframe
                         src="https://www.loom.com/embed/f56aca282489411496eb44f81f60a6f0"
@@ -336,14 +318,14 @@ export default function VslPage(props: VslPageProps) {
                         style={{ height: 48, width: 'auto', borderRadius: 8 }}
                       />
                       <div>
-                        <div style={{ fontFamily: 'Raleway, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: '#1B2B40', lineHeight: 1.2 }}>Aquatic Pool &amp; Spa</div>
-                        <div style={{ fontSize: '0.72rem', color: '#8B9DB3', fontWeight: 500, marginTop: 2 }}>Phoenix, Arizona</div>
+                        <div style={{ fontFamily: 'Raleway, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: '#000', lineHeight: 1.2 }}>Aquatic Pool &amp; Spa</div>
+                        <div style={{ fontSize: '0.75rem', color: '#999', fontWeight: 500, marginTop: 2 }}>Phoenix, Arizona</div>
                       </div>
                     </div>
 
                     <div style={{ position: 'relative', marginBottom: 28 }}>
-                      <div style={{ position: 'absolute', top: -8, left: -4, fontSize: '3rem', color: 'rgba(43,113,157,0.15)', fontFamily: 'Georgia, serif', lineHeight: 1 }}>&ldquo;</div>
-                      <p style={{ fontSize: '1.05rem', color: '#5D7189', lineHeight: 1.7, fontStyle: 'italic', paddingLeft: 20, fontFamily: 'Raleway, sans-serif' }}>
+                      <div style={{ position: 'absolute', top: -8, left: -4, fontSize: '3rem', color: 'rgba(0,0,0,0.06)', fontFamily: 'Georgia, serif', lineHeight: 1 }}>&ldquo;</div>
+                      <p style={{ fontSize: '1.05rem', color: '#555', lineHeight: 1.7, fontStyle: 'italic', paddingLeft: 20, fontFamily: 'Raleway, sans-serif' }}>
                         He pretty much has 10x&apos;d our calls since we had him on board. Now we&apos;re coming up with different ideas to put more staff in place just because of the amount of new customers and new projects.
                       </p>
                     </div>
@@ -367,16 +349,16 @@ export default function VslPage(props: VslPageProps) {
                       {['Hired a full-time sales representative', 'Expanding production team', 'Now offering custom landscaping services'].map(item => (
                         <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
-                          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#5D7189', fontFamily: 'Raleway, sans-serif' }}>{item}</span>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#555', fontFamily: 'Raleway, sans-serif' }}>{item}</span>
                         </div>
                       ))}
                     </div>
 
                     <div style={{ marginBottom: 8 }}>
-                      <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8B9DB3', marginBottom: 10, fontFamily: 'Raleway, sans-serif' }}>Active RevCore Services</div>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#999', marginBottom: 10, fontFamily: 'Raleway, sans-serif' }}>Active RevCore Services</div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                         {['Custom Website', 'Paid Meta Ads', 'SEO Optimization', 'GMB Optimization', 'Sales Software', 'CRM & Automation'].map(svc => (
-                          <span key={svc} style={{ fontSize: '0.7rem', fontWeight: 600, color: '#5D7189', padding: '5px 12px', borderRadius: 100, background: 'rgba(43,113,157,0.06)', border: '1px solid rgba(43,113,157,0.12)', fontFamily: 'Raleway, sans-serif' }}>{svc}</span>
+                          <span key={svc} style={{ fontSize: '0.7rem', fontWeight: 600, color: '#666', padding: '5px 12px', borderRadius: 100, background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.08)', fontFamily: 'Raleway, sans-serif' }}>{svc}</span>
                         ))}
                       </div>
                     </div>
@@ -388,28 +370,25 @@ export default function VslPage(props: VslPageProps) {
 
           {/* Mid CTA */}
           <section style={{ padding: '0 24px 80px', textAlign: 'center' }}>
-            <p style={{ fontSize: '0.95rem', color: '#5D7189', marginBottom: 28, maxWidth: 440, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '1rem', color: '#666', marginBottom: 28, maxWidth: 460, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.6 }}>
               {ctaText}
             </p>
             <div style={{ opacity: ctaVisible ? 1 : 0, transform: ctaVisible ? 'translateY(0)' : 'translateY(8px)', transition: 'opacity 0.5s ease, transform 0.5s ease' }}>
               <button className="vsl-btn" onClick={() => setModalOpen(true)}>
                 Schedule Your Free Call
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
                   <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
-              <p style={{ marginTop: 12, fontSize: '0.8rem', color: '#8B9DB3' }}>
-                Free strategy session &nbsp;&middot;&nbsp; No obligation &nbsp;&middot;&nbsp; Limited territories
-              </p>
             </div>
           </section>
 
           {/* Social Proof */}
-          <section style={{ padding: '80px 24px', borderTop: '1px solid #E4EAF0', background: '#F4F7FA' }}>
-            <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          <section style={{ padding: '80px 24px', borderTop: '1px solid #eee', background: '#f7f7f7' }}>
+            <div style={{ maxWidth: 960, margin: '0 auto' }}>
               <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                <span className="vsl-section-tag">Client Results</span>
-                <h2 style={{ fontSize: 'clamp(1.5rem,3vw,2rem)', fontWeight: 800, color: '#1B2B40', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.02em' }}>
+                <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12, fontFamily: 'Raleway, sans-serif' }}>Client Results</p>
+                <h2 style={{ fontSize: 'clamp(1.5rem,3.5vw,2.4rem)', fontWeight: 900, color: '#000', fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.02em' }}>
                   What Contractors Are Saying
                 </h2>
               </div>
@@ -430,23 +409,24 @@ export default function VslPage(props: VslPageProps) {
                 ))}
               </div>
 
-              {/* Featured Video Testimonial — Aquatic Pools */}
+              {/* Featured Video Testimonial label */}
               <div style={{ textAlign: 'center', marginBottom: 20 }}>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid #E4EAF0', padding: '6px 16px', borderRadius: 100 }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid #eee', padding: '6px 16px', borderRadius: 100 }}>
                   <svg viewBox="0 0 24 24" fill="none" width="12" height="12" stroke="#EE3030" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-                  <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#5D7189', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'Raleway, sans-serif' }}>Featured Video Testimonial</span>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'Raleway, sans-serif' }}>Featured Video Testimonial</span>
                 </div>
               </div>
+
+              {/* Featured Video Testimonial — Aquatic Pools */}
               <div style={{
-                borderRadius: 20, overflow: 'hidden',
+                borderRadius: 12, overflow: 'hidden',
                 background: '#ffffff',
-                border: '1px solid #E4EAF0',
-                boxShadow: '0 4px 24px rgba(27,43,64,0.06)',
+                border: '1px solid #eee',
                 marginBottom: 48,
               }}>
                 <div className="vsl-featured-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
                   {/* Video side */}
-                  <div style={{ position: 'relative', background: '#000', borderRadius: '20px 0 0 20px', overflow: 'hidden' }}>
+                  <div style={{ position: 'relative', background: '#000' }}>
                     <div style={{ position: 'relative', paddingBottom: '177.78%', height: 0 }}>
                       <iframe
                         src="https://www.loom.com/embed/f56aca282489411496eb44f81f60a6f0"
@@ -466,14 +446,14 @@ export default function VslPage(props: VslPageProps) {
                         style={{ height: 48, width: 'auto', borderRadius: 8 }}
                       />
                       <div>
-                        <div style={{ fontFamily: 'Raleway, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: '#1B2B40', lineHeight: 1.2 }}>Aquatic Pool &amp; Spa</div>
-                        <div style={{ fontSize: '0.72rem', color: '#8B9DB3', fontWeight: 500, marginTop: 2 }}>Phoenix, Arizona</div>
+                        <div style={{ fontFamily: 'Raleway, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: '#000', lineHeight: 1.2 }}>Aquatic Pool &amp; Spa</div>
+                        <div style={{ fontSize: '0.75rem', color: '#999', fontWeight: 500, marginTop: 2 }}>Phoenix, Arizona</div>
                       </div>
                     </div>
 
                     <div style={{ position: 'relative', marginBottom: 28 }}>
-                      <div style={{ position: 'absolute', top: -8, left: -4, fontSize: '3rem', color: 'rgba(43,113,157,0.15)', fontFamily: 'Georgia, serif', lineHeight: 1 }}>&ldquo;</div>
-                      <p style={{ fontSize: '1.05rem', color: '#5D7189', lineHeight: 1.7, fontStyle: 'italic', paddingLeft: 20, fontFamily: 'Raleway, sans-serif' }}>
+                      <div style={{ position: 'absolute', top: -8, left: -4, fontSize: '3rem', color: 'rgba(0,0,0,0.06)', fontFamily: 'Georgia, serif', lineHeight: 1 }}>&ldquo;</div>
+                      <p style={{ fontSize: '1.05rem', color: '#555', lineHeight: 1.7, fontStyle: 'italic', paddingLeft: 20, fontFamily: 'Raleway, sans-serif' }}>
                         He pretty much has 10x&apos;d our calls since we had him on board. Now we&apos;re coming up with different ideas to put more staff in place just because of the amount of new customers and new projects.
                       </p>
                     </div>
@@ -497,16 +477,16 @@ export default function VslPage(props: VslPageProps) {
                       {['Hired a full-time sales representative', 'Expanding production team', 'Now offering custom landscaping services'].map(item => (
                         <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#17AF84" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
-                          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#5D7189', fontFamily: 'Raleway, sans-serif' }}>{item}</span>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#555', fontFamily: 'Raleway, sans-serif' }}>{item}</span>
                         </div>
                       ))}
                     </div>
 
                     <div style={{ marginBottom: 8 }}>
-                      <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8B9DB3', marginBottom: 10, fontFamily: 'Raleway, sans-serif' }}>Active RevCore Services</div>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#999', marginBottom: 10, fontFamily: 'Raleway, sans-serif' }}>Active RevCore Services</div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                         {['Custom Website', 'Paid Meta Ads', 'SEO Optimization', 'GMB Optimization', 'Sales Software', 'CRM & Automation'].map(svc => (
-                          <span key={svc} style={{ fontSize: '0.7rem', fontWeight: 600, color: '#5D7189', padding: '5px 12px', borderRadius: 100, background: 'rgba(43,113,157,0.06)', border: '1px solid rgba(43,113,157,0.12)', fontFamily: 'Raleway, sans-serif' }}>{svc}</span>
+                          <span key={svc} style={{ fontSize: '0.7rem', fontWeight: 600, color: '#666', padding: '5px 12px', borderRadius: 100, background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.08)', fontFamily: 'Raleway, sans-serif' }}>{svc}</span>
                         ))}
                       </div>
                     </div>
@@ -517,7 +497,7 @@ export default function VslPage(props: VslPageProps) {
               {/* Portrait video testimonials */}
               <div className="vsl-video-testimonials" style={{ display: 'flex', justifyContent: 'center', gap: 24 }}>
                 {VIDEO_TESTIMONIAL_IDS.map((id) => (
-                  <div key={id} style={{ maxWidth: 300, width: '100%', borderRadius: 16, overflow: 'hidden', border: '1px solid #E4EAF0', boxShadow: '0 8px 32px rgba(27,43,64,0.1)', background: '#000', position: 'relative', aspectRatio: '9/16' }}>
+                  <div key={id} style={{ maxWidth: 300, width: '100%', borderRadius: 8, overflow: 'hidden', border: '1px solid #eee', background: '#000', position: 'relative', aspectRatio: '9/16' }}>
                     <div style={{ position: 'relative', paddingBottom: '177.78%', height: 0 }}>
                       <iframe
                         src={`https://www.loom.com/embed/${id}`}
@@ -531,29 +511,29 @@ export default function VslPage(props: VslPageProps) {
             </div>
           </section>
 
-          {/* Bottom CTA — dark navy section for contrast */}
-          <section style={{ padding: '96px 24px', textAlign: 'center', background: '#1B2B40' }}>
+          {/* Bottom CTA — dark section */}
+          <section style={{ padding: '96px 24px', textAlign: 'center', background: '#111' }}>
             <div style={{ maxWidth: 640, margin: '0 auto' }}>
-              <span className="vsl-section-tag-light">Don&rsquo;t Wait</span>
-              <h2 style={{ fontSize: 'clamp(1.75rem,4vw,2.5rem)', fontWeight: 800, color: '#ffffff', marginBottom: 20, lineHeight: 1.1, fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.02em' }}>
+              <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#EE3030', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 16, fontFamily: 'Raleway, sans-serif' }}>Don&rsquo;t Wait</p>
+              <h2 style={{ fontSize: 'clamp(1.75rem,4.5vw,2.8rem)', fontWeight: 900, color: '#ffffff', marginBottom: 20, lineHeight: 1.08, fontFamily: 'Raleway, sans-serif', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
                 Ready to Scale Your Business?
               </h2>
-              <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.55)', marginBottom: 36, lineHeight: 1.7 }}>
+              <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.5)', marginBottom: 40, lineHeight: 1.7 }}>
                 Book your free 15-minute strategy call and discover how to add 7 figures to your annual revenue with exclusive qualified appointments in your territory.
               </p>
               <button className="vsl-btn" onClick={() => setModalOpen(true)}>
                 Schedule Your Call Now
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
                   <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
-              <p style={{ marginTop: 12, fontSize: '0.8rem', color: 'rgba(255,255,255,0.35)' }}>Limited territories available</p>
+              <p style={{ marginTop: 14, fontSize: '0.82rem', color: 'rgba(255,255,255,0.3)' }}>Limited territories available</p>
 
-              <div style={{ marginTop: 48, paddingTop: 40, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.35)', marginBottom: 12 }}>Want to learn more about what we do?</p>
-                <a href="https://www.revcorehq.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.875rem', fontWeight: 600, color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontFamily: 'Raleway, sans-serif', letterSpacing: '0.02em', borderBottom: '1px solid rgba(255,255,255,0.25)', paddingBottom: 2, transition: 'color 0.2s, border-color 0.2s' }}
-                  onMouseOver={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#EE3030'; (e.currentTarget as HTMLAnchorElement).style.borderBottomColor = '#EE3030'; }}
-                  onMouseOut={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.6)'; (e.currentTarget as HTMLAnchorElement).style.borderBottomColor = 'rgba(255,255,255,0.25)'; }}
+              <div style={{ marginTop: 56, paddingTop: 40, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.35)', marginBottom: 14 }}>Want to learn more about what we do?</p>
+                <a href="https://www.revcorehq.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.95rem', fontWeight: 700, color: '#EE3030', textDecoration: 'none', fontFamily: 'Raleway, sans-serif', letterSpacing: '0.02em', transition: 'opacity 0.2s' }}
+                  onMouseOver={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '0.7'; }}
+                  onMouseOut={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '1'; }}
                 >
                   Visit revcorehq.com &rarr;
                 </a>
@@ -562,8 +542,8 @@ export default function VslPage(props: VslPageProps) {
           </section>
 
           {/* Footer */}
-          <div style={{ padding: '28px 24px', textAlign: 'center', background: '#152233' }}>
-            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>&copy; 2026 RevCore. All Rights Reserved.</p>
+          <div style={{ padding: '28px 24px', textAlign: 'center', background: '#0a0a0a' }}>
+            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'Raleway, sans-serif' }}>&copy; 2026 RevCore. All Rights Reserved.</p>
           </div>
 
         </div>
