@@ -331,15 +331,15 @@ export default function VslPage(props: VslPageProps) {
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(238,48,48,0.06)', border: '1px solid rgba(238,48,48,0.15)', padding: '10px 18px', borderRadius: 100 }}>
                         <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#EE3030" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#EE3030', fontFamily: 'Inter, sans-serif' }}>12x Booked Qualified Appointments</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#EE3030', fontFamily: 'Inter, sans-serif' }}>6 Figures Added in First 90 Days</span>
+                      </div>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(46,174,125,0.06)', border: '1px solid rgba(46,174,125,0.15)', padding: '10px 18px', borderRadius: 100 }}>
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#2EAE7D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#2EAE7D', fontFamily: 'Inter, sans-serif' }}>12x Booked Qualified Appointments</span>
                       </div>
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(46,174,125,0.06)', border: '1px solid rgba(46,174,125,0.15)', padding: '10px 18px', borderRadius: 100 }}>
                         <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#2EAE7D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#2EAE7D', fontFamily: 'Inter, sans-serif' }}>$64K Closed on First Estimate</span>
-                      </div>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(46,174,125,0.06)', border: '1px solid rgba(46,174,125,0.15)', padding: '10px 18px', borderRadius: 100 }}>
-                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#2EAE7D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#2EAE7D', fontFamily: 'Inter, sans-serif' }}>6 Figures Added in First 90 Days</span>
                       </div>
                     </div>
 
