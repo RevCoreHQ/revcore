@@ -98,7 +98,7 @@ export default function VslPage(props: VslPageProps) {
           .vsl-modal-grid { grid-template-columns: 1fr !important; height: 98vh !important; }
           .vsl-modal-left { display: none !important; }
           .vsl-modal-cal  { border-radius: 16px !important; }
-          .vsl-proof-grid { grid-template-columns: 1fr !important; }
+          .vsl-proof-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .vsl-video-testimonials { flex-direction: column !important; align-items: center !important; }
           .vsl-featured-grid { grid-template-columns: 1fr !important; }
           .vsl-featured-grid > div:first-child { max-height: 500px; }
@@ -108,7 +108,7 @@ export default function VslPage(props: VslPageProps) {
           .vsl-modal-grid { height: 100vh !important; border-radius: 12px !important; max-width: 100vw !important; }
           .vsl-modal-cal  { border-radius: 12px !important; }
           .vsl-modal-cal iframe { height: 100vh !important; min-height: 100vh !important; }
-          .vsl-proof-grid { grid-template-columns: 1fr 1fr !important; }
+          .vsl-proof-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .vsl-hero-h1 { font-size: 2rem !important; }
         }
         @keyframes vslFadeUp {
@@ -374,15 +374,8 @@ export default function VslPage(props: VslPageProps) {
               </div>
 
               {/* Screenshot grid */}
-              <div className="vsl-proof-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 16 }}>
-                {TESTIMONIAL_IMAGES.slice(0, 3).map((src, i) => (
-                  <div key={i} className="vsl-testimonial-card">
-                    <img src={src} alt="Client result" style={{ width: '100%', height: 'auto', display: 'block' }} />
-                  </div>
-                ))}
-              </div>
               <div className="vsl-proof-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 48 }}>
-                {TESTIMONIAL_IMAGES.slice(3).map((src, i) => (
+                {TESTIMONIAL_IMAGES.map((src, i) => (
                   <div key={i} className="vsl-testimonial-card">
                     <img src={src} alt="Client result" style={{ width: '100%', height: 'auto', display: 'block' }} />
                   </div>
