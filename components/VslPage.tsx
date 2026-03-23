@@ -229,20 +229,20 @@ export default function VslPage(props: VslPageProps) {
           </div>
 
           {/* Hero — Eyebrow + Massive Headline */}
-          <section className="vsl-fade-up" style={{ padding: '80px 24px 48px', textAlign: 'center' }}>
-            <p style={{ fontSize: '1rem', fontWeight: 800, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 28, fontFamily: 'Inter, sans-serif' }}>
+          <section className="vsl-fade-up" style={{ padding: '80px 24px 40px', textAlign: 'center' }}>
+            <p style={{ fontSize: '1.05rem', fontWeight: 600, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 20, fontFamily: 'Inter, sans-serif' }}>
               {eyebrow}
             </p>
-            <h1 className="vsl-hero-h1" style={{ fontSize: 'clamp(2.8rem, 7vw, 5rem)', fontWeight: 900, lineHeight: 1.05, color: '#000', maxWidth: 1100, margin: '0 auto 28px', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.04em', textTransform: 'uppercase' }}>
+            <h1 className="vsl-hero-h1" style={{ fontSize: 'clamp(2.8rem, 6.5vw, 4.5rem)', fontWeight: 700, lineHeight: 1.12, color: '#222', maxWidth: 1000, margin: '0 auto 28px', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
               {headline}
             </h1>
-            <p style={{ fontSize: '1.15rem', color: '#555', maxWidth: 540, margin: '0 auto', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '1.1rem', color: '#666', maxWidth: 520, margin: '0 auto', lineHeight: 1.6 }}>
               {subheadline}
             </p>
           </section>
 
           {/* Video */}
-          <section style={{ padding: '0 16px 48px' }}>
+          <section style={{ padding: '12px 16px 48px' }}>
             <div style={{ maxWidth: 1100, margin: '0 auto' }}>
               <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, background: '#000' }}>
                 <iframe
@@ -282,7 +282,7 @@ export default function VslPage(props: VslPageProps) {
                   <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#EE3030" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
                   <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#EE3030', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif' }}>Weekly Client Spotlight</span>
                 </div>
-                <h3 style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 800, color: '#000', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', marginBottom: 10 }}>
+                <h3 style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 700, color: '#222', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', marginBottom: 10 }}>
                   See What&rsquo;s Possible With RevCore
                 </h3>
                 <p style={{ fontSize: '0.95rem', color: '#888', maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>
@@ -388,7 +388,7 @@ export default function VslPage(props: VslPageProps) {
             <div style={{ maxWidth: 1100, margin: '0 auto' }}>
               <div style={{ textAlign: 'center', marginBottom: 48 }}>
                 <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#17AF84', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12, fontFamily: 'Inter, sans-serif' }}>Client Results</p>
-                <h2 style={{ fontSize: 'clamp(1.5rem,3.5vw,2.4rem)', fontWeight: 900, color: '#000', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em' }}>
+                <h2 style={{ fontSize: 'clamp(1.5rem,3.5vw,2.4rem)', fontWeight: 700, color: '#222', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em' }}>
                   What Contractors Are Saying
                 </h2>
               </div>
@@ -515,7 +515,7 @@ export default function VslPage(props: VslPageProps) {
           <section style={{ padding: '96px 24px', textAlign: 'center', background: '#111' }}>
             <div style={{ maxWidth: 640, margin: '0 auto' }}>
               <p style={{ fontSize: '0.8rem', fontWeight: 700, color: '#EE3030', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 16, fontFamily: 'Inter, sans-serif' }}>Don&rsquo;t Wait</p>
-              <h2 style={{ fontSize: 'clamp(1.75rem,4.5vw,2.8rem)', fontWeight: 900, color: '#ffffff', marginBottom: 20, lineHeight: 1.08, fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+              <h2 style={{ fontSize: 'clamp(1.75rem,4.5vw,2.8rem)', fontWeight: 700, color: '#ffffff', marginBottom: 20, lineHeight: 1.12, fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
                 Ready to Scale Your Business?
               </h2>
               <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.5)', marginBottom: 40, lineHeight: 1.7 }}>
