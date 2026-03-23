@@ -362,17 +362,29 @@ export default function VslPage(props: VslPageProps) {
                       </p>
                     </div>
 
-                    {/* Key result */}
-                    <div style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 10,
-                      background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.2)',
-                      padding: '10px 18px', borderRadius: 100, marginBottom: 28, width: 'fit-content',
-                    }}>
-                      <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#FE6462" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                        <polyline points="17 6 23 6 23 12" />
-                      </svg>
-                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FE6462', fontFamily: 'DM Sans, sans-serif' }}>10x Increase in Calls</span>
+                    {/* Key results */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 28 }}>
+                      <div style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 10,
+                        background: 'rgba(254,100,98,0.08)', border: '1px solid rgba(254,100,98,0.2)',
+                        padding: '10px 18px', borderRadius: 100,
+                      }}>
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#FE6462" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                          <polyline points="17 6 23 6 23 12" />
+                        </svg>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FE6462', fontFamily: 'DM Sans, sans-serif' }}>12x Increase in Booked Qualified Appointments</span>
+                      </div>
+                      <div style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 10,
+                        background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.2)',
+                        padding: '10px 18px', borderRadius: 100,
+                      }}>
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#94D96B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#94D96B', fontFamily: 'DM Sans, sans-serif' }}>$64K Closed on First Estimate</span>
+                      </div>
                     </div>
 
                     {/* Services used */}
