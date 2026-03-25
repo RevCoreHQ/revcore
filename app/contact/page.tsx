@@ -63,7 +63,7 @@ export default function ContactPage() {
             position: 'absolute', inset: 0,
             display: 'flex', flexDirection: 'column',
             justifyContent: 'center', alignItems: 'flex-start',
-            padding: '0 52px', zIndex: 3,
+            padding: '0 clamp(1rem, 4vw, 3.25rem)', zIndex: 3,
           }}>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -115,7 +115,7 @@ export default function ContactPage() {
           <div className="contact-orb contact-orb-3" />
         </div>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{
+          <div className="contact-grid" style={{
             display: 'grid',
             gridTemplateColumns: '1fr 2fr',
             gap: '4rem',
@@ -212,7 +212,13 @@ export default function ContactPage() {
 
       <style>{`
         @media (max-width: 768px) {
-          .contact-grid { grid-template-columns: 1fr !important; }
+          .contact-grid {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+          }
+          .contact-grid iframe {
+            min-height: 500px !important;
+          }
         }
         .contact-orb {
           position: absolute;

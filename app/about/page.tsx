@@ -159,7 +159,7 @@ export default function AboutPage() {
           {/* Text content */}
           <div style={{
             position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
-            justifyContent: 'center', alignItems: 'flex-start', padding: '0 52px', zIndex: 4,
+            justifyContent: 'center', alignItems: 'flex-start', padding: '0 clamp(1rem, 4vw, 3.25rem)', zIndex: 4,
           }}>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -189,7 +189,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Who we are ── */}
-      <section ref={hero.ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
+      <section ref={hero.ref as React.Ref<HTMLElement>} style={{ padding: 'clamp(48px, 8vw, 100px) 0', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
         <SpaceBackground opacity={0.22} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ ...fadeUp(hero.inView, 0) }}>
@@ -211,7 +211,7 @@ export default function AboutPage() {
           >
             Not a generalist agency. A revenue firm built exclusively for the trades.
           </AnimatedText>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', marginBottom: '3.5rem' }}>
+          <div className="about-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', marginBottom: '3.5rem' }}>
             <p style={{ fontSize: '1.0625rem', lineHeight: '1.85', color: 'rgba(255,255,255,0.45)', ...slideFromLeft(hero.inView, 350) }}>
               RevCore is not a generalist agency. We don&apos;t take on e-commerce brands, SaaS companies, or restaurants. We do one thing: help home improvement contractors — roofers, remodelers, window companies, pool builders, landscapers, and more — grow their revenue fast, with systems that actually work in the field.
             </p>
@@ -263,7 +263,7 @@ export default function AboutPage() {
       <section ref={statsSection.ref as React.Ref<HTMLElement>} style={{ padding: '80px 0', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
         <SpaceBackground opacity={0.45} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: 'rgba(255,255,255,0.07)', borderRadius: '20px', overflow: 'hidden' }}>
+          <div className="about-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: 'rgba(255,255,255,0.07)', borderRadius: '20px', overflow: 'hidden' }}>
             {stats.map((s, i) => (
               <div key={s.label} style={{
                 padding: '3rem 2rem', background: '#070b0f', textAlign: 'center',
@@ -285,7 +285,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Four pillars — corner animations ── */}
-      <section ref={pillarsSection.ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#0A0A0A', position: 'relative', overflow: 'hidden' }}>
+      <section ref={pillarsSection.ref as React.Ref<HTMLElement>} style={{ padding: 'clamp(48px, 8vw, 100px) 0', background: '#0A0A0A', position: 'relative', overflow: 'hidden' }}>
         <SpaceBackground opacity={0.45} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ textAlign: 'center', marginBottom: '4rem', ...fadeUp(pillarsSection.inView, 0) }}>
@@ -304,7 +304,7 @@ export default function AboutPage() {
             </AnimatedText>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+          <div className="about-pillars" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
             {pillars.map((p, i) => {
               const corners = [slideFromTopLeft, slideFromTopRight, slideFromBottomLeft, slideFromBottomRight];
               const anim = corners[i](pillarsSection.inView, 150 + i * 100);
@@ -341,9 +341,9 @@ export default function AboutPage() {
       </section>
 
       {/* ── How it works — timeline ── */}
-      <section ref={timelineSection.ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#ffffff' }}>
+      <section ref={timelineSection.ref as React.Ref<HTMLElement>} style={{ padding: 'clamp(48px, 8vw, 100px) 0', background: '#ffffff' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'start' }}>
+          <div className="about-timeline" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'start' }}>
             <div style={{ ...slideFromLeft(timelineSection.inView, 0) }}>
               <div className="section-tag">How It Works</div>
               <h2 style={{
@@ -404,7 +404,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── CRM spotlight — dark ── */}
-      <section ref={crmSection.ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
+      <section ref={crmSection.ref as React.Ref<HTMLElement>} style={{ padding: 'clamp(48px, 8vw, 100px) 0', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
         <SpaceBackground opacity={0.45} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: '820px', margin: '0 auto' }}>
@@ -423,7 +423,7 @@ export default function AboutPage() {
                   <p style={{ color: 'rgba(255,255,255,0.45)', lineHeight: '1.8', marginBottom: '2.5rem', fontSize: '1rem' }}>
                     Your website, your paid ads, your follow-up sequences, and your rehash engine (automated re-engagement for old leads) all route back into your RevCore CRM. It's a centralized command center, so instead of logging into four different platforms to figure out what's working, you see everything in one clean dashboard.
                   </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+                  <div className="about-crm-features" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
                     {[
                       { label: 'Website leads → CRM', color: '#94D96B' },
                       { label: 'Paid ads → CRM', color: '#6B8EFE' },
@@ -450,7 +450,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── CTA ── */}
-      <section ref={ctaSection.ref as React.Ref<HTMLElement>} style={{ padding: '100px 0', background: 'var(--color-bg)', textAlign: 'center' }}>
+      <section ref={ctaSection.ref as React.Ref<HTMLElement>} style={{ padding: 'clamp(48px, 8vw, 100px) 0', background: 'var(--color-bg)', textAlign: 'center' }}>
         <div className="container" style={{ maxWidth: '640px' }}>
           <div style={{ ...fadeUp(ctaSection.inView, 0) }}>
             <div className="section-tag" style={{ justifyContent: 'center' }}>Ready?</div>
@@ -494,9 +494,11 @@ export default function AboutPage() {
           100% { transform: scale(1);   opacity: 1; }
         }
         @media (max-width: 768px) {
-          .about-grid-2 { grid-template-columns: 1fr !important; }
+          .about-grid-2col,
+          .about-pillars,
+          .about-timeline { grid-template-columns: 1fr !important; gap: 2rem !important; }
           .about-stats { grid-template-columns: repeat(2, 1fr) !important; }
-          div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+          .about-crm-features { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </>

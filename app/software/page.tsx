@@ -1163,11 +1163,28 @@ export default function SoftwarePage() {
           50%       { opacity: 0.5; box-shadow: 0 0 14px #FE6462; }
         }
         @media (max-width: 768px) {
-          div[style*="grid-template-columns: 1fr 1fr"] {
+          div[style*="grid-template-columns: 1fr 1fr"],
+          div[style*="grid-template-columns: 140px 1fr"],
+          div[style*="grid-template-columns: 1fr auto"] {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+          }
+          div[style*="grid-template-columns: repeat(3, 1fr)"] {
             grid-template-columns: 1fr !important;
           }
-          div[style*="grid-template-columns: 140px 1fr"] {
-            grid-template-columns: 1fr !important;
+          section[style*="padding: 120px"] {
+            padding-top: 48px !important;
+            padding-bottom: 48px !important;
+          }
+          section[style*="padding: 140px"] {
+            padding-top: 48px !important;
+            padding-bottom: 48px !important;
+          }
+          table[style*="minWidth"] {
+            min-width: 0 !important;
+          }
+          th[style*="minWidth"], td[style*="minWidth"] {
+            min-width: 0 !important;
           }
         }
       `}</style>

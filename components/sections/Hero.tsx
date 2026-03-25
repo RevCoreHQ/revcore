@@ -109,6 +109,13 @@ export default function Hero() {
         @media (max-width: 768px) {
           .hero-outlined { font-size: clamp(3.5rem, 18vw, 6rem); }
           .hero-gradient { font-size: clamp(2.75rem, 14vw, 5rem); }
+          .hero-text-content { padding: 0 clamp(1rem, 4vw, 3.25rem) !important; }
+          .hero-cta-wrap {
+            width: 100px !important;
+            height: 100px !important;
+            bottom: 20px !important;
+            right: 20px !important;
+          }
         }
 
         /* Rotating CTA */
@@ -248,6 +255,7 @@ export default function Hero() {
 
           {/* Large text */}
           <div
+            className="hero-text-content"
             style={{
               position: 'absolute',
               inset: 0,
@@ -255,7 +263,7 @@ export default function Hero() {
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'flex-start',
-              padding: '0 52px',
+              padding: '0 clamp(1rem, 4vw, 3.25rem)',
               zIndex: 5,
             }}
           >

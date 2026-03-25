@@ -970,6 +970,7 @@ export default function PackagesPage() {
           .roi-appts-4 { grid-template-columns: repeat(2, 1fr) !important; }
           .seo-grid-2 { grid-template-columns: 1fr !important; }
           .cal-phase-tabs { flex-direction: column !important; align-items: stretch !important; }
+          div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </main>

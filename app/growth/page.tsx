@@ -643,7 +643,7 @@ function PortfolioSection() {
         </div>
 
         {/* Tab nav */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '2.5rem', flexWrap: 'wrap' as const, ...fadeUp(inView, 150) }}>
+        <div className="growth-tabs" style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '2.5rem', flexWrap: 'wrap' as const, ...fadeUp(inView, 150) }}>
           {/* Live site tabs first */}
           {LIVE_SITES.map((site, i) => (
             <button key={site.id} onClick={() => setActiveTab(i)} style={{
@@ -852,6 +852,13 @@ export default function GrowthPage() {
         @media (max-width: 900px) {
           .gmb-grid { grid-template-columns: 1fr !important; }
           .features-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 768px) {
+          div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; gap: 2rem !important; }
+          div[style*="grid-template-columns: repeat(4"] { grid-template-columns: repeat(2, 1fr) !important; }
+          div[style*="grid-template-columns: repeat(3"] { grid-template-columns: 1fr !important; }
+          .growth-tabs { flex-wrap: wrap !important; justify-content: center !important; }
+          .growth-tabs button { font-size: 0.72rem !important; padding: 6px 14px !important; }
         }
         @media (max-width: 600px) {
           .features-grid { grid-template-columns: 1fr !important; }

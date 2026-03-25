@@ -171,7 +171,7 @@ export default function ServicesPage() {
           }} />
           <div style={{
             position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
-            justifyContent: 'flex-end', alignItems: 'flex-start', padding: '0 52px 52px', zIndex: 4,
+            justifyContent: 'flex-end', alignItems: 'flex-start', padding: '0 clamp(1rem, 4vw, 3.25rem) clamp(1.5rem, 4vw, 3.25rem)', zIndex: 4,
           }}>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -204,7 +204,7 @@ export default function ServicesPage() {
       {/* ── Intro ── */}
       <section ref={heroSection.ref as React.Ref<HTMLElement>} style={{ padding: '72px 0 48px', background: '#ffffff' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
+          <div className="services-intro-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
             <AnimatedText
               as="h2"
               inView={heroSection.inView}
@@ -237,15 +237,15 @@ export default function ServicesPage() {
       </section>
 
       {/* ── Horizontal scroll section ── */}
-      <div ref={hScrollRef} style={{ position: 'relative', height: '600vh' }}>
-        <div style={{
+      <div ref={hScrollRef} className="services-hscroll-outer" style={{ position: 'relative', height: '600vh' }}>
+        <div className="services-hscroll-sticky" style={{
           position: 'sticky', top: 0, height: '100vh', overflow: 'hidden',
           background: '#070b0f', display: 'flex', alignItems: 'center',
         }}>
           <SpaceBackground opacity={0.22} />
 
           {/* Top progress bar */}
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'rgba(255,255,255,0.06)', zIndex: 10 }}>
+          <div className="services-hscroll-progress" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'rgba(255,255,255,0.06)', zIndex: 10 }}>
             <div style={{
               height: '100%',
               background: services[activeCard]?.accent || '#94D96B',
@@ -255,7 +255,7 @@ export default function ServicesPage() {
           </div>
 
           {/* Card counter */}
-          <div style={{ position: 'absolute', top: '28px', right: '40px', zIndex: 10 }}>
+          <div className="services-hscroll-counter" style={{ position: 'absolute', top: '28px', right: '40px', zIndex: 10 }}>
             <span style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.28)' }}>
               {String(activeCard + 1).padStart(2, '0')} / {String(services.length).padStart(2, '0')}
             </span>
@@ -264,6 +264,7 @@ export default function ServicesPage() {
           {/* Cards track */}
           <div
             ref={trackRef}
+            className="services-hscroll-track"
             style={{
               display: 'flex',
               gap: '24px',
@@ -369,7 +370,7 @@ export default function ServicesPage() {
           </div>
 
           {/* Bottom dot indicators */}
-          <div style={{
+          <div className="services-hscroll-dots" style={{
             position: 'absolute', bottom: '28px', left: '50%', transform: 'translateX(-50%)',
             display: 'flex', gap: '8px', zIndex: 10,
           }}>
@@ -389,10 +390,10 @@ export default function ServicesPage() {
       <section ref={crmSection.ref as React.Ref<HTMLElement>} style={{ padding: '80px 0 120px', background: '#070b0f', position: 'relative', overflow: 'hidden' }}>
         <SpaceBackground opacity={0.45} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{
+          <div className="services-crm-banner" style={{
             borderRadius: '24px',
             background: 'linear-gradient(135deg, #0f1a10 0%, #0a0f1a 100%)',
-            padding: '3.5rem',
+            padding: 'clamp(1.5rem, 4vw, 3.5rem)',
             border: '1px solid rgba(255,255,255,0.07)',
             display: 'grid',
             gridTemplateColumns: '1fr auto',
@@ -467,10 +468,34 @@ export default function ServicesPage() {
           background-position: 0% center;
         }
         @media (max-width: 768px) {
-          div[style*="grid-template-columns: 1fr 1fr"],
-          div[style*="grid-template-columns: 1fr auto"] {
+          .services-intro-grid,
+          .services-crm-banner {
             grid-template-columns: 1fr !important;
+            gap: 2rem !important;
           }
+          .services-hscroll-outer {
+            height: auto !important;
+          }
+          .services-hscroll-sticky {
+            position: relative !important;
+            height: auto !important;
+            flex-direction: column !important;
+            padding: 2rem 0 !important;
+          }
+          .services-hscroll-track {
+            flex-direction: column !important;
+            transform: none !important;
+            padding: 0 1rem !important;
+            gap: 1rem !important;
+          }
+          .services-hscroll-track > div {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 420px !important;
+          }
+          .services-hscroll-progress,
+          .services-hscroll-counter,
+          .services-hscroll-dots { display: none !important; }
         }
       `}</style>
     </>

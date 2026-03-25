@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Tracker",
+  title: "Onboarding",
   robots: { index: false, follow: false },
 };
 
-export default function TrackerLayout({ children }: { children: React.ReactNode }) {
+export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

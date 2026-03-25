@@ -250,6 +250,7 @@ export default function Services() {
         {/* Service cards */}
         <div
           ref={cardsRef as React.Ref<HTMLDivElement>}
+          className="services-cards"
           style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}
         >
           {services.map((service, i) => (
@@ -260,11 +261,11 @@ export default function Services() {
         </div>
 
         {/* System flow diagram */}
-        <div ref={diagramRef as React.Ref<HTMLDivElement>} style={{
+        <div ref={diagramRef as React.Ref<HTMLDivElement>} className="system-diagram" style={{
           marginTop: '3rem',
           background: '#0A0A0A',
           borderRadius: '24px',
-          padding: '2.5rem 3rem',
+          padding: '2.5rem clamp(1.25rem, 3vw, 3rem)',
           position: 'relative',
           overflow: 'hidden',
           ...fadeUp(diagramIn, 0),
@@ -286,7 +287,7 @@ export default function Services() {
             </h3>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0', position: 'relative', overflowX: 'auto', paddingBottom: '4px' }}>
+          <div className="diagram-stages" style={{ display: 'flex', alignItems: 'flex-start', gap: '0', position: 'relative', overflowX: 'auto', paddingBottom: '4px' }}>
             <svg style={{ position: 'absolute', top: '28px', left: 0, width: '100%', height: '2px', pointerEvents: 'none' }} preserveAspectRatio="none">
               <line x1="0" y1="1" x2="100%" y2="1" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
               <line x1="0" y1="1" x2="100%" y2="1"
@@ -338,7 +339,7 @@ export default function Services() {
                   </div>
                 </div>
                 {si < stages.length - 1 && (
-                  <div style={{ flexShrink: 0, width: '32px', paddingTop: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="diagram-arrow" style={{ flexShrink: 0, width: '32px', paddingTop: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <svg width="24" height="16" viewBox="0 0 24 16" fill="none">
                       <path d="M0 8h18M14 3l6 5-6 5" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -348,7 +349,7 @@ export default function Services() {
             ))}
           </div>
 
-          <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+          <div className="diagram-footer" style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
             <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.25)', maxWidth: '400px', lineHeight: 1.6 }}>
               Built as a unified system, not disconnected services. Each stage is optimized to feed qualified, high-intent buyers to the next.
             </p>
@@ -382,6 +383,17 @@ export default function Services() {
         }
         @media (max-width: 600px) {
           .services-cards { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 768px) {
+          .system-diagram .diagram-stages {
+            flex-direction: column !important;
+            gap: 1rem !important;
+          }
+          .system-diagram .diagram-stages .diagram-arrow { display: none !important; }
+          .system-diagram .diagram-footer {
+            flex-direction: column !important;
+            text-align: center;
+          }
         }
       `}</style>
     </section>
