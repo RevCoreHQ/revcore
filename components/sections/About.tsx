@@ -276,7 +276,7 @@ export default function About() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: 'var(--color-white)' }}>
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: 'clamp(48px, 8vw, 120px) 0', background: 'var(--color-white)' }}>
       <div className="container">
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'center' }}>
 
@@ -291,7 +291,7 @@ export default function About() {
             </div>
 
             {/* Floating star badge */}
-            <div style={{
+            <div className="about-star-badge" style={{
               position: 'absolute', bottom: '2rem', left: '-1.5rem',
               width: '68px', height: '68px', borderRadius: '50%',
               background: 'var(--color-green)',
@@ -347,7 +347,8 @@ export default function About() {
 
       <style>{`
         @media (max-width: 768px) {
-          section > .container > div { grid-template-columns: 1fr !important; }
+          section > .container > div { grid-template-columns: 1fr !important; gap: 2rem !important; }
+          .about-star-badge { display: none !important; }
         }
       `}</style>
     </section>

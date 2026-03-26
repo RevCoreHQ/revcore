@@ -311,7 +311,7 @@ export default function AboutPage() {
               return (
                 <div key={p.number} style={{
                   borderRadius: '20px', background: p.color,
-                  border: `1px solid ${p.accent}25`, padding: '2.5rem',
+                  border: `1px solid ${p.accent}25`, padding: 'clamp(1.25rem, 3vw, 2.5rem)',
                   transition: 'transform 0.6s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s ease',
                   willChange: 'transform',
                   ...anim,
@@ -409,7 +409,7 @@ export default function AboutPage() {
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: '820px', margin: '0 auto' }}>
                 <div style={{
-                  borderRadius: '24px', padding: '3.5rem',
+                  borderRadius: '24px', padding: 'clamp(1.5rem, 4vw, 3.5rem)',
                   background: 'linear-gradient(135deg, #0f1a10 0%, #0a0f1a 100%)',
                   border: '1px solid rgba(255,255,255,0.07)', ...fadeUp(crmSection.inView, 0),
                 }}>

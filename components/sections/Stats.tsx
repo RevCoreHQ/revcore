@@ -64,7 +64,7 @@ export default function Stats() {
   }, []);
 
   return (
-    <section ref={sectionRef} style={{ padding: '100px 0', background: 'var(--color-primary)', position: 'relative', overflow: 'hidden' }}>
+    <section ref={sectionRef} style={{ padding: 'clamp(48px, 8vw, 100px) 0', background: 'var(--color-primary)', position: 'relative', overflow: 'hidden' }}>
       <SpaceBackground />
       <VideoBackground src={VIDEO_URL} opacity={0.05} />
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>

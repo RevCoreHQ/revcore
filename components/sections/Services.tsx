@@ -222,7 +222,7 @@ export default function Services() {
   const { ref: diagramRef, inView: diagramIn } = useScrollReveal({ threshold: 0.1 });
 
   return (
-    <section style={{ padding: '120px 0', background: '#070b0f' }}>
+    <section style={{ padding: 'clamp(48px, 8vw, 120px) 0', background: '#070b0f' }}>
       <div className="container">
         <div
           ref={headerRef as React.Ref<HTMLDivElement>}

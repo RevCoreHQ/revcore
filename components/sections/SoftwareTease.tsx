@@ -34,7 +34,7 @@ export default function SoftwareTease() {
   const { ref, inView } = useScrollReveal({ threshold: 0.06 });
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: '#070b0f', overflow: 'hidden', position: 'relative' }}>
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: 'clamp(48px, 8vw, 120px) 0', background: '#070b0f', overflow: 'hidden', position: 'relative' }}>
       <SpaceBackground />
       <VideoBackground src={VIDEO_URL} opacity={0.05} />
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
@@ -70,7 +70,7 @@ export default function SoftwareTease() {
         </div>
 
         {/* iPad display — two side by side */}
-        <div style={{
+        <div className="software-ipads" style={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'flex-end',
@@ -78,21 +78,21 @@ export default function SoftwareTease() {
           marginBottom: '5rem',
           flexWrap: 'wrap',
         }}>
-          <div style={{ ...scaleUp(inView, 150) }}>
-            <IpadMockup tilt={-4} width={500} accentGlow="rgba(148,217,107,0.5)">
+          <div style={{ maxWidth: '100%', ...scaleUp(inView, 150) }}>
+            <IpadMockup tilt={-4} width="min(500px, 90vw)" accentGlow="rgba(148,217,107,0.5)">
               <QuotingApp />
             </IpadMockup>
           </div>
 
-          <div style={{ ...scaleUp(inView, 320) }}>
-            <IpadMockup tilt={4} width={500} accentGlow="rgba(107,142,254,0.5)">
+          <div style={{ maxWidth: '100%', ...scaleUp(inView, 320) }}>
+            <IpadMockup tilt={4} width="min(500px, 90vw)" accentGlow="rgba(107,142,254,0.5)">
               <PitchApp />
             </IpadMockup>
           </div>
         </div>
 
         {/* Feature lists */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '3.5rem' }}>
+        <div className="software-feature-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '3.5rem' }}>
 
           <div style={{
             borderRadius: '20px', background: '#0f1a10',
@@ -164,7 +164,10 @@ export default function SoftwareTease() {
 
       <style>{`
         @media (max-width: 768px) {
-          section > .container > div:nth-child(4) { grid-template-columns: 1fr !important; }
+          .software-feature-grid { grid-template-columns: 1fr !important; }
+          .software-feature-grid div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+          .software-ipads { gap: 1.5rem !important; }
+          .software-ipads > div { max-width: 100% !important; }
         }
       `}</style>
     </section>

@@ -14,7 +14,7 @@ const industries = [
 
 export default function Industries() {
   return (
-    <section style={{ padding: '120px 0', background: 'var(--color-white)' }}>
+    <section style={{ padding: 'clamp(48px, 8vw, 120px) 0', background: 'var(--color-white)' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
           <div className="section-tag" style={{ justifyContent: 'center' }}>Who We Serve</div>

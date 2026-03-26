@@ -145,7 +145,7 @@ export default function SystemDiagram() {
   }
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '100px 0 120px', background: '#F5F5F5', overflow: 'hidden', position: 'relative' }}>
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: 'clamp(48px, 8vw, 100px) 0 clamp(48px, 8vw, 120px)', background: '#F5F5F5', overflow: 'hidden', position: 'relative' }}>
       {/* Light dot pattern */}
       <div style={{
         position: 'absolute', inset: 0,

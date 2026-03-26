@@ -36,7 +36,7 @@ export default function Process() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
 
   return (
-    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: '120px 0', background: 'var(--color-bg)' }}>
+    <section ref={ref as React.Ref<HTMLElement>} style={{ padding: 'clamp(48px, 8vw, 120px) 0', background: 'var(--color-bg)' }}>
       <div className="container">
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'start' }}>
           {/* Left — sticky heading */}

@@ -178,7 +178,7 @@ export default function BlogPreview() {
   const { ref: cardsRef, inView: cardsIn } = useScrollReveal({ threshold: 0.05 });
 
   return (
-    <section style={{ padding: '120px 0', background: '#070b0f' }}>
+    <section style={{ padding: 'clamp(48px, 8vw, 120px) 0', background: '#070b0f' }}>
       <div className="container">
         <div
           ref={headerRef as React.Ref<HTMLDivElement>}
@@ -205,6 +205,7 @@ export default function BlogPreview() {
 
         <div
           ref={cardsRef as React.Ref<HTMLDivElement>}
+          className="blog-grid"
           style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}
         >
           {posts.map((post, i) => (

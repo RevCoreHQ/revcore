@@ -47,7 +47,7 @@ export default function Testimonials() {
   const t = testimonials[current];
 
   return (
-    <section style={{ padding: '120px 0', background: 'var(--color-bg)', overflow: 'hidden' }}>
+    <section style={{ padding: 'clamp(48px, 8vw, 120px) 0', background: 'var(--color-bg)', overflow: 'hidden' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
           <div className="section-tag" style={{ justifyContent: 'center' }}>Partner Reviews</div>

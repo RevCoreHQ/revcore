@@ -61,7 +61,7 @@ export default function Portfolio() {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <section style={{ padding: '120px 0', background: 'var(--color-white)' }}>
+    <section style={{ padding: 'clamp(48px, 8vw, 120px) 0', background: 'var(--color-white)' }}>
       <div className="container">
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '3.5rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
