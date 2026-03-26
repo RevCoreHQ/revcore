@@ -3955,7 +3955,11 @@ function GoalsManagementTab({ data, setData, session }: { data: AppData; setData
 }
 
 // ─── User Management Section ──────────────────────────────────────────────────
-function UserManagementSection({ data, setData }: { data: AppData; setData: (d: AppData) => void }) {
+function UserManagementSection({ data, setData, callerRole }: { data: AppData; setData: (d: AppData) => void; callerRole: UserRole }) {
+  const isSuperAdmin = callerRole === 'super_admin';
+  const allowedRoles: UserRole[] = isSuperAdmin
+    ? (Object.keys(ROLE_LABELS) as UserRole[]).filter(r => r !== 'super_admin')
+    : ['setter', 'closer'];
   const [users, setUsers] = useState<RcUser[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -4106,7 +4110,7 @@ function UserManagementSection({ data, setData }: { data: AppData; setData: (d: 
             <div>
               <label style={lbl}>Role</label>
               <select value={newU.role} onChange={e => setNewU(p => ({ ...p, role: e.target.value as UserRole }))} style={{ ...inp, cursor: 'pointer' }}>
-                {(Object.keys(ROLE_LABELS) as UserRole[]).filter(r => r !== 'super_admin').map(r => (
+                {allowedRoles.map(r => (
                   <option key={r} value={r}>{ROLE_LABELS[r]}</option>
                 ))}
               </select>
@@ -4153,6 +4157,7 @@ function UserManagementSection({ data, setData }: { data: AppData; setData: (d: 
                 const isEditingRole = editRoleId === u.id;
                 const clientCount = data.clients.filter(c => c.setterId === pid || c.closerId === pid).length;
                 const commCount = data.comms.filter(c => c.partnerId === pid).length;
+                const canManage = isSuperAdmin || ['setter', 'closer'].includes(u.role);
                 return (
                   <div key={u.id} style={{ padding: '0.9rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
@@ -4172,31 +4177,33 @@ function UserManagementSection({ data, setData }: { data: AppData; setData: (d: 
                         </div>
                       )}
 
-                      {/* Role edit */}
-                      {isEditingRole ? (
+                      {/* Role badge / edit */}
+                      {canManage && isEditingRole ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <select value={editRoleVal} onChange={e => setEditRoleVal(e.target.value as UserRole)} style={{ ...inp, padding: '4px 8px', fontSize: '0.78rem', width: 'auto', cursor: 'pointer' }}>
-                            {(Object.keys(ROLE_LABELS) as UserRole[]).filter(r => r !== 'super_admin').map(r => (
+                            {allowedRoles.map(r => (
                               <option key={r} value={r}>{ROLE_LABELS[r]}</option>
                             ))}
                           </select>
-                          <button onClick={() => saveRole(u.id)} disabled={savingRole} style={{ ...btn('primary'), fontSize: '0.72rem', padding: '4px 12px' }}>{savingRole ? '…' : 'Save'}</button>
-                          <button onClick={() => setEditRoleId(null)} style={{ ...btn('ghost'), fontSize: '0.72rem', padding: '4px 10px' }}>✕</button>
+                          <button onClick={() => saveRole(u.id)} disabled={savingRole} style={{ ...btn('primary'), fontSize: '0.72rem', padding: '4px 12px' }}>{savingRole ? '\u2026' : 'Save'}</button>
+                          <button onClick={() => setEditRoleId(null)} style={{ ...btn('ghost'), fontSize: '0.72rem', padding: '4px 10px' }}>{'\u2715'}</button>
                         </div>
-                      ) : (
+                      ) : canManage ? (
                         <button onClick={() => { setEditRoleId(u.id); setEditRoleVal(u.role); }} title="Change role"
                           style={{ ...badge(ROLE_COLORS[u.role]), cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          {ROLE_LABELS[u.role]} <span style={{ opacity: 0.5, fontSize: '0.65rem' }}>✎</span>
+                          {ROLE_LABELS[u.role]} <span style={{ opacity: 0.5, fontSize: '0.65rem' }}>{'\u270E'}</span>
                         </button>
+                      ) : (
+                        <span style={badge(ROLE_COLORS[u.role])}>{ROLE_LABELS[u.role]}</span>
                       )}
 
-                      <button onClick={() => resetPassword(u)} disabled={resetPassId === u.id}
+                      {canManage && <button onClick={() => resetPassword(u)} disabled={resetPassId === u.id}
                         style={{ ...btn('ghost'), fontSize: '0.7rem', padding: '3px 10px', opacity: resetPassId === u.id ? 0.5 : 1 }}>
-                        {resetPassId === u.id ? '…' : '↺ Password'}
-                      </button>
-                      <button onClick={() => toggleActive(u)} style={{ ...btn(u.is_active ? 'danger' : 'ghost'), fontSize: '0.7rem', padding: '3px 12px' }}>
+                        {resetPassId === u.id ? '\u2026' : '\u21BA Password'}
+                      </button>}
+                      {canManage && <button onClick={() => toggleActive(u)} style={{ ...btn(u.is_active ? 'danger' : 'ghost'), fontSize: '0.7rem', padding: '3px 12px' }}>
                         {u.is_active ? 'Terminate' : 'Restore'}
-                      </button>
+                      </button>}
                     </div>
                   </div>
                 );
@@ -4243,7 +4250,7 @@ function SettingsTab({ data, setData, session }: { data: AppData; setData: (d: A
         <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>Manage your account, data, and team access</p>
       </div>
 
-      {session.role === 'super_admin' && <UserManagementSection data={data} setData={setData} />}
+      {(session.role === 'super_admin' || session.role === 'sales_manager') && <UserManagementSection data={data} setData={setData} callerRole={session.role} />}
 
       <div style={{ ...glassCard, marginBottom: '1rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.06s both' }}>
         <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '0.4rem' }}>Data Management</div>
