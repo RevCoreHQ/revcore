@@ -149,9 +149,7 @@ const ROLE_TABS: Record<UserRole, { id: Tab; label: string }[]> = {
     { id: 'settings', label: 'Settings' },
   ],
   sales_manager: [
-    { id: 'clients', label: 'Clients' },
-    { id: 'analytics', label: 'Analytics' }, { id: 'team', label: 'Team' },
-    { id: 'goals-mgmt', label: 'Goals & Tasks' },
+    { id: 'goals-mgmt', label: 'Goals & Tasks' }, { id: 'team', label: 'Team' },
     { id: 'calendar', label: 'Calendar' }, { id: 'settings', label: 'Settings' },
   ],
   finance: [
