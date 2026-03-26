@@ -40,9 +40,10 @@ export default function Header() {
   const isOnboarding = pathname?.startsWith('/onboarding');
   const isVsl        = pathname?.startsWith('/vsl') || pathname === '/confirmed' || pathname === '/booked';
   const isPackages   = pathname?.startsWith('/packages');
+  const isScraper    = pathname?.startsWith('/scraper');
   const isDark       = pathname?.startsWith('/software') || pathname?.startsWith('/growth') || isPackages;
 
-  if (isTracker || isPortal || isOnboarding || isVsl || isPackages) return null;
+  if (isTracker || isPortal || isOnboarding || isVsl || isPackages || isScraper) return null;
 
   const navColor   = isDark ? 'rgba(255,255,255,0.75)' : '#0A0A0A';
   const bgColor    = isDark ? 'rgba(7,11,15,0.92)'     : '#ffffff';
