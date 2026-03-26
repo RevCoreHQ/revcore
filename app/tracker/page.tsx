@@ -39,8 +39,15 @@ interface Commission {
 interface ServicePkg { id: string; name: string; price: number; planT: PlanT; description: string; }
 interface Activity { id: string; clientId: string; type: 'call' | 'email' | 'note' | 'payment' | 'issue'; note: string; at: string; }
 interface MonthlyGoal { month: string; revenueTarget: number; newClientsTarget: number; }
-interface TeamGoal { id: string; partnerId: string; dialsPerDay: number; bookedPerWeek: number; attendedPerWeek: number; setBy: string; updatedAt: string; }
-interface DailyLog { id: string; partnerId: string; date: string; dials: number; bookedAppts: number; attendedAppts: number; notes: string; submittedAt: string; }
+interface TeamGoal { id: string; partnerId: string; dialsPerDay: number; bookedPerWeek: number; attendedPerWeek: number; closesPerWeek?: number; revenueTargetPerWeek?: number; setBy: string; updatedAt: string; }
+interface DailyLog {
+  id: string; partnerId: string; date: string;
+  dials: number; bookedAppts: number; attendedAppts: number;
+  connects?: number; followUpsMade?: number; noShows?: number; talkTimeMinutes?: number;
+  closes?: number; closerNoShows?: number; revenueClosed?: number; closerFollowUps?: number;
+  selfRating?: number; wentWell?: string; needsImprovement?: string; tomorrowPriority?: string;
+  notes: string; submittedAt: string;
+}
 interface Task { id: string; assignedToPartnerId: string; assignedByUserId: string; title: string; description: string; dueDate: string; isCompleted: boolean; completedAt: string; createdAt: string; }
 interface PaymentRecord { id: string; clientId: string; month: string; dueDate: string; amount: number; paid: boolean; paidAt: string; }
 interface AppData { partners: Partner[]; clients: Client[]; comms: Commission[]; packages: ServicePkg[]; activities: Activity[]; goals: MonthlyGoal[]; teamGoals: TeamGoal[]; dailyLogs: DailyLog[]; tasks: Task[]; paymentRecords: PaymentRecord[]; }
@@ -67,6 +74,14 @@ const normalizeData = (raw: Partial<AppData>): AppData => ({
   dailyLogs: raw.dailyLogs ?? [],
   tasks:     raw.tasks     ?? [],
   paymentRecords: raw.paymentRecords ?? [],
+});
+const safeLog = (l: DailyLog) => ({
+  dials: l.dials ?? 0, connects: l.connects ?? 0, followUpsMade: l.followUpsMade ?? 0,
+  bookedAppts: l.bookedAppts ?? 0, noShows: l.noShows ?? 0, talkTimeMinutes: l.talkTimeMinutes ?? 0,
+  attendedAppts: l.attendedAppts ?? 0, closes: l.closes ?? 0, closerNoShows: l.closerNoShows ?? 0,
+  revenueClosed: l.revenueClosed ?? 0, closerFollowUps: l.closerFollowUps ?? 0,
+  selfRating: l.selfRating ?? 0, wentWell: l.wentWell ?? '', needsImprovement: l.needsImprovement ?? '',
+  tomorrowPriority: l.tomorrowPriority ?? '', notes: l.notes ?? '',
 });
 
 function calcInit(c: Client, role: 'setter' | 'closer'): number {
@@ -3060,13 +3075,36 @@ function MyDashboardTab({ data, session }: { data: AppData; session: Session }) 
   const myComms = data.comms.filter(c => c.partnerId === session.partnerId);
   const pendingTotal = myComms.filter(c => c.stat === 'pending').reduce((s, c) => s + c.amount, 0);
   const paidTotal = myComms.filter(c => c.stat === 'paid').reduce((s, c) => s + c.amount, 0);
+
+  const todayStr = today();
+  const weekStart = getMonday();
+  const weekDates = Array.from({ length: 7 }, (_, i) => { const d = new Date(weekStart + 'T00:00:00'); d.setDate(d.getDate() + i); return d.toISOString().slice(0, 10); });
+  const myLogs = data.dailyLogs.filter(l => l.partnerId === session.partnerId);
+  const todayLog = myLogs.find(l => l.date === todayStr);
+  const weekLogs = myLogs.filter(l => l.date >= weekStart && l.date <= weekDates[6]);
+
+  const partnerRecord = data.partners.find(p => p.id === session.partnerId);
+  const partnerRole = partnerRecord?.role ?? 'both';
+  const isSetter = partnerRole === 'setter' || partnerRole === 'both';
+  const isCloser = partnerRole === 'closer' || partnerRole === 'both';
+
+  const weekDials = weekLogs.reduce((s, l) => s + l.dials, 0);
+  const weekBooked = weekLogs.reduce((s, l) => s + l.bookedAppts, 0);
+  const weekCloses = weekLogs.reduce((s, l) => s + (l.closes ?? 0), 0);
+  const weekRevenue = weekLogs.reduce((s, l) => s + (l.revenueClosed ?? 0), 0);
+  const myGoal = data.teamGoals.find(g => g.partnerId === session.partnerId);
+
+  const statMini: React.CSSProperties = { background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px', padding: '0.6rem 0.75rem' };
+  const statLabel: React.CSSProperties = { display: 'block', fontSize: '0.67rem', fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: '3px' };
+  const statVal = (color: string): React.CSSProperties => ({ display: 'block', fontSize: '1.3rem', fontWeight: 800, color, lineHeight: 1 });
+
   return (
     <div>
       <div style={{ marginBottom: '2rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
         <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.2rem', letterSpacing: '-0.03em' }}>Welcome back, {session.name.split(' ')[0]}</h2>
-        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>{ROLE_LABELS[session.role]} · Your activity at a glance</p>
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>{ROLE_LABELS[session.role]} {'\u00B7'} Your activity at a glance</p>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
         {[
           { label: 'Active Clients', value: myClients.filter(c => c.stage === 'active').length, color: '#94D96B' },
           { label: 'Total Assigned', value: myClients.length, color: '#6B8EFE' },
@@ -3079,7 +3117,89 @@ function MyDashboardTab({ data, session }: { data: AppData; session: Session }) 
           </div>
         ))}
       </div>
-      <div style={{ ...glassCard, animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.24s both' }}>
+
+      {/* Today's Activity */}
+      <div style={{ ...glassCard, marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.18s both' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+          <div>
+            <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem' }}>Today's Activity</div>
+            <div style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.35)', marginTop: '2px' }}>{fmtD(todayStr)}</div>
+          </div>
+          {!todayLog
+            ? <span style={badge('#F59E0B')}>Not logged yet</span>
+            : <span style={badge('#94D96B')}>Logged {new Date(todayLog.submittedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
+          }
+        </div>
+        {!todayLog
+          ? <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.83rem', margin: 0 }}>
+              Head to <strong style={{ color: 'rgba(255,255,255,0.6)' }}>Goals & Tasks</strong> to submit your check-in.
+            </p>
+          : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '0.75rem' }}>
+              {isSetter && <>
+                <div style={statMini}><span style={statLabel}>Dials</span><span style={statVal('#6B8EFE')}>{todayLog.dials}</span></div>
+                <div style={statMini}><span style={statLabel}>Connects</span><span style={statVal('#26D9B0')}>{todayLog.connects ?? 0}</span></div>
+                <div style={statMini}><span style={statLabel}>Booked</span><span style={statVal('#FEB64A')}>{todayLog.bookedAppts}</span></div>
+              </>}
+              {isCloser && <>
+                <div style={statMini}><span style={statLabel}>Taken</span><span style={statVal('#94D96B')}>{todayLog.attendedAppts}</span></div>
+                <div style={statMini}><span style={statLabel}>Closes</span><span style={statVal('#a78bfa')}>{todayLog.closes ?? 0}</span></div>
+                <div style={statMini}><span style={statLabel}>Revenue</span><span style={statVal('#94D96B')}>{fmtM(todayLog.revenueClosed ?? 0)}</span></div>
+              </>}
+              {(todayLog.selfRating ?? 0) > 0 && (
+                <div style={statMini}>
+                  <span style={statLabel}>Rating</span>
+                  <span style={{ ...statVal('#FEB64A'), fontSize: '1rem' }}>{'\u2605'.repeat(todayLog.selfRating!)}{'\u2606'.repeat(5 - todayLog.selfRating!)}</span>
+                </div>
+              )}
+            </div>
+        }
+      </div>
+
+      {/* This Week */}
+      <div style={{ ...glassCard, marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.24s both' }}>
+        <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '1rem' }}>
+          This Week <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', fontWeight: 400, marginLeft: '0.5rem' }}>Week of {fmtD(weekStart)}</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.75rem' }}>
+          {isSetter && <>
+            <div style={statMini}>
+              <span style={statLabel}>Dials</span>
+              <span style={statVal('#6B8EFE')}>{weekDials}</span>
+              {myGoal && myGoal.dialsPerDay > 0 && <div style={{ marginTop: '4px', background: 'rgba(255,255,255,0.07)', borderRadius: '100px', height: '5px' }}>
+                <div style={{ width: `${Math.min(100, Math.round(weekDials / (myGoal.dialsPerDay * 5) * 100))}%`, height: '100%', background: '#6B8EFE', borderRadius: '100px' }} />
+              </div>}
+            </div>
+            <div style={statMini}>
+              <span style={statLabel}>Booked</span>
+              <span style={statVal('#FEB64A')}>{weekBooked}</span>
+              {myGoal && myGoal.bookedPerWeek > 0 && <div style={{ marginTop: '4px', background: 'rgba(255,255,255,0.07)', borderRadius: '100px', height: '5px' }}>
+                <div style={{ width: `${Math.min(100, Math.round(weekBooked / myGoal.bookedPerWeek * 100))}%`, height: '100%', background: '#FEB64A', borderRadius: '100px' }} />
+              </div>}
+            </div>
+          </>}
+          {isCloser && <>
+            <div style={statMini}>
+              <span style={statLabel}>Closes</span>
+              <span style={statVal('#a78bfa')}>{weekCloses}</span>
+              {myGoal?.closesPerWeek && myGoal.closesPerWeek > 0 && <div style={{ marginTop: '4px', background: 'rgba(255,255,255,0.07)', borderRadius: '100px', height: '5px' }}>
+                <div style={{ width: `${Math.min(100, Math.round(weekCloses / myGoal.closesPerWeek * 100))}%`, height: '100%', background: '#a78bfa', borderRadius: '100px' }} />
+              </div>}
+            </div>
+            <div style={statMini}>
+              <span style={statLabel}>Revenue</span>
+              <span style={{ ...statVal('#94D96B'), fontSize: '1rem' }}>{fmtM(weekRevenue)}</span>
+            </div>
+          </>}
+          <div style={statMini}>
+            <span style={statLabel}>Days Logged</span>
+            <span style={statVal(weekLogs.length >= 5 ? '#94D96B' : weekLogs.length > 0 ? '#F59E0B' : '#FE6462')}>
+              {weekLogs.length}<span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.35)', fontWeight: 400 }}>/5</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ ...glassCard, animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.3s both' }}>
         <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '1rem' }}>My Recent Clients</div>
         {myClients.length === 0
           ? <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.83rem', margin: 0 }}>No clients assigned yet.</p>
@@ -3199,12 +3319,25 @@ function GoalsTab({ data, setData, session }: { data: AppData; setData: (d: AppD
   const todayStr = today();
   const todayLog = weekLogs.find(l => l.date === todayStr);
 
-  const [logForm, setLogForm] = useState({ dials: todayLog?.dials ?? 0, bookedAppts: todayLog?.bookedAppts ?? 0, attendedAppts: todayLog?.attendedAppts ?? 0, notes: todayLog?.notes ?? '' });
+  const initForm = (log?: DailyLog) => ({
+    dials: log?.dials ?? 0, connects: log?.connects ?? 0, followUpsMade: log?.followUpsMade ?? 0,
+    bookedAppts: log?.bookedAppts ?? 0, noShows: log?.noShows ?? 0, talkTimeMinutes: log?.talkTimeMinutes ?? 0,
+    attendedAppts: log?.attendedAppts ?? 0, closes: log?.closes ?? 0, closerNoShows: log?.closerNoShows ?? 0,
+    revenueClosed: log?.revenueClosed ?? 0, closerFollowUps: log?.closerFollowUps ?? 0,
+    selfRating: log?.selfRating ?? 0, wentWell: log?.wentWell ?? '', needsImprovement: log?.needsImprovement ?? '',
+    tomorrowPriority: log?.tomorrowPriority ?? '', notes: log?.notes ?? '',
+  });
+  const [logForm, setLogForm] = useState(initForm(todayLog));
   const [logSaved, setLogSaved] = useState(false);
+
+  const partnerRecord = data.partners.find(p => p.id === session.partnerId);
+  const partnerRole = partnerRecord?.role ?? 'both';
+  const isSetter = partnerRole === 'setter' || partnerRole === 'both';
+  const isCloser = partnerRole === 'closer' || partnerRole === 'both';
 
   // Re-init form if todayLog changes
   useEffect(() => {
-    setLogForm({ dials: todayLog?.dials ?? 0, bookedAppts: todayLog?.bookedAppts ?? 0, attendedAppts: todayLog?.attendedAppts ?? 0, notes: todayLog?.notes ?? '' });
+    setLogForm(initForm(todayLog));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [todayLog?.id]);
 
@@ -3227,9 +3360,14 @@ function GoalsTab({ data, setData, session }: { data: AppData; setData: (d: AppD
 
   // Weekly totals
   const weekDials    = weekLogs.reduce((s, l) => s + l.dials, 0);
+  const weekConnects = weekLogs.reduce((s, l) => s + (l.connects ?? 0), 0);
   const weekBooked   = weekLogs.reduce((s, l) => s + l.bookedAppts, 0);
   const weekAttended = weekLogs.reduce((s, l) => s + l.attendedAppts, 0);
+  const weekCloses   = weekLogs.reduce((s, l) => s + (l.closes ?? 0), 0);
+  const weekRevenue  = weekLogs.reduce((s, l) => s + (l.revenueClosed ?? 0), 0);
   const showRate     = weekBooked > 0 ? Math.round((weekAttended / weekBooked) * 100) : null;
+  const dialToConnect = weekDials > 0 ? Math.round((weekConnects / weekDials) * 100) : null;
+  const showToClose   = weekAttended > 0 ? Math.round((weekCloses / weekAttended) * 100) : null;
 
   const goalDialsWeek = myGoal ? myGoal.dialsPerDay * 5 : 0;
   const pct = (val: number, target: number) => target > 0 ? Math.min(100, Math.round((val / target) * 100)) : 0;
@@ -3250,12 +3388,21 @@ function GoalsTab({ data, setData, session }: { data: AppData; setData: (d: AppD
       </div>
 
       {/* Weekly progress cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(155px, 1fr))', gap: '1rem', marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}>
         {[
-          { label: 'Dials This Week', val: weekDials, target: goalDialsWeek, color: '#6B8EFE', suffix: myGoal ? `/ ${goalDialsWeek}` : '' },
-          { label: 'Booked Appts', val: weekBooked, target: myGoal?.bookedPerWeek ?? 0, color: '#FEB64A', suffix: myGoal ? `/ ${myGoal.bookedPerWeek}` : '' },
-          { label: 'Attended Appts', val: weekAttended, target: myGoal?.attendedPerWeek ?? 0, color: '#94D96B', suffix: myGoal ? `/ ${myGoal.attendedPerWeek}` : '' },
-          { label: 'Show Rate', val: showRate ?? 0, target: 100, color: '#26D9B0', suffix: showRate !== null ? '%' : '', override: showRate !== null ? `${showRate}%` : 'N/A' },
+          ...(isSetter ? [
+            { label: 'Dials', val: weekDials, target: goalDialsWeek, color: '#6B8EFE', suffix: myGoal ? `/ ${goalDialsWeek}` : '' },
+            { label: 'Connects', val: weekConnects, target: 0, color: '#26D9B0', suffix: '' },
+            { label: 'Dial→Connect', val: dialToConnect ?? 0, target: 0, color: '#26D9B0', suffix: '', override: dialToConnect !== null ? `${dialToConnect}%` : 'N/A' },
+            { label: 'Appts Set', val: weekBooked, target: myGoal?.bookedPerWeek ?? 0, color: '#FEB64A', suffix: myGoal ? `/ ${myGoal.bookedPerWeek}` : '' },
+          ] : []),
+          ...(isCloser ? [
+            { label: 'Appts Taken', val: weekAttended, target: myGoal?.attendedPerWeek ?? 0, color: '#94D96B', suffix: myGoal ? `/ ${myGoal.attendedPerWeek}` : '' },
+            { label: 'Closes', val: weekCloses, target: myGoal?.closesPerWeek ?? 0, color: '#a78bfa', suffix: myGoal?.closesPerWeek ? `/ ${myGoal.closesPerWeek}` : '' },
+            { label: 'Revenue', val: weekRevenue, target: myGoal?.revenueTargetPerWeek ?? 0, color: '#94D96B', suffix: '', override: fmtM(weekRevenue) },
+            { label: 'Show→Close', val: showToClose ?? 0, target: 0, color: '#a78bfa', suffix: '', override: showToClose !== null ? `${showToClose}%` : 'N/A' },
+          ] : []),
+          { label: 'Show Rate', val: showRate ?? 0, target: 100, color: '#26D9B0', suffix: '', override: showRate !== null ? `${showRate}%` : 'N/A' },
         ].map(({ label, val, target, color, suffix, override }) => (
           <div key={label} style={{ ...card }}>
             <div style={{ fontSize: '0.68rem', fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>{label}</div>
@@ -3271,14 +3418,61 @@ function GoalsTab({ data, setData, session }: { data: AppData; setData: (d: AppD
       <div style={{ ...glassCard, marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
         <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem', marginBottom: '0.15rem' }}>Today's Check-in</div>
         <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.35)', marginBottom: '1.25rem' }}>{fmtD(todayStr)}{todayLog ? ' — already submitted, edit and save to update' : ''}</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
-          {([['Dials Made', 'dials'], ['Booked Appts', 'bookedAppts'], ['Attended Appts', 'attendedAppts']] as const).map(([label, field]) => (
-            <div key={field}>
-              <label style={lbl}>{label}</label>
-              <input type="number" min={0} value={logForm[field]} onChange={e => setLogForm(f => ({ ...f, [field]: Number(e.target.value) }))} style={inp} />
+
+        {isSetter && (
+          <div style={{ marginBottom: '1.25rem' }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.75rem', paddingBottom: '0.4rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>Setter Activity</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '0.75rem' }}>
+              {([['Dials Made', 'dials'], ['Connects', 'connects'], ['Follow-ups', 'followUpsMade']] as [string, string][]).map(([label, field]) => (
+                <div key={field}><label style={lbl}>{label}</label><input type="number" min={0} value={(logForm as Record<string, number | string>)[field] as number} onChange={e => setLogForm(f => ({ ...f, [field]: Number(e.target.value) }))} style={inp} /></div>
+              ))}
             </div>
-          ))}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+              {([['Appts Set', 'bookedAppts'], ['No-Shows', 'noShows'], ['Talk Time (min)', 'talkTimeMinutes']] as [string, string][]).map(([label, field]) => (
+                <div key={field}><label style={lbl}>{label}</label><input type="number" min={0} value={(logForm as Record<string, number | string>)[field] as number} onChange={e => setLogForm(f => ({ ...f, [field]: Number(e.target.value) }))} style={inp} /></div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {isCloser && (
+          <div style={{ marginBottom: '1.25rem' }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.75rem', paddingBottom: '0.4rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>Closer Activity</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '0.75rem' }}>
+              {([['Appts Taken', 'attendedAppts'], ['Closes / Deals Won', 'closes'], ['No-Shows', 'closerNoShows']] as [string, string][]).map(([label, field]) => (
+                <div key={field}><label style={lbl}>{label}</label><input type="number" min={0} value={(logForm as Record<string, number | string>)[field] as number} onChange={e => setLogForm(f => ({ ...f, [field]: Number(e.target.value) }))} style={inp} /></div>
+              ))}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div><label style={lbl}>Revenue Closed ($)</label><input type="number" min={0} step={100} value={logForm.revenueClosed} onChange={e => setLogForm(f => ({ ...f, revenueClosed: Number(e.target.value) }))} style={inp} /></div>
+              <div><label style={lbl}>Follow-up Calls</label><input type="number" min={0} value={logForm.closerFollowUps} onChange={e => setLogForm(f => ({ ...f, closerFollowUps: Number(e.target.value) }))} style={inp} /></div>
+            </div>
+          </div>
+        )}
+
+        {/* End of day closeout */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: '1.25rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+          <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>End of Day Closeout</div>
+          <div style={{ marginBottom: '1rem' }}>
+            <label style={lbl}>Self Rating</label>
+            <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
+              {[1, 2, 3, 4, 5].map(n => (
+                <button key={n} type="button" onClick={() => setLogForm(f => ({ ...f, selfRating: f.selfRating === n ? 0 : n }))}
+                  style={{ width: '36px', height: '36px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '1.1rem', fontFamily: 'inherit',
+                    background: logForm.selfRating >= n ? 'rgba(254,182,74,0.2)' : 'rgba(255,255,255,0.05)',
+                    color: logForm.selfRating >= n ? '#FEB64A' : 'rgba(255,255,255,0.2)', transition: 'all 0.15s' }}>
+                  {logForm.selfRating >= n ? '\u2605' : '\u2606'}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+            <div><label style={lbl}>What Went Well</label><input value={logForm.wentWell} onChange={e => setLogForm(f => ({ ...f, wentWell: e.target.value }))} placeholder="Key win today..." style={inp} /></div>
+            <div><label style={lbl}>Needs Improvement</label><input value={logForm.needsImprovement} onChange={e => setLogForm(f => ({ ...f, needsImprovement: e.target.value }))} placeholder="Focus area..." style={inp} /></div>
+            <div><label style={lbl}>Tomorrow's Priority</label><input value={logForm.tomorrowPriority} onChange={e => setLogForm(f => ({ ...f, tomorrowPriority: e.target.value }))} placeholder="#1 goal for tomorrow..." style={inp} /></div>
+          </div>
         </div>
+
         <div style={{ marginBottom: '1rem' }}>
           <label style={lbl}>Notes (optional)</label>
           <input value={logForm.notes} onChange={e => setLogForm(f => ({ ...f, notes: e.target.value }))} placeholder="Any blockers, wins, or context..." style={inp} />
@@ -3293,25 +3487,46 @@ function GoalsTab({ data, setData, session }: { data: AppData; setData: (d: AppD
         <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
           <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem' }}>Weekly Breakdown</div>
         </div>
+        <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead><tr>{['Day', 'Date', 'Dials', 'Booked', 'Attended', 'Notes'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
+          <thead><tr>
+            {['Day', 'Date',
+              ...(isSetter ? ['Dials', 'Connects', 'Follow-ups', 'Set', 'No-Shows'] : []),
+              ...(isCloser ? ['Taken', 'Closes', 'Revenue'] : []),
+              'Rating', 'Priority / Notes',
+            ].map(h => <th key={h} style={thStyle}>{h}</th>)}
+          </tr></thead>
           <tbody>
             {weekDates.map((date, i) => {
               const log = weekLogs.find(l => l.date === date);
+              const s = log ? safeLog(log) : null;
               const isToday = date === todayStr;
               return (
                 <tr key={date} style={{ background: isToday ? 'rgba(107,142,254,0.05)' : undefined }}>
                   <td style={{ ...tdStyle, fontWeight: 700, color: isToday ? '#6B8EFE' : 'rgba(255,255,255,0.5)' }}>{dayLabels[i]}</td>
                   <td style={tdStyle}>{fmtD(date)}</td>
-                  <td style={{ ...tdStyle, fontWeight: log?.dials ? 600 : undefined }}>{log?.dials ?? '—'}</td>
-                  <td style={{ ...tdStyle, fontWeight: log?.bookedAppts ? 600 : undefined }}>{log?.bookedAppts ?? '—'}</td>
-                  <td style={{ ...tdStyle, fontWeight: log?.attendedAppts ? 600 : undefined }}>{log?.attendedAppts ?? '—'}</td>
-                  <td style={{ ...tdStyle, color: 'rgba(255,255,255,0.4)', fontSize: '0.78rem' }}>{log?.notes || '—'}</td>
+                  {isSetter && <>
+                    <td style={{ ...tdStyle, color: s?.dials ? '#6B8EFE' : 'rgba(255,255,255,0.2)', fontWeight: s?.dials ? 600 : undefined }}>{s?.dials ?? '—'}</td>
+                    <td style={{ ...tdStyle, color: s?.connects ? '#26D9B0' : 'rgba(255,255,255,0.2)' }}>{s?.connects ?? '—'}</td>
+                    <td style={{ ...tdStyle, color: s?.followUpsMade ? '#6B8EFE' : 'rgba(255,255,255,0.2)' }}>{s?.followUpsMade ?? '—'}</td>
+                    <td style={{ ...tdStyle, color: s?.bookedAppts ? '#FEB64A' : 'rgba(255,255,255,0.2)', fontWeight: s?.bookedAppts ? 600 : undefined }}>{s?.bookedAppts ?? '—'}</td>
+                    <td style={{ ...tdStyle, color: s?.noShows ? '#FE6462' : 'rgba(255,255,255,0.2)' }}>{s?.noShows ?? '—'}</td>
+                  </>}
+                  {isCloser && <>
+                    <td style={{ ...tdStyle, color: s?.attendedAppts ? '#94D96B' : 'rgba(255,255,255,0.2)', fontWeight: s?.attendedAppts ? 600 : undefined }}>{s?.attendedAppts ?? '—'}</td>
+                    <td style={{ ...tdStyle, color: s?.closes ? '#a78bfa' : 'rgba(255,255,255,0.2)', fontWeight: s?.closes ? 600 : undefined }}>{s?.closes ?? '—'}</td>
+                    <td style={{ ...tdStyle, color: s?.revenueClosed ? '#94D96B' : 'rgba(255,255,255,0.2)' }}>{s?.revenueClosed ? fmtM(s.revenueClosed) : '—'}</td>
+                  </>}
+                  <td style={{ ...tdStyle, color: '#FEB64A', letterSpacing: '-1px' }}>{s?.selfRating ? '\u2605'.repeat(s.selfRating) : '—'}</td>
+                  <td style={{ ...tdStyle, color: 'rgba(255,255,255,0.4)', fontSize: '0.78rem', maxWidth: '200px' }}>
+                    {[s?.tomorrowPriority && `\u2192 ${s.tomorrowPriority}`, s?.notes].filter(Boolean).join(' · ') || '—'}
+                  </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Tasks */}
@@ -3349,8 +3564,9 @@ function GoalsManagementTab({ data, setData, session }: { data: AppData; setData
 
   const teamMembers = data.partners.filter(p => p.active !== false);
   const [selectedMember, setSelectedMember] = useState<string>(teamMembers[0]?.id ?? '');
-  const [goalForm, setGoalForm] = useState({ dialsPerDay: 0, bookedPerWeek: 0, attendedPerWeek: 0 });
+  const [goalForm, setGoalForm] = useState({ dialsPerDay: 0, bookedPerWeek: 0, attendedPerWeek: 0, closesPerWeek: 0, revenueTargetPerWeek: 0 });
   const [goalSaved, setGoalSaved] = useState(false);
+  const [lbSort, setLbSort] = useState<'revenue' | 'closes' | 'dials' | 'connects' | 'booked'>('revenue');
 
   // Task form
   const [showTaskForm, setShowTaskForm] = useState(false);
@@ -3360,7 +3576,7 @@ function GoalsManagementTab({ data, setData, session }: { data: AppData; setData
   // Load goal when member changes
   useEffect(() => {
     const g = data.teamGoals.find(g => g.partnerId === selectedMember);
-    setGoalForm({ dialsPerDay: g?.dialsPerDay ?? 0, bookedPerWeek: g?.bookedPerWeek ?? 0, attendedPerWeek: g?.attendedPerWeek ?? 0 });
+    setGoalForm({ dialsPerDay: g?.dialsPerDay ?? 0, bookedPerWeek: g?.bookedPerWeek ?? 0, attendedPerWeek: g?.attendedPerWeek ?? 0, closesPerWeek: g?.closesPerWeek ?? 0, revenueTargetPerWeek: g?.revenueTargetPerWeek ?? 0 });
   }, [selectedMember, data.teamGoals]);
 
   const saveGoal = () => {
@@ -3385,9 +3601,54 @@ function GoalsManagementTab({ data, setData, session }: { data: AppData; setData
 
   const deleteTask = (taskId: string) => setData({ ...data, tasks: data.tasks.filter(t => t.id !== taskId) });
 
-  // Team activity view
+  // Team activity helpers
   const getMemberWeekLogs = (partnerId: string) =>
     data.dailyLogs.filter(l => l.partnerId === partnerId && l.date >= weekStart && l.date <= weekDates[6]);
+
+  const lastWeekStart = (() => { const d = new Date(weekStart + 'T00:00:00'); d.setDate(d.getDate() - 7); return d.toISOString().slice(0, 10); })();
+  const lastWeekEnd = (() => { const d = new Date(lastWeekStart + 'T00:00:00'); d.setDate(d.getDate() + 6); return d.toISOString().slice(0, 10); })();
+  const getMemberLastWeekLogs = (partnerId: string) =>
+    data.dailyLogs.filter(l => l.partnerId === partnerId && l.date >= lastWeekStart && l.date <= lastWeekEnd);
+
+  const buildStats = (logs: DailyLog[]) => {
+    const dials = logs.reduce((s, l) => s + l.dials, 0);
+    const connects = logs.reduce((s, l) => s + (l.connects ?? 0), 0);
+    const booked = logs.reduce((s, l) => s + l.bookedAppts, 0);
+    const attended = logs.reduce((s, l) => s + l.attendedAppts, 0);
+    const closes = logs.reduce((s, l) => s + (l.closes ?? 0), 0);
+    const revenue = logs.reduce((s, l) => s + (l.revenueClosed ?? 0), 0);
+    const daysLogged = logs.length;
+    const dialToConnect = dials > 0 ? (connects / dials * 100) : null;
+    const showToClose = attended > 0 ? (closes / attended * 100) : null;
+    return { dials, connects, booked, attended, closes, revenue, daysLogged, dialToConnect, showToClose };
+  };
+
+  const teamStats = teamMembers.map(p => ({
+    p,
+    goal: data.teamGoals.find(g => g.partnerId === p.id),
+    curr: buildStats(getMemberWeekLogs(p.id)),
+    prev: buildStats(getMemberLastWeekLogs(p.id)),
+  }));
+
+  const rollup = {
+    dials: teamStats.reduce((s, m) => s + m.curr.dials, 0),
+    connects: teamStats.reduce((s, m) => s + m.curr.connects, 0),
+    booked: teamStats.reduce((s, m) => s + m.curr.booked, 0),
+    attended: teamStats.reduce((s, m) => s + m.curr.attended, 0),
+    closes: teamStats.reduce((s, m) => s + m.curr.closes, 0),
+    revenue: teamStats.reduce((s, m) => s + m.curr.revenue, 0),
+  };
+  const prevRollup = {
+    dials: teamStats.reduce((s, m) => s + m.prev.dials, 0),
+    connects: teamStats.reduce((s, m) => s + m.prev.connects, 0),
+    booked: teamStats.reduce((s, m) => s + m.prev.booked, 0),
+    closes: teamStats.reduce((s, m) => s + m.prev.closes, 0),
+    revenue: teamStats.reduce((s, m) => s + m.prev.revenue, 0),
+  };
+
+  const selectedPartner = data.partners.find(p => p.id === selectedMember);
+  const showCloserGoals = selectedPartner?.role === 'closer' || selectedPartner?.role === 'both';
+  const todayStr = today();
 
   return (
     <div>
@@ -3396,41 +3657,95 @@ function GoalsManagementTab({ data, setData, session }: { data: AppData; setData
         <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.83rem', margin: 0 }}>Set team targets, assign tasks, and track weekly activity</p>
       </div>
 
-      {/* Team activity summary */}
-      <div style={{ ...glassCard, padding: 0, overflow: 'hidden', marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}>
-        <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* KPI Rollup Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(155px, 1fr))', gap: '1rem', marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.04s both' }}>
+        {([
+          { label: 'Total Dials', val: rollup.dials, prev: prevRollup.dials, color: '#6B8EFE', fmt: String },
+          { label: 'Connects', val: rollup.connects, prev: prevRollup.connects, color: '#26D9B0', fmt: String },
+          { label: 'Appts Set', val: rollup.booked, prev: prevRollup.booked, color: '#FEB64A', fmt: String },
+          { label: 'Appts Taken', val: rollup.attended, prev: 0, color: '#94D96B', fmt: String },
+          { label: 'Closes', val: rollup.closes, prev: prevRollup.closes, color: '#a78bfa', fmt: String },
+          { label: 'Revenue Closed', val: rollup.revenue, prev: prevRollup.revenue, color: '#94D96B', fmt: fmtM },
+        ] as { label: string; val: number; prev: number; color: string; fmt: (v: number) => string }[]).map(({ label, val, prev, color, fmt }) => {
+          const delta = prev > 0 ? Math.round(((val - prev) / prev) * 100) : null;
+          return (
+            <div key={label} style={{ ...card, borderColor: color + '22' }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>{label}</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color, lineHeight: 1 }}>{fmt(val)}</div>
+              {delta !== null && (
+                <div style={{ fontSize: '0.72rem', marginTop: '4px', fontWeight: 600, color: delta >= 0 ? '#94D96B' : '#FE6462' }}>
+                  {delta >= 0 ? '\u2191' : '\u2193'} {Math.abs(delta)}% vs last week
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Conversion Funnel */}
+      <div style={{ ...glassCard, marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.07s both' }}>
+        <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '1rem' }}>Team Conversion Funnel — Week to Date</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 0, overflowX: 'auto' }}>
+          {([
+            { label: 'Dials', val: rollup.dials, color: '#6B8EFE', rate: '' },
+            { label: 'Connects', val: rollup.connects, color: '#26D9B0', rate: rollup.dials > 0 ? `${(rollup.connects / rollup.dials * 100).toFixed(0)}%` : '\u2014' },
+            { label: 'Appts Set', val: rollup.booked, color: '#FEB64A', rate: rollup.connects > 0 ? `${(rollup.booked / rollup.connects * 100).toFixed(0)}%` : '\u2014' },
+            { label: 'Attended', val: rollup.attended, color: '#94D96B', rate: rollup.booked > 0 ? `${(rollup.attended / rollup.booked * 100).toFixed(0)}%` : '\u2014' },
+            { label: 'Closes', val: rollup.closes, color: '#a78bfa', rate: rollup.attended > 0 ? `${(rollup.closes / rollup.attended * 100).toFixed(0)}%` : '\u2014' },
+          ]).map((stage, i, arr) => (
+            <React.Fragment key={stage.label}>
+              <div style={{ textAlign: 'center', minWidth: '80px', flex: 1 }}>
+                <div style={{ fontSize: '1.6rem', fontWeight: 800, color: stage.color, lineHeight: 1 }}>{stage.val}</div>
+                <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', marginTop: '4px' }}>{stage.label}</div>
+              </div>
+              {i < arr.length - 1 && (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 6px', flexShrink: 0 }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>{arr[i + 1].rate}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: '1rem' }}>{'\u2192'}</div>
+                </div>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+
+      {/* Enhanced Team Activity Table */}
+      <div style={{ ...glassCard, padding: 0, overflow: 'hidden', marginBottom: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
+        <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
           <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem' }}>Team Activity — Week of {fmtD(weekStart)}</div>
         </div>
+        <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead><tr>{['Team Member', 'Role', 'Goal (D/B/A)', 'Dials', 'Booked', 'Attended', 'Show Rate', 'Days Logged'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
+          <thead><tr>{['Member', 'Role', 'Dials', 'Connects', 'D\u2192C%', 'Booked', 'Attended', 'Closes', 'Revenue', 'Show\u2192Close%', 'Days', '\u2195 vs LW'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
           <tbody>
-            {teamMembers.map(p => {
-              const logs = getMemberWeekLogs(p.id);
-              const goal = data.teamGoals.find(g => g.partnerId === p.id);
-              const dials = logs.reduce((s, l) => s + l.dials, 0);
-              const booked = logs.reduce((s, l) => s + l.bookedAppts, 0);
-              const attended = logs.reduce((s, l) => s + l.attendedAppts, 0);
-              const showRate = booked > 0 ? `${Math.round((attended / booked) * 100)}%` : '—';
-              const daysLogged = logs.length;
+            {teamStats.map(({ p, curr, prev }) => {
+              const dialsDelta = prev.dials > 0 ? Math.round(((curr.dials - prev.dials) / prev.dials) * 100) : null;
               return (
                 <tr key={p.id} onMouseEnter={e => (e.currentTarget.style.background='rgba(255,255,255,0.02)')} onMouseLeave={e => (e.currentTarget.style.background='transparent')}>
                   <td style={{ ...tdStyle, fontWeight: 600, color: '#fff' }}>{p.name}</td>
-                  <td style={tdStyle}><span style={{ textTransform: 'capitalize', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>{p.role}</span></td>
-                  <td style={{ ...tdStyle, fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)' }}>{goal ? `${goal.dialsPerDay * 5} / ${goal.bookedPerWeek} / ${goal.attendedPerWeek}` : 'Not set'}</td>
-                  <td style={{ ...tdStyle, fontWeight: dials > 0 ? 700 : undefined, color: dials > 0 ? '#6B8EFE' : 'rgba(255,255,255,0.3)' }}>{dials || '—'}</td>
-                  <td style={{ ...tdStyle, fontWeight: booked > 0 ? 700 : undefined, color: booked > 0 ? '#FEB64A' : 'rgba(255,255,255,0.3)' }}>{booked || '—'}</td>
-                  <td style={{ ...tdStyle, fontWeight: attended > 0 ? 700 : undefined, color: attended > 0 ? '#94D96B' : 'rgba(255,255,255,0.3)' }}>{attended || '—'}</td>
-                  <td style={{ ...tdStyle, fontWeight: 600, color: '#26D9B0' }}>{showRate}</td>
-                  <td style={tdStyle}><span style={{ ...badge(daysLogged >= 5 ? '#94D96B' : daysLogged > 0 ? '#F59E0B' : '#FE6462') }}>{daysLogged}/5 days</span></td>
+                  <td style={tdStyle}><span style={{ textTransform: 'capitalize', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)' }}>{p.role}</span></td>
+                  <td style={{ ...tdStyle, color: curr.dials > 0 ? '#6B8EFE' : 'rgba(255,255,255,0.2)', fontWeight: curr.dials > 0 ? 700 : undefined }}>{curr.dials || '\u2014'}</td>
+                  <td style={{ ...tdStyle, color: curr.connects > 0 ? '#26D9B0' : 'rgba(255,255,255,0.2)', fontWeight: curr.connects > 0 ? 700 : undefined }}>{curr.connects || '\u2014'}</td>
+                  <td style={{ ...tdStyle, color: 'rgba(255,255,255,0.5)' }}>{curr.dialToConnect !== null ? `${curr.dialToConnect.toFixed(0)}%` : '\u2014'}</td>
+                  <td style={{ ...tdStyle, color: curr.booked > 0 ? '#FEB64A' : 'rgba(255,255,255,0.2)', fontWeight: curr.booked > 0 ? 700 : undefined }}>{curr.booked || '\u2014'}</td>
+                  <td style={{ ...tdStyle, color: curr.attended > 0 ? '#94D96B' : 'rgba(255,255,255,0.2)', fontWeight: curr.attended > 0 ? 700 : undefined }}>{curr.attended || '\u2014'}</td>
+                  <td style={{ ...tdStyle, color: curr.closes > 0 ? '#a78bfa' : 'rgba(255,255,255,0.2)', fontWeight: curr.closes > 0 ? 700 : undefined }}>{curr.closes || '\u2014'}</td>
+                  <td style={{ ...tdStyle, color: curr.revenue > 0 ? '#94D96B' : 'rgba(255,255,255,0.2)' }}>{curr.revenue > 0 ? fmtM(curr.revenue) : '\u2014'}</td>
+                  <td style={{ ...tdStyle, color: 'rgba(255,255,255,0.5)' }}>{curr.showToClose !== null ? `${curr.showToClose.toFixed(0)}%` : '\u2014'}</td>
+                  <td style={tdStyle}><span style={badge(curr.daysLogged >= 5 ? '#94D96B' : curr.daysLogged > 0 ? '#F59E0B' : '#FE6462')}>{curr.daysLogged}/5</span></td>
+                  <td style={{ ...tdStyle, color: dialsDelta === null ? 'rgba(255,255,255,0.2)' : dialsDelta >= 0 ? '#94D96B' : '#FE6462', fontWeight: 600 }}>
+                    {dialsDelta !== null ? `${dialsDelta >= 0 ? '+' : ''}${dialsDelta}%` : '\u2014'}
+                  </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Two column: set goals + tasks */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.2fr)', gap: '1.25rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.2fr)', gap: '1.25rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.13s both' }}>
         {/* Set goals */}
         <div style={glassCard}>
           <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '1rem' }}>Set Weekly Goals</div>
@@ -3454,6 +3769,18 @@ function GoalsManagementTab({ data, setData, session }: { data: AppData; setData
               <input type="number" min={0} value={goalForm.attendedPerWeek} onChange={e => setGoalForm(f => ({ ...f, attendedPerWeek: Number(e.target.value) }))} style={inp} />
             </div>
           </div>
+          {showCloserGoals && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+              <div>
+                <label style={lbl}>Closes / Wk</label>
+                <input type="number" min={0} value={goalForm.closesPerWeek} onChange={e => setGoalForm(f => ({ ...f, closesPerWeek: Number(e.target.value) }))} style={inp} />
+              </div>
+              <div>
+                <label style={lbl}>Revenue Target / Wk</label>
+                <input type="number" min={0} step={500} value={goalForm.revenueTargetPerWeek} onChange={e => setGoalForm(f => ({ ...f, revenueTargetPerWeek: Number(e.target.value) }))} style={inp} />
+              </div>
+            </div>
+          )}
           <button onClick={saveGoal} style={btn(goalSaved ? 'success' : 'primary')}>{goalSaved ? 'Saved!' : 'Save Goals'}</button>
         </div>
 
@@ -3501,7 +3828,7 @@ function GoalsManagementTab({ data, setData, session }: { data: AppData; setData
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                         {task.isCompleted && <span style={badge('#94D96B')}>Done</span>}
-                        <button onClick={() => deleteTask(task.id)} style={{ background: 'none', border: 'none', color: 'rgba(255,100,98,0.5)', cursor: 'pointer', fontSize: '0.75rem', padding: '2px 6px', fontFamily: 'inherit' }}>✕</button>
+                        <button onClick={() => deleteTask(task.id)} style={{ background: 'none', border: 'none', color: 'rgba(255,100,98,0.5)', cursor: 'pointer', fontSize: '0.75rem', padding: '2px 6px', fontFamily: 'inherit' }}>{'\u2715'}</button>
                       </div>
                     </div>
                   );
@@ -3511,32 +3838,114 @@ function GoalsManagementTab({ data, setData, session }: { data: AppData; setData
         </div>
       </div>
 
+      {/* Leaderboard */}
+      <div style={{ marginTop: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.16s both' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+          <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem' }}>Leaderboard</div>
+          <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.06)', borderRadius: '10px', padding: '3px' }}>
+            {(['revenue', 'closes', 'dials', 'connects', 'booked'] as const).map(k => (
+              <button key={k} onClick={() => setLbSort(k)} style={{
+                padding: '4px 12px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+                fontSize: '0.75rem', fontWeight: 600, background: lbSort === k ? 'rgba(255,255,255,0.12)' : 'transparent',
+                color: lbSort === k ? '#fff' : 'rgba(255,255,255,0.4)', transition: 'all 0.15s', fontFamily: 'inherit'
+              }}>
+                {k === 'revenue' ? 'Revenue' : k === 'closes' ? 'Closes' : k === 'dials' ? 'Dials' : k === 'connects' ? 'Connects' : 'Booked'}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          {[...teamStats]
+            .sort((a, b) => b.curr[lbSort] - a.curr[lbSort])
+            .map(({ p, curr }, rank) => {
+              const val = lbSort === 'revenue' ? fmtM(curr.revenue) : String(curr[lbSort]);
+              const medals = ['\uD83E\uDD47', '\uD83E\uDD48', '\uD83E\uDD49'];
+              return (
+                <div key={p.id} style={{ ...card, display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.9rem 1.25rem' }}>
+                  <div style={{ fontSize: '1.2rem', width: '28px', flexShrink: 0 }}>{medals[rank] ?? `#${rank + 1}`}</div>
+                  <div style={{ flex: 1, fontWeight: 600, color: '#fff', fontSize: '0.88rem' }}>{p.name}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', textTransform: 'capitalize' }}>{p.role}</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: lbSort === 'revenue' ? '#94D96B' : lbSort === 'closes' ? '#a78bfa' : '#6B8EFE', minWidth: '80px', textAlign: 'right' }}>{val}</div>
+                </div>
+              );
+            })
+          }
+        </div>
+      </div>
+
+      {/* Closeout Review */}
+      {teamStats.some(m => getMemberWeekLogs(m.p.id).some(l => l.selfRating)) && (
+        <div style={{ marginTop: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.19s both' }}>
+          <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '0.75rem' }}>Today's Closeout Notes</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+            {teamStats.map(({ p }) => {
+              const tLog = getMemberWeekLogs(p.id).find(l => l.date === todayStr);
+              if (!tLog || !tLog.selfRating) return null;
+              return (
+                <div key={p.id} style={{ ...card }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.65rem' }}>
+                    <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.85rem' }}>{p.name}</div>
+                    <div style={{ color: '#FEB64A', fontSize: '0.9rem', letterSpacing: '-1px' }}>
+                      {'\u2605'.repeat(tLog.selfRating)}{'\u2606'.repeat(5 - tLog.selfRating)}
+                    </div>
+                  </div>
+                  {tLog.wentWell && <div style={{ marginBottom: '0.4rem' }}><span style={{ fontSize: '0.67rem', fontWeight: 700, color: '#94D96B', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Went Well: </span><span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.65)' }}>{tLog.wentWell}</span></div>}
+                  {tLog.needsImprovement && <div style={{ marginBottom: '0.4rem' }}><span style={{ fontSize: '0.67rem', fontWeight: 700, color: '#FE6462', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Improve: </span><span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.65)' }}>{tLog.needsImprovement}</span></div>}
+                  {tLog.tomorrowPriority && <div><span style={{ fontSize: '0.67rem', fontWeight: 700, color: '#6B8EFE', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Tomorrow: </span><span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.65)' }}>{tLog.tomorrowPriority}</span></div>}
+                </div>
+              );
+            }).filter(Boolean)}
+          </div>
+        </div>
+      )}
+
       {/* Daily breakdown per member */}
-      <div style={{ marginTop: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.15s both' }}>
+      <div style={{ marginTop: '1.5rem', animation: 'cardReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.22s both' }}>
         <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem', marginBottom: '0.75rem' }}>Daily Activity Detail</div>
         {teamMembers.map(p => {
           const logs = getMemberWeekLogs(p.id);
+          const mIsSetter = p.role === 'setter' || p.role === 'both';
+          const mIsCloser = p.role === 'closer' || p.role === 'both';
           return (
             <div key={p.id} style={{ ...glassCard, padding: 0, overflow: 'hidden', marginBottom: '1rem' }}>
-              <div style={{ padding: '0.75rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)', fontWeight: 700, color: '#fff', fontSize: '0.84rem' }}>{p.name} <span style={{ fontWeight: 400, color: 'rgba(255,255,255,0.35)', textTransform: 'capitalize' }}>· {p.role}</span></div>
+              <div style={{ padding: '0.75rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)', fontWeight: 700, color: '#fff', fontSize: '0.84rem' }}>{p.name} <span style={{ fontWeight: 400, color: 'rgba(255,255,255,0.35)', textTransform: 'capitalize' }}>{'\u00B7'} {p.role}</span></div>
+              <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead><tr>{['Day', 'Dials', 'Booked', 'Attended', 'Notes'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
+                <thead><tr>
+                  <th style={thStyle}>Day</th>
+                  {mIsSetter && <><th style={thStyle}>Dials</th><th style={thStyle}>Connects</th><th style={thStyle}>Booked</th></>}
+                  {mIsCloser && <><th style={thStyle}>Taken</th><th style={thStyle}>Closes</th><th style={thStyle}>Revenue</th></>}
+                  <th style={thStyle}>Rating</th>
+                  <th style={thStyle}>Priority / Notes</th>
+                </tr></thead>
                 <tbody>
                   {weekDates.map((date, i) => {
                     const log = logs.find(l => l.date === date);
-                    const isToday = date === today();
+                    const s = log ? safeLog(log) : null;
+                    const isToday = date === todayStr;
                     return (
                       <tr key={date} style={{ background: isToday ? 'rgba(107,142,254,0.04)' : undefined }}>
                         <td style={{ ...tdStyle, fontWeight: 700, color: isToday ? '#6B8EFE' : 'rgba(255,255,255,0.4)', fontSize: '0.78rem' }}>{dayLabels[i]}</td>
-                        <td style={{ ...tdStyle, color: log?.dials ? '#6B8EFE' : 'rgba(255,255,255,0.2)' }}>{log?.dials ?? '—'}</td>
-                        <td style={{ ...tdStyle, color: log?.bookedAppts ? '#FEB64A' : 'rgba(255,255,255,0.2)' }}>{log?.bookedAppts ?? '—'}</td>
-                        <td style={{ ...tdStyle, color: log?.attendedAppts ? '#94D96B' : 'rgba(255,255,255,0.2)' }}>{log?.attendedAppts ?? '—'}</td>
-                        <td style={{ ...tdStyle, color: 'rgba(255,255,255,0.35)', fontSize: '0.77rem' }}>{log?.notes || '—'}</td>
+                        {mIsSetter && <>
+                          <td style={{ ...tdStyle, color: s?.dials ? '#6B8EFE' : 'rgba(255,255,255,0.2)' }}>{s?.dials ?? '\u2014'}</td>
+                          <td style={{ ...tdStyle, color: s?.connects ? '#26D9B0' : 'rgba(255,255,255,0.2)' }}>{s?.connects ?? '\u2014'}</td>
+                          <td style={{ ...tdStyle, color: s?.bookedAppts ? '#FEB64A' : 'rgba(255,255,255,0.2)' }}>{s?.bookedAppts ?? '\u2014'}</td>
+                        </>}
+                        {mIsCloser && <>
+                          <td style={{ ...tdStyle, color: s?.attendedAppts ? '#94D96B' : 'rgba(255,255,255,0.2)' }}>{s?.attendedAppts ?? '\u2014'}</td>
+                          <td style={{ ...tdStyle, color: s?.closes ? '#a78bfa' : 'rgba(255,255,255,0.2)' }}>{s?.closes ?? '\u2014'}</td>
+                          <td style={{ ...tdStyle, color: s?.revenueClosed ? '#94D96B' : 'rgba(255,255,255,0.2)' }}>{s?.revenueClosed ? fmtM(s.revenueClosed) : '\u2014'}</td>
+                        </>}
+                        <td style={{ ...tdStyle, color: '#FEB64A', letterSpacing: '-1px' }}>{s?.selfRating ? '\u2605'.repeat(s.selfRating) : '\u2014'}</td>
+                        <td style={{ ...tdStyle, color: 'rgba(255,255,255,0.35)', fontSize: '0.77rem', maxWidth: '200px' }}>
+                          {[s?.tomorrowPriority && `\u2192 ${s.tomorrowPriority}`, s?.notes].filter(Boolean).join(' \u00B7 ') || '\u2014'}
+                        </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
+              </div>
             </div>
           );
         })}
