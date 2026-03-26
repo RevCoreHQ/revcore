@@ -4285,11 +4285,30 @@ function SettingsTab({ data, setData, session }: { data: AppData; setData: (d: A
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function Dashboard({ onLogout, session }: { onLogout: () => void; session: Session }) {
-  const roleTabs = ROLE_TABS[session.role];
+  const [viewAsRole, setViewAsRole] = useState<UserRole | null>(null);
+  const [showViewAs, setShowViewAs] = useState(false);
+  const effectiveRole = viewAsRole ?? session.role;
+  const effectiveSession: Session = viewAsRole ? { ...session, role: viewAsRole } : session;
+  const roleTabs = ROLE_TABS[effectiveRole];
   const [tab, setTab] = useState<Tab>(roleTabs[0]?.id ?? 'overview');
   const [data, setDataRaw] = useState<AppData>(normalizeData({}));
   const [syncStatus, setSyncStatus] = useState<'connecting' | 'live' | 'offline'>('connecting');
   const isSaving = useRef(false);
+  const viewAsRef = useRef<HTMLDivElement>(null);
+
+  // Reset tab when viewAs changes
+  useEffect(() => {
+    const newTabs = ROLE_TABS[effectiveRole];
+    if (!newTabs.find(t => t.id === tab)) setTab(newTabs[0]?.id ?? 'overview');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effectiveRole]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => { if (viewAsRef.current && !viewAsRef.current.contains(e.target as Node)) setShowViewAs(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   // Initial load
   useEffect(() => {
@@ -4340,8 +4359,6 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
     }
   };
 
-  const tabs = roleTabs;
-
   const pendingCount = data.comms.filter(c => c.stat === 'pending').length;
 
   return (
@@ -4357,25 +4374,59 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
             {syncStatus === 'live' ? 'Live' : syncStatus === 'offline' ? 'Offline' : 'Connecting…'}
           </span>
         </div>
-        {pendingCount > 0 && (session.role === 'super_admin' || session.role === 'admin') && (
+        {pendingCount > 0 && (effectiveRole === 'super_admin' || effectiveRole === 'admin') && (
           <button onClick={() => setTab('team')} style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '100px', padding: '3px 12px', fontSize: '0.73rem', fontWeight: 700, color: '#F59E0B', backdropFilter: 'blur(8px)', cursor: 'pointer' }}>
             {pendingCount} pending
           </button>
         )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0,0,0,0.4)', border: `1px solid ${ROLE_COLORS[session.role]}30`, borderRadius: '100px', padding: '3px 10px 3px 6px', backdropFilter: 'blur(8px)' }}>
-          <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: ROLE_COLORS[session.role] + '25', border: `1px solid ${ROLE_COLORS[session.role]}50`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: 800, color: ROLE_COLORS[session.role] }}>{session.name.charAt(0).toUpperCase()}</span>
-          <span style={{ fontSize: '0.72rem', fontWeight: 600, color: 'rgba(255,255,255,0.6)' }}>{session.name.split(' ')[0]}</span>
-          <span style={{ fontSize: '0.65rem', color: ROLE_COLORS[session.role], fontWeight: 700, opacity: 0.8 }}>{ROLE_LABELS[session.role]}</span>
+        <div ref={viewAsRef} style={{ position: 'relative' }}>
+          <button onClick={() => { if (session.role === 'super_admin') setShowViewAs(v => !v); }}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0,0,0,0.4)', border: `1px solid ${ROLE_COLORS[effectiveRole]}30`, borderRadius: '100px', padding: '3px 10px 3px 6px', backdropFilter: 'blur(8px)', cursor: session.role === 'super_admin' ? 'pointer' : 'default', fontFamily: 'inherit', transition: 'all 0.15s' }}>
+            <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: ROLE_COLORS[effectiveRole] + '25', border: `1px solid ${ROLE_COLORS[effectiveRole]}50`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: 800, color: ROLE_COLORS[effectiveRole] }}>{session.name.charAt(0).toUpperCase()}</span>
+            <span style={{ fontSize: '0.72rem', fontWeight: 600, color: 'rgba(255,255,255,0.6)' }}>{session.name.split(' ')[0]}</span>
+            <span style={{ fontSize: '0.65rem', color: ROLE_COLORS[effectiveRole], fontWeight: 700, opacity: 0.8 }}>{viewAsRole ? `Viewing as ${ROLE_LABELS[viewAsRole]}` : ROLE_LABELS[session.role]}</span>
+            {session.role === 'super_admin' && <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginLeft: '2px' }}>{'\u25BE'}</span>}
+          </button>
+          {showViewAs && session.role === 'super_admin' && (
+            <div style={{ position: 'absolute', top: 'calc(100% + 6px)', right: 0, background: 'rgba(15,18,25,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '6px', backdropFilter: 'blur(20px)', boxShadow: '0 12px 40px rgba(0,0,0,0.5)', minWidth: '180px', zIndex: 300, animation: 'trackerFadeUp 0.2s cubic-bezier(0.16,1,0.3,1) both' }}>
+              <div style={{ padding: '6px 10px', fontSize: '0.65rem', fontWeight: 700, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>View as role</div>
+              <button onClick={() => { setViewAsRole(null); setShowViewAs(false); }}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 10px', background: !viewAsRole ? 'rgba(255,255,255,0.08)' : 'transparent', border: 'none', borderRadius: '8px', cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.1s' }}
+                onMouseEnter={e => { if (viewAsRole) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+                onMouseLeave={e => { if (viewAsRole) e.currentTarget.style.background = 'transparent'; }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: ROLE_COLORS['super_admin'] }} />
+                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: !viewAsRole ? '#fff' : 'rgba(255,255,255,0.6)' }}>Super Admin</span>
+                {!viewAsRole && <span style={{ marginLeft: 'auto', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)' }}>{'\u2713'}</span>}
+              </button>
+              {(['admin', 'sales_manager', 'finance', 'setter', 'closer'] as UserRole[]).map(r => (
+                <button key={r} onClick={() => { setViewAsRole(r); setShowViewAs(false); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 10px', background: viewAsRole === r ? 'rgba(255,255,255,0.08)' : 'transparent', border: 'none', borderRadius: '8px', cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.1s' }}
+                  onMouseEnter={e => { if (viewAsRole !== r) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+                  onMouseLeave={e => { if (viewAsRole !== r) e.currentTarget.style.background = 'transparent'; }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: ROLE_COLORS[r] }} />
+                  <span style={{ fontSize: '0.8rem', fontWeight: 600, color: viewAsRole === r ? '#fff' : 'rgba(255,255,255,0.6)' }}>{ROLE_LABELS[r]}</span>
+                  {viewAsRole === r && <span style={{ marginLeft: 'auto', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)' }}>{'\u2713'}</span>}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <button onClick={onLogout} style={{ ...btn('ghost'), fontSize: '0.78rem', padding: '5px 14px', backdropFilter: 'blur(8px)' }}>Sign out</button>
       </div>
 
       <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '0 clamp(1.5rem, 4vw, 3rem)', position: 'relative', zIndex: 10 }}>
         <div style={{ display: 'flex', maxWidth: '1400px', margin: '0 auto', overflowX: 'auto' }}>
-          {tabs.map(t => (
+          {viewAsRole && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '0 1rem 0 0.5rem', borderRight: '1px solid rgba(255,255,255,0.07)', marginRight: '0.5rem', flexShrink: 0 }}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: ROLE_COLORS[viewAsRole] }} />
+              <span style={{ fontSize: '0.7rem', fontWeight: 700, color: ROLE_COLORS[viewAsRole], whiteSpace: 'nowrap' }}>Viewing as {ROLE_LABELS[viewAsRole]}</span>
+              <button onClick={() => setViewAsRole(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.3)', fontSize: '0.7rem', fontFamily: 'inherit', padding: '0 4px' }}>{'\u2715'}</button>
+            </div>
+          )}
+          {roleTabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '1rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, fontFamily: 'inherit', whiteSpace: 'nowrap', color: tab === t.id ? '#FE6462' : 'rgba(255,255,255,0.4)', borderBottom: tab === t.id ? '2px solid #FE6462' : '2px solid transparent', transition: 'color 0.2s', marginBottom: '-1px', position: 'relative' }}>
               {t.label}
-              {t.id === 'team' && pendingCount > 0 && (session.role === 'super_admin' || session.role === 'admin') && <span style={{ position: 'absolute', top: '8px', right: '6px', width: '7px', height: '7px', borderRadius: '50%', background: '#F59E0B' }} />}
+              {t.id === 'team' && pendingCount > 0 && (effectiveRole === 'super_admin' || effectiveRole === 'admin') && <span style={{ position: 'absolute', top: '8px', right: '6px', width: '7px', height: '7px', borderRadius: '50%', background: '#F59E0B' }} />}
             </button>
           ))}
         </div>
@@ -4389,12 +4440,12 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
         {tab === 'team'          && <><TeamTab data={data} setData={setData} /><div style={{ marginTop: '2.5rem' }}><PayoutsTab data={data} setData={setData} partners={data.partners} /></div></>}
         {tab === 'calendar'      && <CalendarTab  data={data} />}
         {tab === 'payments'      && <PaymentsTab  data={data} setData={setData} />}
-        {tab === 'settings'      && <SettingsTab  data={data} setData={setData} session={session} />}
-        {tab === 'my-dashboard'  && <MyDashboardTab data={data} session={session} />}
-        {tab === 'my-clients'    && <MyClientsTab   data={data} session={session} />}
-        {tab === 'my-ledger'     && <MyLedgerTab    data={data} session={session} />}
-        {tab === 'goals'         && <GoalsTab        data={data} setData={setData} session={session} />}
-        {tab === 'goals-mgmt'    && <GoalsManagementTab data={data} setData={setData} session={session} />}
+        {tab === 'settings'      && <SettingsTab  data={data} setData={setData} session={effectiveSession} />}
+        {tab === 'my-dashboard'  && <MyDashboardTab data={data} session={effectiveSession} />}
+        {tab === 'my-clients'    && <MyClientsTab   data={data} session={effectiveSession} />}
+        {tab === 'my-ledger'     && <MyLedgerTab    data={data} session={effectiveSession} />}
+        {tab === 'goals'         && <GoalsTab        data={data} setData={setData} session={effectiveSession} />}
+        {tab === 'goals-mgmt'    && <GoalsManagementTab data={data} setData={setData} session={effectiveSession} />}
       </main>
 
       <style>{`
