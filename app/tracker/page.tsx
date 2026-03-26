@@ -7,7 +7,7 @@ const PASS  = 'revcore2024';
 const STORE = 'rcTrackerV1';
 
 type Tab       = 'overview' | 'clients' | 'services' | 'analytics' | 'team' | 'calendar' | 'payments' | 'settings' | 'my-dashboard' | 'my-clients' | 'my-ledger' | 'goals' | 'goals-mgmt';
-type UserRole  = 'super_admin' | 'admin' | 'sales_manager' | 'finance' | 'setter' | 'closer';
+type UserRole  = 'super_admin' | 'sales_manager' | 'finance' | 'setter' | 'closer';
 type Stage     = 'onboarding' | 'balance-pending' | 'active' | 'at-risk' | 'paused' | 'churned';
 type PlanT     = 'recurring' | 'one-time';
 type InitCommT = 'pct' | 'fixed' | 'none';
@@ -133,11 +133,11 @@ const PAY_STAT: Record<PayStat, { label: string; color: string }> = {
 };
 
 const ROLE_LABELS: Record<UserRole, string> = {
-  super_admin: 'Super Admin', admin: 'Admin', sales_manager: 'Sales Manager',
+  super_admin: 'Super Admin', sales_manager: 'Sales Manager',
   finance: 'Finance', setter: 'Setter', closer: 'Closer',
 };
 const ROLE_COLORS: Record<UserRole, string> = {
-  super_admin: '#FE6462', admin: '#FEB64A', sales_manager: '#6B8EFE',
+  super_admin: '#FE6462', sales_manager: '#6B8EFE',
   finance: '#94D96B', setter: '#26D9B0', closer: '#a78bfa',
 };
 const ROLE_TABS: Record<UserRole, { id: Tab; label: string }[]> = {
@@ -148,15 +148,8 @@ const ROLE_TABS: Record<UserRole, { id: Tab; label: string }[]> = {
     { id: 'goals-mgmt', label: 'Goals & Tasks' }, { id: 'calendar', label: 'Calendar' },
     { id: 'settings', label: 'Settings' },
   ],
-  admin: [
-    { id: 'overview', label: 'Overview' }, { id: 'payments', label: 'Payments' },
-    { id: 'clients', label: 'Clients' }, { id: 'services', label: 'Services' },
-    { id: 'analytics', label: 'Analytics' }, { id: 'team', label: 'Team & Payouts' },
-    { id: 'goals-mgmt', label: 'Goals & Tasks' }, { id: 'calendar', label: 'Calendar' },
-    { id: 'settings', label: 'Settings' },
-  ],
   sales_manager: [
-    { id: 'overview', label: 'Overview' }, { id: 'clients', label: 'Clients' },
+    { id: 'clients', label: 'Clients' },
     { id: 'analytics', label: 'Analytics' }, { id: 'team', label: 'Team' },
     { id: 'goals-mgmt', label: 'Goals & Tasks' },
     { id: 'calendar', label: 'Calendar' }, { id: 'settings', label: 'Settings' },
@@ -4374,7 +4367,7 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
             {syncStatus === 'live' ? 'Live' : syncStatus === 'offline' ? 'Offline' : 'Connecting…'}
           </span>
         </div>
-        {pendingCount > 0 && (effectiveRole === 'super_admin' || effectiveRole === 'admin') && (
+        {pendingCount > 0 && (effectiveRole === 'super_admin') && (
           <button onClick={() => setTab('team')} style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '100px', padding: '3px 12px', fontSize: '0.73rem', fontWeight: 700, color: '#F59E0B', backdropFilter: 'blur(8px)', cursor: 'pointer' }}>
             {pendingCount} pending
           </button>
@@ -4398,7 +4391,7 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
                 <span style={{ fontSize: '0.8rem', fontWeight: 600, color: !viewAsRole ? '#fff' : 'rgba(255,255,255,0.6)' }}>Super Admin</span>
                 {!viewAsRole && <span style={{ marginLeft: 'auto', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)' }}>{'\u2713'}</span>}
               </button>
-              {(['admin', 'sales_manager', 'finance', 'setter', 'closer'] as UserRole[]).map(r => (
+              {(['sales_manager', 'finance', 'setter', 'closer'] as UserRole[]).map(r => (
                 <button key={r} onClick={() => { setViewAsRole(r); setShowViewAs(false); }}
                   style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 10px', background: viewAsRole === r ? 'rgba(255,255,255,0.08)' : 'transparent', border: 'none', borderRadius: '8px', cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.1s' }}
                   onMouseEnter={e => { if (viewAsRole !== r) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
@@ -4426,7 +4419,7 @@ function Dashboard({ onLogout, session }: { onLogout: () => void; session: Sessi
           {roleTabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '1rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, fontFamily: 'inherit', whiteSpace: 'nowrap', color: tab === t.id ? '#FE6462' : 'rgba(255,255,255,0.4)', borderBottom: tab === t.id ? '2px solid #FE6462' : '2px solid transparent', transition: 'color 0.2s', marginBottom: '-1px', position: 'relative' }}>
               {t.label}
-              {t.id === 'team' && pendingCount > 0 && (effectiveRole === 'super_admin' || effectiveRole === 'admin') && <span style={{ position: 'absolute', top: '8px', right: '6px', width: '7px', height: '7px', borderRadius: '50%', background: '#F59E0B' }} />}
+              {t.id === 'team' && pendingCount > 0 && (effectiveRole === 'super_admin') && <span style={{ position: 'absolute', top: '8px', right: '6px', width: '7px', height: '7px', borderRadius: '50%', background: '#F59E0B' }} />}
             </button>
           ))}
         </div>
