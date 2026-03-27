@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { mapResults } from './utils';
 
 export const maxDuration = 180;
 
@@ -57,10 +58,10 @@ export async function POST(req: NextRequest) {
       }
 
       const items = await res.json();
-      return NextResponse.json({ results: mapResults(items), totalFound: items.length });
+      return NextResponse.json({ results: mapResults(items), totalFound: items.length, mode: 'sync' });
     }
 
-    // Async — start run, poll, then fetch items
+    // Async — start run, return runId immediately (client polls /api/scrape/status)
     const startUrl = `https://api.apify.com/v2/acts/${ACTOR_ID}/runs?token=${APIFY_TOKEN}`;
     const startRes = await fetch(startUrl, {
       method: 'POST',
@@ -79,69 +80,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No run ID returned' }, { status: 502 });
     }
 
-    // Poll up to 160s
-    const deadline = Date.now() + 160_000;
-    let status = '';
-    while (Date.now() < deadline) {
-      await new Promise(r => setTimeout(r, 3000));
-      const pollRes = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${APIFY_TOKEN}`);
-      const pollData = await pollRes.json();
-      status = pollData.data?.status;
-      if (status === 'SUCCEEDED') break;
-      if (status === 'FAILED' || status === 'ABORTED' || status === 'TIMED-OUT') {
-        return NextResponse.json({ error: `Run ${status}` }, { status: 502 });
-      }
-    }
-
-    if (status !== 'SUCCEEDED') {
-      return NextResponse.json({ error: 'Run timed out', runId }, { status: 504 });
-    }
-
-    // Fetch dataset items
-    const dsUrl = `https://api.apify.com/v2/actor-runs/${runId}/dataset/items?token=${APIFY_TOKEN}`;
-    const dsRes = await fetch(dsUrl);
-    const items = await dsRes.json();
-    return NextResponse.json({ results: mapResults(items), totalFound: items.length, runId });
+    return NextResponse.json({ runId, mode: 'async' });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-function mapResults(items: any[]): any[] {
-  return (items || []).map((item: any) => {
-    const addrParts = (item.address || '').split(',').map((s: string) => s.trim());
-    const stateZip = addrParts.length >= 3 ? addrParts[addrParts.length - 1] : '';
-    const city = addrParts.length >= 3 ? addrParts[addrParts.length - 2] : '';
-    const state = stateZip.split(' ')[0] || '';
-
-    let email = '';
-    if (item.emails && item.emails.length > 0) {
-      email = item.emails[0];
-    } else if (item.email) {
-      email = item.email;
-    }
-
-    return {
-      businessName: item.title || item.name || '',
-      phone: item.phone || item.phoneUnformatted || '',
-      email,
-      website: item.website || item.url || '',
-      address: item.address || item.street || '',
-      city,
-      state,
-      rating: item.totalScore ?? item.rating ?? 0,
-      reviews: item.reviewsCount ?? item.reviews ?? 0,
-      category: item.categoryName || item.category || '',
-      placeId: item.placeId || '',
-      googleUrl: item.url || '',
-      lat: item.location?.lat ?? 0,
-      lng: item.location?.lng ?? 0,
-      claimStatus: item.claimingStatus || '',
-      permanentlyClosed: item.permanentlyClosed || false,
-      openingHours: item.openingHours || null,
-      additionalInfo: item.additionalInfo || null,
-    };
-  });
 }
