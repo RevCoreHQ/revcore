@@ -777,9 +777,9 @@ function ComparisonSection() {
 
   // Pricing rows (displayed above features)
   const pricingRows: { label: string; revcore: string; values: string[] }[] = [
-    { label: 'Starting Price',     revcore: 'Included',  values: ['$300+/mo',       '$39–199/mo',    '$245+/tech/mo',  '$59–329/mo',     '$79–297/mo'] },
-    { label: 'Setup / Onboarding', revcore: '$0',        values: ['$0',             '$0',            '$2K–$10K+',      '$0',             'Annual contract'] },
-    { label: 'Per-User Fees',      revcore: 'None',      values: ['$30–75/user',    '$29/user',      'Per-tech pricing','$35/user (MAX)', '$99/user'] },
+    { label: 'Starting Price',     revcore: 'Included',  values: ['$300+/mo',       '$39–199/mo',    '$245+/tech/mo',  '$59–329/mo',     '$79–297/mo',     '$127+/user'] },
+    { label: 'Setup / Onboarding', revcore: '$0',        values: ['$0',             '$0',            '$2K–$10K+',      '$0',             'Annual contract', 'Contact sales'] },
+    { label: 'Per-User Fees',      revcore: 'None',      values: ['$30–75/user',    '$29/user',      'Per-tech pricing','$35/user (MAX)', '$99/user',       'Per-user pricing'] },
   ];
 
   const features = [
@@ -820,6 +820,11 @@ function ComparisonSection() {
     {
       name: 'Leap',
       values:          ['✓',  '~',  '✓',  '✓',  '✗',  '~',  '✓',  '✓',  '✗',  '~',  '✗',  '✗'],
+    },
+    {
+      name: 'Ingage',
+      //                Pres  Quote  GBB   Esig  Auto  Photo Brand  Rep   Setup  Supp  GMB   Contract
+      values:          ['✓',  '✗',  '✗',  '✗',  '✗',  '✓',  '✓',  '~',  '✗',  '~',  '✗',  '✗'],
     },
   ];
 
@@ -878,7 +883,7 @@ function ComparisonSection() {
 
         {/* Table wrapper — horizontally scrollable on mobile */}
         <div style={{ overflowX: 'auto', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.07)', ...scaleUp(inView, 150) }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '880px', fontFamily: 'DM Sans, sans-serif' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1000px', fontFamily: 'DM Sans, sans-serif' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
                 {/* Feature column header */}
