@@ -778,7 +778,7 @@ function ComparisonSection() {
   // Pricing rows (displayed above features)
   const pricingRows: { label: string; revcore: string; values: string[] }[] = [
     { label: 'Starting Price',     revcore: 'Included',  values: ['$300+/mo',       '$39–199/mo',    '$245+/tech/mo',  '$59–329/mo',     '$79–297/mo',     '$127+/user'] },
-    { label: 'Setup / Onboarding', revcore: '$0',        values: ['$0',             '$0',            '$2K–$10K+',      '$0',             'Annual contract', 'Contact sales'] },
+    { label: 'Setup / Onboarding', revcore: '$0',        values: ['$0',             '$0',            '$2K–$10K+',      '$0',             'Annual contract', '$4K–$10K+'] },
     { label: 'Per-User Fees',      revcore: 'None',      values: ['$30–75/user',    '$29/user',      'Per-tech pricing','$35/user (MAX)', '$99/user',       'Per-user pricing'] },
   ];
 
