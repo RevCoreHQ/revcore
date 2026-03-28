@@ -775,6 +775,13 @@ function IntegrationBanner() {
 function ComparisonSection() {
   const { ref, inView } = useScrollReveal({ threshold: 0.08 });
 
+  // Pricing rows (displayed above features)
+  const pricingRows: { label: string; revcore: string; values: string[] }[] = [
+    { label: 'Starting Price',     revcore: 'Included',  values: ['$300+/mo',       '$39–199/mo',    '$245+/tech/mo',  '$59–329/mo',     '$79–297/mo'] },
+    { label: 'Setup / Onboarding', revcore: '$0',        values: ['$0',             '$0',            '$2K–$10K+',      '$0',             'Annual contract'] },
+    { label: 'Per-User Fees',      revcore: 'None',      values: ['$30–75/user',    '$29/user',      'Per-tech pricing','$35/user (MAX)', '$99/user'] },
+  ];
+
   const features = [
     'iPad Sales Presentation Tool',
     'In-Field Quote Builder',
@@ -805,6 +812,14 @@ function ComparisonSection() {
     {
       name: 'ServiceTitan',
       values:          ['✗',  '✓',  '~',  '✓',  '✓',  '✗',  '~',  '✗',  '✗',  '✓',  '✗',  '✗'],
+    },
+    {
+      name: 'Housecall Pro',
+      values:          ['✗',  '✓',  '✗',  '✓',  '~',  '✗',  '✗',  '✗',  '✗',  '~',  '✗',  '✗'],
+    },
+    {
+      name: 'Leap',
+      values:          ['✓',  '~',  '✓',  '✓',  '✗',  '~',  '✓',  '✓',  '✗',  '~',  '✗',  '✗'],
     },
   ];
 
@@ -863,7 +878,7 @@ function ComparisonSection() {
 
         {/* Table wrapper — horizontally scrollable on mobile */}
         <div style={{ overflowX: 'auto', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.07)', ...scaleUp(inView, 150) }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '640px', fontFamily: 'DM Sans, sans-serif' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '880px', fontFamily: 'DM Sans, sans-serif' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
                 {/* Feature column header */}
@@ -915,6 +930,62 @@ function ComparisonSection() {
               </tr>
             </thead>
             <tbody>
+              {/* ── Pricing rows ── */}
+              {pricingRows.map((row, prIdx) => (
+                <tr
+                  key={row.label}
+                  style={{
+                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    background: 'rgba(148,217,107,0.02)',
+                  }}
+                >
+                  <td style={{
+                    padding: '0.85rem 1.5rem',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    color: 'rgba(255,255,255,0.75)',
+                    background: prIdx % 2 === 0 ? '#0e1219' : '#0d1218',
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 1,
+                    borderBottom: prIdx === pricingRows.length - 1 ? '2px solid rgba(255,255,255,0.08)' : undefined,
+                  }}>
+                    {row.label}
+                  </td>
+                  {/* RevCore pricing — green highlight */}
+                  <td style={{
+                    padding: '0.85rem 1.25rem',
+                    textAlign: 'center',
+                    background: 'rgba(148,217,107,0.08)',
+                    borderLeft: '2px solid rgba(148,217,107,0.35)',
+                    borderRight: '1px solid rgba(255,255,255,0.05)',
+                    borderBottom: prIdx === pricingRows.length - 1 ? '2px solid rgba(255,255,255,0.08)' : undefined,
+                  }}>
+                    <span style={{ fontWeight: 800, fontSize: '0.88rem', color: '#94D96B' }}>{row.revcore}</span>
+                  </td>
+                  {/* Competitor pricing */}
+                  {row.values.map((val, ci) => (
+                    <td key={ci} style={{
+                      padding: '0.85rem 1.25rem',
+                      textAlign: 'center',
+                      borderRight: '1px solid rgba(255,255,255,0.04)',
+                      borderBottom: prIdx === pricingRows.length - 1 ? '2px solid rgba(255,255,255,0.08)' : undefined,
+                    }}>
+                      <span style={{
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        color: val.includes('$') && (val.includes('K') || val.includes('tech') || val.includes('user'))
+                          ? '#F59E0B'
+                          : 'rgba(255,255,255,0.55)',
+                      }}>
+                        {val}
+                      </span>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+
+              {/* ── Feature rows ── */}
               {features.map((feat, rowIdx) => (
                 <tr
                   key={feat}
@@ -965,9 +1036,25 @@ function ComparisonSection() {
           </table>
         </div>
 
+        {/* Pricing summary strip */}
+        <div style={{
+          marginTop: '2rem',
+          padding: '1.25rem 2rem',
+          borderRadius: '12px',
+          background: 'rgba(148,217,107,0.04)',
+          border: '1px solid rgba(148,217,107,0.15)',
+          textAlign: 'center',
+          ...fadeUp(inView, 250),
+        }}>
+          <p style={{ margin: 0, fontSize: '0.95rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>
+            RevCore includes both <span style={{ color: '#94D96B', fontWeight: 700 }}>Scope</span> + <span style={{ color: '#6B8EFE', fontWeight: 700 }}>Pitch</span> in every package.{' '}
+            <span style={{ color: 'rgba(255,255,255,0.45)' }}>Competitors charge $300–$3,000+/mo for less.</span>
+          </p>
+        </div>
+
         {/* Footnote */}
-        <p style={{ textAlign: 'center', fontSize: '0.72rem', color: 'rgba(255,255,255,0.22)', marginTop: '1.25rem', ...fadeUp(inView, 300) }}>
-          Feature availability as of 2026. Competitor features may vary by plan.
+        <p style={{ textAlign: 'center', fontSize: '0.72rem', color: 'rgba(255,255,255,0.22)', marginTop: '1rem', ...fadeUp(inView, 300) }}>
+          Pricing as of 2026. Competitor pricing may vary by plan and team size.
         </p>
       </div>
     </section>
