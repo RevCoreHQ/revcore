@@ -871,12 +871,12 @@ function ComparisonSection() {
   return (
     <section
       ref={ref as React.Ref<HTMLElement>}
-      style={{ padding: '6rem clamp(1.5rem, 6vw, 6rem)', background: '#080c10', position: 'relative', overflow: 'hidden' }}
+      style={{ padding: '6rem clamp(1rem, 3vw, 3rem)', background: '#080c10', position: 'relative', overflow: 'hidden' }}
     >
       {/* Background glow */}
       <div style={{ position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)', width: '800px', height: '400px', background: 'radial-gradient(ellipse, rgba(148,217,107,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-      <div style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '3.5rem', ...fadeUp(inView, 0) }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', padding: '5px 14px', borderRadius: '100px', background: 'rgba(148,217,107,0.08)', border: '1px solid rgba(148,217,107,0.2)', marginBottom: '1.5rem' }}>
@@ -893,7 +893,7 @@ function ComparisonSection() {
 
         {/* Table wrapper — horizontally scrollable on mobile */}
         <div style={{ overflowX: 'auto', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.07)', ...scaleUp(inView, 150) }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1200px', fontFamily: 'DM Sans, sans-serif' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1400px', fontFamily: 'DM Sans, sans-serif' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
                 {/* Feature column header */}
@@ -909,18 +909,18 @@ function ComparisonSection() {
                   position: 'sticky',
                   left: 0,
                   zIndex: 2,
-                  minWidth: '220px',
+                  minWidth: '200px',
                 }}>
                   Feature
                 </th>
                 {/* RevCore header — highlighted */}
                 <th style={{
-                  padding: '1.1rem 1.25rem',
+                  padding: '1.1rem 1rem',
                   textAlign: 'center',
                   background: 'rgba(148,217,107,0.06)',
                   borderLeft: '2px solid rgba(148,217,107,0.35)',
                   borderRight: '1px solid rgba(255,255,255,0.06)',
-                  minWidth: '120px',
+                  minWidth: '100px',
                 }}>
                   <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '4px' }}>
                     <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#94D96B' }}>RevCore</div>
@@ -930,13 +930,13 @@ function ComparisonSection() {
                 {/* Competitor headers */}
                 {competitors.map((comp) => (
                   <th key={comp.name} style={{
-                    padding: '1.1rem 1.25rem',
+                    padding: '1.1rem 0.75rem',
                     textAlign: 'center',
                     background: '#0d1117',
                     borderRight: '1px solid rgba(255,255,255,0.05)',
-                    minWidth: '120px',
+                    minWidth: '100px',
                     fontWeight: 700,
-                    fontSize: '0.85rem',
+                    fontSize: '0.78rem',
                     color: 'rgba(255,255,255,0.4)',
                   }}>
                     {comp.name}
