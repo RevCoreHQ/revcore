@@ -9,7 +9,7 @@ import IpadMockup from '@/components/iPadMockup';
 import QuotingApp from '@/components/QuotingApp';
 import PitchApp from '@/components/PitchApp';
 import { useScrollReveal, fadeUp, scaleUp, stagger } from '@/hooks/useScrollReveal';
-import { Check, CheckCircle, ChevronDown } from 'lucide-react';
+import { Check, CheckCircle, ChevronDown, Info } from 'lucide-react';
 import {
   packagesData, phoneSteps, fbAds,
   qualifyQuestions, stateMarkets,
@@ -3786,16 +3786,30 @@ function PricingSection() {
                     {pkg.featuresTitle || "What's included"}
                   </p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {pkg.heroFeatures.map((f, fi) => (
-                      <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '6px 0' }}>
-                        <Check size={14} style={{ color: pkg.accent, flexShrink: 0 }} />
-                        <span style={{
-                          fontSize: '1rem',
-                          fontWeight: 600,
-                          color: 'rgba(255,255,255,0.8)',
-                        }}>{f}</span>
-                      </div>
-                    ))}
+                    {pkg.heroFeatures.map((f, fi) => {
+                      const hasTooltip = f.includes('Appointments / mo');
+                      return (
+                        <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '6px 0' }}>
+                          <Check size={14} style={{ color: pkg.accent, flexShrink: 0 }} />
+                          <span style={{
+                            fontSize: '1rem',
+                            fontWeight: 600,
+                            color: 'rgba(255,255,255,0.8)',
+                            display: 'flex', alignItems: 'center', gap: 6,
+                          }}>
+                            {f}
+                            {hasTooltip && (
+                              <span
+                                title="May vary by market, industry, and ad spend"
+                                style={{ display: 'inline-flex', cursor: 'help' }}
+                              >
+                                <Info size={13} style={{ color: 'rgba(255,255,255,0.25)' }} />
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Loss framing for Launchpad */}
