@@ -32,7 +32,7 @@ export const packagesData = [
     highlight: true,
     heroFeatures: [
       '20+ Appointments / mo',
-      'Bonus Leads / mo',
+      'Bonus Leads',
       'Conversion Optimized Website',
       'SEO Optimization',
       'Automated Follow-Up',
@@ -58,15 +58,13 @@ export const packagesData = [
     featuresTitle: 'Everything in Growth Partner, plus',
     heroFeatures: [
       '40+ Appointments / mo',
-      'Bonus Leads / mo',
+      'Bonus Leads',
       'GMB Optimization',
       'Presentation Software',
       'Quoting Software',
       '4% Revenue Share',
     ],
     moreFeatures: [
-      'Sales training & scripts',
-      'Custom sales presentation',
       'Dedicated success manager',
       'Monthly strategy sessions',
       'Review request automation',
