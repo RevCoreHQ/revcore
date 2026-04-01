@@ -50,8 +50,8 @@ export const packagesData = [
     badgeType: 'premium' as const,
     tagline: 'Complete revenue engine with automation stack and sales optimization.',
     priceMonthly: 4997,
-    noteMonthly: '+ ad spend',
-    quarterlyTotal: '$13,491/quarter',
+    noteMonthly: '+ ad spend + 4% rev share',
+    quarterlyTotal: '$13,491/quarter + 4% rev share',
     quarterlySave: '$500/mo',
     accent: '#8B5CF6',
     highlight: false,
@@ -62,7 +62,6 @@ export const packagesData = [
       'GMB Optimization',
       'Presentation Software',
       'Quoting Software',
-      '4% Revenue Share',
     ],
     moreFeatures: [
       'Dedicated success manager',
